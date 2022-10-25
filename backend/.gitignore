@@ -1,0 +1,19 @@
+# IDE files
+.idea/
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# config files
+config/default.json
+config/production.json
+
+# node modules
+node_modules/
+
+# frontend
+## node modules
+frontend/node_modules

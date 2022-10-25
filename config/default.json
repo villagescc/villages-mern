@@ -1,6 +1,0 @@
-{
-    "mongoURI":"mongodb://localhost/villages",
-    "jwtSecret":"villageSecret",
-    "githubClientId":"",
-    "githubSecret":""
-}
