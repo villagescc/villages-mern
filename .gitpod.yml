@@ -1,0 +1,7 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - command: mkdir -p /workspace/data && mongod --dbpath /workspace/data
+  - init: |
+      chmod +x ./start-mongodb.sh
+      ./start-mongodb.sh latest "" 27019 villages Mike villages 
