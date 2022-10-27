@@ -35,7 +35,7 @@ const verifyToken = (serviceToken) => {
 const setSession = (serviceToken) => {
     if (serviceToken) {
         localStorage.setItem('serviceToken', serviceToken);
-        axios.defaults.headers.common.Authorization = `Bearer ${serviceToken}`;
+        axios.defaults.headers.common.Authorization = serviceToken;
     } else {
         localStorage.removeItem('serviceToken');
         delete axios.defaults.headers.common.Authorization;
@@ -54,7 +54,7 @@ export const JWTProvider = ({ children }) => {
                 const serviceToken = window.localStorage.getItem('serviceToken');
                 if (serviceToken && verifyToken(serviceToken)) {
                     setSession(serviceToken);
-                    const response = await axios.get('/api/account/me');
+                    const response = await axios.get('/auth');
                     const { user } = response.data;
                     dispatch({
                         type: LOGIN,
@@ -82,6 +82,7 @@ export const JWTProvider = ({ children }) => {
     const login = async (email, password) => {
         const response = await axios.post('/auth/login', { email, password });
         const { serviceToken, user } = response.data;
+        console.log('serviceToken:', serviceToken)
         setSession(serviceToken);
         dispatch({
             type: LOGIN,

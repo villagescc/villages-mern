@@ -2,12 +2,22 @@ const express = require('express');
 const auth = require('../../middleware/auth');
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 const router = express.Router();
+
+router.get('/', auth, async (req, res, next) => {
+  User.findById(req.user.id).select('-password')
+    .then(user => {
+      res.json(user);
+    })
+    .catch(err => {
+      console.log('find user error', err);
+      next(err);
+    })
+});
 
 router.post(
   '/register',
@@ -124,19 +134,19 @@ router.post(
               isStaff: user.isStaff,
             }
             const payload = {
-              user
+              user: userData
             };
 
             jwt.sign(
               payload,
               process.env.jwtSecret,
               { expiresIn: 3600 },
-              (err, token) => {
+              (err, serviceToken) => {
                 if (err) {
                   console.log('jwt sign error', err);
                   next(err);
                 }
-                return res.json({ token, userData });
+                return res.json({ serviceToken, userData });
               }
             );
           })

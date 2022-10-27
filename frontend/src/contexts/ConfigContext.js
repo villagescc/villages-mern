@@ -25,7 +25,7 @@ const initialState = {
 const ConfigContext = createContext(initialState);
 
 function ConfigProvider({ children }) {
-    const [config, setConfig] = useLocalStorage('berry-config', {
+    const [config, setConfig] = useLocalStorage('villages-config', {
         layout: initialState.layout,
         drawerType: initialState.drawerType,
         fontFamily: initialState.fontFamily,
