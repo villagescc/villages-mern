@@ -72,4 +72,84 @@ router.get("/verify/:id/:token", async (req, res, next) => {
       });
 });
 
+router.post(
+  '/login',
+  [
+      check('email', 'Email or Username is Required').not().isEmpty(),
+      check('password', 'Password is Required').not().isEmpty(),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { password, email } = req.body;
+
+    User.findOne({ $or: [ { email }, { username: email } ] })
+      .then(user => {
+        if (!user) {
+          return res.status(400).send({
+            message: 'Invalid Credentials'
+          });
+        }
+
+        bcrypt.compare(password, user.password)
+          .then(isMatch => {
+            if (!isMatch) {
+              return res.status(400).send({
+                message: 'Invalid Credentials'
+              });
+            }
+
+            if(!user.verified) {
+              return res.status(400).send({
+                message: 'Email is not verified'
+              });
+            }
+
+            if(!user.isActive) {
+              return res.status(400).send({
+                message: 'Account is not active'
+              });
+            }
+
+            const userData = {
+              id: user.id,
+              username: user.username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              verified: user.verified,
+              isStaff: user.isStaff,
+            }
+            const payload = {
+              user
+            };
+
+            jwt.sign(
+              payload,
+              process.env.jwtSecret,
+              { expiresIn: 3600 },
+              (err, token) => {
+                if (err) {
+                  console.log('jwt sign error', err);
+                  next(err);
+                }
+                return res.json({ token, userData });
+              }
+            );
+          })
+          .catch(err => {
+            console.log('bcrypt compare error', err);
+            next(err);
+          })
+      })
+      .catch(err => {
+        console.log('find user error', err);
+        next(err);
+      })
+  }
+)
+
 module.exports = router;
