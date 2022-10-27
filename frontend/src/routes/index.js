@@ -2,7 +2,7 @@ import { lazy } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 // routes
-// import MainRoutes from './MainRoutes';
+import MainRoutes from './MainRoutes';
 // import LoginRoutes from './LoginRoutes';
 // import AuthenticationRoutes from './AuthenticationRoutes';
 import Loadable from 'ui-component/Loadable';
@@ -16,7 +16,8 @@ const LandingPage = Loadable(lazy(() => import('views/pages/landing')));
 export default function ThemeRoutes() {
     return useRoutes([
         { path: '/', element: <LandingPage /> },
+        LoginRoutes,
         HomeRoutes,
-        LoginRoutes
+        MainRoutes
     ]);
 }

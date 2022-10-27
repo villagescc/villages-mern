@@ -1,10 +1,11 @@
 const moongose = require('mongoose');
 
 //calling database using async await
+const db = process.env.mongoURI || 'mongodb://localhost:27017';
 
 const connectDB = async () => {
     try {
-        await moongose.connect(process.env.mongoURI, {
+        await moongose.connect(db, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });

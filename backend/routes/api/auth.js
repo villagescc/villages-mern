@@ -42,8 +42,9 @@ router.post(
 
           await user.save();
 
-          const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
-          await sendEmail(user.email, "Verify Email", message);
+          // TODO : Send a verification mail
+          // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
+          // await sendEmail(user.email, "Verify Email", message);
 
           res.send("An Email sent to your account please verify")
       }

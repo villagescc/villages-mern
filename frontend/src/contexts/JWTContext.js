@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer } from 'react';
 
 // third-party
-import { Chance } from 'chance';
 import jwtDecode from 'jwt-decode';
 
 // reducer - state management
@@ -12,8 +11,6 @@ import accountReducer from 'store/accountReducer';
 // project imports
 import Loader from 'ui-component/Loader';
 import axios from 'utils/axios';
-
-const chance = new Chance();
 
 // constant
 const initialState = {
@@ -93,16 +90,23 @@ export const JWTProvider = ({ children }) => {
         });
     };
 
-    const register = async (email, password, firstName, lastName) => {
+    const register = async (email, password, firstName, lastName, username) => {
         // todo: this flow need to be recode as it not verified
-        const id = chance.bb_pin();
-        const response = await axios.post('/api/account/register', {
-            id,
+        console.log({
             email,
             password,
             firstName,
-            lastName
+            lastName,
+            username
+        })
+        const response = await axios.post('/auth/register', {
+            email,
+            password,
+            firstName,
+            lastName,
+            username
         });
+        console.log('user:', response);
         let users = response.data;
 
         if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
@@ -110,7 +114,6 @@ export const JWTProvider = ({ children }) => {
             users = [
                 ...JSON.parse(localUsers),
                 {
-                    id,
                     email,
                     password,
                     name: `${firstName} ${lastName}`
