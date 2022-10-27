@@ -11,7 +11,9 @@ import accountReducer from 'store/accountReducer';
 // project imports
 import Loader from 'ui-component/Loader';
 import axios from 'utils/axios';
+// import services from 'utils/mockAdapter';
 
+// axios.defaults.adapter = services.original
 // constant
 const initialState = {
     isLoggedIn: false,
@@ -92,36 +94,15 @@ export const JWTProvider = ({ children }) => {
 
     const register = async (email, password, firstName, lastName, username) => {
         // todo: this flow need to be recode as it not verified
-        console.log({
-            email,
-            password,
-            firstName,
-            lastName,
-            username
-        })
-        const response = await axios.post('/auth/register', {
+        const response = await axios.post('auth/register', {
             email,
             password,
             firstName,
             lastName,
             username
         });
-        console.log('user:', response);
-        let users = response.data;
 
-        if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
-            const localUsers = window.localStorage.getItem('users');
-            users = [
-                ...JSON.parse(localUsers),
-                {
-                    email,
-                    password,
-                    name: `${firstName} ${lastName}`
-                }
-            ];
-        }
-
-        window.localStorage.setItem('users', JSON.stringify(users));
+        return response.data;
     };
 
     const logout = () => {

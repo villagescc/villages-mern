@@ -3,13 +3,23 @@ const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
 const app = express();
+const cors = require('cors')
 //connect database
 connectDB();
 //Initialise middleware
+app.use(cors());
 app.use(express.json({ extended: false }));
 
 //Define routes
 app.use('/api/auth', require('./routes/api/auth'));
+
+app.use((error, req, res, next) => {
+  res.status(500).send({ error: error })
+})
+
+app.use((req, res, next) => {
+  res.status(404).send({ error: 'Not Found' })
+})
 
 //Serve Static Assets
 if (process.env.NODE_ENV === 'production') {

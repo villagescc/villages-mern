@@ -87,9 +87,9 @@ const FirebaseRegister = ({ ...others }) => {
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
-                        await register(values.email, values.password, values.firstName, values.lastName, values.username);
+                        const result = await register(values.email, values.password, values.firstName, values.lastName, values.username);
+                        if(result.success) alert(result.message)
                     } catch (err) {
-                        console.error(err);
                         if (scriptedRef.current) {
                             setStatus({ success: false });
                             setErrors({ submit: err.message });

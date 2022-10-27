@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 // load mock apis
-import '_mockApis';
+// import '_mockApis';
 
 // project imports
 import App from 'App';
