@@ -15,7 +15,7 @@ import icon from '../assets/images/logo_full.png';
 const Logo = () => {
     const theme = useTheme();
 
-    return <img src={icon} alt="" />;
+    return <img src={icon} alt="" style={{ height: 40 }} />;
 };
 
 export default Logo;

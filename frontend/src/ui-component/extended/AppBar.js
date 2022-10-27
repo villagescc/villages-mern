@@ -68,95 +68,101 @@ const AppBar = ({ ...others }) => {
     };
 
     return (
-        <ElevationScroll {...others}>
-            <MuiAppBar>
-                <Container>
-                    <Toolbar>
-                        <Typography component="div" sx={{ flexGrow: 1, textAlign: 'left' }}>
-                            <Logo />
-                        </Typography>
-                        <Stack direction="row" sx={{ display: { xs: 'none', sm: 'block' } }} spacing={2}>
-                            <Button color="inherit" component={Link} href="#" target="_blank">
-                                Home
-                            </Button>
-                            <Button color="inherit" component={RouterLink} to="/login" target="_blank">
-                                Dashboard
-                            </Button>
-                            <Button color="inherit" component={Link} href="https://codedthemes.gitbook.io/berry" target="_blank">
-                                Documentation
-                            </Button>
-                            <Button
-                                component={Link}
-                                href="https://material-ui.com/store/items/berry-react-material-admin/"
-                                disableElevation
-                                variant="contained"
-                                color="secondary"
-                            >
-                                Purchase Now
-                            </Button>
-                        </Stack>
-                        <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-                            <IconButton color="inherit" onClick={drawerToggler(true)} size="large">
-                                <MenuIcon />
-                            </IconButton>
-                            <Drawer anchor="top" open={drawerToggle} onClose={drawerToggler(false)}>
-                                {drawerToggle && (
-                                    <Box
-                                        sx={{ width: 'auto' }}
-                                        role="presentation"
-                                        onClick={drawerToggler(false)}
-                                        onKeyDown={drawerToggler(false)}
-                                    >
-                                        <List>
-                                            <Link style={{ textDecoration: 'none' }} href="#" target="_blank">
-                                                <ListItemButton component="a">
-                                                    <ListItemIcon>
-                                                        <IconHome2 />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Home" />
-                                                </ListItemButton>
-                                            </Link>
-                                            <Link style={{ textDecoration: 'none' }} href="/login" target="_blank">
-                                                <ListItemButton component="a">
-                                                    <ListItemIcon>
-                                                        <IconDashboard />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Dashboard" />
-                                                </ListItemButton>
-                                            </Link>
-                                            <Link
-                                                style={{ textDecoration: 'none' }}
-                                                href="https://codedthemes.gitbook.io/berry"
-                                                target="_blank"
-                                            >
-                                                <ListItemButton component="a">
-                                                    <ListItemIcon>
-                                                        <IconBook />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Documentation" />
-                                                </ListItemButton>
-                                            </Link>
-                                            <Link
-                                                style={{ textDecoration: 'none' }}
-                                                href="https://material-ui.com/store/items/berry-react-material-admin/"
-                                                target="_blank"
-                                            >
-                                                <ListItemButton component="a">
-                                                    <ListItemIcon>
-                                                        <IconCreditCard />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Purchase Now" />
-                                                </ListItemButton>
-                                            </Link>
-                                        </List>
-                                    </Box>
-                                )}
-                            </Drawer>
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </MuiAppBar>
-        </ElevationScroll>
+      <ElevationScroll {...others}>
+          <MuiAppBar>
+              <Container>
+                  <Toolbar>
+                      <Typography component="div" sx={{ flexGrow: 1, textAlign: 'left' }}>
+                          <Logo />
+                      </Typography>
+                      <Stack direction="row" sx={{ display: { xs: 'none', sm: 'block' } }} spacing={2}>
+                          <Button color="inherit" component={Link} href="home">
+                              Home
+                          </Button>
+                          <Button color="inherit" component={RouterLink} to="/login">
+                              How it Works
+                          </Button>
+                          <Button
+                            component={RouterLink}
+                            to="/register"
+                            disableElevation
+                            variant="contained"
+                            color="secondary"
+                          >
+                              Join Now
+                          </Button>
+                          <Button
+                            component={RouterLink}
+                            to="/login"
+                            disableElevation
+                            variant="outlined"
+                            color="secondary"
+                          >
+                              Login
+                          </Button>
+                      </Stack>
+                      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                          <IconButton color="inherit" onClick={drawerToggler(true)} size="large">
+                              <MenuIcon />
+                          </IconButton>
+                          <Drawer anchor="top" open={drawerToggle} onClose={drawerToggler(false)}>
+                              {drawerToggle && (
+                                <Box
+                                  sx={{ width: 'auto' }}
+                                  role="presentation"
+                                  onClick={drawerToggler(false)}
+                                  onKeyDown={drawerToggler(false)}
+                                >
+                                    <List>
+                                        <Link style={{ textDecoration: 'none' }} href="#" target="_blank">
+                                            <ListItemButton component="a">
+                                                <ListItemIcon>
+                                                    <IconHome2 />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Home" />
+                                            </ListItemButton>
+                                        </Link>
+                                        <Link style={{ textDecoration: 'none' }} href="/login" target="_blank">
+                                            <ListItemButton component="a">
+                                                <ListItemIcon>
+                                                    <IconDashboard />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Dashboard" />
+                                            </ListItemButton>
+                                        </Link>
+                                        <Link
+                                          style={{ textDecoration: 'none' }}
+                                          href="https://codedthemes.gitbook.io/berry"
+                                          target="_blank"
+                                        >
+                                            <ListItemButton component="a">
+                                                <ListItemIcon>
+                                                    <IconBook />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Documentation" />
+                                            </ListItemButton>
+                                        </Link>
+                                        <Link
+                                          style={{ textDecoration: 'none' }}
+                                          href="https://material-ui.com/store/items/berry-react-material-admin/"
+                                          target="_blank"
+                                        >
+                                            <ListItemButton component="a">
+                                                <ListItemIcon>
+                                                    <IconCreditCard />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Purchase Now" />
+                                            </ListItemButton>
+                                        </Link>
+                                    </List>
+                                </Box>
+                              )}
+                          </Drawer>
+                      </Box>
+                  </Toolbar>
+              </Container>
+          </MuiAppBar>
+      </ElevationScroll>
     );
 };
 
