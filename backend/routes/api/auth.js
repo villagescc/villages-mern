@@ -56,16 +56,20 @@ router.post(
 );
 
 router.get("/verify/:id/:token", async (req, res, next) => {
-    try {
-        const user = await User.findOne({ _id: req.params.id, token: req.params.token });
-        if (!user) return res.status(400).send("Invalid link");
-
-        await User.updateOne({ _id: user._id, verified: true });
-
-        res.send("email verified sucessfully");
-    } catch (error) {
-        next(error)
-    }
+    User.findOne({ _id: req.params.id, token: req.params.token })
+      .then(user => {
+          if(!user) return res.status(400).send("Invalid link");
+          User.findByIdAndUpdate(user._id, { verified: true })
+            .then(() => res.send({success: true, message: "email verified sucessfully"}))
+            .catch(err => {
+                console.log('update user error', err)
+                next(err)
+            });
+      })
+      .catch(err => {
+          console.log('find user error')
+          next(err)
+      });
 });
 
 module.exports = router;
