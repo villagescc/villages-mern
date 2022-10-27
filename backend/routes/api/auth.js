@@ -13,6 +13,9 @@ router.post(
   [
     check('email', 'Email is Required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
+    check('username', 'Username is Required').not().isEmpty(),
+    check('firstName', 'First name is Required').not().isEmpty(),
+    check('lastName', 'Last name is Required').not().isEmpty(),
   ],
   async (req, res) => {
       const errors = validationResult(req);
