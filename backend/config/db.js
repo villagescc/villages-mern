@@ -1,12 +1,10 @@
 const moongose = require('mongoose');
-const config = require('config');
-const db = config.get('mongoURI');
 
 //calling database using async await
 
 const connectDB = async () => {
     try {
-        await moongose.connect(db, {
+        await moongose.connect(process.env.mongoURI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
