@@ -12,6 +12,31 @@ const ProfileSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    locationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'location'
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+    },
+    job: {
+      type: String,
+    },
+    headerImage: {
+      type: String
+    },
+    tags: [
+      {
+        listType: {
+          type: String
+        },
+        tag: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'tag'
+        }
+      }
+    ],
   },
   {
     timestamps: true

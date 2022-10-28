@@ -1,0 +1,41 @@
+const mongoose = require('mongoose');
+
+const ProfileSettingSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true
+    },
+    endorsement_limited: {
+      type: Boolean,
+      default: false
+    },
+    sendNotifications: {
+      type: Boolean,
+      default: true
+    },
+    sendNewsletter: {
+      type: Boolean,
+      default: true
+    },
+    language: {
+      type: String,
+    },
+    feedRadius: {
+      type: Number
+    },
+    feedTrusted: {
+      type: Boolean,
+      default: true
+    },
+    profileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'profile'
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+module.exports = ProfileSetting = mongoose.model('profile_setting', ProfileSettingSchema);
