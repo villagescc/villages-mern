@@ -28,6 +28,7 @@ import Logo from 'ui-component/Logo';
 // assets
 import { IconBook, IconCreditCard, IconDashboard, IconHome2 } from '@tabler/icons';
 import MenuIcon from '@mui/icons-material/Menu';
+import useAuth from "../../hooks/useAuth";
 
 // elevation scroll
 function ElevationScroll({ children, window }) {
@@ -58,6 +59,7 @@ ElevationScroll.propTypes = {
 // ==============================|| MINIMAL LAYOUT APP BAR ||============================== //
 
 const AppBar = ({ ...others }) => {
+    const { isLoggedIn, logout } = useAuth();
     const [drawerToggle, setDrawerToggle] = React.useState(false);
     /** Method called on multiple components with different event types */
     const drawerToggler = (open) => (event) => {
@@ -82,24 +84,39 @@ const AppBar = ({ ...others }) => {
                           <Button color="inherit" component={RouterLink} to="/login">
                               How it Works
                           </Button>
-                          <Button
-                            component={RouterLink}
-                            to="/register"
-                            disableElevation
-                            variant="contained"
-                            color="secondary"
-                          >
-                              Join Now
-                          </Button>
-                          <Button
-                            component={RouterLink}
-                            to="/login"
-                            disableElevation
-                            variant="outlined"
-                            color="secondary"
-                          >
-                              Login
-                          </Button>
+                          {
+                              isLoggedIn ? (
+                                <Button
+                                  onClick={logout}
+                                  disableElevation
+                                  variant="outlined"
+                                  color="secondary"
+                                >
+                                    Logout
+                                </Button>
+                              ) : (
+                                <>
+                                    <Button
+                                      component={RouterLink}
+                                      to="/register"
+                                      disableElevation
+                                      variant="contained"
+                                      color="secondary"
+                                    >
+                                        Join Now
+                                    </Button>
+                                    <Button
+                                      component={RouterLink}
+                                      to="/login"
+                                      disableElevation
+                                      variant="outlined"
+                                      color="secondary"
+                                    >
+                                        Login
+                                    </Button>
+                                </>
+                              )
+                          }
                       </Stack>
                       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
                           <IconButton color="inherit" onClick={drawerToggler(true)} size="large">
@@ -114,7 +131,7 @@ const AppBar = ({ ...others }) => {
                                   onKeyDown={drawerToggler(false)}
                                 >
                                     <List>
-                                        <Link style={{ textDecoration: 'none' }} href="#" target="_blank">
+                                        <Link style={{ textDecoration: 'none' }} href="/home" target="_blank">
                                             <ListItemButton component="a">
                                                 <ListItemIcon>
                                                     <IconHome2 />
@@ -127,33 +144,44 @@ const AppBar = ({ ...others }) => {
                                                 <ListItemIcon>
                                                     <IconDashboard />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Dashboard" />
+                                                <ListItemText primary="How It Works" />
                                             </ListItemButton>
                                         </Link>
-                                        <Link
-                                          style={{ textDecoration: 'none' }}
-                                          href="https://codedthemes.gitbook.io/berry"
-                                          target="_blank"
-                                        >
-                                            <ListItemButton component="a">
-                                                <ListItemIcon>
-                                                    <IconBook />
-                                                </ListItemIcon>
-                                                <ListItemText primary="Documentation" />
-                                            </ListItemButton>
-                                        </Link>
-                                        <Link
-                                          style={{ textDecoration: 'none' }}
-                                          href="https://material-ui.com/store/items/berry-react-material-admin/"
-                                          target="_blank"
-                                        >
-                                            <ListItemButton component="a">
-                                                <ListItemIcon>
-                                                    <IconCreditCard />
-                                                </ListItemIcon>
-                                                <ListItemText primary="Purchase Now" />
-                                            </ListItemButton>
-                                        </Link>
+                                        {
+                                            isLoggedIn ? (
+                                              <ListItemButton component="a" onClick={logout}>
+                                                  <ListItemIcon>
+                                                      <IconCreditCard />
+                                                  </ListItemIcon>
+                                                  <ListItemText primary="Logout" />
+                                              </ListItemButton>
+                                            ) : (
+                                              <>
+                                                  <Link
+                                                    style={{ textDecoration: 'none' }}
+                                                    href="/register"
+                                                  >
+                                                      <ListItemButton component="a">
+                                                          <ListItemIcon>
+                                                              <IconBook />
+                                                          </ListItemIcon>
+                                                          <ListItemText primary="Join Now" />
+                                                      </ListItemButton>
+                                                  </Link>
+                                                  <Link
+                                                    style={{ textDecoration: 'none' }}
+                                                    href="/login"
+                                                  >
+                                                      <ListItemButton component="a">
+                                                          <ListItemIcon>
+                                                              <IconCreditCard />
+                                                          </ListItemIcon>
+                                                          <ListItemText primary="Login" />
+                                                      </ListItemButton>
+                                                  </Link>
+                                              </>
+                                            )
+                                        }
                                     </List>
                                 </Box>
                               )}

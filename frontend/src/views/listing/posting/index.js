@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import {CardContent, Grid, InputAdornment, TextField} from '@mui/material';
+import {Button, CardContent, Grid, InputAdornment, TextField} from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -10,16 +10,18 @@ import { listing_type, radius } from '../../../constant';
 
 // assets
 import * as React from "react";
-import SearchIcon from "@mui/icons-material/Search";
+import {Search as SearchIcon, AddCircleRounded} from "@mui/icons-material";
 import FormControlSelect from "../../../ui-component/extended/Form/FormControlSelect";
 import {useDispatch, useSelector} from "../../../store";
 import {filterPost, getCategories} from "../../../store/slices/posting";
+import useAuth from "../../../hooks/useAuth";
 
 // ==============================|| Posting ||============================== //
 
 const Posting = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { isLoggedIn } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
   const [keyword, setKeyword] = React.useState('');
@@ -44,7 +46,17 @@ const Posting = () => {
   };
 
   return (
-    <MainCard title="Posting List" content={false}>
+    <MainCard
+      title="Posting List"
+      content={false}
+      secondary={
+        isLoggedIn ? (
+          <Button variant="contained" startIcon={<AddCircleRounded />}>
+            Create
+          </Button>
+        ) : null
+      }
+    >
       <CardContent>
         <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
           <Grid item xs={12} sm={3}>
