@@ -12,6 +12,7 @@ app.use(express.json({ extended: false }));
 
 //Define routes
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/posting', require('./routes/api/posting'));
 
 app.use((error, req, res, next) => {
   res.status(500).send({ error: error })

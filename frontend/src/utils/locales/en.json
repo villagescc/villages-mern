@@ -3,6 +3,10 @@
     "default": "Default",
     "analytics": "Analytics",
 
+    "listing": "Listing",
+    "posting": "Posting",
+    "people": "People",
+
     "widget": "Widget",
     "statistics": "Statistics",
     "data": "Data",

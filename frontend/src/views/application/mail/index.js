@@ -11,7 +11,7 @@ import MailList from './MailList';
 import { openDrawer } from 'store/slices/menu';
 import { appDrawerWidth as drawerWidth, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getMails, filterMails, setImportant, setStarred, setRead } from 'store/slices/mail';
+import { getMails, filterMails, setImportant, setStarred, setRead } from 'store/slices/posting';
 
 // drawer content element
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({

@@ -30,6 +30,7 @@ const FormControlSelect = ({ captionLabel, currencies, formState, iconPrimary, i
                 label={captionLabel}
                 value={currency}
                 onChange={handleChange}
+                size="small"
                 InputProps={{
                     startAdornment: (
                         <>

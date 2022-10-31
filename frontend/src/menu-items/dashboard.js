@@ -13,24 +13,16 @@ const icons = {
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
 const dashboard = {
-    id: 'dashboard',
+    id: 'home',
     title: <FormattedMessage id="dashboard" />,
     icon: icons.IconDashboard,
     type: 'group',
     children: [
         {
-            id: 'default',
-            title: <FormattedMessage id="default" />,
-            type: 'item',
-            url: '/dashboard/default',
-            icon: icons.IconDashboard,
-            breadcrumbs: false
-        },
-        {
-            id: 'analytics',
+            id: 'dashboard',
             title: <FormattedMessage id="analytics" />,
             type: 'item',
-            url: '/dashboard/analytics',
+            url: '/home',
             icon: icons.IconDeviceAnalytics,
             breadcrumbs: false
         }

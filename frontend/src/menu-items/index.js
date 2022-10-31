@@ -1,3 +1,4 @@
+import listing from './listing';
 import dashboard from './dashboard';
 import widget from './widget';
 import application from './application';
@@ -11,7 +12,7 @@ import other from './other';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [dashboard, widget, application, forms, elements, pages, utilities, support, other]
+    items: [dashboard, listing]
 };
 
 export default menuItems;

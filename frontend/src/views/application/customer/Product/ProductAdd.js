@@ -181,11 +181,11 @@ const ProductAdd = ({ open, handleCloseDialog }) => {
                                 <TextField
                                     id="standard-select-currency"
                                     select
-                                    label="Select Category*"
+                                    label="Select Posting*"
                                     value={currency}
                                     fullWidth
                                     onChange={handleSelectChange}
-                                    helperText="Please select Category"
+                                    helperText="Please select Posting"
                                 >
                                     {categories.map((option) => (
                                         <MenuItem key={option.value} value={option.value}>
