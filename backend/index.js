@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json({ extended: false }));
 
 //Define routes
+app.use('/api/base', require('./routes/api/base'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/posting', require('./routes/api/posting'));
 

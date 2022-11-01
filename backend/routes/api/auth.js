@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../../middleware/auth');
 const User = require('../../models/User');
+const Profile = require('../../models/Profile');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
@@ -29,64 +30,66 @@ router.post(
     check('lastName', 'Last name is Required').not().isEmpty(),
   ],
   async (req, res, next) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-          return res.status(400).json({ errors: errors.array() });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { password, username, firstName, lastName, email } = req.body;
+
+      let user = await User.findOne({ $or: [ {email}, {username} ] });
+      if(user) {
+        return res.status(400).send({
+          message: user.email === email ? 'Email already exists' : 'Username already exists',
+        });
       }
 
-      try {
-          const { password, username, firstName, lastName, email } = req.body;
+      const token = crypto.randomBytes(32).toString("hex");
+      user = new User({ password, username, firstName, lastName, email, token });
 
-          let user = await User.findOne({ $or: [ {email}, {username} ] });
-          if(user) {
-              return res.status(400).send({
-                  message: user.email === email ? 'Email already exists' : 'Username already exists',
-              });
-          }
+      const salt = await bcrypt.genSalt(10);
 
-          const token = crypto.randomBytes(32).toString("hex");
-          user = new User({ password, username, firstName, lastName, email, token });
+      user.password = await bcrypt.hash(password, salt);
 
-          const salt = await bcrypt.genSalt(10);
+      await user.save();
 
-          user.password = await bcrypt.hash(password, salt);
+      await Profile.create({ userId: user.id });
 
-          await user.save();
+      // TODO : Send a verification mail
+      // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
+      // await sendEmail(user.email, "Verify Email", message);
 
-          // TODO : Send a verification mail
-          // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
-          // await sendEmail(user.email, "Verify Email", message);
-
-          res.send({success: true, message: "An Email sent to your account please verify"});
-      }
-      catch(err) {
-          next(err)
-      }
+      res.send({success: true, message: "An Email sent to your account please verify"});
+    }
+    catch(err) {
+      next(err)
+    }
   }
 );
 
 router.get("/verify/:id/:token", async (req, res, next) => {
-    User.findOne({ _id: req.params.id, token: req.params.token })
-      .then(user => {
-          if(!user) return res.status(400).send("Invalid link");
-          User.findByIdAndUpdate(user._id, { verified: true })
-            .then(() => res.send({success: true, message: "email verified sucessfully"}))
-            .catch(err => {
-                console.log('update user error', err)
-                next(err)
-            });
-      })
-      .catch(err => {
-          console.log('find user error')
+  User.findOne({ _id: req.params.id, token: req.params.token })
+    .then(user => {
+      if(!user) return res.status(400).send("Invalid link");
+      User.findByIdAndUpdate(user._id, { verified: true })
+        .then(() => res.send({success: true, message: "email verified sucessfully"}))
+        .catch(err => {
+          console.log('update user error', err)
           next(err)
-      });
+        });
+    })
+    .catch(err => {
+      console.log('find user error')
+      next(err)
+    });
 });
 
 router.post(
   '/login',
   [
-      check('email', 'Email or Username is Required').not().isEmpty(),
-      check('password', 'Password is Required').not().isEmpty(),
+    check('email', 'Email or Username is Required').not().isEmpty(),
+    check('password', 'Password is Required').not().isEmpty(),
   ],
   (req, res, next) => {
     const errors = validationResult(req);

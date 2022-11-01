@@ -9,6 +9,8 @@ import { dispatch } from '../index';
 
 const initialState = {
     error: null,
+    loading: false,
+    tags: [],
     categories: [],
     posts: []
 };
@@ -22,14 +24,27 @@ const slice = createSlice({
             state.error = action.payload;
         },
 
+        // SET LOADING
+        setLoading(state, action) {
+            state.loading = action.payload;
+        },
+
+        // GET TAGS
+        getTagsSuccess(state, action) {
+            state.tags = action.payload;
+            state.loading = false;
+        },
+
         // GET GATEGORIES
         getCategoriesSuccess(state, action) {
             state.categories = action.payload;
+            state.loading = false;
         },
 
         // GET POSTS
         filterPostSuccess(state, action) {
             state.posts = action.payload;
+            state.loading = false;
         },
     }
 });
@@ -39,10 +54,23 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
+export function getTags() {
+    return async () => {
+        dispatch(slice.actions.setLoading(true));
+        try {
+            const response = await axios.get('/base/tags');
+            dispatch(slice.actions.getTagsSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
 export function getCategories() {
     return async () => {
+        dispatch(slice.actions.setLoading(true));
         try {
-            const response = await axios.get('/posting/categories');
+            const response = await axios.get('/base/categories');
             dispatch(slice.actions.getCategoriesSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
@@ -52,6 +80,7 @@ export function getCategories() {
 
 export function filterPost() {
     return async (category, type, radius, keyword) => {
+        dispatch(slice.actions.setLoading(true));
         try {
             const response = await axios.post('/posting/posts', { category, type, radius, keyword });
             dispatch(slice.actions.filterPostSuccess(response.data));
