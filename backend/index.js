@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
+const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors')
 //connect database
@@ -9,6 +10,7 @@ connectDB();
 //Initialise middleware
 app.use(cors());
 app.use(express.json({ extended: false }));
+app.use(bodyparser.json());
 
 //Define routes
 app.use('/api/base', require('./routes/api/base'));
