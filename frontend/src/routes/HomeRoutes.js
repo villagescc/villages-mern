@@ -17,7 +17,9 @@ const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics
 const HomeRoutes = {
     path: '/',
     element: (
-      <MainLayout />
+      <AuthGuard>
+          <MainLayout />
+      </AuthGuard>
     ),
     children: [
         {

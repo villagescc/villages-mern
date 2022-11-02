@@ -9,29 +9,26 @@ import Avatar from '../extended/Avatar';
 import { gridSpacing } from 'store/constant';
 
 // assets
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
-
-const avatarImage = require.context('assets/images/profile', true);
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import ChatIcon from '@mui/icons-material/Chat';
 
 // styles
-const FacebookWrapper = styled(Button)({
+const TrustWrapper = styled(Button)({
     padding: 8,
-    background: 'rgba(66, 103, 178, 0.2)',
+    background: 'rgba(242,29,104,0.2)',
     '& svg': {
-        color: '#4267B2'
+        color: '#f21d9d'
     },
     '&:hover': {
-        background: '#4267B2',
+        background: '#b21df2',
         '& svg': {
             color: '#fff'
         }
     }
 });
 
-const TwitterWrapper = styled(Button)({
+const PaymentWrapper = styled(Button)({
     padding: 8,
     background: 'rgba(29, 161, 242, 0.2)',
     '& svg': {
@@ -45,7 +42,7 @@ const TwitterWrapper = styled(Button)({
     }
 });
 
-const LinkedInWrapper = styled(Button)({
+const MessageWrapper = styled(Button)({
     padding: 8,
     background: 'rgba(14, 118, 168, 0.12)',
     '& svg': {
@@ -61,10 +58,10 @@ const LinkedInWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const UserProfileCard = ({ avatar, name, profile, role, status }) => {
+const UserProfileCard = ({ avatar, title, post, description }) => {
     const theme = useTheme();
-    const avatarProfile = avatar && avatarImage(`./${avatar}`);
-    const imageProfile = profile && avatarImage(`./${profile}`);
+    const postImage = post ? post : 'http://localhost:5000/upload/posting/default.png';
+    const avatarImage = avatar ? avatar : 'http://localhost:5000/upload/avatar/default.png';
 
     return (
         <Card
@@ -72,73 +69,47 @@ const UserProfileCard = ({ avatar, name, profile, role, status }) => {
                 background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
                 border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
                 borderColor: theme.palette.grey[100],
-                textAlign: 'center'
+                textAlign: 'center',
             }}
         >
-            <CardMedia component="img" image={imageProfile} title="Slider5 image" sx={{ height: '125px' }} />
+            <CardMedia component="img" image={postImage} title="Slider5 image" sx={{ height: '125px' }} />
             <CardContent sx={{ p: 2, pb: '16px !important' }}>
-                <Grid container spacing={gridSpacing}>
+                <Grid container spacing={gridSpacing} >
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
-                                <Avatar alt={name} src={avatarProfile} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+                                <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} alignItems="center">
                         <Grid container spacing={1}>
-                            <Grid item xs={12}>
-                                <Typography variant="h4">{name}</Typography>
+                            <Grid item xs={12} sx={{ height: 50 }}>
+                                <Typography variant="h4">{title.length > 30 ? title.substring(0, 30) + "..." : title}</Typography>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Typography variant="body2">{role}</Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                {status === 'Active' ? (
-                                    <Chip
-                                        label="Active"
-                                        size="small"
-                                        sx={{
-                                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : 'success.light',
-                                            color: 'success.dark'
-                                        }}
-                                    />
-                                ) : (
-                                    <Chip
-                                        label="Rejected"
-                                        size="small"
-                                        sx={{
-                                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : 'error.light',
-                                            color: 'error.dark'
-                                        }}
-                                    />
-                                )}
+                            <Grid item xs={12} sx={{ height: 100 }}>
+                                <Typography variant="body2">{description.length > 100 ? description.substring(0, 100) + "..." : description}</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container spacing={2}>
                             <Grid item xs={4}>
-                                <FacebookWrapper fullWidth>
-                                    <FacebookIcon />
-                                </FacebookWrapper>
+                                <TrustWrapper fullWidth>
+                                    <FavoriteIcon />
+                                </TrustWrapper>
                             </Grid>
                             <Grid item xs={4}>
-                                <TwitterWrapper fullWidth>
-                                    <TwitterIcon />
-                                </TwitterWrapper>
+                                <PaymentWrapper fullWidth>
+                                    <CurrencyExchangeIcon />
+                                </PaymentWrapper>
                             </Grid>
                             <Grid item xs={4}>
-                                <LinkedInWrapper fullWidth>
-                                    <LinkedInIcon />
-                                </LinkedInWrapper>
+                                <MessageWrapper fullWidth>
+                                    <ChatIcon />
+                                </MessageWrapper>
                             </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button variant="outlined" fullWidth startIcon={<ChatBubbleTwoToneIcon />}>
-                            Message
-                        </Button>
                     </Grid>
                 </Grid>
             </CardContent>

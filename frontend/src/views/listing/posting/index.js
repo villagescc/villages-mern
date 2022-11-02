@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  InputAdornment,
+  InputAdornment, Pagination,
   TextField,
 } from '@mui/material';
 
@@ -26,112 +26,12 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import {Search as SearchIcon, AddCircleRounded} from "@mui/icons-material";
 import FormControlSelect from "../../../ui-component/extended/Form/FormControlSelect";
 import {useDispatch, useSelector} from "../../../store";
-import {filterPost, getCategories, getTags} from "../../../store/slices/posting";
+import {createPost, filterPost, getCategories, getSubCategories, getTags} from "../../../store/slices/posting";
 import useAuth from "../../../hooks/useAuth";
+import UserProfileCard from "../../../ui-component/cards/UserProfileCard";
+import SubCard from "../../../ui-component/cards/SubCard";
 
 // ==============================|| Posting ||============================== //
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  { title: 'The Lord of the Rings: The Return of the King', year: 2003 },
-  { title: 'The Good, the Bad and the Ugly', year: 1966 },
-  { title: 'Fight Club', year: 1999 },
-  { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001 },
-  { title: 'Star Wars: Episode V - The Empire Strikes Back', year: 1980 },
-  { title: 'Forrest Gump', year: 1994 },
-  { title: 'Inception', year: 2010 },
-  { title: 'The Lord of the Rings: The Two Towers', year: 2002 },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: 'Goodfellas', year: 1990 },
-  { title: 'The Matrix', year: 1999 },
-  { title: 'Seven Samurai', year: 1954 },
-  { title: 'Star Wars: Episode IV - A New Hope', year: 1977 },
-  { title: 'City of God', year: 2002 },
-  { title: 'Se7en', year: 1995 },
-  { title: 'The Silence of the Lambs', year: 1991 },
-  { title: 'it&apos;s a Wonderful Life', year: 1946 },
-  { title: 'Life Is Beautiful', year: 1997 },
-  { title: 'The Usual Suspects', year: 1995 },
-  { title: 'Léon: The Professional', year: 1994 },
-  { title: 'Spirited Away', year: 2001 },
-  { title: 'Saving Private Ryan', year: 1998 },
-  { title: 'Once Upon a Time in the West', year: 1968 },
-  { title: 'American History X', year: 1998 },
-  { title: 'Interstellar', year: 2014 },
-  { title: 'Casablanca', year: 1942 },
-  { title: 'City Lights', year: 1931 },
-  { title: 'Psycho', year: 1960 },
-  { title: 'The Green Mile', year: 1999 },
-  { title: 'The Intouchables', year: 2011 },
-  { title: 'Modern Times', year: 1936 },
-  { title: 'Raiders of the Lost Ark', year: 1981 },
-  { title: 'Rear Window', year: 1954 },
-  { title: 'The Pianist', year: 2002 },
-  { title: 'The Departed', year: 2006 },
-  { title: 'Terminator 2: Judgment Day', year: 1991 },
-  { title: 'Back to the Future', year: 1985 },
-  { title: 'Whiplash', year: 2014 },
-  { title: 'Gladiator', year: 2000 },
-  { title: 'Memento', year: 2000 },
-  { title: 'The Prestige', year: 2006 },
-  { title: 'The Lion King', year: 1994 },
-  { title: 'Apocalypse Now', year: 1979 },
-  { title: 'Alien', year: 1979 },
-  { title: 'Sunset Boulevard', year: 1950 },
-  { title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb', year: 1964 },
-  { title: 'The Great Dictator', year: 1940 },
-  { title: 'Cinema Paradiso', year: 1988 },
-  { title: 'The Lives of Others', year: 2006 },
-  { title: 'Grave of the Fireflies', year: 1988 },
-  { title: 'Paths of Glory', year: 1957 },
-  { title: 'Django Unchained', year: 2012 },
-  { title: 'The Shining', year: 1980 },
-  { title: 'WALL·E', year: 2008 },
-  { title: 'American Beauty', year: 1999 },
-  { title: 'The Dark Knight Rises', year: 2012 },
-  { title: 'Princess Mononoke', year: 1997 },
-  { title: 'Aliens', year: 1986 },
-  { title: 'Oldboy', year: 2003 },
-  { title: 'Once Upon a Time in America', year: 1984 },
-  { title: 'Witness for the Prosecution', year: 1957 },
-  { title: 'Das Boot', year: 1981 },
-  { title: 'Citizen Kane', year: 1941 },
-  { title: 'North by Northwest', year: 1959 },
-  { title: 'Vertigo', year: 1958 },
-  { title: 'Star Wars: Episode VI - Return of the Jedi', year: 1983 },
-  { title: 'Reservoir Dogs', year: 1992 },
-  { title: 'Braveheart', year: 1995 },
-  { title: 'M', year: 1931 },
-  { title: 'Requiem for a Dream', year: 2000 },
-  { title: 'Amélie', year: 2001 },
-  { title: 'A Clockwork Orange', year: 1971 },
-  { title: 'Like Stars on Earth', year: 2007 },
-  { title: 'Taxi Driver', year: 1976 },
-  { title: 'Lawrence of Arabia', year: 1962 },
-  { title: 'Double Indemnity', year: 1944 },
-  { title: 'Eternal Sunshine of the Spotless Mind', year: 2004 },
-  { title: 'Amadeus', year: 1984 },
-  { title: 'To Kill a Mockingbird', year: 1962 },
-  { title: 'Toy Story 3', year: 2010 },
-  { title: 'Logan', year: 2017 },
-  { title: 'Full Metal Jacket', year: 1987 },
-  { title: 'Dangal', year: 2016 },
-  { title: 'The Sting', year: 1973 },
-  { title: '2001: A Space Odyssey', year: 1968 },
-  { title: "Singin' in the Rain", year: 1952 },
-  { title: 'Toy Story', year: 1995 },
-  { title: 'Bicycle Thieves', year: 1948 },
-  { title: 'The Kid', year: 1921 },
-  { title: 'Inglourious Basterds', year: 2009 },
-  { title: 'Snatch', year: 2000 },
-  { title: '3 Idiots', year: 2009 },
-  { title: 'Monty Python and the Holy Grail', year: 1975 }
-];
 const KeyCodes = {
   comma: 188,
   enter: 13,
@@ -141,16 +41,32 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 const Posting = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
   const [openCreate, setOpenCreate] = React.useState(false);
   const [keyword, setKeyword] = React.useState('');
   const [posts, setPosts] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [categories, setCategories] = React.useState([]);
+  const [subCategories, setSubCategories] = React.useState([]);
   const [tagSuggestion, setTagSuggestion] = React.useState([]);
   const [tags, setTags] = React.useState([]);
-  const [suggestions, setSuggestions] = React.useState([]);
+
+  const [filterCategory, setFilterCategory] = React.useState('');
+  const [filterType, setFilterType] = React.useState('');
+  const [filterRadius, setFilterRadius] = React.useState('');
+
+  const [type, setType] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [price, setPrice] = React.useState(0);
+  const [category, setCategory] = React.useState('');
+  const [subCategory, setSubCategory] = React.useState('');
+  const [file, setFile] = React.useState(null);
+  const [previewImage, setPreviewImage] = React.useState(null);
+
   const postingState = useSelector((state) => state.posting);
 
   const handleDelete = (i) => {
@@ -161,27 +77,20 @@ const Posting = () => {
     setTags([...tags, newTag]);
   }
 
-  const handleDrag = (tag, currPos, newPos) => {
-    const newTags = tags.slice();
-
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-
-    // re-render
-    setTags(newTags);
-  }
-
   useEffect(() => {
-    setCategories(postingState.categories);
-    setPosts(postingState.posts);
-    setTagSuggestion(postingState.tags);
     setLoading(postingState.loading);
+    setTagSuggestion(postingState.tags);
+    setCategories(postingState.categories);
+    setSubCategories(postingState.subCategories);
+    setPosts(postingState.posts);
+    setTotal(postingState.total);
   }, [postingState]);
 
   useEffect(() => {
     setLoading(true);
     dispatch(getTags());
     dispatch(getCategories());
+    dispatch(getSubCategories());
     dispatch(filterPost());
   }, []);
 
@@ -189,6 +98,44 @@ const Posting = () => {
     const newString = event?.target.value;
     setKeyword(newString || '');
   };
+
+  const handleKeyPress = (event) => {
+    if(event.key === 'Enter') {
+      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, page))
+    }
+  }
+
+  const handleImageChange = (e) => {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      setFile(file);
+      setPreviewImage(reader.result);
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  const submitPost = () => {
+    const data = new FormData();
+    data.append('file', file);
+    data.append('type', type)
+    data.append('title', title)
+    data.append('description', description)
+    data.append('price', price)
+    data.append('category', category)
+    data.append('subCategory', subCategory)
+    tags.forEach(tag => {
+      data.append('tags', tag.text);
+    })
+    dispatch(createPost(data, () => {
+      setOpenCreate(false);
+      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, page))
+    }))
+  }
 
   return (
     <>
@@ -206,55 +153,106 @@ const Posting = () => {
         {
           loading ?
             <PostingList /> : (
-            <CardContent>
-              <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect
-                    currencies={
-                      [
-                        {
-                          value: '',
-                          label: 'All categories'
-                        },
-                        ...categories.map(category => ({
-                          value: category.title,
-                          label: category.title
-                        }))
-                      ]
-                    }
-                    captionLabel="Posting"
-                  />
+              <CardContent>
+                <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+                  <Grid item xs={12} sm={3}>
+                    <FormControlSelect
+                      currencies={
+                        [
+                          {
+                            value: '',
+                            label: 'All categories'
+                          },
+                          ...categories.map(category => ({
+                            value: category.title,
+                            label: category.title
+                          }))
+                        ]
+                      }
+                      currency={filterCategory}
+                      onChange={e => {
+                        setFilterCategory(e.target.value);
+                        dispatch(filterPost(e.target.value, filterType, filterRadius, keyword, page))
+                      }}
+                      captionLabel="Posting"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <FormControlSelect
+                      currencies={listing_type}
+                      currency={filterType}
+                      onChange={e => {
+                        setFilterType(e.target.value)
+                        dispatch(filterPost(filterCategory, e.target.value, filterRadius, keyword, page))
+                      }}
+                      captionLabel="Post type"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <FormControlSelect
+                      currencies={radius}
+                      currency={filterRadius}
+                      onChange={e => {
+                        setFilterRadius(e.target.value)
+                        dispatch(filterPost(filterCategory, filterType, e.target.value, keyword, page))
+                      }}
+                      captionLabel="Search area"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        )
+                      }}
+                      fullWidth
+                      onChange={handleSearch}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Search Post"
+                      value={keyword}
+                      size="small"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect currencies={listing_type} captionLabel="Post type" />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect currencies={radius} captionLabel="Search area" />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      )
+                <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
+                  <Pagination
+                    count={Math.ceil(total / 12)}
+                    page={page}
+                    onPageChange={(e, p) => {
+                      setPage(p)
+                      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
                     }}
-                    fullWidth
-                    onChange={handleSearch}
-                    placeholder="Search Post"
-                    value={keyword}
-                    size="small"
+                    color="secondary"
                   />
                 </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-                <Grid item xs={12} sm={12}>
-
+                <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
+                  {
+                    posts.map((post, index) => (
+                      <Grid item xs={12} sm={3} key={index}>
+                        <UserProfileCard
+                          title={post.title}
+                          description={post.description}
+                        />
+                      </Grid>
+                    ))
+                  }
                 </Grid>
-              </Grid>
-            </CardContent>
-          )
+                <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
+                  <Pagination
+                    count={Math.ceil(total / 12)}
+                    page={page}
+                    onPageChange={(e, p) => {
+                      setPage(p)
+                      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
+                    }}
+                    color="secondary"
+                  />
+                </Grid>
+              </CardContent>
+            )
         }
       </MainCard>
       <Dialog fullWidth maxWidth={'md'} open={openCreate} onClose={() => setOpenCreate(false)} scroll={'body'}>
@@ -271,33 +269,41 @@ const Posting = () => {
                   marginTop: 2,
                 }}
               >
-                <FormControlSelect currencies={listing_type} captionLabel="Post type" />
+                <FormControlSelect
+                  currencies={listing_type}
+                  currency={type}
+                  onChange={e => {
+                    setType(e.target.value);
+                  }}
+                  captionLabel="Listing type"
+                />
                 <TextField
                   fullWidth
-                  id="emailInstant"
-                  name="emailInstant"
-                  label="Email"
+                  label="Title"
                   size={'small'}
-                  sx={{ marginTop: 2 }}
+                  sx={{ my: 1 }}
+                  value={title}
+                  onChange={event => setTitle(event.target.value)}
                 />
                 <TextField
                   fullWidth
                   id="outlined-multiline-flexible"
-                  label="Multiline"
+                  label="Description"
                   multiline
                   rows={3}
-                  defaultValue=""
-                  sx={{ marginTop: 2 }}
+                  sx={{ my: 1 }}
+                  value={description}
+                  onChange={event => setDescription(event.target.value)}
                 />
                 <TextField
                   fullWidth
-                  id="emailInstant"
-                  name="emailInstant"
                   type="number"
-                  label="Email"
+                  label="Price"
                   size={'small'}
                   min={0}
-                  sx={{ marginTop: 2, marginBottom: 3 }}
+                  sx={{ my: 1.5 }}
+                  value={price}
+                  onChange={event => setPrice(event.target.value)}
                 />
                 <FormControlSelect
                   currencies={
@@ -307,31 +313,46 @@ const Posting = () => {
                         label: 'All categories'
                       },
                       ...categories.map(category => ({
-                        value: category.title,
+                        value: category._id,
                         label: category.title
                       }))
                     ]
                   }
-                  captionLabel="GATEGORY"
+                  currency={category}
+                  onChange={e => {
+                    dispatch(getSubCategories(e.target.value));
+                    setCategory(e.target.value);
+                  }}
+                  captionLabel="CATEGORY"
                 />
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={top100Films}
-                  getOptionLabel={(option) => option.title}
-                  renderInput={(params) => <TextField {...params} size={'small'} label="Combo box" />}
-                  sx={{ marginTop: 2, marginBottom: 1 }}
+                <FormControlSelect
+                  currencies={
+                    subCategories.map(category => ({
+                      value: category._id,
+                      label: category.title
+                    }))
+                  }
+                  currency={subCategory}
+                  onChange={e => setSubCategory(e.target.value)}
+                  captionLabel="SUB-CATEGORY"
                 />
                 <Button
                   variant="contained"
                   component="label"
                   sx={{ width: 200 }}
                 >
-                  Upload File
+                  {
+                    previewImage ? "Change Image" : "Choose Image"
+                  }
                   <input
                     type="file"
+                    onChange={e => handleImageChange(e)}
                     hidden
                   />
                 </Button>
+                {
+                  previewImage && <img src={previewImage} style={{ width: 200, borderRadius: 10, marginTop: 10 }} />
+                }
                 <ReactTags
                   tags={tags}
                   suggestions={
@@ -342,15 +363,14 @@ const Posting = () => {
                   }
                   handleDelete={handleDelete}
                   handleAddition={handleAddition}
-                  handleDrag={handleDrag}
                   delimiters={delimiters}
-                  placeholder={"Input tags"}
+                  placeholder={"Tags"}
                 />
               </Box>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenCreate(false)}>Close</Button>
-              <Button onClick={() => setOpenCreate(false)} variant={'contained'}>Submit</Button>
+              <Button onClick={submitPost} variant={'contained'}>Submit</Button>
             </DialogActions>
           </>
         )}

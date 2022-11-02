@@ -7,7 +7,7 @@ import { Divider, FormControl, InputAdornment, MenuItem, TextField } from '@mui/
 
 // ==============================|| FORM CONTROL SELECT ||============================== //
 
-const FormControlSelect = ({ captionLabel, currencies, formState, iconPrimary, iconSecondary, selected, textPrimary, textSecondary }) => {
+const FormControlSelect = ({ captionLabel, currencies, currency, onChange, formState, iconPrimary, iconSecondary, selected, textPrimary, textSecondary }) => {
     const theme = useTheme();
     const IconPrimary = iconPrimary;
     const primaryIcon = iconPrimary ? <IconPrimary fontSize="small" sx={{ color: theme.palette.grey[700] }} /> : null;
@@ -18,9 +18,6 @@ const FormControlSelect = ({ captionLabel, currencies, formState, iconPrimary, i
     const errorState = formState === 'error';
     const val = selected || '';
 
-    const [currency, setCurrency] = useState(val);
-    const handleChange = (event) => setCurrency(event?.target.value);
-
     return (
         <FormControl fullWidth error={errorState}>
             <TextField
@@ -29,8 +26,9 @@ const FormControlSelect = ({ captionLabel, currencies, formState, iconPrimary, i
                 fullWidth
                 label={captionLabel}
                 value={currency}
-                onChange={handleChange}
+                onChange={onChange}
                 size="small"
+                sx={{ my: 1.5 }}
                 InputProps={{
                     startAdornment: (
                         <>

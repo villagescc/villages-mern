@@ -12,7 +12,9 @@ const initialState = {
     loading: false,
     tags: [],
     categories: [],
-    posts: []
+    subCategories: [],
+    posts: [],
+    total: 0,
 };
 
 const slice = createSlice({
@@ -41,9 +43,16 @@ const slice = createSlice({
             state.loading = false;
         },
 
+        // GET GATEGORIES
+        getSubCategoriesSuccess(state, action) {
+            state.subCategories = action.payload;
+            state.loading = false;
+        },
+
         // GET POSTS
         filterPostSuccess(state, action) {
-            state.posts = action.payload;
+            state.posts = action.payload.posts;
+            state.total = action.payload.total;
             state.loading = false;
         },
     }
@@ -78,15 +87,39 @@ export function getCategories() {
     };
 }
 
-export function filterPost() {
-    return async (category, type, radius, keyword) => {
+export function getSubCategories(categoryId='all') {
+    return async () => {
         dispatch(slice.actions.setLoading(true));
         try {
-            const response = await axios.post('/posting/posts', { category, type, radius, keyword });
+            const response = await axios.get(`/base/subCategories/${categoryId}`);
+            dispatch(slice.actions.getSubCategoriesSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function filterPost(category='', type='', radius='', keyword='', page=1) {
+    return async () => {
+        dispatch(slice.actions.setLoading(true));
+        try {
+            const response = await axios.post('/posting/posts', { category, type, radius, keyword, page });
             dispatch(slice.actions.filterPostSuccess(response.data));
         } catch (error) {
             console.log('error', error);
             dispatch(slice.actions.hasError(error));
         }
     };
+}
+
+export function createPost(data, closeModal) {
+    return async () => {
+        try {
+            const response = await axios.post('/posting/upload', data);
+            closeModal();
+        } catch (error) {
+            console.log('error', error);
+            dispatch(slice.actions.hasError(error?.error?._message));
+        }
+    }
 }

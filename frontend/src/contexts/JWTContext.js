@@ -55,7 +55,7 @@ export const JWTProvider = ({ children }) => {
                 if (serviceToken && verifyToken(serviceToken)) {
                     setSession(serviceToken);
                     const response = await axios.get('/auth');
-                    const { user } = response.data;
+                    const user = response.data;
                     dispatch({
                         type: LOGIN,
                         payload: {
@@ -82,7 +82,6 @@ export const JWTProvider = ({ children }) => {
     const login = async (email, password) => {
         const response = await axios.post('/auth/login', { email, password });
         const { serviceToken, user } = response.data;
-        console.log('serviceToken:', serviceToken)
         setSession(serviceToken);
         dispatch({
             type: LOGIN,

@@ -21,6 +21,7 @@ const accountReducer = (state = initialState, action) => {
         }
         case LOGIN: {
             const { user } = action.payload;
+
             return {
                 ...state,
                 isLoggedIn: true,

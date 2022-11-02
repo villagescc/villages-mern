@@ -11,19 +11,19 @@ export const listing_type = [
         label: 'All listings'
     },
     {
-        value: '1',
+        value: 'OFFER',
         label: 'OFFER'
     },
     {
-        value: '2',
+        value: 'REQUEST',
         label: 'REQUEST'
     },
     {
-        value: '3',
+        value: 'TEACH',
         label: 'TEACH'
     },
     {
-        value: '4',
+        value: 'LEARN',
         label: 'LEARN'
     },
 ];
