@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 router.post('/posts', async (req, res, next) => {
-  console.log(req.body)
   const { category, type, radius, keyword, page } = req.body;
   try {
     const total = await Listing.countDocuments();
@@ -41,9 +40,9 @@ router.post('/posts', async (req, res, next) => {
         { description: { $regex: keyword, $options: 'i' } }
       ]);
     }
+    query.skip(page * 12 - 12).limit(12);
     const lists = await query.exec();
     res.send({ total, posts: lists })
-    console.log(lists);
   }
   catch(err) {
     console.log('filter error:', err);
