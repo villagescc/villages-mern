@@ -36,7 +36,10 @@ router.post('/posts', async (req, res, next) => {
       query.where('listingType', type);
     }
     if(keyword !== '') {
-      query.where('title').regex(keyword)
+      query.or([
+        { title: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } }
+      ]);
     }
     const lists = await query.exec();
     res.send({ total, posts: lists })
