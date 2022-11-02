@@ -15,7 +15,7 @@ const ProfileSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'location'
     },
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user'
     },

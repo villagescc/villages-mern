@@ -10,9 +10,9 @@ const crypto = require('crypto');
 const router = express.Router();
 
 router.get('/', auth, async (req, res, next) => {
-  User.findById(req.user.id).select('-password')
-    .then(user => {
-      res.json(user);
+  Profile.findOne({ userId: req.user.id }).populate('user')
+    .then(profile => {
+      res.send(profile);
     })
     .catch(err => {
       console.log('find user error', err);
@@ -54,7 +54,7 @@ router.post(
 
       await user.save();
 
-      await Profile.create({ userId: user.id });
+      await Profile.create({ user: user.id });
 
       // TODO : Send a verification mail
       // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
@@ -100,10 +100,17 @@ router.post(
     const { password, email } = req.body;
 
     User.findOne({ $or: [ { email }, { username: email } ] })
-      .then(user => {
+      .then(async user => {
         if (!user) {
           return res.status(400).send({
             message: 'Invalid Credentials'
+          });
+        }
+
+        const profile = await Profile.findOne({ userId: user._id });
+        if(!profile) {
+          return res.status(400).send({
+            message: 'Profile does not exist'
           });
         }
 
@@ -135,6 +142,7 @@ router.post(
               email: user.email,
               verified: user.verified,
               isStaff: user.isStaff,
+              ...profile
             }
             const payload = {
               user: userData

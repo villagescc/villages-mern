@@ -13,6 +13,7 @@ app.use(express.json({ extended: false }));
 app.use(bodyparser.json());
 
 //Define routes
+app.use('/upload', express.static('upload'));
 app.use('/api/base', require('./routes/api/base'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/posting', require('./routes/api/posting'));
