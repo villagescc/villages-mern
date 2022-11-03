@@ -2,12 +2,11 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics, IconUsers } from '@tabler/icons';
+import { IconLayout, IconUsers } from '@tabler/icons';
 
 // constant
 const icons = {
-    IconDashboard,
-    IconDeviceAnalytics,
+    IconLayout,
     IconUsers
 };
 
@@ -23,15 +22,15 @@ const listing = {
             id: 'posting',
             title: <FormattedMessage id="posting" />,
             type: 'item',
-            url: '/home/posting',
-            icon: icons.IconDashboard,
+            url: '/listing/posts',
+            icon: icons.IconLayout,
             breadcrumbs: false
         },
         {
             id: 'people',
             title: <FormattedMessage id="people" />,
             type: 'item',
-            url: '/home/people',
+            url: '/listing/people',
             icon: icons.IconUsers,
             breadcrumbs: false
         }

@@ -18,10 +18,10 @@ const TrustWrapper = styled(Button)({
     padding: 8,
     background: 'rgba(242,29,104,0.2)',
     '& svg': {
-        color: '#f21d9d'
+        color: '#f21d60'
     },
     '&:hover': {
-        background: '#b21df2',
+        background: '#f21d60',
         '& svg': {
             color: '#fff'
         }
@@ -60,8 +60,8 @@ const MessageWrapper = styled(Button)({
 
 const UserProfileCard = ({ avatar, title, post, description }) => {
     const theme = useTheme();
-    const postImage = post ? post : 'http://localhost:5000/upload/posting/default.png';
-    const avatarImage = avatar ? avatar : 'http://localhost:5000/upload/avatar/default.png';
+    const postImage = post ? 'http://localhost:5000/upload/posting/'+post : 'http://localhost:5000/upload/posting/default.png';
+    const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : 'http://localhost:5000/upload/avatar/default.png';
 
     return (
         <Card

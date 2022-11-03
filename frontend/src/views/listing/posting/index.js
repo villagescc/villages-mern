@@ -221,7 +221,7 @@ const Posting = () => {
                   <Pagination
                     count={Math.ceil(total / 12)}
                     page={page}
-                    onPageChange={(e, p) => {
+                    onChange={(e, p) => {
                       setPage(p)
                       dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
                     }}
@@ -233,6 +233,8 @@ const Posting = () => {
                     posts.map((post, index) => (
                       <Grid item xs={12} sm={3} key={index}>
                         <UserProfileCard
+                          avatar={user.avatar}
+                          post={post.photo}
                           title={post.title}
                           description={post.description}
                         />
@@ -244,7 +246,7 @@ const Posting = () => {
                   <Pagination
                     count={Math.ceil(total / 12)}
                     page={page}
-                    onPageChange={(e, p) => {
+                    onChange={(e, p) => {
                       setPage(p)
                       dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
                     }}

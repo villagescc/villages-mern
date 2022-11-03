@@ -6,6 +6,22 @@
     "listing": "Listing",
     "posting": "Posting",
     "people": "People",
+    "setting": "Setting",
+
+    "map": "Map",
+
+    "trustline": "Trust line",
+    "trust": "Trust",
+    "pay": "Payment",
+
+    "personal": "Personal info",
+    "notification": "Notification",
+    "profile": "Profile",
+
+    "documentation": "Documentation",
+    "how": "How It Works",
+    "motivation": "Motivation",
+    "privacy": "Privacy",
 
     "widget": "Widget",
     "statistics": "Statistics",
@@ -16,7 +32,6 @@
     "users": "Users",
     "social-profile": "Social Profile",
     "account-profile": "Account Profile",
-    "profile": "Profile",
     "cards": "Cards",
     "list": "List",
     "style": "Style",
@@ -140,7 +155,6 @@
     "outlined": "Outlined",
 
     "sample-page": "Sample Page",
-    "documentation": "Documentation",
     "roadmap": "Roadmap",
 
     "title": "Multi Language",
