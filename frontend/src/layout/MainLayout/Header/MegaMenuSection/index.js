@@ -27,6 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { IconAccessPoint } from '@tabler/icons';
 import { drawerWidth, gridSpacing } from 'store/constant';
+import useAuth from "../../../../hooks/useAuth";
 
 const HeaderAvatarStyle = styled(Avatar)(({ theme }) => ({
     ...theme.typography.commonAvatar,
@@ -43,6 +44,7 @@ const HeaderAvatarStyle = styled(Avatar)(({ theme }) => ({
 
 const MegaMenuSection = () => {
     const theme = useTheme();
+    const { isLoggedIn } = useAuth();
     const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const [open, setOpen] = useState(false);
@@ -141,39 +143,27 @@ const MegaMenuSection = () => {
                                                             aria-labelledby="nested-list-user"
                                                             subheader={
                                                                 <ListSubheader id="nested-list-user">
-                                                                    <Typography variant="subtitle1"> User Quick</Typography>
+                                                                    <Typography variant="subtitle1"> Listing </Typography>
                                                                 </ListSubheader>
                                                             }
                                                         >
-                                                            <ListItemButton disableRipple component={Link} to="/user/social-profile/posts">
+                                                            <ListItemButton disableRipple component={Link} to="/listing/posts">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Social Profile" />
+                                                                <ListItemText primary="Posts" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/user/account-profile/profile1">
+                                                            <ListItemButton component={Link} to="/listing/people">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Account Profile" />
+                                                                <ListItemText primary="People" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/user/card/card1">
+                                                            <ListItemButton component={Link} to="/map">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="User Cards" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/user/list/list2">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="User List" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/app/contact/c-card">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="Contact" />
+                                                                <ListItemText primary="Map" />
                                                             </ListItemButton>
                                                         </List>
                                                     </Grid>
@@ -183,39 +173,21 @@ const MegaMenuSection = () => {
                                                             aria-labelledby="nested-list-application"
                                                             subheader={
                                                                 <ListSubheader id="nested-list-application">
-                                                                    <Typography variant="subtitle1"> Applications </Typography>
+                                                                    <Typography variant="subtitle1"> Trust Line </Typography>
                                                                 </ListSubheader>
                                                             }
                                                         >
-                                                            <ListItemButton component={Link} to="/app/chat">
+                                                            <ListItemButton component={Link} to="/ripple/trust">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Chat" />
+                                                                <ListItemText primary="Trust" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/app/kanban/board">
+                                                            <ListItemButton component={Link} to="/ripple/pay">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Kanban" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/app/mail">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="Mail" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/app/calendar">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="Calendar" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/e-commerce/products">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="E-Commerce" />
+                                                                <ListItemText primary="Payment" />
                                                             </ListItemButton>
                                                         </List>
                                                     </Grid>
@@ -225,39 +197,27 @@ const MegaMenuSection = () => {
                                                             aria-labelledby="nested-list-primitives"
                                                             subheader={
                                                                 <ListSubheader component="div" id="nested-list-primitives">
-                                                                    <Typography variant="subtitle1"> Primitives</Typography>
+                                                                    <Typography variant="subtitle1"> Documentation</Typography>
                                                                 </ListSubheader>
                                                             }
                                                         >
-                                                            <ListItemButton component={Link} to="/utils/util-color">
+                                                            <ListItemButton component={Link} to="/documentation/help">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Colors" />
+                                                                <ListItemText primary="How It Works" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/utils/util-typography">
+                                                            <ListItemButton component={Link} to="/documentation/motivation">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Typography" />
+                                                                <ListItemText primary="Motivation" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/utils/util-shadow">
+                                                            <ListItemButton component={Link} to="/documentation/privacy">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
-                                                                <ListItemText primary="Shadows" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/icons/tabler-icons">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="Icons" />
-                                                            </ListItemButton>
-                                                            <ListItemButton component={Link} to="/basic/accordion">
-                                                                <ListItemIcon>
-                                                                    <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary="Elements" />
+                                                                <ListItemText primary="Privacy" />
                                                             </ListItemButton>
                                                         </List>
                                                     </Grid>

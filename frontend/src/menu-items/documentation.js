@@ -19,15 +19,15 @@ const documentation = {
   type: 'group',
   children: [
     {
-      id: 'trust',
+      id: 'how',
       title: <FormattedMessage id="how" />,
       type: 'item',
-      url: '/documentation/notification',
+      url: '/documentation/help',
       icon: icons.IconHelp,
       breadcrumbs: false
     },
     {
-      id: 'profile',
+      id: 'motivation',
       title: <FormattedMessage id="motivation" />,
       type: 'item',
       url: '/documentation/motivation',
@@ -35,7 +35,7 @@ const documentation = {
       breadcrumbs: false
     },
     {
-      id: 'setting',
+      id: 'privacy',
       title: <FormattedMessage id="privacy" />,
       type: 'item',
       url: '/documentation/privacy',

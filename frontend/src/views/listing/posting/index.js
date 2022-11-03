@@ -233,7 +233,7 @@ const Posting = () => {
                     posts.map((post, index) => (
                       <Grid item xs={12} sm={3} key={index}>
                         <UserProfileCard
-                          avatar={user.avatar}
+                          avatar={user?.avatar}
                           post={post.photo}
                           title={post.title}
                           description={post.description}

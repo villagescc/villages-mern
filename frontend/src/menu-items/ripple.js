@@ -27,7 +27,7 @@ const ripple = {
             breadcrumbs: false
         },
         {
-            id: 'people',
+            id: 'pay',
             title: <FormattedMessage id="pay" />,
             type: 'item',
             url: '/ripple/pay',

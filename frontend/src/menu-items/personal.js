@@ -2,11 +2,11 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconNotification, IconUser, IconSettings } from '@tabler/icons';
+import { IconBell, IconUser, IconSettings } from '@tabler/icons';
 
 // constant
 const icons = {
-    IconNotification,
+    IconBell,
     IconUser,
     IconSettings
 }
@@ -19,11 +19,11 @@ const personal = {
     type: 'group',
     children: [
         {
-            id: 'trust',
+            id: 'notification',
             title: <FormattedMessage id="notification" />,
             type: 'item',
             url: '/personal/notification',
-            icon: icons.IconNotification,
+            icon: icons.IconBell,
             breadcrumbs: false
         },
         {

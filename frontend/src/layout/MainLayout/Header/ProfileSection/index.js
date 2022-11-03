@@ -37,7 +37,7 @@ import useAuth from 'hooks/useAuth';
 import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import { IconLogout, IconSearch, IconSettings, IconUser, IconKey } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 
 // ==============================|| PROFILE MENU ||============================== //
@@ -51,7 +51,7 @@ const ProfileSection = () => {
     const [value, setValue] = useState('');
     const [notification, setNotification] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
-    const { logout, user } = useAuth();
+    const { logout, user, isLoggedIn } = useAuth();
     const [open, setOpen] = useState(false);
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
@@ -92,6 +92,34 @@ const ProfileSection = () => {
         prevOpen.current = open;
     }, [open]);
 
+    if(!isLoggedIn) return (
+      <Chip
+        sx={{
+          height: '48px',
+          alignItems: 'center',
+          borderRadius: '27px',
+          transition: 'all .2s ease-in-out',
+          borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
+          backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
+          '&[aria-controls="menu-list-grow"], &:hover': {
+            borderColor: theme.palette.primary.main,
+            background: `${theme.palette.primary.main}!important`,
+            color: theme.palette.primary.light,
+            '& svg': {
+              stroke: theme.palette.primary.light
+            }
+          },
+        }}
+        icon={
+          <IconKey stroke={1.5} size="24px" color={theme.palette.primary.main} />
+        }
+        label={<FormattedMessage id="login" />}
+        variant="outlined"
+        onClick={() => navigate('login', { replace: true })}
+        color="primary"
+      />
+    );
+
     return (
         <>
             <Chip
@@ -116,7 +144,7 @@ const ProfileSection = () => {
                 }}
                 icon={
                     <Avatar
-                        src={User1}
+                        src={user?.avatar ? `http://localhost:5000/upload/avatar/${user.avatar}` : 'http://localhost:5000/upload/avatar/default.png'}
                         sx={{
                             ...theme.typography.mediumAvatar,
                             margin: '8px 0 8px 8px !important',
@@ -162,9 +190,9 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
+                                                    <Typography variant="h4">Hello,</Typography>
                                                     <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.name}
+                                                        {user?.user?.username}
                                                     </Typography>
                                                 </Stack>
                                                 <Typography variant="subtitle2">Project Admin</Typography>
@@ -195,54 +223,6 @@ const ProfileSection = () => {
                                             }}
                                         >
                                             <Box sx={{ p: 2, pt: 0 }}>
-                                                <UpgradePlanCard />
-                                                <Divider />
-                                                <Card
-                                                    sx={{
-                                                        bgcolor:
-                                                            theme.palette.mode === 'dark'
-                                                                ? theme.palette.dark[800]
-                                                                : theme.palette.primary.light,
-                                                        my: 2
-                                                    }}
-                                                >
-                                                    <CardContent>
-                                                        <Grid container spacing={3} direction="column">
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Start DND Mode</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            color="primary"
-                                                                            checked={sdm}
-                                                                            onChange={(e) => setSdm(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Allow Notifications</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            checked={notification}
-                                                                            onChange={(e) => setNotification(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </CardContent>
-                                                </Card>
-                                                <Divider />
                                                 <List
                                                     component="nav"
                                                     sx={{
@@ -262,7 +242,7 @@ const ProfileSection = () => {
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
-                                                        onClick={(event) => handleListItemClick(event, 0, '/user/account-profile/profile1')}
+                                                        onClick={(event) => handleListItemClick(event, 0, '/personal/setting')}
                                                     >
                                                         <ListItemIcon>
                                                             <IconSettings stroke={1.5} size="20px" />
@@ -270,7 +250,7 @@ const ProfileSection = () => {
                                                         <ListItemText
                                                             primary={
                                                                 <Typography variant="body2">
-                                                                    <FormattedMessage id="account-settings" />
+                                                                    <FormattedMessage id="setting" />
                                                                 </Typography>
                                                             }
                                                         />
@@ -278,7 +258,7 @@ const ProfileSection = () => {
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 1}
-                                                        onClick={(event) => handleListItemClick(event, 1, '/user/social-profile/posts')}
+                                                        onClick={(event) => handleListItemClick(event, 1, '/personal/profile/view')}
                                                     >
                                                         <ListItemIcon>
                                                             <IconUser stroke={1.5} size="20px" />
@@ -288,21 +268,8 @@ const ProfileSection = () => {
                                                                 <Grid container spacing={1} justifyContent="space-between">
                                                                     <Grid item>
                                                                         <Typography variant="body2">
-                                                                            <FormattedMessage id="social-profile" />
+                                                                            <FormattedMessage id="profile" />
                                                                         </Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Chip
-                                                                            label="02"
-                                                                            size="small"
-                                                                            sx={{
-                                                                                bgcolor:
-                                                                                    theme.palette.mode === 'dark'
-                                                                                        ? theme.palette.dark.dark
-                                                                                        : theme.palette.warning.dark,
-                                                                                color: theme.palette.background.default
-                                                                            }}
-                                                                        />
                                                                     </Grid>
                                                                 </Grid>
                                                             }
