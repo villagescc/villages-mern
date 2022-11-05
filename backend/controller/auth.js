@@ -13,7 +13,7 @@ const _getUser = async id => {
 
 exports.getUser = async (req, res, next) => {
   try {
-    const user = await _getUser(req.user.id);
+    const user = await _getUser(req.user._id);
     res.send(user);
   }
   catch (err) {

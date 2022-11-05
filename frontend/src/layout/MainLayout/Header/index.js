@@ -10,6 +10,7 @@ import SearchSection from './SearchSection';
 import MobileSection from './MobileSection';
 import ProfileSection from './ProfileSection';
 import LocalizationSection from './LocalizationSection';
+import BalanceSection from './BalanceSection';
 import MegaMenuSection from './MegaMenuSection';
 import NotificationSection from './NotificationSection';
 
@@ -89,7 +90,10 @@ const Header = () => {
       {/* notification & profile */}
       {
         isLoggedIn && (
-          <NotificationSection />
+          <>
+            <NotificationSection />
+            <BalanceSection />
+          </>
         )
       }
       <ProfileSection />

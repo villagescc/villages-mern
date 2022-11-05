@@ -8,7 +8,7 @@ const baseController = require('./controller/base');
 const postController = require('./controller/posting');
 
 // ######################### AUTH ROUTER #############################
-router.get('/auth/', authMiddleware.auth, authController.getUser);
+router.get('/auth', authMiddleware.auth, authController.getUser);
 router.post('/auth/register', authMiddleware.register, authController.registerUser)
 router.get('/auth/verify/:id/:token', authController.verifyToken)
 router.post('/auth/login', authMiddleware.login, authController.login)
@@ -19,7 +19,7 @@ router.get('/base/categories', baseController.getCategories);
 router.get('/base/subCategories/:categoryId', baseController.getSubcategories);
 
 // ######################### POSTING ROUTER #############################
-router.post('posting/posts', postController.searchPosts);
-router.post('posting/upload', postMiddleware.create, postMiddleware.upload.single('file'), postController.createPost);
+router.post('/posting/posts', postController.searchPosts);
+router.post('/posting/upload', postMiddleware.create, postMiddleware.upload.single('file'), postController.createPost);
 
 module.exports = router;

@@ -144,7 +144,7 @@ const ProfileSection = () => {
                 }}
                 icon={
                     <Avatar
-                        src={user?.avatar ? `http://localhost:5000/upload/avatar/${user.avatar}` : 'http://localhost:5000/upload/avatar/default.png'}
+                        src={user?.profile?.avatar ? `http://localhost:5000/upload/avatar/${user?.profile?.avatar}` : 'http://localhost:5000/upload/avatar/default.png'}
                         sx={{
                             ...theme.typography.mediumAvatar,
                             margin: '8px 0 8px 8px !important',
@@ -192,7 +192,7 @@ const ProfileSection = () => {
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
                                                     <Typography variant="h4">Hello,</Typography>
                                                     <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.user?.username}
+                                                        {user?.username}
                                                     </Typography>
                                                 </Stack>
                                                 <Typography variant="subtitle2">Project Admin</Typography>
