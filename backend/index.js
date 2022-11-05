@@ -5,6 +5,7 @@ const path = require('path');
 const bodyparser = require('body-parser');
 const app = express();
 const cors = require('cors')
+const router = require('./router');
 //connect database
 connectDB();
 //Initialise middleware
@@ -12,11 +13,11 @@ app.use(cors());
 app.use(express.json({ extended: false }));
 app.use(bodyparser.json());
 
-//Define routes
+// Hosting upload files
 app.use('/upload', express.static('upload'));
-app.use('/api/base', require('./routes/api/base'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/posting', require('./routes/api/posting'));
+
+//Define controller
+app.use('/api/', router);
 
 app.use((error, req, res, next) => {
   res.status(500).send({ error: error })

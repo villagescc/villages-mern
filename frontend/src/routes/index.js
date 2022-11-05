@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-// routes
+// controller
 import Loadable from 'ui-component/Loadable';
 import HomeRoutes from './HomeRoutes';
 import LoginRoutes from './LoginRoutes';

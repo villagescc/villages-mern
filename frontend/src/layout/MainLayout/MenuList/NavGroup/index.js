@@ -105,7 +105,7 @@ const NavGroup = ({ item, lastItem, remItems, lastItemId }) => {
         });
     };
 
-    // keep selected-menu on page load and use for horizontal menu close on change routes
+    // keep selected-menu on page load and use for horizontal menu close on change controller
     useEffect(() => {
         checkSelectedOnload(currentItem);
         if (openMini) setAnchorEl(null);

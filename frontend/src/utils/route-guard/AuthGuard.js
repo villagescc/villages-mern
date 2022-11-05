@@ -8,7 +8,7 @@ import useAuth from 'hooks/useAuth';
 // ==============================|| AUTH GUARD ||============================== //
 
 /**
- * Authentication guard for routes
+ * Authentication guard for controller
  * @param {PropTypes.node} children children element/node
  */
 const AuthGuard = ({ children }) => {

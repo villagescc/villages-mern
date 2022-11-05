@@ -1,6 +1,27 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const validateRegisterInput = require('../validation/register');
+const validateLoginInput = require('../validation/login');
+
+exports.register = (req, res, next) => {
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    next();
+}
+
+exports.login = (req, res, next) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    next();
+}
+
+exports.auth = (req, res, next) => {
     const token = req.header('Authorization');
 
     //when no token is available
