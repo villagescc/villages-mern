@@ -77,7 +77,7 @@ const Header = () => {
       <Box sx={{ flexGrow: 1 }} />
 
       {/* mega-menu */}
-      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' }, marginRight: isLoggedIn ? 0 : 2 }}>
         <MegaMenuSection />
       </Box>
 
