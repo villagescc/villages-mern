@@ -7,15 +7,19 @@ const crypto = require('crypto');
 const profileController = require('./profile');
 const paymentController = require('./payment');
 
+const _getUser = async id => {
+  return await User.findById(id).populate('profile').populate('account').exec();
+}
+
 exports.getUser = async (req, res, next) => {
-  Profile.findOne({ userId: req.user.id }).populate('user')
-    .then(profile => {
-      res.send(profile);
-    })
-    .catch(err => {
-      console.log('find user error', err);
-      next(err);
-    })
+  try {
+    const user = await _getUser(req.user.id);
+    res.send(user);
+  }
+  catch (err) {
+    console.log('find user error', err);
+    next(err);
+  }
 }
 
 exports.registerUser = async (req, res, next) => {
@@ -87,7 +91,7 @@ exports.login = (req, res, next) => {
       }
 
       bcrypt.compare(password, user.password)
-        .then(isMatch => {
+        .then(async isMatch => {
           if (!isMatch) {
             return res.status(400).send({
               password: 'Password is incorrect.'
@@ -106,15 +110,7 @@ exports.login = (req, res, next) => {
             });
           }
 
-          const userData = {
-            id: user.id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            verified: user.verified,
-            isStaff: user.isStaff,
-          }
+          const userData = await _getUser(user.id)
           const payload = {
             user: userData
           };
