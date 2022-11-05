@@ -15,10 +15,10 @@ const ProfileSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'location'
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
-    },
+    // user: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'user'
+    // },
     job: {
       type: String,
     },

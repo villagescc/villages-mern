@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
+const profileController = require('./profile');
+
 exports.getUser = async (req, res, next) => {
   Profile.findOne({ userId: req.user.id }).populate('user')
     .then(profile => {
@@ -28,16 +30,16 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).send(errors);
     }
 
+    const profile = await profileController._createProfile({ name: `${firstName} ${lastName}` });
+
     const token = crypto.randomBytes(32).toString("hex");
-    user = new User({ password, username, firstName, lastName, email, token });
+    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id });
 
     const salt = await bcrypt.genSalt(10);
 
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
-
-    await Profile.create({ user: user.id });
 
     // TODO : Send a verification mail
     // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
