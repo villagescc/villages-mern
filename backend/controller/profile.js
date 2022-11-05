@@ -7,3 +7,7 @@ exports._createProfile = async (data) => {
 
   return profile;
 }
+
+exports._removeProfileById = async id => {
+  return Profile.find({ id }).remove();
+}

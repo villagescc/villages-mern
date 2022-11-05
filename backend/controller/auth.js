@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 const profileController = require('./profile');
+const paymentController = require('./payment');
 
 exports.getUser = async (req, res, next) => {
   Profile.findOne({ userId: req.user.id }).populate('user')
@@ -19,10 +20,11 @@ exports.getUser = async (req, res, next) => {
 
 exports.registerUser = async (req, res, next) => {
   let errors = {};
+  let profile, account, user;
   try {
     const { password, username, firstName, lastName, email } = req.body;
 
-    let user = await User.findOne({ $or: [ {email}, {username} ] });
+    user = await User.findOne({ $or: [ {email}, {username} ] });
     if(user) {
       if(user.email === email) errors.email = 'Email already exists';
       else errors.username = 'Username already exists';
@@ -30,10 +32,11 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).send(errors);
     }
 
-    const profile = await profileController._createProfile({ name: `${firstName} ${lastName}` });
+    profile = await profileController._createProfile({ name: `${firstName} ${lastName}` });
+    account = await paymentController._createAccount();
 
     const token = crypto.randomBytes(32).toString("hex");
-    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id });
+    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id, account: account.id });
 
     const salt = await bcrypt.genSalt(10);
 
@@ -48,6 +51,9 @@ exports.registerUser = async (req, res, next) => {
     res.send({success: true, message: "An Email sent to your account. please verify"});
   }
   catch(err) {
+    if(profile) await profileController._removeProfileById(profile.id)
+    if(account) await paymentController._removeAccountById(profile.id)
+    if(user) await User.find({ id: user.id }).remove().exec();
     next(err)
   }
 }
