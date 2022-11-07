@@ -1,13 +1,8 @@
-const express = require('express');
 const multer  = require('multer');
-const auth = require('../middleware/auth');
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
 const Listing = require('../models/Listing');
 const Tag = require('../models/Tag');
-const { check, validationResult } = require('express-validator');
-
-const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -18,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix+'.'+file.originalname.split('.')[1])
   }
 })
-const upload = multer({ storage: storage })
 
 exports.searchPosts = async (req, res, next) => {
   const { category, type, radius, keyword, page } = req.body;

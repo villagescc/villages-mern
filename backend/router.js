@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('./middleware/auth');
 const postMiddleware = require('./middleware/posting');
+const endorsementMiddleware = require('./middleware/endorsement');
 
 const authController = require('./controller/auth');
 const baseController = require('./controller/base');
 const postController = require('./controller/posting');
+const endorsementController = require('./controller/endorsement');
 
 // ######################### AUTH ROUTER #############################
 router.get('/auth', authMiddleware.auth, authController.getUser);
@@ -21,5 +23,8 @@ router.get('/base/subCategories/:categoryId', baseController.getSubcategories);
 // ######################### POSTING ROUTER #############################
 router.post('/posting/posts', postController.searchPosts);
 router.post('/posting/upload', postMiddleware.create, postMiddleware.upload.single('file'), postController.createPost);
+
+// ######################### Trust ROUTER #############################
+router.post('/endorsement/create', authMiddleware.auth, endorsementMiddleware.create, endorsementController.create)
 
 module.exports = router;

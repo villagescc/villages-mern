@@ -1,24 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-  Avatar,
   Box,
-  ClickAwayListener,
-  Grid,
-  List,
-  ListItemButton,
-  ListItemText,
-  Paper,
-  Popper,
   Typography,
-  useMediaQuery
 } from '@mui/material';
 
 // assets
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import useConfig from 'hooks/useConfig';
 import useAuth from "../../../../hooks/useAuth";
 
 // ==============================|| LOCALIZATION ||============================== //

@@ -124,7 +124,7 @@ exports.login = (req, res, next) => {
                 console.log('jwt sign error', err);
                 next(err);
               }
-              return res.json({ serviceToken, userData });
+              return res.json({ serviceToken, user: userData });
             }
           );
         })
