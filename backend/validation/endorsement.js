@@ -8,11 +8,11 @@ module.exports = function validateEndorsementCreate(data) {
   data.amount = !isEmpty(data.amount) ? data.amount : "";
 
   if (validator.isEmpty(data.recipient)) {
-    errors.name = "Please choose recipient.";
+    errors.recipient = "Please choose recipient.";
   }
 
   if (validator.isEmpty(data.amount)) {
-    errors.name = "Please input amount.";
+    errors.amount = "Please input amount.";
   }
 
   return {

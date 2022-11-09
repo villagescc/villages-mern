@@ -34,11 +34,14 @@ import { strengthColor, strengthIndicatorNumFunc } from 'utils/password-strength
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useDispatch } from 'store';
+import { openSnackbar } from 'store/slices/snackbar';
 
 // ===========================|| AUTH - REGISTER ||=========================== //
 
 const AuthRegister = ({ ...others }) => {
     const theme = useTheme();
+    const dispatch = useDispatch();
     const scriptedRef = useScriptRef();
     const navigate = useNavigate();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
@@ -92,7 +95,17 @@ const AuthRegister = ({ ...others }) => {
                     try {
                         const result = await register(values.email, values.password, values.password2, values.firstName, values.lastName, values.username);
                         if(result.success) {
-                            alert(result.message);
+                            dispatch(
+                              openSnackbar({
+                                  open: true,
+                                  message: result.message,
+                                  variant: 'alert',
+                                  alert: {
+                                      color: 'success'
+                                  },
+                                  close: false
+                              })
+                            )
                             navigate('/login', { replace: true });
                         }
                     } catch (err) {
