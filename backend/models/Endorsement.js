@@ -8,13 +8,13 @@ const EndorsementSchema = new mongoose.Schema(
     text: {
       type: String
     },
-    recipientProfileId: {
+    recipientId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: 'user'
     },
-    endorserProfileId: {
+    endorserId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: 'user'
     },
   },
   {
@@ -22,4 +22,4 @@ const EndorsementSchema = new mongoose.Schema(
   }
 );
 
-module.exports = Endorsement = mongoose.model('referral', EndorsementSchema);
+module.exports = Endorsement = mongoose.model('endorsement', EndorsementSchema);

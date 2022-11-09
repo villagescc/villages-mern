@@ -27,7 +27,7 @@ router.post('/posting/posts', postController.searchPosts);
 router.post('/posting/upload', postMiddleware.create, postMiddleware.upload.single('file'), postController.createPost);
 
 // ######################### Trust ROUTER #############################
-router.post('/endorsement/create', authMiddleware.auth, endorsementMiddleware.create, endorsementController.create)
+router.post('/endorsement/save', authMiddleware.auth, endorsementMiddleware.save, endorsementController.save)
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)

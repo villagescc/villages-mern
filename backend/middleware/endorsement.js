@@ -1,6 +1,6 @@
 const validateTrustCreate = require('../validation/endorsement');
 
-exports.create = (req, res, next) => {
+exports.save = (req, res, next) => {
   const { errors, isValid } = validateTrustCreate(req.body);
 
   if(!isValid) {
