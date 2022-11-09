@@ -12,13 +12,13 @@ const NotificationSchema = new mongoose.Schema(
       enum: ['READ', 'NEW'],
       default: 'NEW'
     },
-    notifierProfileId: {
+    notifierId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: 'user'
     },
-    recipientProfileId: {
+    recipientId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: 'user'
     },
     amount: {
       type: Number,

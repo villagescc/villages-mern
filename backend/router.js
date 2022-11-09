@@ -3,11 +3,13 @@ const router = express.Router();
 const authMiddleware = require('./middleware/auth');
 const postMiddleware = require('./middleware/posting');
 const endorsementMiddleware = require('./middleware/endorsement');
+const notificationMiddleware = require('./middleware/notification');
 
 const authController = require('./controller/auth');
 const baseController = require('./controller/base');
 const postController = require('./controller/posting');
 const endorsementController = require('./controller/endorsement');
+const notificationController = require('./controller/notification');
 
 // ######################### AUTH ROUTER #############################
 router.get('/auth', authMiddleware.auth, authController.getUser);
@@ -26,5 +28,8 @@ router.post('/posting/upload', postMiddleware.create, postMiddleware.upload.sing
 
 // ######################### Trust ROUTER #############################
 router.post('/endorsement/create', authMiddleware.auth, endorsementMiddleware.create, endorsementController.create)
+
+// ######################### NOTIFICATION ROUTER #############################
+router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)
 
 module.exports = router;
