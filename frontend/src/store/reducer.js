@@ -8,7 +8,7 @@ import postingReducer from './slices/posting';
 
 import snackbarReducer from './slices/snackbar';
 import customerReducer from './slices/customer';
-import contactReducer from './slices/contact';
+import endorsementReducer from './slices/endorsement';
 import productReducer from './slices/product';
 import chatReducer from './slices/chat';
 import calendarReducer from './slices/calendar';
@@ -33,7 +33,7 @@ const reducer = combineReducers({
     ),
     kanban: kanbanReducer,
     customer: customerReducer,
-    contact: contactReducer,
+    endorsement: endorsementReducer,
     product: productReducer,
     chat: chatReducer,
     calendar: calendarReducer,

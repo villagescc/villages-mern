@@ -8,27 +8,30 @@ import { dispatch } from '../index';
 // ----------------------------------------------------------------------
 
 const initialState = {
-    error: null,
-    contacts: []
+    endorsements: [],
+    total: 0,
+    errors: {},
+    loading: false
 };
 
 const slice = createSlice({
-    name: 'contact',
+    name: 'endorsement',
     initialState,
     reducers: {
         // HAS ERROR
         hasError(state, action) {
-            state.error = action.payload;
+            state.errors = action.payload;
         },
 
         // GET CONTACTS
-        getContactsSuccess(state, action) {
-            state.contacts = action.payload;
+        searchEndorsementsSuccess(state, action) {
+            state.endorsements = action.payload.endorsements;
+            state.total = action.payload.total;
         },
 
         // MODIFY CONTACT
-        modifyContactSuccess(state, action) {
-            state.contacts = action.payload;
+        setLoading(state, action) {
+            state.loading = action.payload;
         }
     }
 });
@@ -38,21 +41,21 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getContacts() {
+export function searchEndorsements(keyword = '', page = 1) {
     return async () => {
         try {
-            const response = await axios.get('/api/contact/list');
-            dispatch(slice.actions.getContactsSuccess(response.data.contacts));
+            const response = await axios.post('/endorsement/search', { keyword, page });
+            dispatch(slice.actions.searchEndorsementsSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
-export function modifyContact(contact) {
+export function saveEndorsement(endorsement) {
     return async () => {
         try {
-            const response = await axios.post('/api/contact/modify', contact);
+            const response = await axios.post('/endorsement/save', endorsement);
             dispatch(slice.actions.modifyContactSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));

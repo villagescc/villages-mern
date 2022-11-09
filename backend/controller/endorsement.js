@@ -31,3 +31,26 @@ exports.save = async (req, res, next) => {
     res.status(400).send(err);
   }
 }
+
+exports.search = async (req, res, next) => {
+  const { keyword, page } = req.body;
+  try {
+    const total = await Endorsement.countDocuments();
+    const query = Endorsement.find();
+    if(keyword && keyword !== '') {
+      const users = await User.find({ $or: [ { firstName: { $regex: keyword, $options: 'i' } }, { lastName: { $regex: keyword, $options: 'i' } }, { email: { $regex: keyword, $options: 'i' } }, { username: { $regex: keyword, $options: 'i' } } ] })
+      query.or([
+        { recipientId: { $in: [ ...users.map(user => user._id), req.user._id ] } },
+        { endorserId: { $in: [ ...users.map(user => user._id), req.user._id ] } },
+        { text: { $regex: keyword, $options: 'i' } }
+      ]);
+    }
+    query.skip(page * 12 - 12).limit(12);
+    const endorsements = await query.populate({ path: 'recipientId', model: 'user', populate: { path: 'profile', model: 'profile' } }).exec();
+    res.send({ total, endorsements })
+  }
+  catch(err) {
+    console.log('filter error:', err);
+    next(err);
+  }
+}

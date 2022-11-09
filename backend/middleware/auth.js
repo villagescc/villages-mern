@@ -13,7 +13,6 @@ exports.register = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
-    console.log(req.body);
     const { errors, isValid } = validateLoginInput(req.body);
 
     if(!isValid) {

@@ -18,7 +18,7 @@ const avatarImage = require.context('assets/images/users', true);
 
 // ==============================|| USER CONTACT CARD ||============================== //
 
-const ContactCard = ({ avatar, contact, email, name, location, onActive, role }) => {
+const EndorsementCard = ({ avatar, contact, email, name, location, onActive, role }) => {
     const theme = useTheme();
 
     const avatarProfile = avatar && avatarImage(`./${avatar}`);
@@ -121,7 +121,7 @@ const ContactCard = ({ avatar, contact, email, name, location, onActive, role })
     );
 };
 
-ContactCard.propTypes = {
+EndorsementCard.propTypes = {
     avatar: PropTypes.string,
     contact: PropTypes.string,
     email: PropTypes.string,
@@ -131,4 +131,4 @@ ContactCard.propTypes = {
     role: PropTypes.string
 };
 
-export default ContactCard;
+export default EndorsementCard;

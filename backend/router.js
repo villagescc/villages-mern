@@ -28,6 +28,7 @@ router.post('/posting/upload', postMiddleware.create, postMiddleware.upload.sing
 
 // ######################### Trust ROUTER #############################
 router.post('/endorsement/save', authMiddleware.auth, endorsementMiddleware.save, endorsementController.save)
+router.post('/endorsement/search', authMiddleware.auth, endorsementController.search)
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)
