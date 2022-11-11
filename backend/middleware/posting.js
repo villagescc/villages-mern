@@ -14,6 +14,7 @@ exports.upload = multer({ storage: storage })
 const validatePostingCreate = require('../validation/posting');
 
 exports.create = (req, res, next) => {
+  console.log(req.body)
   const { errors, isValid } = validatePostingCreate(req.body);
 
   if(!isValid) {

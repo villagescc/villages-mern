@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 exports.save = async (req, res, next) => {
   let errors = {};
-  const { recipient, amount, text, referred } = req.body;
+  const { recipient, weight, text, referred } = req.body;
   const recipientUser = await User.findById(recipient);
   if(!recipientUser) {
     errors.recipient = "Recipient does not exist.";
@@ -15,12 +15,12 @@ exports.save = async (req, res, next) => {
   }
 
   try {
-    let endorsement = await Endorsement.findOne({ recipientId: recipientUser._id, endorserId: req.body._id });
+    let endorsement = await Endorsement.findOne({ recipientId: recipientUser._id, endorserId: req.user._id });
     if(!endorsement) {
-      endorsement = await Endorsement.create({ recipientId: recipientUser._id, endorserId: req.body._id, amount, text, referred })
+      endorsement = await Endorsement.create({ recipientId: recipientUser._id, endorserId: req.user._id, weight, text, referred })
     }
     else {
-      endorsement.amount = amount;
+      endorsement.weight = weight;
       endorsement.text = text;
       endorsement.referred = referred;
       await endorsement.save();
@@ -37,17 +37,41 @@ exports.search = async (req, res, next) => {
   try {
     const total = await Endorsement.countDocuments();
     const query = Endorsement.find();
+    console.log(req.user._id)
+    query.or([
+      { endorserId: req.user._id },
+      { recipientId: req.user._id }
+    ]);
     if(keyword && keyword !== '') {
       const users = await User.find({ $or: [ { firstName: { $regex: keyword, $options: 'i' } }, { lastName: { $regex: keyword, $options: 'i' } }, { email: { $regex: keyword, $options: 'i' } }, { username: { $regex: keyword, $options: 'i' } } ] })
       query.or([
-        { recipientId: { $in: [ ...users.map(user => user._id), req.user._id ] } },
-        { endorserId: { $in: [ ...users.map(user => user._id), req.user._id ] } },
+        { recipientId: { $in: users.map(user => user._id) } },
         { text: { $regex: keyword, $options: 'i' } }
       ]);
     }
     query.skip(page * 12 - 12).limit(12);
     const endorsements = await query.populate({ path: 'recipientId', model: 'user', populate: { path: 'profile', model: 'profile' } }).exec();
-    res.send({ total, endorsements })
+    console.log(endorsements.length)
+    let endorsements_group = {};
+    for(let i=0; i< endorsements.length; i++) {
+      if(endorsements[i].endorserId._id.toString() === req.user._id) {
+        if(Object.keys(endorsements_group).includes(endorsements[i].recipientId._id)) {
+          endorsements_group[endorsements[i].recipientId._id] = { ...endorsements_group[endorsements[i].recipientId._id], send_weight: endorsements[i].weight, send_text: endorsements[i].text }
+        }
+        else {
+          endorsements_group[endorsements[i].recipientId._id] = { send_weight: endorsements[i].weight, send_text: endorsements[i].text, user: endorsements[i].recipientId }
+        }
+      }
+      else if(endorsements[i].recipientId._id.toString() === req.user._id) {
+        if(Object.keys(endorsements_group).includes(endorsements[i].endorserId._id)) {
+          endorsements_group[endorsements[i].endorserId._id] = { ...endorsements_group[endorsements[i].endorserId._id], recieve_weight: endorsements[i].weight, receive_text: endorsements[i].text }
+        }
+        else {
+          endorsements_group[endorsements[i].endorserId._id] = { recieve_weight: endorsements[i].weight, receive_text: endorsements[i].text, user: endorsements[i].endorserId }
+        }
+      }
+    }
+    res.send({ total, endorsements: endorsements_group })
   }
   catch(err) {
     console.log('filter error:', err);

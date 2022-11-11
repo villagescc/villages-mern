@@ -119,7 +119,7 @@ export function createPost(data, closeModal) {
             closeModal();
         } catch (error) {
             console.log('error', error);
-            dispatch(slice.actions.hasError(error?.error?._message));
+            dispatch(slice.actions.hasError(error));
         }
     }
 }

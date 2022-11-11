@@ -5,14 +5,14 @@ module.exports = function validateEndorsementCreate(data) {
   let errors = {};
 
   data.recipient = !isEmpty(data.recipient) ? data.recipient : "";
-  data.amount = !isEmpty(data.amount) ? data.amount : "";
+  data.weight = !isEmpty(data.weight) ? data.weight : "";
 
   if (validator.isEmpty(data.recipient)) {
     errors.recipient = "Please choose recipient.";
   }
 
-  if (validator.isEmpty(data.amount)) {
-    errors.amount = "Please input amount.";
+  if (validator.isEmpty(data.weight)) {
+    errors.weight = "Please input weight.";
   }
 
   return {
