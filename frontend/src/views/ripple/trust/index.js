@@ -83,12 +83,7 @@ const Index = () => {
               {endorsements.map((endorsement, i) => (
                 <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
                   <ContactCard
-                    avatar={endorsement.recipientId?.profile?.avatar}
-                    name={endorsement?.recipientId.firstName}
-                    role={endorsement.recipientId?.profile?.job}
-                    email={endorsement.recipientId?.email}
-                    fromMe={endorsement.phone}
-                    toMe={endorsement.location}
+                    endorsement={endorsement}
                     onActive={() => {
                     }}
                   />

@@ -36,22 +36,31 @@ exports.search = async (req, res, next) => {
   const { keyword, page } = req.body;
   try {
     const total = await Endorsement.countDocuments();
-    const query = Endorsement.find();
-    console.log(req.user._id)
-    query.or([
-      { endorserId: req.user._id },
-      { recipientId: req.user._id }
-    ]);
+    let query = { $and: [] };
+    query.$and.push({
+      $or: [
+        { endorserId: req.user._id },
+        { recipientId: req.user._id }
+      ]
+    })
     if(keyword && keyword !== '') {
       const users = await User.find({ $or: [ { firstName: { $regex: keyword, $options: 'i' } }, { lastName: { $regex: keyword, $options: 'i' } }, { email: { $regex: keyword, $options: 'i' } }, { username: { $regex: keyword, $options: 'i' } } ] })
-      query.or([
-        { recipientId: { $in: users.map(user => user._id) } },
-        { text: { $regex: keyword, $options: 'i' } }
-      ]);
+      query.$and.push({
+        $or: [
+          { recipientId: { $in: users.map(user => user._id) } },
+          { endorserId: { $in: users.map(user => user._id) } },
+          { text: { $regex: keyword, $options: 'i' } }
+        ]
+      })
     }
-    query.skip(page * 12 - 12).limit(12);
-    const endorsements = await query.populate({ path: 'recipientId', model: 'user', populate: { path: 'profile', model: 'profile' } }).exec();
-    console.log(endorsements.length)
+    const endorsements = await Endorsement
+      .find(query)
+      .skip(page * 12 - 12)
+      .limit(12)
+      .populate({ path: 'recipientId', model: 'user', populate: { path: 'profile', model: 'profile' } })
+      .populate({ path: 'endorserId', model: 'user', populate: { path: 'profile', model: 'profile' } })
+      .exec();
+
     let endorsements_group = {};
     for(let i=0; i< endorsements.length; i++) {
       if(endorsements[i].endorserId._id.toString() === req.user._id) {
@@ -71,7 +80,7 @@ exports.search = async (req, res, next) => {
         }
       }
     }
-    res.send({ total, endorsements: endorsements_group })
+    res.send({ total, endorsements: Object.values(endorsements_group) })
   }
   catch(err) {
     console.log('filter error:', err);

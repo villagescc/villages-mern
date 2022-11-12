@@ -9,6 +9,8 @@ import Avatar from '../extended/Avatar';
 import { gridSpacing } from 'store/constant';
 
 // assets
+import DefaultUserIcon from '../../assets/images/auth/default.png';
+import DefaultPostingIcon from '../../assets/images/posting/default.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -60,8 +62,8 @@ const MessageWrapper = styled(Button)({
 
 const UserProfileCard = ({ avatar, title, post, description }) => {
     const theme = useTheme();
-    const postImage = post ? 'http://localhost:5000/upload/posting/'+post : 'http://localhost:5000/upload/posting/default.png';
-    const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : 'http://localhost:5000/upload/avatar/default.png';
+    const postImage = post ? 'http://localhost:5000/upload/posting/'+post : DefaultPostingIcon;
+    const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : DefaultUserIcon;
 
     return (
         <Card
