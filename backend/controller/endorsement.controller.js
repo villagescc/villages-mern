@@ -93,7 +93,27 @@ exports.search = async (req, res, next) => {
   }
 }
 
-exports._getEndorserList = async (id) => {
+exports.getFollowers = async (req, res, next) => {
+  try {
+    const followers = await _getFollowers(req.params.id);
+    res.send(followers);
+  }
+  catch(err) {
+    next(err);
+  }
+}
+
+exports.getFollowings = async (req, res, next) => {
+  try {
+    const followers = await _getFollowings(req.params.id);
+    res.send(followers);
+  }
+  catch(err) {
+    next(err);
+  }
+}
+
+exports._getFollowers = async (id) => {
   const endorsers = await Endorsement.find({ recipientId: id })
     .populate({ path: 'endorserId', model: 'user', populate: { path: 'profile', model: 'profile' } })
     .exec();
@@ -102,7 +122,7 @@ exports._getEndorserList = async (id) => {
   }))
 }
 
-exports._getEndorsedList = async (id) => {
+exports._getFollowings = async (id) => {
   const endorsers = await Endorsement.find({ endorserId: id })
     .populate({ path: 'endorserId', model: 'user', populate: { path: 'profile', model: 'profile' } })
     .exec();

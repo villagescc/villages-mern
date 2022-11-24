@@ -36,6 +36,8 @@ router.get('/users/user/:id', userController.getOne);
 // ######################### Trust ROUTER #############################
 router.post('/endorsement/save', authMiddleware.auth, endorsementMiddleware.save, endorsementController.save)
 router.post('/endorsement/search', authMiddleware.auth, endorsementController.search)
+router.get('/endorsement/followers/:id', endorsementController.getFollowers)
+router.get('/endorsement/followings/:id', endorsementController.getFollowings)
 
 // ######################### Payment ROUTER #############################
 // router.post('/payment/')

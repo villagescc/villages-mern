@@ -69,12 +69,12 @@ const UserList = ({ users }) => {
               <TableCell>
                 <Grid container spacing={2}>
                   <Grid item>
-                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}`}/>
+                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}/profile`}/>
                   </Grid>
                   <Grid item sm zeroMinWidth>
                     <Grid container spacing={1}>
                       <Grid item xs={12}>
-                        <Typography align="left" variant="subtitle1" component={Link} to={`/listing/person/${user.id}`} style={{ textDecoration: 'none' }}>
+                        <Typography align="left" variant="subtitle1" component={Link} to={`/listing/person/${user.id}/profile`} style={{ textDecoration: 'none' }}>
                           {user?.firstName}{' '}{user?.lastName}
                         </Typography>
                         <Typography align="left" variant="subtitle2" sx={{ whiteSpace: 'break-spaces' }}>

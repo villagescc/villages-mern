@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "store";
-import { getUser } from "../../../store/slices/user";
+import { getUser } from "../../../../store/slices/user";
 
 const Person = () => {
   const dispatch = useDispatch();

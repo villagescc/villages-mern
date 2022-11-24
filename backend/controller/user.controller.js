@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Profile = require('../models/Profile');
-const { _getEndorserList, _getEndorsedList } = require('../controller/endorsement.controller');
+const { _getFollowers, _getFollowings } = require('../controller/endorsement.controller');
 const { _getBalanceById } = require('../controller/account.controller');
 
 exports.search = async (req, res, next) => {
@@ -77,8 +77,8 @@ const getUserDetail = async (id) => {
   userInfo.job = profile.job;
   userInfo.description = profile.description;
   userInfo.avatar = profile.avatar;
-  userInfo.endorsedFrom = await _getEndorserList(id);
-  userInfo.endorsedTo = await _getEndorsedList(id);
+  userInfo.endorsedFrom = await _getFollowers(id);
+  userInfo.endorsedTo = await _getFollowings(id);
   userInfo.balance = await _getBalanceById(user.account);
 
   return userInfo;

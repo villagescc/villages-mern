@@ -10,7 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 // listing routing
 const Posting = Loadable(lazy(() => import('views/listing/posting')));
 const People = Loadable(lazy(() => import('views/listing/people')));
-const Person = Loadable(lazy(() => import('views/listing/people/person')));
+const Person = Loadable(lazy(() => import('views/listing/people/person/')));
 
 // map routing
 const Map = Loadable(lazy(() => import('views/map')))
@@ -42,7 +42,7 @@ const HomeRoutes = {
             element: <People />
         },
         {
-            path: '/listing/person/:id',
+            path: '/listing/person/:id/:tab',
             element: <Person />
         },
         {

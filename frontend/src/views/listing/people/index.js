@@ -3,14 +3,10 @@ import React from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-  Button,
   Grid,
   InputAdornment,
-  Menu,
-  MenuItem,
   OutlinedInput,
   Pagination,
-  TextField,
   Typography
 } from '@mui/material';
 
@@ -23,7 +19,6 @@ import { gridSpacing } from 'store/constant';
 import { IconSearch } from '@tabler/icons';
 import {getUserList} from "../../../store/slices/user";
 import { useDispatch, useSelector } from 'store';
-import {filterPost} from "../../../store/slices/posting";
 
 // ==============================|| USER LIST STYLE 2 ||============================== //
 
