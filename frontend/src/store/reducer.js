@@ -4,7 +4,9 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // project imports
+import menuReducer from './slices/menu';
 import postingReducer from './slices/posting';
+import notificationReducer from './slices/notification';
 
 import snackbarReducer from './slices/snackbar';
 import customerReducer from './slices/customer';
@@ -15,11 +17,11 @@ import calendarReducer from './slices/calendar';
 import userReducer from './slices/user';
 import cartReducer from './slices/cart';
 import kanbanReducer from './slices/kanban';
-import menuReducer from './slices/menu';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
+    menu: menuReducer,
     posting: postingReducer,
 
     snackbar: snackbarReducer,
@@ -34,11 +36,11 @@ const reducer = combineReducers({
     kanban: kanbanReducer,
     customer: customerReducer,
     endorsement: endorsementReducer,
+    notification: notificationReducer,
     product: productReducer,
     chat: chatReducer,
     calendar: calendarReducer,
     user: userReducer,
-    menu: menuReducer
 });
 
 export default reducer;

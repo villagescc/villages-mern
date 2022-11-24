@@ -3,9 +3,10 @@
  */
 
 import axios from 'axios';
+import { SERVER_URL } from '../config'
 
 const axiosServices = axios.create({
-  baseURL: 'http://localhost:5000/api/'
+  baseURL: `${SERVER_URL}/api/`
 });
 
 // interceptor for http

@@ -1,9 +1,9 @@
 require("dotenv").config();
 const express = require('express');
+const app = express();
 const connectDB = require('./config/db');
 const path = require('path');
 const bodyparser = require('body-parser');
-const app = express();
 const cors = require('cors')
 const router = require('./router');
 //connect database
@@ -40,4 +40,12 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+global.io = io;
+require('./config/socket.js')(io)

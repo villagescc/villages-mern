@@ -9,6 +9,7 @@ import { dispatch } from '../index';
 
 const initialState = {
     endorsements: [],
+    users: [],
     total: 0,
     errors: {},
     loading: false
@@ -23,10 +24,17 @@ const slice = createSlice({
             state.errors = action.payload;
         },
 
-        // GET CONTACTS
+        // GET ENDORSEMENTS
         searchEndorsementsSuccess(state, action) {
             state.endorsements = action.payload.endorsements;
             state.total = action.payload.total;
+            state.errors = {};
+        },
+
+        // GET USERS
+        getUsersSuccess(state, action) {
+            state.users = action.payload;
+            state.errors = {};
         },
 
         // MODIFY CONTACT
@@ -52,11 +60,22 @@ export function searchEndorsements(keyword = '', page = 1) {
     };
 }
 
-export function saveEndorsement(endorsement) {
+export function saveEndorsement(endorsement, successAction) {
     return async () => {
         try {
             const response = await axios.post('/endorsement/save', endorsement);
-            dispatch(slice.actions.modifyContactSuccess(response.data));
+            successAction();
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getUsers() {
+    return async () => {
+        try {
+            const response = await axios.get('/base/users/getRecipients');
+            dispatch(slice.actions.getUsersSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

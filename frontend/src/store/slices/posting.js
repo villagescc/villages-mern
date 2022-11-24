@@ -87,7 +87,7 @@ export function getCategories() {
     };
 }
 
-export function getSubCategories(categoryId='all') {
+export function getSubCategories(categoryId = 'all') {
     return async () => {
         dispatch(slice.actions.setLoading(true));
         try {
@@ -99,7 +99,7 @@ export function getSubCategories(categoryId='all') {
     };
 }
 
-export function filterPost(category='', type='', radius='', keyword='', page=1) {
+export function filterPost(category = '', type = '', radius = '', keyword = '', page = 1) {
     return async () => {
         dispatch(slice.actions.setLoading(true));
         try {
@@ -115,7 +115,12 @@ export function filterPost(category='', type='', radius='', keyword='', page=1) 
 export function createPost(data, closeModal) {
     return async () => {
         try {
-            const response = await axios.post('/posting/upload', data);
+            console.log(data);
+            const response = await axios.postForm('/posting/upload', data, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
             closeModal();
         } catch (error) {
             console.log('error', error);

@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, FormControl, InputAdornment, MenuItem, TextField } from '@mui/material';
+import {Divider, FormControl, FormHelperText, InputAdornment, MenuItem, TextField} from '@mui/material';
 
 // ==============================|| FORM CONTROL SELECT ||============================== //
 
-const FormControlSelect = ({ captionLabel, currencies, currency, onChange, formState, iconPrimary, iconSecondary, selected, textPrimary, textSecondary }) => {
+const FormControlSelect = ({ captionLabel, currencies, currency, onChange, formState, iconPrimary, iconSecondary, selected, textPrimary, textSecondary, error }) => {
     const theme = useTheme();
     const IconPrimary = iconPrimary;
     const primaryIcon = iconPrimary ? <IconPrimary fontSize="small" sx={{ color: theme.palette.grey[700] }} /> : null;
@@ -27,6 +27,8 @@ const FormControlSelect = ({ captionLabel, currencies, currency, onChange, formS
                 label={captionLabel}
                 value={currency}
                 onChange={onChange}
+                error={error}
+                helperText={error}
                 size="small"
                 sx={{ my: 1.5 }}
                 InputProps={{

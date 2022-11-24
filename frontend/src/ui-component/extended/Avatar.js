@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import MuiAvatar from '@mui/material/Avatar';
+import {Tooltip} from "@mui/material";
 
 // ==============================|| AVATAR ||============================== //
 
@@ -58,7 +59,14 @@ const Avatar = ({ color, outline, size, sx, ...others }) => {
             sizeSX = {};
     }
 
-    return <MuiAvatar sx={{ ...colorSX, ...outlineSX, ...sizeSX, ...sx }} {...others} />;
+
+    return others.tooltip ? (
+      <Tooltip title={others.tooltip}>
+          <MuiAvatar sx={{ ...colorSX, ...outlineSX, ...sizeSX, ...sx }} {...others} />
+      </Tooltip>
+    ) : (
+      <MuiAvatar sx={{ ...colorSX, ...outlineSX, ...sizeSX, ...sx }} {...others} />
+    );
 };
 
 Avatar.propTypes = {

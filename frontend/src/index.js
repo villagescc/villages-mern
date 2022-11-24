@@ -4,6 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import TimeAgo from "javascript-time-ago";
+
+import en from 'javascript-time-ago/locale/en.json'
+import ru from 'javascript-time-ago/locale/ru.json'
 
 // load mock apis
 // import '_mockApis';
@@ -20,6 +24,8 @@ import { ConfigProvider } from 'contexts/ConfigContext';
 import 'assets/scss/style.scss';
 
 // ==============================|| REACT DOM RENDER  ||============================== //
+TimeAgo.addDefaultLocale(en)
+TimeAgo.addLocale(ru)
 
 const container = document.getElementById('root');
 const root = createRoot(container);

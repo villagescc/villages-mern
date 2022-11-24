@@ -44,6 +44,7 @@ const Posting = () => {
   const { isLoggedIn, user } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
   const [openCreate, setOpenCreate] = React.useState(false);
   const [keyword, setKeyword] = React.useState('');
   const [posts, setPosts] = React.useState([]);
@@ -84,6 +85,7 @@ const Posting = () => {
     setSubCategories(postingState.subCategories);
     setPosts(postingState.posts);
     setTotal(postingState.total);
+    setErrors(postingState.error);
   }, [postingState]);
 
   useEffect(() => {
@@ -278,6 +280,7 @@ const Posting = () => {
                     setType(e.target.value);
                   }}
                   captionLabel="Listing type"
+                  error={errors?.type}
                 />
                 <TextField
                   fullWidth
@@ -286,6 +289,8 @@ const Posting = () => {
                   sx={{ my: 1 }}
                   value={title}
                   onChange={event => setTitle(event.target.value)}
+                  error={errors?.title}
+                  helperText={errors?.title}
                 />
                 <TextField
                   fullWidth
@@ -325,6 +330,7 @@ const Posting = () => {
                     dispatch(getSubCategories(e.target.value));
                     setCategory(e.target.value);
                   }}
+                  error={errors?.category}
                   captionLabel="CATEGORY"
                 />
                 <FormControlSelect
@@ -337,6 +343,7 @@ const Posting = () => {
                   currency={subCategory}
                   onChange={e => setSubCategory(e.target.value)}
                   captionLabel="SUB-CATEGORY"
+                  error={errors?.subCategory}
                 />
                 <Button
                   variant="contained"

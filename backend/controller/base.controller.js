@@ -2,6 +2,7 @@ const express = require('express');
 const Tag = require('../models/Tag');
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -29,3 +30,17 @@ exports.getSubcategories = async (req, res, next) => {
     })
     .catch(err => next(err))
 };
+
+exports.getRecipients = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.send(users.map(user => ({
+      id: user._id,
+      username: user.username,
+      email: user.email
+    })))
+  }
+  catch(err) {
+    next(err);
+  }
+}

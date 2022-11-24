@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -6,49 +7,28 @@ import {
   AvatarGroup,
   Button,
   Grid,
-  LinearProgress,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableRow,
-  Typography
+  Typography,
+  Chip
 } from '@mui/material';
 
 // project imports
 import Avatar from 'ui-component/extended/Avatar';
 import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getUsersListStyle2 } from 'store/slices/user';
 
-// asset
-import Avatar1 from 'assets/images/users/avatar-1.png';
-import Avatar2 from 'assets/images/users/avatar-2.png';
-import Avatar3 from 'assets/images/users/avatar-3.png';
-import Avatar4 from 'assets/images/users/avatar-4.png';
-import Avatar5 from 'assets/images/users/avatar-5.png';
-
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
-import BlockTwoToneIcon from '@mui/icons-material/BlockTwoTone';
+import moment from 'moment';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import ChatIcon from '@mui/icons-material/Chat';
 
 // ==============================|| USER LIST 2 ||============================== //
 
-const UserCard = () => {
+const UserList = ({ users }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-
-  const [rows, setRows] = React.useState([]);
-  const { usersS2 } = useSelector((state) => state.user);
-
-  React.useEffect(() => {
-    setRows(usersS2);
-  }, [usersS2]);
-
-  React.useEffect(() => {
-    dispatch(getUsersListStyle2());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <TableContainer>
@@ -84,29 +64,31 @@ const UserCard = () => {
         }}
       >
         <TableBody>
-          {rows.map((row, index) => (
+          {users.map((user, index) => (
             <TableRow key={index}>
               <TableCell>
                 <Grid container spacing={2}>
                   <Grid item>
-                    <Avatar alt="User 1" src={row.image} sx={{ width: 60, height: 60 }} />
+                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}`}/>
                   </Grid>
                   <Grid item sm zeroMinWidth>
                     <Grid container spacing={1}>
                       <Grid item xs={12}>
-                        <Typography align="left" variant="subtitle1">
-                          {row.name}{' '}
-                          {row.badgeStatus === 'active' && (
-                            <CheckCircleIcon sx={{ color: 'success.dark', width: 14, height: 14 }} />
-                          )}
+                        <Typography align="left" variant="subtitle1" component={Link} to={`/listing/person/${user.id}`} style={{ textDecoration: 'none' }}>
+                          {user?.firstName}{' '}{user?.lastName}
                         </Typography>
                         <Typography align="left" variant="subtitle2" sx={{ whiteSpace: 'break-spaces' }}>
-                          {row.designation}
+                          {user?.profile?.job}
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
                         <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                          {row.subContent}
+                          {user?.profile?.description}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
+                          {user?.balance}{' V.H.'}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -117,21 +99,34 @@ const UserCard = () => {
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <Typography variant="caption">Email</Typography>
-                    <Typography variant="h6">{row.email}</Typography>
+                    <Typography variant="h6">{user.email}</Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography variant="caption">Phone</Typography>
-                    <Typography variant="h6">{row.phone}</Typography>
+                    <Typography variant="caption">Username</Typography>
+                    <Typography variant="h6">{user.username}</Typography>
                   </Grid>
                 </Grid>
               </TableCell>
               <TableCell>
                 <Grid container spacing={1}>
                   <Grid item xs={12}>
-                    <Typography variant="caption">Location</Typography>
-                    <Typography variant="h6">{row.location}</Typography>
+                    <Typography variant="caption">Joined at</Typography>
+                    <Typography variant="h6">{moment(user.createdAt).format('YYYY-MM-DD')}</Typography>
                   </Grid>
                   <Grid item xs={12}>
+                    <Typography variant="caption">Location</Typography>
+                    <Typography variant="h6">{
+                      user.location ? user.location : (
+                        <Chip label="No location" />
+                      )
+                    }</Typography>
+                  </Grid>
+                </Grid>
+              </TableCell>
+              <TableCell>
+                <Grid item xs={12} container spacing={1}>
+                  <Grid item xs={6}>
+                    <Typography variant="caption">Trusted From</Typography>
                     <Grid container>
                       <AvatarGroup
                         max={4}
@@ -143,57 +138,81 @@ const UserCard = () => {
                           }
                         }}
                       >
-                        <Avatar alt="User 1" src={Avatar1} />
-                        <Avatar alt="User 2" src={Avatar2} />
-                        <Avatar alt="User 3" src={Avatar3} />
-                        <Avatar alt="User 4" src={Avatar4} />
-                        <Avatar alt="User 5" src={Avatar5} />
+                        {
+                          user.endorsedFrom.map((each, index) => (
+                            <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
+                          ))
+                        }
+                        {
+                          user.endorsedFrom.length === 0 && (
+                            <Chip label="No users trusted from" />
+                          )
+                        }
+                      </AvatarGroup>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="caption">Trusted To</Typography>
+                    <Grid container>
+                      <AvatarGroup
+                        max={4}
+                        sx={{
+                          '& .MuiAvatar-root': {
+                            width: 32,
+                            height: 32,
+                            fontSize: '1rem'
+                          }
+                        }}
+                      >
+                        {
+                          user.endorsedFrom.map((each, index) => (
+                            <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
+                          ))
+                        }
+                        {
+                          user.endorsedFrom.length === 0 && (
+                            <Chip label="No users trusted to" />
+                          )
+                        }
                       </AvatarGroup>
                     </Grid>
                   </Grid>
                 </Grid>
-              </TableCell>
-              <TableCell>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Grid container alignItems="center" spacing={gridSpacing}>
-                      <Grid item>
-                        <Typography variant="caption">Progress</Typography>
-                      </Grid>
-                      <Grid item sm zeroMinWidth>
-                        <LinearProgress variant="determinate" value={56} color="primary" sx={{ minWidth: 90 }} />
-                      </Grid>
-                      <Grid item>
-                        <Typography variant="h6" component="div">
-                          {row.progressValue}
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                <Grid item xs={12} container spacing={1}>
+                  <Grid item xs={4}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      color="error"
+                      sx={{ minWidth: 120, marginTop: 1 }}
+                      startIcon={<FavoriteIcon />}
+                    >
+                      Trust
+                    </Button>
                   </Grid>
-                  <Grid item xs={12} container spacing={1}>
-                    <Grid item xs={6}>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        sx={{ minWidth: 120 }}
-                        startIcon={<ChatBubbleTwoToneIcon />}
-                      >
-                        Message
-                      </Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        fullWidth
-                        size="small"
-                        sx={{ minWidth: 120 }}
-                        startIcon={<BlockTwoToneIcon />}
-                      >
-                        Block
-                      </Button>
-                    </Grid>
+                  <Grid item xs={4}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      sx={{ minWidth: 120, marginTop: 1 }}
+                      startIcon={<CurrencyExchangeIcon />}
+                    >
+                      Pay
+                    </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      fullWidth
+                      size="small"
+                      sx={{ minWidth: 120, marginTop: 1 }}
+                      startIcon={<ChatIcon />}
+                    >
+                      Message
+                    </Button>
                   </Grid>
                 </Grid>
               </TableCell>
@@ -205,4 +224,4 @@ const UserCard = () => {
   );
 };
 
-export default UserCard;
+export default UserList;

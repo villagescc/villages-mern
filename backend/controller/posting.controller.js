@@ -1,18 +1,7 @@
-const multer  = require('multer');
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
 const Listing = require('../models/Listing');
 const Tag = require('../models/Tag');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './upload/posting')
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, uniqueSuffix+'.'+file.originalname.split('.')[1])
-  }
-})
 
 exports.searchPosts = async (req, res, next) => {
   const { category, type, radius, keyword, page } = req.body;

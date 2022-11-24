@@ -92,14 +92,14 @@ const EndorsementCard = ({ endorsement, onActive }) => {
                   <Typography variant="h6">{user?.email}</Typography>
               </Grid>
               <Grid item xs={12}>
-                  <Typography variant="caption">TRUST FROM THEM</Typography>
+                  <Typography variant="caption">TRUST FROM YOU</Typography>
                   <Typography variant="h5">{send_weight ? send_weight : 0} V.H.</Typography>
-                  <Typography variant="h6">{send_text}</Typography>
+                  <Typography variant="h6">{send_text ? send_text : 'No description'}</Typography>
               </Grid>
               <Grid item xs={12}>
-                  <Typography variant="caption">TRUST FROM YOU</Typography>
+                  <Typography variant="caption">TRUST FROM THEM</Typography>
                   <Typography variant="h5">{receive_weight ? receive_weight : 0} V.H.</Typography>
-                  <Typography variant="h6">{receive_text}</Typography>
+                  <Typography variant="h6">{receive_text ? receive_text : 'No description'}</Typography>
               </Grid>
               <Grid item xs={12}>
                   <Button variant="outlined" sx={{ width: '100%' }} startIcon={<EditTwoToneIcon />} onClick={onActive}>

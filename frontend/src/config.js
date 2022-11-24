@@ -1,5 +1,7 @@
 import LAYOUT_CONST from 'constant';
 
+export const SERVER_URL = 'http://localhost:5000';
+
 export const JWT_API = {
     secret: 'SECRET-KEY',
     timeout: '1 days'

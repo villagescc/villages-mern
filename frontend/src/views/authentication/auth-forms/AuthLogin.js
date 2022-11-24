@@ -80,15 +80,12 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                                 // github issue: https://github.com/formium/formik/issues/2430
                             },
                             (err) => {
-                                if (scriptedRef.current) {
-                                    setStatus({ success: false });
-                                    setErrors({ submit: err.message });
-                                    setSubmitting(false);
-                                }
+                                setStatus({ success: false });
+                                setErrors(err);
+                                setSubmitting(false);
                             }
                         );
                     } catch (err) {
-                        console.error(err);
                         if (scriptedRef.current) {
                             setStatus({ success: false });
                             setErrors({ submit: err.message });

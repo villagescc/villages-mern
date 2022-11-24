@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const profileController = require('./profile');
-const paymentController = require('./payment');
+const profileController = require('./profile.controller');
+const paymentController = require('./payment.controller');
 
 const _getUser = async id => {
   return await User.findById(id).populate('profile').populate('account').exec();
