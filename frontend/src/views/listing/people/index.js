@@ -19,12 +19,15 @@ import { gridSpacing } from 'store/constant';
 import { IconSearch } from '@tabler/icons';
 import {getUserList} from "../../../store/slices/user";
 import { useDispatch, useSelector } from 'store';
+import useAuth from "../../../hooks/useAuth";
 
 // ==============================|| USER LIST STYLE 2 ||============================== //
 
 const Index = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+
+  const { isLoggedIn, user } = useAuth();
 
   const [users, setUsers] = React.useState([]);
   const [keyword, setKeyword] = React.useState('');
@@ -34,7 +37,7 @@ const Index = () => {
   const userState = useSelector((state) => state.user);
 
   React.useEffect(() => {
-    setUsers(userState.users);
+    setUsers(isLoggedIn ? userState.users.filter(item => item.id != user._id) : userState.users);
     setTotal(userState.total);
   }, [userState]);
 

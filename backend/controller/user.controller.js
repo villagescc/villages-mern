@@ -16,7 +16,7 @@ exports.search = async (req, res, next) => {
           { lastName: { $regex: keyword, $options: 'i' } },
           { email: { $regex: keyword, $options: 'i' } },
           { username: { $regex: keyword, $options: 'i' } }
-          ]
+        ]
       }
     }
     const users = await User.find(query)

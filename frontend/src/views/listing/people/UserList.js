@@ -187,6 +187,8 @@ const UserList = ({ users }) => {
                       color="error"
                       sx={{ minWidth: 120, marginTop: 1 }}
                       startIcon={<FavoriteIcon />}
+                      component={Link}
+                      to={`/ripple/trust/${user.id}`}
                     >
                       Trust
                     </Button>

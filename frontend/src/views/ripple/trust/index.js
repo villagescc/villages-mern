@@ -66,18 +66,19 @@ const Index = () => {
 
   useEffect(() => {
     if(!!userId) {
-      setEndorsement({
-        recipient: userId
-      })
+      if(!!endorsements.find(endorsement => endorsement.user._id === userId)) {
+        setEndorsement({
+          recipient: userId,
+          text: endorsements.find(endorsement => endorsement.user._id === userId).send_text,
+          weight: endorsements.find(endorsement => endorsement.user._id === userId).send_weight
+        })
+      }
+      else {
+        setEndorsement({
+          recipient: userId,
+        })
+      }
       setOpenCreate(true);
-    }
-    console.log(endorsements, endorsements.find(endorsement => endorsement.user._id === userId))
-    if(endorsements.find(endorsement => endorsement.user._id === userId)) {
-      setEndorsement({
-        recipient: userId,
-        text: endorsements.find(endorsement => endorsement.user._id === userId).send_text,
-        weight: endorsements.find(endorsement => endorsement.user._id === userId).send_weight
-      })
     }
   }, [userId, endorsements])
 
@@ -97,7 +98,7 @@ const Index = () => {
   }
 
   const handleNewClick = () => {
-    socket.emit('mytest', 'this is test socket data');
+    setEndorsement({})
     setOpenCreate(true);
   }
 

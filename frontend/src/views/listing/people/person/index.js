@@ -174,8 +174,8 @@ const SocialProfile = () => {
                         <Grid item xs={12} md={9}>
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12} md={4}>
-                                    <Typography variant="h5">{user?.name}</Typography>
-                                    <Typography variant="subtitle2">Android Developer</Typography>
+                                    <Typography variant="h5">{user?.firstName} {user?.lastName}</Typography>
+                                    <Typography variant="subtitle2">{user?.profile?.job}Android Developer</Typography>
                                 </Grid>
                                 <Grid item xs={12} md={8}>
                                     <Grid

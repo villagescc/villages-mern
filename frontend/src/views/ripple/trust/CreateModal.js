@@ -24,10 +24,11 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                   Let your friends know that you trust a promise from them and they can use their credit with your network.
                 </Typography>
               </DialogContentText>
+              {/* TODO: A component is changing an uncontrolled Autocomplete to be controlled */}
               <Autocomplete
                 {...defaultProps}
                 id="recipient"
-                defaultValue={endorsement.recipient ? users.find(user => user.id === endorsement.recipient) : null}
+                value={users.find(user => user.id === endorsement.recipient) || null}
                 onChange={(event, newValue) => {
                   setEndorsement({ ...endorsement, recipient: newValue.id });
                 }}

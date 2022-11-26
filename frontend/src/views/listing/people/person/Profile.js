@@ -1,214 +1,192 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Box, Button, Divider, Grid, IconButton, Link, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    CardContent,
+    Chip,
+    Divider,
+    Grid,
+    LinearProgress,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemSecondaryAction,
+    ListItemText,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Typography
+} from '@mui/material';
 
 // project imports
-import AnimateButton from 'ui-component/extended/AnimateButton';
-import Posts from 'ui-component/cards/Post';
-import MainCard from 'ui-component/cards/MainCard';
+import SubCard from 'ui-component/cards/SubCard';
 import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
 
 // assets
-import AttachmentTwoToneIcon from '@mui/icons-material/AttachmentTwoTone';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import LayersTwoToneIcon from '@mui/icons-material/LayersTwoTone';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
-import PublicTwoToneIcon from '@mui/icons-material/PublicTwoTone';
-import RecentActorsTwoToneIcon from '@mui/icons-material/RecentActorsTwoTone';
+import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
+import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
+import PersonTwoTone from '@mui/icons-material/PersonTwoTone';
 
-// ==============================|| SOCIAL PROFILE - POST ||============================== //
+import React from "react";
+
+// progress
+function LinearProgressWithLabel({ value, ...others }) {
+    return (
+      <Box
+        sx={{
+            display: 'flex',
+            alignItems: 'center'
+        }}
+      >
+          <Box
+            sx={{
+                width: '100%',
+                mr: 1
+            }}
+          >
+              <LinearProgress value={value} {...others} />
+          </Box>
+          <Box sx={{ minWidth: 35 }}>
+              <Typography variant="body2" color="textSecondary">{`${Math.round(value)}%`}</Typography>
+          </Box>
+      </Box>
+    );
+}
+
+LinearProgressWithLabel.propTypes = {
+    value: PropTypes.number
+};
+
+// personal details table
+/** names Don&apos;t look right */
+function createData(name, calories, fat, carbs, protein) {
+    return { name, calories, fat, carbs, protein };
+}
+
+// ==============================|| PROFILE 1 - PROFILE ||============================== //
 
 const Profile = ({ user }) => {
-    const theme = useTheme();
-    const dispatch = useDispatch();
-
-    const sideAvatarSX = {
-        borderRadius: '8px',
-        width: 48,
-        height: 48,
-        fontSize: '1.5rem',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: theme.palette.mode === 'dark' ? '1px solid' : 'none',
-        '&>svg': {
-            width: 24,
-            height: 24
-        }
-    };
+    const rows = [
+        createData('First Name', ':', user?.firstName),
+        createData('Last Name', ':', user?.lastName),
+        createData('Zip Code', ':', '12345'),
+        createData('Phone', ':', '+0 123456789 , +0 123456789'),
+        createData('Email', ':', 'support@example.com'),
+        createData('Website', ':', 'http://example.com')
+    ];
 
     return (
-        <Grid container spacing={gridSpacing}>
-            <Grid item xs={12} sm={12} md={4}>
-                <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12}>
-                        <MainCard>
-                            <Grid container alignItems="center" spacing={gridSpacing}>
-                                <Grid item>
-                                    <Box
+      <Grid container spacing={gridSpacing}>
+          <Grid item lg={4} xs={12}>
+              <SubCard
+              >
+                  <List component="nav" aria-label="main mailbox folders">
+                      <ListItemButton>
+                          <ListItemIcon>
+                              <PersonTwoTone sx={{ fontSize: '1.3rem' }} />
+                          </ListItemIcon>
+                          <ListItemText primary={<Typography variant="subtitle1">Username</Typography>} />
+                          <ListItemSecondaryAction>
+                              <Typography variant="subtitle2" align="right">
+                                  {user.username}
+                              </Typography>
+                          </ListItemSecondaryAction>
+                      </ListItemButton>
+                      <Divider />
+                      <ListItemButton>
+                          <ListItemIcon>
+                              <MailTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                          </ListItemIcon>
+                          <ListItemText primary={<Typography variant="subtitle1">Email</Typography>} />
+                          <ListItemSecondaryAction>
+                              <Typography variant="subtitle2" align="right">
+                                  {user.email}
+                              </Typography>
+                          </ListItemSecondaryAction>
+                      </ListItemButton>
+                      <Divider />
+                      <ListItemButton>
+                          <ListItemIcon>
+                              <PinDropTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                          </ListItemIcon>
+                          <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} />
+                          <ListItemSecondaryAction>
+                              <Typography variant="subtitle2" align="right">
+                                  {user?.profile?.locationId ? user?.profile?.locationId : <Chip label="No location" />}
+                              </Typography>
+                          </ListItemSecondaryAction>
+                      </ListItemButton>
+                  </List>
+                  <CardContent>
+                      <Grid container spacing={0}>
+                          <Grid item xs={6}>
+                              <Typography align="center" variant="h3">
+                                  {user?.followers?.length ? user?.followers?.length : 0}
+                              </Typography>
+                              <Typography align="center" variant="subtitle2">
+                                  Followers
+                              </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                              <Typography align="center" variant="h3">
+                                  {user?.followings?.length ? user?.followings?.length : 0}
+                              </Typography>
+                              <Typography align="center" variant="subtitle2">
+                                  Following
+                              </Typography>
+                          </Grid>
+                      </Grid>
+                  </CardContent>
+              </SubCard>
+          </Grid>
+          <Grid item lg={8} xs={12}>
+              <Grid container direction="column" spacing={gridSpacing}>
+                  <Grid item xs={12}>
+                      <SubCard
+                        title="About me"
+                      >
+                          <Grid container direction="column" spacing={2}>
+                              <Grid item xs={12}>
+                                  <Typography variant="body2">
+                                      {user?.profile?.description}
+                                  </Typography>
+                              </Grid>
+                              <Grid item xs={12}>
+                                  <Typography variant="subtitle1">Personal Details</Typography>
+                              </Grid>
+                              <Divider sx={{ pt: 1 }} />
+                              <Grid item xs={12}>
+                                  <TableContainer>
+                                      <Table
                                         sx={{
-                                            ...sideAvatarSX,
-                                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.primary.main + 20 : 'primary.light',
-                                            border: theme.palette.mode === 'dark' ? '1px solid' : 'none',
-                                            borderColor: 'primary.main',
-                                            color: 'primary.dark'
+                                            '& td': {
+                                                borderBottom: 'none'
+                                            }
                                         }}
-                                    >
-                                        <PeopleAltTwoToneIcon />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs zeroMinWidth>
-                                    <Typography variant="h3" color="primary" component="div" sx={{ mb: 0.625 }}>
-                                        239k
-                                    </Typography>
-                                    <Typography variant="body2">Friends</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <IconButton size="large">
-                                        <NavigateNextRoundedIcon />
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                            <Divider sx={{ margin: '16px 0' }} />
-                            <Grid container alignItems="center" spacing={gridSpacing}>
-                                <Grid item>
-                                    <Box
-                                        sx={{
-                                            ...sideAvatarSX,
-                                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.secondary.main + 20 : 'secondary.light',
-                                            borderColor: 'secondary.main',
-                                            color: 'secondary.dark'
-                                        }}
-                                    >
-                                        <RecentActorsTwoToneIcon />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs zeroMinWidth>
-                                    <Typography
-                                        variant="h3"
-                                        sx={{
-                                            mb: 0.625,
-                                            color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : 'secondary.main'
-                                        }}
-                                    >
-                                        234k
-                                    </Typography>
-                                    <Typography variant="body2">Followers</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <IconButton size="large">
-                                        <NavigateNextRoundedIcon />
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                        </MainCard>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <MainCard>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Typography variant="h4">About</Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant="body2">
-                                        It is a long established fact that a reader will be distracted by the readable content of a page
-                                        when looking at its layout.
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Divider sx={{ margin: '16px 0' }} />
-                            <Grid
-                                container
-                                spacing={2}
-                                sx={{
-                                    '& >div': {
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                        display: 'block',
-                                        width: '100%'
-                                    },
-                                    '& a': {
-                                        color: theme.palette.grey[700],
-
-                                        '& svg': {
-                                            mr: 1,
-                                            verticalAlign: 'bottom'
-                                        },
-                                        '&:hover': {
-                                            color: theme.palette.primary.main,
-                                            textDecoration: 'none'
-                                        }
-                                    }
-                                }}
-                            >
-                                <Grid item xs={12}>
-                                    <Link href="https://codedthemes.com/" target="_blank" underline="hover">
-                                        <PublicTwoToneIcon color="secondary" /> https://codedthemes.com/
-                                    </Link>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Link href="https://www.instagram.com/codedthemes" target="_blank" underline="hover">
-                                        <InstagramIcon sx={{ color: theme.palette.orange.dark }} /> https://www.instagram.com/codedthemes
-                                    </Link>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Link href="https://www.facebook.com/codedthemes" target="_blank" underline="hover">
-                                        <FacebookIcon color="primary" /> https://www.facebook.com/codedthemes
-                                    </Link>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Link href="https://in.linkedin.com/company/codedthemes" target="_blank" underline="hover">
-                                        <LinkedInIcon sx={{ color: theme.palette.grey[900] }} /> https://in.linkedin.com/company/codedthemes
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                        </MainCard>
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Grid item xs={12} sm={12} md={8}>
-                <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12}>
-                        <MainCard>
-                            <Grid container spacing={gridSpacing}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        id="outlined-textarea"
-                                        placeholder="What’s on your mind, Larry?"
-                                        rows={4}
-                                        fullWidth
-                                        multiline
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container justifyContent="space-between" spacing={gridSpacing}>
-                                        <Grid item>
-                                            <Button variant="text" color="secondary" startIcon={<AttachmentTwoToneIcon />}>
-                                                Gallery
-                                            </Button>
-                                        </Grid>
-                                        <Grid item>
-                                            <AnimateButton>
-                                                <Button variant="contained" color="secondary" startIcon={<LayersTwoToneIcon />}>
-                                                    Post
-                                                </Button>
-                                            </AnimateButton>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </MainCard>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Grid>
+                                        size="small"
+                                      >
+                                          <TableBody>
+                                              {rows.map((row) => (
+                                                <TableRow key={row.name}>
+                                                    <TableCell variant="head">{row.name}</TableCell>
+                                                    <TableCell>{row.calories}</TableCell>
+                                                    <TableCell>{row.fat}</TableCell>
+                                                </TableRow>
+                                              ))}
+                                          </TableBody>
+                                      </Table>
+                                  </TableContainer>
+                              </Grid>
+                          </Grid>
+                      </SubCard>
+                  </Grid>
+              </Grid>
+          </Grid>
+      </Grid>
     );
 };
 
