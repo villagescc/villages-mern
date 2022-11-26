@@ -62,7 +62,7 @@ const FriendRequest = () => {
                         <OutlinedInput
                             size="small"
                             id="input-search-user-profile"
-                            placeholder="Search Friends"
+                            placeholder="Search Followings"
                             value={search}
                             onChange={handleSearch}
                             startAdornment={

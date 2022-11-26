@@ -5,37 +5,23 @@ import { useTheme } from '@mui/material/styles';
 import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 
 // project imports
-import FriendsCard from 'ui-component/cards/FriendsCard';
+import FollowingCard from 'ui-component/cards/FollowingCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getFollowings } from 'store/slices/user';
 
 // assets
 import { IconSearch } from '@tabler/icons';
 
 // ==============================|| SOCIAL PROFILE - FRIENDS ||============================== //
 
-const Friends = () => {
+const Followings = ({ user }) => {
     const theme = useTheme();
-    const dispatch = useDispatch();
-    const [friends, setFriends] = React.useState([]);
-    const userState = useSelector((state) => state.user);
-
-    React.useEffect(() => {
-        setFriends(userState.friends);
-    }, [userState]);
-
-    React.useEffect(() => {
-        dispatch(getFollowings());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     let friendsResult = <></>;
-    if (friends) {
-        friendsResult = friends.map((friend, index) => (
+    if (user.followings.length) {
+        friendsResult = user.followings.map((following, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3} xl={2}>
-                <FriendsCard {...friend} />
+                <FollowingCard {...following} />
             </Grid>
         ));
     }
@@ -44,12 +30,6 @@ const Friends = () => {
     const handleSearch = async (event) => {
         const newString = event?.target.value;
         setSearch(newString);
-
-        if (newString) {
-            dispatch(getFollowings());
-        } else {
-            dispatch(getFollowings());
-        }
     };
 
     return (
@@ -58,9 +38,9 @@ const Friends = () => {
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
                         <Typography variant="h3">
-                            Friends{' '}
+                            Followings{' '}
                             <Typography variant="h3" component="span" sx={{ color: theme.palette.grey[300], fontWeight: 500 }}>
-                                (463)
+                                ({user.followings.length})
                             </Typography>
                         </Typography>
                     </Grid>
@@ -68,7 +48,7 @@ const Friends = () => {
                         <OutlinedInput
                             size="small"
                             id="input-search-user-profile"
-                            placeholder="Search"
+                            placeholder="Search Followings"
                             value={search}
                             onChange={handleSearch}
                             startAdornment={
@@ -88,4 +68,4 @@ const Friends = () => {
     );
 };
 
-export default Friends;
+export default Followings;

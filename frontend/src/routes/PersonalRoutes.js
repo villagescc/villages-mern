@@ -26,6 +26,11 @@ const PersonalRoute = {
     ),
     children: [
         {
+            path: '/ripple/trust/:userId',
+            element:
+              <Trust />
+        },
+        {
             path: '/ripple/trust',
             element:
               <Trust />

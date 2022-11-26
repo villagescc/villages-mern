@@ -26,9 +26,11 @@ import {openSnackbar} from "../../../store/slices/snackbar";
 import {SERVER_URL} from "../../../config";
 import {getNotifications} from "../../../store/slices/notification";
 import useAuth from "../../../hooks/useAuth";
+import {useParams} from "react-router-dom";
 
 const Index = () => {
   const theme = useTheme();
+  const { userId } = useParams();
   const dispatch = useDispatch();
   const { user } = useAuth();
 
@@ -61,6 +63,23 @@ const Index = () => {
     dispatch(getUsers());
     setSocket(io(SERVER_URL));
   }, []);
+
+  useEffect(() => {
+    if(!!userId) {
+      setEndorsement({
+        recipient: userId
+      })
+      setOpenCreate(true);
+    }
+    console.log(endorsements, endorsements.find(endorsement => endorsement.user._id === userId))
+    if(endorsements.find(endorsement => endorsement.user._id === userId)) {
+      setEndorsement({
+        recipient: userId,
+        text: endorsements.find(endorsement => endorsement.user._id === userId).send_text,
+        weight: endorsements.find(endorsement => endorsement.user._id === userId).send_weight
+      })
+    }
+  }, [userId, endorsements])
 
   useEffect(() => {
     if(socket) {

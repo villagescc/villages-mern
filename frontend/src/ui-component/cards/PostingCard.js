@@ -60,7 +60,7 @@ const MessageWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const UserProfileCard = ({ avatar, title, post, description }) => {
+const PostingCard = ({ avatar, title, post, description }) => {
     const theme = useTheme();
     const postImage = post ? 'http://localhost:5000/upload/posting/'+post : DefaultPostingIcon;
     const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : DefaultUserIcon;
@@ -119,7 +119,7 @@ const UserProfileCard = ({ avatar, title, post, description }) => {
     );
 };
 
-UserProfileCard.propTypes = {
+PostingCard.propTypes = {
     avatar: PropTypes.string,
     name: PropTypes.string,
     profile: PropTypes.string,
@@ -127,4 +127,4 @@ UserProfileCard.propTypes = {
     status: PropTypes.string
 };
 
-export default UserProfileCard;
+export default PostingCard;

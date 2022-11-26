@@ -7,42 +7,25 @@ import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import FollowerCard from 'ui-component/cards/FollowerCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getFollowers } from 'store/slices/user';
 
 // assets
 import { IconSearch } from '@tabler/icons';
+import {useTheme} from "@mui/material/styles";
 
 // ==============================|| SOCIAL PROFILE - FOLLOWERS ||============================== //
 
-const Followers = () => {
-    const dispatch = useDispatch();
-    const [followers, setFollowers] = React.useState([]);
-    const userState = useSelector((state) => state.user);
-
-    React.useEffect(() => {
-        setFollowers(userState.followers);
-    }, [userState]);
-
-    React.useEffect(() => {
-        dispatch(getFollowers());
-    }, []);
+const Followers = ({ user }) => {
+    const theme = useTheme();
 
     const [search, setSearch] = React.useState('');
     const handleSearch = async (event) => {
         const newString = event?.target.value;
         setSearch(newString);
-
-        if (newString) {
-            dispatch(getFollowers());
-        } else {
-            dispatch(getFollowers());
-        }
     };
 
     let followersResult = <></>;
-    if (followers) {
-        followersResult = followers.map((follower, index) => (
+    if (user?.followers.length) {
+        followersResult = user.followers.map((follower, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                 <FollowerCard {...follower} />
             </Grid>
@@ -54,7 +37,12 @@ const Followers = () => {
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">Followers</Typography>
+                        <Typography variant="h3">
+                            Followers{' '}
+                            <Typography variant="h3" component="span" sx={{ color: theme.palette.grey[300], fontWeight: 500 }}>
+                                ({user.followers.length})
+                            </Typography>
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <OutlinedInput

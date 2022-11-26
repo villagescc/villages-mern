@@ -9,24 +9,23 @@ import { Box, Button, CardMedia, Grid, Tab, Tabs, Typography } from '@mui/materi
 // project imports
 import Profile from './Profile';
 import Followers from './Followers';
-import Friends from './Friends';
-import Gallery from './Gallery';
-import useAuth from 'hooks/useAuth';
+import Followings from './Followings';
+import Postings from './Postings';
 import useConfig from 'hooks/useConfig';
 import Avatar from 'ui-component/extended/Avatar';
-import Chip from 'ui-component/extended/Chip';
 import MainCard from 'ui-component/cards/MainCard';
 import ImagePlaceholder from 'ui-component/cards/Skeleton/ImagePlaceholder';
 import { gridSpacing } from 'store/constant';
 
 // assets
 import { IconFriends, IconInbox, IconPhoto, IconUserPlus, IconUsers } from '@tabler/icons';
-import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone';
+import ChatIcon from '@mui/icons-material/Chat';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
-import User1 from 'assets/images/profile/img-user.png';
 import Cover from 'assets/images/profile/img-profile-bg.png';
 import {useDispatch, useSelector} from "store";
 import {getUser} from "store/slices/user";
+import DefaultUserIcon from "../../../../assets/images/auth/default.png";
 
 function TabPanel({ children, value, index, ...other }) {
     return (
@@ -59,32 +58,24 @@ function a11yProps(index) {
 
 const tabOptions = [
     {
-        to: '/user/person/posts',
         icon: <IconInbox stroke={1.5} size="17px" />,
         label: 'Profile'
     },
     {
-        to: '/user/person/follower',
         icon: <IconUsers stroke={1.5} size="17px" />,
         label: 'Followers'
     },
     {
-        to: '/user/person/friends',
         icon: <IconFriends stroke={1.5} size="17px" />,
-        label: (
-            <>
-                friends <Chip label="100" size="small" chipcolor="secondary" sx={{ ml: 1.5 }} />
-            </>
-        )
+        label: 'Followings'
     },
     {
-        to: '/user/person/gallery',
         icon: <IconPhoto stroke={1.5} size="17px" />,
         label: 'Posting'
     },
 ];
 
-// ==============================|| SOCIAL PROFILE ||============================== //
+// ==============================|| PUBLIC PROFILE ||============================== //
 
 const SocialProfile = () => {
     const theme = useTheme();
@@ -93,6 +84,7 @@ const SocialProfile = () => {
     const { borderRadius } = useConfig();
     const { id, tab } = useParams();
     const { user } = useSelector(state => state.user);
+    const avatarImage = user?.avatar ? 'http://localhost:5000/upload/avatar/'+user?.avatar : DefaultUserIcon;
 
     let selectedTab = 0;
     switch (tab) {
@@ -163,7 +155,7 @@ const SocialProfile = () => {
                             ) : (
                                 <Avatar
                                     alt="User 1"
-                                    src={user.avatar}
+                                    src={avatarImage}
                                     sx={{
                                         margin: '-70px 0 0 auto',
                                         borderRadius: '16px',
@@ -197,11 +189,13 @@ const SocialProfile = () => {
                                         }}
                                     >
                                         <Grid item>
-                                            <Button variant="outlined">Message</Button>
+                                            <Button variant="outlined" color={'secondary'} startIcon={<ChatIcon />}>
+                                                Message
+                                            </Button>
                                         </Grid>
                                         <Grid item>
-                                            <Button variant="contained" startIcon={<PersonAddTwoToneIcon />}>
-                                                Send Request
+                                            <Button component={Link} to={`/ripple/trust/${id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
+                                                Make Credit limit
                                             </Button>
                                         </Grid>
                                     </Grid>
@@ -242,7 +236,7 @@ const SocialProfile = () => {
                                         <Tab
                                             key={index}
                                             component={Link}
-                                            to={option.to}
+                                            to={'#'}
                                             icon={option.icon}
                                             label={option.label}
                                             {...a11yProps(index)}
@@ -256,16 +250,16 @@ const SocialProfile = () => {
             </Grid>
             <Grid item xs={12}>
                 <TabPanel value={value} index={0}>
-                    <Profile id={id} />
+                    <Profile user={user} />
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Followers id={id} />
+                    <Followers user={user} />
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Friends id={id} />
+                    <Followings user={user} />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                    <Gallery id={id} />
+                    <Postings user={user} />
                 </TabPanel>
             </Grid>
         </Grid>

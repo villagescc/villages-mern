@@ -24,15 +24,9 @@ import RecentActorsTwoToneIcon from '@mui/icons-material/RecentActorsTwoTone';
 
 // ==============================|| SOCIAL PROFILE - POST ||============================== //
 
-const Profile = () => {
+const Profile = ({ user }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const [user, setUser] = React.useState({});
-    const userState = useSelector((state) => state.user);
-
-    React.useEffect(() => {
-        setUser(userState.user);
-    }, [userState]);
 
     const sideAvatarSX = {
         borderRadius: '8px',

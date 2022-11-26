@@ -74,7 +74,7 @@ const UserList = ({ users }) => {
                   <Grid item sm zeroMinWidth>
                     <Grid container spacing={1}>
                       <Grid item xs={12}>
-                        <Typography align="left" variant="subtitle1" component={Link} to={`/listing/person/${user.id}/profile`} style={{ textDecoration: 'none' }}>
+                        <Typography align="left" variant="subtitle1" component={Link} to={`/listing/person/${user.id}`} style={{ textDecoration: 'none' }}>
                           {user?.firstName}{' '}{user?.lastName}
                         </Typography>
                         <Typography align="left" variant="subtitle2" sx={{ whiteSpace: 'break-spaces' }}>
@@ -139,12 +139,12 @@ const UserList = ({ users }) => {
                         }}
                       >
                         {
-                          user.endorsedFrom.map((each, index) => (
+                          user.followers.map((each, index) => (
                             <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
                           ))
                         }
                         {
-                          user.endorsedFrom.length === 0 && (
+                          user.followers.length === 0 && (
                             <Chip label="No users trusted from" />
                           )
                         }
@@ -165,12 +165,12 @@ const UserList = ({ users }) => {
                         }}
                       >
                         {
-                          user.endorsedFrom.map((each, index) => (
+                          user.followers.map((each, index) => (
                             <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
                           ))
                         }
                         {
-                          user.endorsedFrom.length === 0 && (
+                          user.followers.length === 0 && (
                             <Chip label="No users trusted to" />
                           )
                         }

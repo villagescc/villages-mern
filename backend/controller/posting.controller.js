@@ -67,3 +67,14 @@ exports.createPost = async (req, res, next) => {
     next(err);
   }
 }
+
+exports.getByUser = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const postings = await Listing.find({ userId });
+    res.send(postings);
+  }
+  catch(err) {
+    next(err);
+  }
+}

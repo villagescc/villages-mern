@@ -33,8 +33,8 @@ exports.search = async (req, res, next) => {
       job,
       description,
       avatar
-      endorsedFrom: [],
-      endorsedTo: [],
+      followers: [],
+      followings: [],
       balance,
     }
      */
@@ -77,8 +77,8 @@ const getUserDetail = async (id) => {
   userInfo.job = profile.job;
   userInfo.description = profile.description;
   userInfo.avatar = profile.avatar;
-  userInfo.endorsedFrom = await _getFollowers(id);
-  userInfo.endorsedTo = await _getFollowings(id);
+  userInfo.followers = await _getFollowers(id);
+  userInfo.followings = await _getFollowings(id);
   userInfo.balance = await _getBalanceById(user.account);
 
   return userInfo;

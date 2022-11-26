@@ -28,7 +28,7 @@ import FormControlSelect from "../../../ui-component/extended/Form/FormControlSe
 import {useDispatch, useSelector} from "../../../store";
 import {createPost, filterPost, getCategories, getSubCategories, getTags} from "../../../store/slices/posting";
 import useAuth from "../../../hooks/useAuth";
-import UserProfileCard from "../../../ui-component/cards/UserProfileCard";
+import PostingCard from "../../../ui-component/cards/PostingCard";
 import SubCard from "../../../ui-component/cards/SubCard";
 
 // ==============================|| Posting ||============================== //
@@ -234,7 +234,7 @@ const Posting = () => {
                   {
                     posts.map((post, index) => (
                       <Grid item xs={12} sm={3} key={index}>
-                        <UserProfileCard
+                        <PostingCard
                           avatar={user?.avatar}
                           post={post.photo}
                           title={post.title}

@@ -4,7 +4,7 @@ import React from 'react';
 import { Button, Grid, Typography } from '@mui/material';
 
 // project imports
-import GalleryCard from 'ui-component/cards/GalleryCard';
+import PostingCard from 'ui-component/cards/PostingCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
@@ -12,23 +12,28 @@ import { getPostings } from 'store/slices/user';
 
 // ==============================|| SOCIAL PROFILE - GALLERY ||============================== //
 
-const Gallery = () => {
+const Postings = ({ user }) => {
     const dispatch = useDispatch();
-    const [gallery, setGallery] = React.useState([]);
+    const [postings, setPostings] = React.useState([]);
     const userState = useSelector((state) => state.user);
     React.useEffect(() => {
-        setGallery(userState.gallery);
+        setPostings(userState.postings);
     }, [userState]);
 
     React.useEffect(() => {
-        dispatch(getPostings());
+        dispatch(getPostings(user.id));
     }, []);
 
-    let galleryResult = <></>;
-    if (gallery) {
-        galleryResult = gallery.map((item, index) => (
+    let postingsResult = <></>;
+    if (postings) {
+        postingsResult = postings.map((item, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                <GalleryCard {...item} />
+                <PostingCard
+                  avatar={user?.profile?.avatar}
+                  post={item.photo}
+                  title={item.title}
+                  description={item.description}
+                />
             </Grid>
         ));
     }
@@ -38,21 +43,16 @@ const Gallery = () => {
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">Gallery</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" color="secondary">
-                            Add Photos
-                        </Button>
+                        <Typography variant="h3">Postings</Typography>
                     </Grid>
                 </Grid>
             }
         >
             <Grid container direction="row" spacing={gridSpacing}>
-                {galleryResult}
+                {postingsResult}
             </Grid>
         </MainCard>
     );
 };
 
-export default Gallery;
+export default Postings;
