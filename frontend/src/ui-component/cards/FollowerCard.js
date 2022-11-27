@@ -116,9 +116,6 @@ const FollowerCard = (follower) => {
                   </Grid>
               </Grid>
               <Grid item xs={12}>
-                  <Button variant="contained" fullWidth startIcon={<PersonAddTwoToneIcon />}>
-                      Follow Back
-                  </Button>
                   <Button variant="outlined" fullWidth startIcon={<PeopleAltTwoToneIcon />}>
                       Followed
                   </Button>

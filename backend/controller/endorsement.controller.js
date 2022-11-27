@@ -124,9 +124,9 @@ exports._getFollowers = async (id) => {
 
 exports._getFollowings = async (id) => {
   const endorsers = await Endorsement.find({ endorserId: id })
-    .populate({ path: 'endorserId', model: 'user', populate: { path: 'profile', model: 'profile' } })
+    .populate({ path: 'recipientId', model: 'user', populate: { path: 'profile', model: 'profile' } })
     .exec();
   return endorsers.map(endorser => ({
-    ...endorser.endorserId._doc
+    ...endorser.recipientId._doc
   }))
 }

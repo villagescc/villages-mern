@@ -69,7 +69,7 @@ const UserList = ({ users }) => {
               <TableCell>
                 <Grid container spacing={2}>
                   <Grid item>
-                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}/profile`}/>
+                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}`}/>
                   </Grid>
                   <Grid item sm zeroMinWidth>
                     <Grid container spacing={1}>
@@ -145,7 +145,7 @@ const UserList = ({ users }) => {
                         }
                         {
                           user.followers.length === 0 && (
-                            <Chip label="No users trusted from" />
+                            <Chip label="No followers" />
                           )
                         }
                       </AvatarGroup>
@@ -165,13 +165,13 @@ const UserList = ({ users }) => {
                         }}
                       >
                         {
-                          user.followers.map((each, index) => (
+                          user.followings.map((each, index) => (
                             <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
                           ))
                         }
                         {
-                          user.followers.length === 0 && (
-                            <Chip label="No users trusted to" />
+                          user.followings.length === 0 && (
+                            <Chip label="No followings" />
                           )
                         }
                       </AvatarGroup>
@@ -200,6 +200,8 @@ const UserList = ({ users }) => {
                       size="small"
                       sx={{ minWidth: 120, marginTop: 1 }}
                       startIcon={<CurrencyExchangeIcon />}
+                      component={Link}
+                      to={`/ripple/pay/${user.id}`}
                     >
                       Pay
                     </Button>

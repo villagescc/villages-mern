@@ -116,7 +116,7 @@ const Profile = ({ user }) => {
                           <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} />
                           <ListItemSecondaryAction>
                               <Typography variant="subtitle2" align="right">
-                                  {user?.profile?.locationId ? user?.profile?.locationId : <Chip label="No location" />}
+                                  {user?.locationId ? user?.locationId : <Chip label="No location" />}
                               </Typography>
                           </ListItemSecondaryAction>
                       </ListItemButton>
@@ -152,7 +152,7 @@ const Profile = ({ user }) => {
                           <Grid container direction="column" spacing={2}>
                               <Grid item xs={12}>
                                   <Typography variant="body2">
-                                      {user?.profile?.description}
+                                      {user?.description}
                                   </Typography>
                               </Grid>
                               <Grid item xs={12}>

@@ -26,7 +26,7 @@ const avatarImage = require.context('assets/images/profile', true);
 const FollowingCard = (following) => {
     const theme = useTheme();
 
-    const avatarProfile = following?.profile.avatar ? 'http://localhost:5000/upload/avatar/'+following?.profile?.avatar : DefaultUserIcon;
+    const avatarProfile = following?.profile?.avatar ? 'http://localhost:5000/upload/avatar/'+following?.profile?.avatar : DefaultUserIcon;
 
     const btnSX = {
         borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],

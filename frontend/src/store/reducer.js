@@ -11,6 +11,7 @@ import notificationReducer from './slices/notification';
 import snackbarReducer from './slices/snackbar';
 import customerReducer from './slices/customer';
 import endorsementReducer from './slices/endorsement';
+import paymentReducer from './slices/payment';
 import productReducer from './slices/product';
 import chatReducer from './slices/chat';
 import calendarReducer from './slices/calendar';
@@ -36,6 +37,7 @@ const reducer = combineReducers({
     kanban: kanbanReducer,
     customer: customerReducer,
     endorsement: endorsementReducer,
+    payment: paymentReducer,
     notification: notificationReducer,
     product: productReducer,
     chat: chatReducer,

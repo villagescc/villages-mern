@@ -36,6 +36,10 @@ const PersonalRoute = {
               <Trust />
         },
         {
+            path: '/ripple/pay/:userId',
+            element: <Pay />
+        },
+        {
             path: '/ripple/pay',
             element: <Pay />
         },

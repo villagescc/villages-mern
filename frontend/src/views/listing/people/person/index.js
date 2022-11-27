@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, CardMedia, Grid, Tab, Tabs, Typography } from '@mui/material';
+import {Box, Button, CardMedia, Chip, Grid, Tab, Tabs, Typography} from '@mui/material';
 
 // project imports
 import Profile from './Profile';
@@ -21,6 +21,7 @@ import { gridSpacing } from 'store/constant';
 import { IconFriends, IconInbox, IconPhoto, IconUserPlus, IconUsers } from '@tabler/icons';
 import ChatIcon from '@mui/icons-material/Chat';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 import Cover from 'assets/images/profile/img-profile-bg.png';
 import {useDispatch, useSelector} from "store";
@@ -175,7 +176,7 @@ const SocialProfile = () => {
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12} md={4}>
                                     <Typography variant="h5">{user?.firstName} {user?.lastName}</Typography>
-                                    <Typography variant="subtitle2">{user?.profile?.job}Android Developer</Typography>
+                                    <Typography variant="subtitle2">{user?.job || <Chip label="No job" />}</Typography>
                                 </Grid>
                                 <Grid item xs={12} md={8}>
                                     <Grid
@@ -189,13 +190,18 @@ const SocialProfile = () => {
                                         }}
                                     >
                                         <Grid item>
-                                            <Button variant="outlined" color={'secondary'} startIcon={<ChatIcon />}>
+                                            <Button variant="contained" color={'secondary'} startIcon={<ChatIcon />}>
                                                 Message
                                             </Button>
                                         </Grid>
                                         <Grid item>
                                             <Button component={Link} to={`/ripple/trust/${id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
-                                                Make Credit limit
+                                                Trust
+                                            </Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <Button component={Link} to={`/ripple/pay/${id}`} color={'success'} variant="outlined" startIcon={<CurrencyExchangeIcon />}>
+                                                Pay
                                             </Button>
                                         </Grid>
                                     </Grid>
