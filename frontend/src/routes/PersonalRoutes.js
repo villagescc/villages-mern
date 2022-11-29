@@ -11,7 +11,7 @@ const Pay = Loadable(lazy(() => import('views/ripple/pay')))
 
 // personal routing
 const Notification = Loadable(lazy(() => import('views/user/notification')))
-const ProfileView = Loadable(lazy(() => import('views/user/profile/view')))
+const ProfileView = Loadable(lazy(() => import('views/user/profile')))
 const ProfileEdit = Loadable(lazy(() => import('views/user/profile/edit')))
 const Setting = Loadable(lazy(() => import('views/user/setting')))
 
@@ -48,7 +48,7 @@ const PersonalRoute = {
             element: <Notification />
         },
         {
-            path: '/personal/profile/view',
+            path: '/personal/profile',
             element: <ProfileView />
         },
         {

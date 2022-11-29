@@ -23,7 +23,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
-import Cover from 'assets/images/profile/img-profile-bg.png';
+import Cover from 'assets/images/profile/img-profile-bg1.jpg';
 import {useDispatch, useSelector} from "store";
 import {getUser} from "store/slices/user";
 import DefaultUserIcon from "../../../../assets/images/auth/default.png";

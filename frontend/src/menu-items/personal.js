@@ -30,7 +30,7 @@ const personal = {
             id: 'profile',
             title: <FormattedMessage id="profile" />,
             type: 'item',
-            url: '/personal/profile/view',
+            url: '/personal/profile',
             icon: icons.IconUser,
             breadcrumbs: false
         },
