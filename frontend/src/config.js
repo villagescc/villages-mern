@@ -7,16 +7,6 @@ export const JWT_API = {
     timeout: '1 days'
 };
 
-export const FIREBASE_API = {
-    apiKey: 'AIzaSyBernKzdSojh_vWXBHt0aRhf5SC9VLChbM',
-    authDomain: 'berry-material-react.firebaseapp.com',
-    projectId: 'berry-material-react',
-    storageBucket: 'berry-material-react.appspot.com',
-    messagingSenderId: '901111229354',
-    appId: '1:901111229354:web:a5ae5aa95486297d69d9d3',
-    measurementId: 'G-MGJHSL8XW3'
-};
-
 export const AUTH0_API = {
     client_id: '7T4IlWis4DKHSbG8JAye4Ipk0rvXkH9V',
     domain: 'dev-w0-vxep3.us.auth0.com'
