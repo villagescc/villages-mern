@@ -16,15 +16,15 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (validator.isEmpty(data.firstName)) {
-    errors.name = "First name field is required";
+    errors.firstName = "First name field is required";
   }
 
   if (!validator.isLength(data.lastName, { min: 2, max: 30 })) {
-    errors.name = "Last name must be between 2 and 30 characters";
+    errors.lastName = "Last name must be between 2 and 30 characters";
   }
 
   if (validator.isEmpty(data.lastName)) {
-    errors.name = "Last name field is required";
+    errors.lastName = "Last name field is required";
   }
 
   if (validator.isEmpty(data.email)) {
@@ -36,7 +36,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (validator.isEmpty(data.username)) {
-    errors.email = "Username field is required";
+    errors.username = "Username field is required";
   }
 
   if (validator.isEmpty(data.password)) {

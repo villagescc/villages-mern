@@ -33,6 +33,7 @@ router.get('/posting/getByUser/:userId', postController.getByUser);
 // ######################### POSTING ROUTER #############################
 router.post('/users/search', userController.search);
 router.get('/users/user/:id', userController.getOne);
+router.post('/users/profile', authMiddleware.auth, userMiddleware.saveProfile, userController.saveProfile);
 
 // ######################### Trust ROUTER #############################
 router.post('/endorsement/save', authMiddleware.auth, endorsementMiddleware.save, endorsementController.save)

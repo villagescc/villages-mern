@@ -11,127 +11,234 @@ import { gridSpacing } from 'store/constant';
 import DefaultAvatar from 'assets/images/auth/default.png';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
 import PersonIcon from '@mui/icons-material/Person';
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "store";
+import {getUser, saveProfile} from "store/slices/user";
+import {openSnackbar} from "store/slices/snackbar";
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
 
 const Profile = () => {
-    const { user } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useAuth();
 
-    return (
-      <Grid container spacing={gridSpacing}>
-          <Grid item sm={6} md={4}>
-              <SubCard title="Profile Picture" contentSX={{ textAlign: 'center' }}>
-                  <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                          <Avatar alt="User 1" src={DefaultAvatar} sx={{ width: 100, height: 100, margin: '0 auto' }} />
-                      </Grid>
-                      <Grid item xs={12}>
-                          <Typography variant="subtitle2" align="center">
-                              Upload/Change Your Profile Image
-                          </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                          <AnimateButton>
-                              <Button variant="contained" size="small">
-                                  Upload Avatar
-                              </Button>
-                          </AnimateButton>
-                      </Grid>
-                      <Grid item xs={12}>
-                          <List component="nav" aria-label="main mailbox folders">
-                              <ListItemButton>
-                                  <ListItemIcon>
-                                      <MailTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                                  </ListItemIcon>
-                                  <ListItemText primary={<Typography variant="subtitle1">Email</Typography>} />
-                                  <ListItemSecondaryAction>
-                                      <Typography variant="subtitle2" align="right">
-                                          { user?.email }
-                                      </Typography>
-                                  </ListItemSecondaryAction>
-                              </ListItemButton>
-                              <Divider />
-                              <ListItemButton>
-                                  <ListItemIcon>
-                                      <PersonIcon sx={{ fontSize: '1.3rem' }} />
-                                  </ListItemIcon>
-                                  <ListItemText primary={<Typography variant="subtitle1">Username</Typography>} />
-                                  <ListItemSecondaryAction>
-                                      <Typography variant="subtitle2" align="right">
-                                          { user.username }
-                                      </Typography>
-                                  </ListItemSecondaryAction>
-                              </ListItemButton>
-                          </List>
-                          <Grid container spacing={0}>
-                              <Grid item xs={4}>
-                                  <Typography align="center" variant="h3">
-                                      37
-                                  </Typography>
-                                  <Typography align="center" variant="subtitle2">
-                                      Mails
-                                  </Typography>
-                              </Grid>
-                              <Grid item xs={4}>
-                                  <Typography align="center" variant="h3">
-                                      2749
-                                  </Typography>
-                                  <Typography align="center" variant="subtitle2">
-                                      Followers
-                                  </Typography>
-                              </Grid>
-                              <Grid item xs={4}>
-                                  <Typography align="center" variant="h3">
-                                      678
-                                  </Typography>
-                                  <Typography align="center" variant="subtitle2">
-                                      Following
-                                  </Typography>
-                              </Grid>
-                          </Grid>
-                      </Grid>
-                  </Grid>
-              </SubCard>
-          </Grid>
-          <Grid item sm={6} md={8}>
-              <SubCard title="Edit Account Details">
-                  <Grid container spacing={gridSpacing}>
-                      <Grid item xs={12} md={6}>
-                          <TextField id="firstName" fullWidth label="First Name" defaultValue={user?.firstName} />
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                          <TextField id="lastName" fullWidth label="Last Name" defaultValue={user?.lastName} />
-                      </Grid>
-                      <Grid item xs={12}>
-                          <TextField id="job" fullWidth label="Job" defaultValue={user?.profile?.job} />
-                      </Grid>
-                      <Grid item xs={12}>
-                          <TextField id="location" fullWidth label="Location" defaultValue={user?.profile?.locationId} />
-                      </Grid>
-                      <Grid item xs={12}>
-                          <TextField
-                            id="description"
-                            fullWidth
-                            multiline
-                            rows={3}
-                            value={user?.profile?.description}
-                            placeholder={'Description'}
-                          />
-                      </Grid>
+  const { user : currentUser, error } = useSelector(state => state.user);
 
-                      <Grid item xs={12}>
-                          <Stack direction="row">
-                              <AnimateButton>
-                                  <Button variant="contained">Change Details</Button>
-                              </AnimateButton>
-                          </Stack>
-                      </Grid>
-                  </Grid>
-              </SubCard>
-          </Grid>
-      </Grid>
+  const [ avatar, setAvatar ] = useState(null);
+  const [ firstName, setFirstName ] = useState('');
+  const [ lastName, setLastName ] = useState('');
+  const [ job, setJob ] = useState('');
+  const [ location, setLocation ] = useState('');
+  const [ description, setDescription ] = useState('');
+  const [ errors, setErrors ] = useState({});
+
+  useEffect(() => {
+    dispatch(getUser(user._id));
+  }, [user]);
+
+  useEffect(() => {
+    setFirstName(currentUser.firstName);
+    setLastName(currentUser.lastName);
+    setJob(currentUser.job);
+    setLocation(currentUser.location);
+    setDescription(currentUser.description);
+  }, [currentUser]);
+
+  useEffect(() => {
+    setErrors(error);
+  }, [error])
+
+  const handleFileChange = ({ target }) => {
+    const fileReader = new FileReader();
+
+    fileReader.readAsDataURL(target.files[0]);
+    fileReader.onload = (e) => {
+      setAvatar(e.target.result);
+    };
+  };
+
+  const handleSaveProfileClick = () => {
+    dispatch(
+      saveProfile(
+        { firstName, lastName, job, location, description },
+        () => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: "Profile is saved successfully.",
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: false
+            })
+          )
+          dispatch(getUser(user._id));
+        }
+      )
     );
+  }
+
+  return (
+    <Grid container spacing={gridSpacing}>
+      <Grid item sm={6} md={4}>
+        <SubCard title="Profile Picture" contentSX={{ textAlign: 'center' }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Avatar alt="User 1" src={avatar || DefaultAvatar} sx={{ width: 100, height: 100, margin: '0 auto' }} />
+            </Grid>
+            {
+              !!!avatar && (
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" align="center">
+                    Upload/Change Your Profile Image
+                  </Typography>
+                </Grid>
+              )
+            }
+            <Grid item xs={12}>
+              <AnimateButton>
+                <Button variant="contained" color={!avatar ? "primary" : "secondary"} component={"label"} size="small">
+                  {
+                    !!avatar ? "Change file" : "Choose file"
+                  }
+                  <input
+                    type="file"
+                    accept=".jpg, .jpeg, .png"
+                    onChange={handleFileChange}
+                    hidden
+                  />
+                </Button>
+                {
+                  !!avatar && (
+                    <Button variant={"outlined"} size="small" onClick={() => setAvatar(null)} sx={{ marginLeft: 1 }}> Reset </Button>
+                  )
+                }
+              </AnimateButton>
+            </Grid>
+            <Grid item xs={12}>
+              <List component="nav" aria-label="main mailbox folders">
+                <ListItemButton>
+                  <ListItemIcon>
+                    <MailTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={<Typography variant="subtitle1">Email</Typography>} />
+                  <ListItemSecondaryAction>
+                    <Typography variant="subtitle2" align="right">
+                      { currentUser?.email }
+                    </Typography>
+                  </ListItemSecondaryAction>
+                </ListItemButton>
+                <Divider />
+                <ListItemButton>
+                  <ListItemIcon>
+                    <PersonIcon sx={{ fontSize: '1.3rem' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={<Typography variant="subtitle1">Username</Typography>} />
+                  <ListItemSecondaryAction>
+                    <Typography variant="subtitle2" align="right">
+                      { currentUser?.username }
+                    </Typography>
+                  </ListItemSecondaryAction>
+                </ListItemButton>
+              </List>
+              <Grid container spacing={0}>
+                <Grid item xs={6}>
+                  <Typography align="center" variant="h3">
+                    { currentUser?.followers?.length }
+                  </Typography>
+                  <Typography align="center" variant="subtitle2">
+                    Followers
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography align="center" variant="h3">
+                    { currentUser?.followings?.length }
+                  </Typography>
+                  <Typography align="center" variant="subtitle2">
+                    Following
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </SubCard>
+      </Grid>
+      <Grid item sm={6} md={8}>
+        <SubCard title="Edit Account Details">
+          <Grid container spacing={gridSpacing}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                name="firstName"
+                fullWidth
+                label="First Name"
+                value={firstName}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setFirstName(e.target.value)}
+                error={errors?.firstName}
+                helperText={errors?.firstName}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                name="lastName"
+                fullWidth
+                label="Last Name"
+                value={lastName}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setLastName(e.target.value)}
+                error={errors?.lastName}
+                helperText={errors?.lastName}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="job"
+                fullWidth
+                label="Job"
+                value={job}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setJob(e.target.value)}
+                error={errors?.job}
+                helperText={errors?.job}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="location"
+                fullWidth
+                label="Location"
+                value={location}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setLocation(e.target.value)}
+                error={errors?.location}
+                helperText={errors?.location}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="description"
+                fullWidth
+                multiline
+                rows={3}
+                value={description} InputLabelProps={{ shrink: true }}
+                placeholder={'Description'}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Stack direction="row">
+                <AnimateButton>
+                  <Button variant="contained" onClick={handleSaveProfileClick}> Save </Button>
+                </AnimateButton>
+              </Stack>
+            </Grid>
+          </Grid>
+        </SubCard>
+      </Grid>
+    </Grid>
+  );
 };
 
 export default Profile;

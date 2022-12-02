@@ -11,14 +11,13 @@ const storage = multer.diskStorage({
 })
 exports.upload = multer({ storage: storage })
 
-// const validatePostingCreate = require('../validation/posting');
-//
-// exports.create = (req, res, next) => {
-//   console.log(req.body)
-//   const { errors, isValid } = validatePostingCreate(req.body);
-//
-//   if (!isValid) {
-//     return res.status(400).json(errors);
-//   }
-//   next();
-// }
+const validateProfileSave = require('../validation/profile');
+
+exports.saveProfile = (req, res, next) => {
+  const { errors, isValid } = validateProfileSave(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+  next();
+}

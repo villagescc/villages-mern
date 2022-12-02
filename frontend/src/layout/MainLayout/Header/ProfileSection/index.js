@@ -258,7 +258,7 @@ const ProfileSection = () => {
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 1}
-                                                        onClick={(event) => handleListItemClick(event, 1, '/personal/profile/view')}
+                                                        onClick={(event) => handleListItemClick(event, 1, '/personal/profile')}
                                                     >
                                                         <ListItemIcon>
                                                             <IconUser stroke={1.5} size="20px" />

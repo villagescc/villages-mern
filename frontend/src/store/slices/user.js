@@ -117,3 +117,16 @@ export function getPostings(id) {
         }
     };
 }
+
+export function saveProfile(data, afterAction) {
+    return async () => {
+        try {
+            const response = await axios.post(`/users/profile`, data);
+            if(response.data?.success) {
+                afterAction();
+            }
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    }
+}

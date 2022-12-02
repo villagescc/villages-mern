@@ -83,3 +83,13 @@ const getUserDetail = async (id) => {
 
   return userInfo;
 }
+
+exports.saveProfile = async (req, res, next) => {
+  try {
+    const user = await getUserDetail(req.params.id);
+    res.send({ success: true, user });
+  }
+  catch(err) {
+    next(err)
+  }
+}
