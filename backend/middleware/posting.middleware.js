@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
 })
 exports.upload = multer({ storage: storage })
 
-const validatePostingCreate = require('../validation/posting');
+const { validatePostingCreate } = require('../validation');
 
 exports.create = (req, res, next) => {
   console.log(req.body)

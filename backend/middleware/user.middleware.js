@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
 })
 exports.upload = multer({ storage: storage })
 
-const validateProfileSave = require('../validation/profile');
+const { validateProfileSave, validateChangePassword } = require('../validation');
 
 exports.saveProfile = (req, res, next) => {
   const { errors, isValid } = validateProfileSave(req.body);
@@ -21,3 +21,14 @@ exports.saveProfile = (req, res, next) => {
   }
   next();
 }
+
+exports.changePassword = (req, res, next) => {
+  const { errors, isValid } = validateChangePassword(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+  next();
+}
+
+

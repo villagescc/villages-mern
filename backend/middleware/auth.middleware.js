@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const validateRegisterInput = require('../validation/register');
-const validateLoginInput = require('../validation/login');
+const { validateRegisterInput, validateLoginInput } = require('../validation');
 
 exports.register = (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);

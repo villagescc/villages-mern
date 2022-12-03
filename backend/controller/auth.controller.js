@@ -138,3 +138,41 @@ exports.login = (req, res, next) => {
       next(err);
     })
 }
+
+exports.changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  User.findOne({ _id: req.user._id })
+    .then(async user => {
+      if (!user) {
+        return res.status(400).send({
+          oldPassword: 'This credential does not exist.'
+        });
+      }
+
+      bcrypt.compare(oldPassword, user.password)
+        .then(async isMatch => {
+          if (!isMatch) {
+            return res.status(400).send({
+              oldPassword: 'Password is incorrect.'
+            });
+          }
+
+          const salt = await bcrypt.genSalt(10);
+
+          user.password = await bcrypt.hash(newPassword, salt);
+
+          user.save()
+            .then(() => res.send({ success: true}))
+            .catch(err => next(err));
+        })
+        .catch(err => {
+          console.log('bcrypt compare error', err);
+          next(err);
+        })
+    })
+    .catch(err => {
+      console.log('find user error', err);
+      next(err);
+    })
+}

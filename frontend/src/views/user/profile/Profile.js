@@ -37,11 +37,11 @@ const Profile = () => {
   }, [user]);
 
   useEffect(() => {
-    setFirstName(currentUser.firstName);
-    setLastName(currentUser.lastName);
-    setJob(currentUser.job);
-    setLocation(currentUser.location);
-    setDescription(currentUser.description);
+    setFirstName(currentUser.firstName ? currentUser.firstName : '');
+    setLastName(currentUser.lastName ? currentUser.lastName : '');
+    setJob(currentUser.job ? currentUser.job : '');
+    setLocation(currentUser.location ? currentUser.location : '');
+    setDescription(currentUser.description ? currentUser.description : '');
   }, [currentUser]);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const Profile = () => {
                 value={firstName}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setFirstName(e.target.value)}
-                error={errors?.firstName}
+                error={Boolean(errors?.firstName)}
                 helperText={errors?.firstName}
               />
             </Grid>
@@ -187,7 +187,7 @@ const Profile = () => {
                 value={lastName}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setLastName(e.target.value)}
-                error={errors?.lastName}
+                error={Boolean(errors?.lastName)}
                 helperText={errors?.lastName}
               />
             </Grid>
@@ -199,7 +199,7 @@ const Profile = () => {
                 value={job}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setJob(e.target.value)}
-                error={errors?.job}
+                error={Boolean(errors?.job)}
                 helperText={errors?.job}
               />
             </Grid>
@@ -211,7 +211,7 @@ const Profile = () => {
                 value={location}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setLocation(e.target.value)}
-                error={errors?.location}
+                error={Boolean(errors?.location)}
                 helperText={errors?.location}
               />
             </Grid>

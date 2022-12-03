@@ -130,3 +130,17 @@ export function saveProfile(data, afterAction) {
         }
     }
 }
+
+export function changePassword(data, afterAction) {
+    return async () => {
+        try {
+            const response = await axios.post(`/users/password`, data);
+            if(response.data?.success) {
+                afterAction();
+                dispatch(slice.actions.hasError({}));
+            }
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    }
+}

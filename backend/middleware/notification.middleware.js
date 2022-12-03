@@ -1,4 +1,4 @@
-const validateNotificationCreate = require('../validation/notification');
+const { validateNotificationCreate } = require('../validation');
 
 exports.create = (req, res, next) => {
   const { errors, isValid } = validateNotificationCreate(req.body);

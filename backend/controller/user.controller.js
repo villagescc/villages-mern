@@ -86,7 +86,10 @@ const getUserDetail = async (id) => {
 
 exports.saveProfile = async (req, res, next) => {
   try {
-    const user = await getUserDetail(req.params.id);
+    const { firstName, lastName, job, location, description } = req.body;
+    let user = await User.findOneAndUpdate({ _id: req.user._id }, { firstName, lastName })
+    await Profile.findOneAndUpdate({ _id: user.profile }, { job, description });
+    user = await getUserDetail(req.user._id);
     res.send({ success: true, user });
   }
   catch(err) {

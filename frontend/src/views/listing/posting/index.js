@@ -18,18 +18,17 @@ import {
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import PostingList from "../../../ui-component/cards/Skeleton/PostingList";
-import { listing_type, radius } from '../../../constant';
+import PostingList from "ui-component/cards/Skeleton/PostingList";
+import { listing_type, radius } from 'constant';
 
 // assets
 import { WithContext as ReactTags } from 'react-tag-input';
 import {Search as SearchIcon, AddCircleRounded} from "@mui/icons-material";
-import FormControlSelect from "../../../ui-component/extended/Form/FormControlSelect";
-import {useDispatch, useSelector} from "../../../store";
-import {createPost, filterPost, getCategories, getSubCategories, getTags} from "../../../store/slices/posting";
-import useAuth from "../../../hooks/useAuth";
-import PostingCard from "../../../ui-component/cards/PostingCard";
-import SubCard from "../../../ui-component/cards/SubCard";
+import FormControlSelect from "ui-component/extended/Form/FormControlSelect";
+import {useDispatch, useSelector} from "store";
+import {createPost, filterPost, getCategories, getSubCategories, getTags} from "store/slices/posting";
+import useAuth from "hooks/useAuth";
+import PostingCard from "ui-component/cards/PostingCard";
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
