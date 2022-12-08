@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 
 const PaylogSchema = new mongoose.Schema(
   {
+    payer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'account'
+    },
+    recipient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'account'
+    },
     amount: {
       type: Number,
       required: true
-    },
-    newBalance: {
-      type: Number,
-      required: true
-    },
-    accountId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'account'
     },
     paymentId: {
       type: mongoose.Schema.Types.ObjectId,

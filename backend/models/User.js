@@ -50,10 +50,6 @@ const UserSchema = new mongoose.Schema(
     profile: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'profile'
-    },
-    account: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'account'
     }
   },
   {
