@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Profile = require('../models/Profile');
+const Account = require('../models/Account');
 const { _getFollowers, _getFollowings } = require('../controller/endorsement.controller');
 const { _getBalanceById } = require('../controller/account.controller');
 
@@ -73,13 +74,13 @@ const getUserDetail = async (id) => {
   userInfo.username = user.username;
   userInfo.email = user.email;
   userInfo.memberDate = user.createdAt;
-  userInfo.location = profile.location;
-  userInfo.job = profile.job;
-  userInfo.description = profile.description;
-  userInfo.avatar = profile.avatar;
+  userInfo.location = ''; // TODO
+  userInfo.job = profile?.job;
+  userInfo.description = profile?.description;
+  userInfo.avatar = profile?.avatar;
   userInfo.followers = await _getFollowers(id);
   userInfo.followings = await _getFollowings(id);
-  userInfo.balance = await _getBalanceById(user.account);
+  userInfo.accounts = await Account.find({ userId: id });
 
   return userInfo;
 }

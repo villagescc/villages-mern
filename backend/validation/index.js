@@ -101,6 +101,25 @@ exports.validateEndorsementCreate = (data) => {
   };
 };
 
+exports.validateAccountCreate = (data) => {
+  let errors = {};
+
+  data.name = !isEmpty(data.name) ? data.name : "";
+
+  if (validator.isEmpty(data.name)) {
+    errors.name = "Account name field is required";
+  }
+
+  if (!validator.isLength(data.name, { min: 2, max: 10 })) {
+    errors.title = "Account name must be between 2 and 10 characters";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  };
+};
+
 exports.validateNotificationCreate = (data) => {
   let errors = {};
 

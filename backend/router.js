@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('./middleware/auth.middleware');
 const postMiddleware = require('./middleware/posting.middleware');
 const userMiddleware = require('./middleware/user.middleware');
+const accountMiddleware = require('./middleware/account.middleware');
 const endorsementMiddleware = require('./middleware/endorsement.middleware');
 const notificationMiddleware = require('./middleware/notification.middleware');
 
@@ -10,7 +11,9 @@ const authController = require('./controller/auth.controller');
 const baseController = require('./controller/base.controller');
 const postController = require('./controller/posting.controller');
 const userController = require('./controller/user.controller');
+const accountController = require('./controller/account.controller');
 const endorsementController = require('./controller/endorsement.controller');
+const paymentController = require('./controller/payment.controller');
 const notificationController = require('./controller/notification.controller');
 
 // ######################### AUTH ROUTER #############################
@@ -42,8 +45,11 @@ router.post('/endorsement/search', authMiddleware.auth, endorsementController.se
 router.get('/endorsement/followers/:id', endorsementController.getFollowers)
 router.get('/endorsement/followings/:id', endorsementController.getFollowings)
 
+// ######################### Account ROUTER #############################
+router.post('/account/create', authMiddleware.auth, accountMiddleware.create, accountController.create)
+
 // ######################### Payment ROUTER #############################
-// router.post('/payment/')
+router.get('/payment/getMaxLimit/:recipient', authMiddleware.auth, paymentController.getMaxLimit)
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)

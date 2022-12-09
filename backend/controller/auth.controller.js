@@ -1,14 +1,19 @@
 const User = require('../models/User');
+const Account = require('../models/Account');
 const Profile = require('../models/Profile');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 const profileController = require('./profile.controller');
+const accountController = require('./account.controller');
 const paymentController = require('./payment.controller');
 
 const _getUser = async id => {
-  return await User.findById(id).populate('profile').populate('account').exec();
+  const user = await User.findById(id).populate('profile').exec();
+  const accounts = await Account.find({ userId: user._id })
+  const userData = { ...user._doc, accounts };
+  return userData;
 }
 
 exports.getUser = async (req, res, next) => {
@@ -37,10 +42,10 @@ exports.registerUser = async (req, res, next) => {
     }
 
     profile = await profileController._createProfile({ name: `${firstName} ${lastName}` });
-    account = await paymentController._createAccount();
 
     const token = crypto.randomBytes(32).toString("hex");
-    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id, account: account.id });
+    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id });
+    account = await accountController._createAccount(user.id);
 
     const salt = await bcrypt.genSalt(10);
 
@@ -56,7 +61,7 @@ exports.registerUser = async (req, res, next) => {
   }
   catch(err) {
     if(profile) await profileController._removeProfileById(profile.id)
-    if(account) await paymentController._removeAccountById(profile.id)
+    if(account) await accountController._removeAccountById(account.id)
     if(user) await User.find({ id: user.id }).remove().exec();
     next(err)
   }
@@ -112,7 +117,13 @@ exports.login = (req, res, next) => {
 
           const userData = await _getUser(user.id)
           const payload = {
-            user: userData
+            user: {
+              _id: userData._id,
+              username: userData.username,
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              email: userData.email,
+            }
           };
 
           jwt.sign(

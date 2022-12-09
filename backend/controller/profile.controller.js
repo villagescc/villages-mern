@@ -9,5 +9,5 @@ exports._createProfile = async (data) => {
 }
 
 exports._removeProfileById = async id => {
-  return Profile.find({ id }).remove();
+  return Profile.deleteOne({ id });
 }
