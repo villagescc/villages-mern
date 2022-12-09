@@ -40,20 +40,38 @@ exports.getMaxLimit = async (req, res, next) => {
 }
 
 exports.pay = async (req, res, next) => {
-  const { recipient, amount } = req.body;
-  const sender = req.user._id;
+  const { recipient, amount, memo } = req.body;
+  const payer = req.user._id;
+  let payment;
 
   try {
-    const result = await this._getMaxFlow(sender, recipient, amount);
+    payment = await Payment.create({ amount, memo, payer, recipient });
+
+    const result = await this._getMaxFlow(payer, recipient, amount);
     if(result.success) {
-      res.send("TODO: create paylogs")
-      console.log(result.paylogs);
+      try {
+        await Paylog.insertMany(result.paylogs.map(paylog => ({ ...paylog, paymentId: payment._id })), { ordered: false });
+        payment.status = 'Completed';
+        payment.save();
+        res.send({ success: true })
+      }
+      catch(error) {
+        payment.status = 'Failed';
+        payment.save();
+        next(error);
+      }
     }
     else {
+      payment.status = 'Failed';
+      payment.save();
       res.status(400).send(result.errors);
     }
   }
   catch(err) {
+    if(payment) {
+      payment.status = 'Failed';
+      payment.save();
+    }
     next(err);
   }
 }
@@ -117,7 +135,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
     }
   }
 
-  const paylogs = graph.edges().filter(edge => graph.hasEdgeAttribute(edge, 'tempPay')).map(edge => ({from: graph.source(edge), to: graph.target(edge), amount: graph.getEdgeAttribute(edge, "tempPay")}))
+  const paylogs = graph.edges().filter(edge => graph.hasEdgeAttribute(edge, 'tempPay')).map(edge => ({payer: graph.source(edge), recipient: graph.target(edge), amount: graph.getEdgeAttribute(edge, "tempPay")}))
 
   return { success: true, maxLimit, paylogs };
 }
