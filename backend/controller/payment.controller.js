@@ -25,17 +25,64 @@ const buildGraph = async () => {
 exports.getMaxLimit = async (req, res, next) => {
   const { recipient } = req.params;
   const sender = req.user._id;
-  const maxAmount =  await this._getMaxFlow(sender, recipient)
-  res.send({ maxAmount });
+  try {
+    const result =  await this._getMaxFlow(sender, recipient)
+    if(result.success) {
+      res.send({ maxLimit: result.maxLimit, paylogs: result.paylogs });
+    }
+    else {
+      res.status(400).send(result.errors);
+    }
+  }
+  catch(error) {
+    next(error);
+  }
+}
+
+exports.pay = async (req, res, next) => {
+  const { recipient, amount } = req.body;
+  const sender = req.user._id;
+
+  try {
+    const result = await this._getMaxFlow(sender, recipient, amount);
+    if(result.success) {
+      res.send("TODO: create paylogs")
+      console.log(result.paylogs);
+    }
+    else {
+      res.status(400).send(result.errors);
+    }
+  }
+  catch(err) {
+    next(err);
+  }
 }
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
   await buildGraph();
+  if(!graph.hasNode(recipient)) {
+    return {
+      success: false,
+      errors: {
+        recipient: "This recipient has not any account"
+      }
+    }
+  }
+
+  if(sender === recipient) {
+    return {
+      success: false,
+      errors: {
+        recipient: "You cannot send to yourself."
+      }
+    }
+  }
+
   let paths = allSimplePaths(graph, sender, recipient);
   console.log(paths);
   // TODO sort for balancing routes
 
-  let maxAmount = 0;
+  let maxLimit = 0;
   let finished = false;
   for (const path of paths) {
     console.log(path.join('->'))
@@ -48,8 +95,8 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       console.log(limit)
     }
 
-    if(amount && amount - maxAmount < min) {
-      min = amount - maxAmount;
+    if(amount && amount - maxLimit < min) {
+      min = amount - maxLimit;
       finished = true;
     }
 
@@ -58,12 +105,19 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       if(tempPayAmount > 0) graph.setEdgeAttribute(path[i], path[i+1], 'tempPay', tempPayAmount)
     }
     console.log("min:", min);
-    maxAmount += min;
+    maxLimit += min;
     if(finished) break;
   }
-  console.log("maxAmount:", maxAmount)
+  console.log("maxLimit:", maxLimit)
+
+  if(amount > maxLimit) return {
+    success: false,
+    errors: {
+      amount: `You can send up to ${maxLimit}VH.`
+    }
+  }
 
   const paylogs = graph.edges().filter(edge => graph.hasEdgeAttribute(edge, 'tempPay')).map(edge => ({from: graph.source(edge), to: graph.target(edge), amount: graph.getEdgeAttribute(edge, "tempPay")}))
 
-  return { maxAmount, paylogs };
+  return { success: true, maxLimit, paylogs };
 }

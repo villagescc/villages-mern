@@ -5,6 +5,7 @@ const postMiddleware = require('./middleware/posting.middleware');
 const userMiddleware = require('./middleware/user.middleware');
 const accountMiddleware = require('./middleware/account.middleware');
 const endorsementMiddleware = require('./middleware/endorsement.middleware');
+const paymentMiddleware = require('./middleware/payment.middleware');
 const notificationMiddleware = require('./middleware/notification.middleware');
 
 const authController = require('./controller/auth.controller');
@@ -50,6 +51,7 @@ router.post('/account/create', authMiddleware.auth, accountMiddleware.create, ac
 
 // ######################### Payment ROUTER #############################
 router.get('/payment/getMaxLimit/:recipient', authMiddleware.auth, paymentController.getMaxLimit)
+router.post('/payment/pay', authMiddleware.auth, paymentMiddleware.pay, paymentController.pay)
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)

@@ -54,7 +54,7 @@ exports.createPost = async (req, res, next) => {
       price: req.body.price,
       listingType: req.body.type,
       photo: uploadFile ? uploadFile.filename : null,
-      userId: req.user.id,
+      userId: req.user._id,
       subcategoryId: req.body.subCategory,
       description: req.body.description,
       tags: tagId,
