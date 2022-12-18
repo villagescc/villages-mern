@@ -12,6 +12,7 @@ import snackbarReducer from './slices/snackbar';
 import customerReducer from './slices/customer';
 import endorsementReducer from './slices/endorsement';
 import paymentReducer from './slices/payment';
+import graphReducer from './slices/graph';
 import productReducer from './slices/product';
 import chatReducer from './slices/chat';
 import calendarReducer from './slices/calendar';
@@ -38,6 +39,7 @@ const reducer = combineReducers({
     customer: customerReducer,
     endorsement: endorsementReducer,
     payment: paymentReducer,
+    graph: graphReducer,
     notification: notificationReducer,
     product: productReducer,
     chat: chatReducer,

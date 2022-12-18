@@ -2521,6 +2521,25 @@
   "resolved" "https://registry.npmjs.org/@react-dnd/shallowequal/-/shallowequal-2.0.0.tgz"
   "version" "2.0.0"
 
+"@react-sigma/core@^3.1.0":
+  "integrity" "sha512-b/Jq91WGTBIdQrD+Z34BASkn+mXRVLiLyxJS/n5Q9wPKjiIt6qlaqpbjdgj1sN8C7w3brA0+bAMl1ZnGjxOuIg=="
+  "resolved" "https://registry.npmjs.org/@react-sigma/core/-/core-3.1.0.tgz"
+  "version" "3.1.0"
+
+"@react-sigma/layout-core@^3.1.0":
+  "integrity" "sha512-uiRaP60zg+y1lcING8yv1EeO/7Ws/B8oFVtDyTNnLdaoSK5VssMR3g4wYMb7JrsI6W2jl4iRJ+RZtS+Fbjc6ig=="
+  "resolved" "https://registry.npmjs.org/@react-sigma/layout-core/-/layout-core-3.1.0.tgz"
+  "version" "3.1.0"
+  dependencies:
+    "@react-sigma/core" "^3.1.0"
+
+"@react-sigma/layout-forceatlas2@^3.1.0":
+  "integrity" "sha512-sHHAdR/MtjgFNfyHpupPO80kPSFHOigt7m5ps3iCuQylLoLWadiibck56CX2HHAIOWHkb4qFqATg98uN5gi1RA=="
+  "resolved" "https://registry.npmjs.org/@react-sigma/layout-forceatlas2/-/layout-forceatlas2-3.1.0.tgz"
+  "version" "3.1.0"
+  dependencies:
+    "@react-sigma/layout-core" "^3.1.0"
+
 "@reduxjs/toolkit@^1.8.5":
   "integrity" "sha512-f4D5EXO7A7Xq35T0zRbWq5kJQyXzzscnHKmjnu2+37B3rwHU6mX9PYlbfXdnxcY6P/7zfmjhgan0Z+yuOfeBmA=="
   "resolved" "https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-1.8.5.tgz"
@@ -3312,6 +3331,11 @@
   "integrity" "sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ=="
   "resolved" "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   "version" "4.2.2"
+
+"@yomguithereal/helpers@^1.1.1":
+  "integrity" "sha512-UYvAq/XCA7xoh1juWDYsq3W0WywOB+pz8cgVnE1b45ZfdMhBvHDrgmSFG3jXeZSr2tMTYLGHFHON+ekG05Jebg=="
+  "resolved" "https://registry.npmjs.org/@yomguithereal/helpers/-/helpers-1.1.1.tgz"
+  "version" "1.1.1"
 
 "a11y-focus-store@^1.0.0":
   "integrity" "sha1-rlJWHLhq5sKQTBpKvy5YIL9TBbA= sha512-N07kBzfvJuQrYFck3C+N7QFrzqaIZB+gVcm9apVGAjDHfaMkPjgex6EpRRz12mGps898Og5AYycH2xDdbbuaLg=="
@@ -5782,7 +5806,7 @@
   "resolved" "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz"
   "version" "4.0.7"
 
-"events@^3.2.0":
+"events@^3.2.0", "events@^3.3.0":
   "integrity" "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="
   "resolved" "https://registry.npmjs.org/events/-/events-3.3.0.tgz"
   "version" "3.3.0"
@@ -6446,6 +6470,54 @@
   "integrity" "sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ=="
   "resolved" "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz"
   "version" "1.0.4"
+
+"graphology-canvas@^0.4.1":
+  "integrity" "sha512-YWnE9UwEM5YHBta9q+YFBp2dTcP8dTFVNfR/0ZgDqZvdn9Qs05GdlXOdaTxS6ehOEPkSiMZSZwwp0obeMf3PEg=="
+  "resolved" "https://registry.npmjs.org/graphology-canvas/-/graphology-canvas-0.4.1.tgz"
+  "version" "0.4.1"
+  dependencies:
+    "graphology-layout" "0.6.0"
+    "graphology-utils" "^2.0.0"
+
+"graphology-layout-force@^0.2.4":
+  "integrity" "sha512-NYZz0YAnDkn5pkm30cvB0IScFoWGtbzJMrqaiH070dYlYJiag12Oc89dbVfaMaVR/w8DMIKxn/ix9Bqj+Umm9Q=="
+  "resolved" "https://registry.npmjs.org/graphology-layout-force/-/graphology-layout-force-0.2.4.tgz"
+  "version" "0.2.4"
+  dependencies:
+    "graphology-utils" "^2.4.2"
+
+"graphology-layout-forceatlas2@^0.10.1":
+  "integrity" "sha512-ogzBeF1FvWzjkikrIFwxhlZXvD2+wlY54lqhsrWprcdPjopM2J9HoMweUmIgwaTvY4bUYVimpSsOdvDv1gPRFQ=="
+  "resolved" "https://registry.npmjs.org/graphology-layout-forceatlas2/-/graphology-layout-forceatlas2-0.10.1.tgz"
+  "version" "0.10.1"
+  dependencies:
+    "graphology-utils" "^2.1.0"
+
+"graphology-layout@0.6.0":
+  "integrity" "sha512-QZIminJVOqOFHBOf6qEjcMp0m+BNP4/XqY1jrnJhH+fmUHFtNDdTPSXYhVa8Hr3AN5bOPP1Zte5oY1ZzOyzhvA=="
+  "resolved" "https://registry.npmjs.org/graphology-layout/-/graphology-layout-0.6.0.tgz"
+  "version" "0.6.0"
+  dependencies:
+    "graphology-utils" "^2.3.0"
+    "pandemonium" "^1.5.0"
+
+"graphology-types@>=0.19.0", "graphology-types@>=0.20.0", "graphology-types@>=0.23.0", "graphology-types@>=0.24.0":
+  "integrity" "sha512-m8FVoj9b6MwIaTN+/AvoxXhcK5n0uSe7ZnhbQNTcjh94vzN6m5hU501LihtCfRjF35QEMVrXYOrTNO0wAR1Gxw=="
+  "resolved" "https://registry.npmjs.org/graphology-types/-/graphology-types-0.24.5.tgz"
+  "version" "0.24.5"
+
+"graphology-utils@^2.0.0", "graphology-utils@^2.1.0", "graphology-utils@^2.3.0", "graphology-utils@^2.4.2", "graphology-utils@^2.5.0":
+  "integrity" "sha512-ckHg8MXrXJkOARk56ZaSCM1g1Wihe2d6iTmz1enGOz4W/l831MBCKSayeFQfowgF8wd+PQ4rlch/56Vs/VZLDQ=="
+  "resolved" "https://registry.npmjs.org/graphology-utils/-/graphology-utils-2.5.2.tgz"
+  "version" "2.5.2"
+
+"graphology@^0.25.1":
+  "integrity" "sha512-yYA7BJCcXN2DrKNQQ9Qf22zBHm/yTbyBR71T1MYBbGtywNHsv0QZtk8zaR6zxNcp2hCCZayUkHp9DyMSZCpoxQ=="
+  "resolved" "https://registry.npmjs.org/graphology/-/graphology-0.25.1.tgz"
+  "version" "0.25.1"
+  dependencies:
+    "events" "^3.3.0"
+    "obliterator" "^2.0.2"
 
 "gzip-size@^6.0.0":
   "integrity" "sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q=="
@@ -9047,6 +9119,11 @@
     "define-properties" "^1.1.3"
     "es-abstract" "^1.19.1"
 
+"obliterator@^2.0.2":
+  "integrity" "sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ=="
+  "resolved" "https://registry.npmjs.org/obliterator/-/obliterator-2.0.4.tgz"
+  "version" "2.0.4"
+
 "obuf@^1.0.0", "obuf@^1.1.2":
   "integrity" "sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg=="
   "resolved" "https://registry.npmjs.org/obuf/-/obuf-1.1.2.tgz"
@@ -9189,6 +9266,11 @@
   "integrity" "sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw=="
   "resolved" "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
   "version" "1.0.11"
+
+"pandemonium@^1.5.0":
+  "integrity" "sha512-9PU9fy93rJhZHLMjX+4M1RwZPEYl6g7DdWKGmGNhkgBZR5+tOBVExNZc00kzdEGMxbaAvWdQy9MqGAScGwYlcA=="
+  "resolved" "https://registry.npmjs.org/pandemonium/-/pandemonium-1.5.0.tgz"
+  "version" "1.5.0"
 
 "param-case@^3.0.4":
   "integrity" "sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A=="
@@ -10304,7 +10386,7 @@
     "fast-deep-equal" "^3.1.3"
     "hoist-non-react-statics" "^3.3.2"
 
-"react-dom@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^0.14 || ^15.0.0-rc || ^15.0.0 || ^16.0.0-rc || ^16.0.0 || ^17.0.0", "react-dom@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^16 || ^17", "react-dom@^16.2.0 || ^17.0.0", "react-dom@^16.7.0 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.5 || ^17.0.0 || ^18.0.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2", "react-dom@^17.0.2 || ^18.0.0", "react-dom@^18.0.0", "react-dom@^18.2.0", "react-dom@>= 16.12.0", "react-dom@>= 16.3.0", "react-dom@>=0.14.0", "react-dom@>=0.16.8", "react-dom@>=16.3.3", "react-dom@>=16.6.0", "react-dom@>=16.8", "react-dom@>=16.8.0", "react-dom@0.13.x || 0.14.x || ^15.0.0-0 || 15.x.x || ^16.0.0-0 || ^16.x.x || ^17.x.x || ^18.x.x", "react-dom@0.14.x || ^15.0.0 || ^16.0.0", "react-dom@17.0.2 || ^18.2.0":
+"react-dom@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^0.14 || ^15.0.0-rc || ^15.0.0 || ^16.0.0-rc || ^16.0.0 || ^17.0.0", "react-dom@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^16 || ^17", "react-dom@^16.2.0 || ^17.0.0", "react-dom@^16.7.0 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.5 || ^17.0.0 || ^18.0.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2", "react-dom@^17.0.2 || ^18.0.0", "react-dom@^18.0.0", "react-dom@^18.2.0", "react-dom@>= 16.12.0", "react-dom@>= 16.3.0", "react-dom@>=0.14.0", "react-dom@>=0.16.8", "react-dom@>=15.3", "react-dom@>=16.3.3", "react-dom@>=16.6.0", "react-dom@>=16.8", "react-dom@>=16.8.0", "react-dom@0.13.x || 0.14.x || ^15.0.0-0 || 15.x.x || ^16.0.0-0 || ^16.x.x || ^17.x.x || ^18.x.x", "react-dom@0.14.x || ^15.0.0 || ^16.0.0", "react-dom@17.0.2 || ^18.2.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
@@ -10645,6 +10727,11 @@
   optionalDependencies:
     "fsevents" "^2.3.2"
 
+"react-sigma@^1.2.35":
+  "integrity" "sha512-amjKjaQusefDp8dD9er3wE/lfubSQT5fJSRF4SsS0LjxRue4bpSapAQ1WpmSM6nQEgawbrKel+bQBmatl7MAIw=="
+  "resolved" "https://registry.npmjs.org/react-sigma/-/react-sigma-1.2.35.tgz"
+  "version" "1.2.35"
+
 "react-slick@^0.29.0":
   "integrity" "sha512-TGdOKE+ZkJHHeC4aaoH85m8RnFyWqdqRfAGkhd6dirmATXMZWAxOpTLmw2Ll/jPTQ3eEG7ercFr/sbzdeYCJXA=="
   "resolved" "https://registry.npmjs.org/react-slick/-/react-slick-0.29.0.tgz"
@@ -10736,7 +10823,7 @@
     "@babel/runtime" "^7.0.0"
     "memoize-one" ">=3.1.1 <6"
 
-"react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14 || ^15.0.0-rc || ^15.0.0 || ^16.0.0-rc || ^16.0.0 || ^17.0.0", "react@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14.9 || ^15.3.0 || ^16.0.0", "react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0", "react@^15.3.0 || ^16.0.0 || ^17.0.0", "react@^15.3.0 || 16 || 17 || 18", "react@^16 || ^17", "react@^16.2.0 || ^17.0.0", "react@^16.6.0 || 17 || 18", "react@^16.7.0 || ^17 || ^18", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.3 || ^17", "react@^16.8.5 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^16.x || 17.x || 18.x", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@^17.0.2 || ^18.2.0", "react@^18.0.0", "react@^18.2.0", "react@>= 0.14.0", "react@>= 16", "react@>= 16.12.0", "react@>= 16.14", "react@>= 16.3.0", "react@>= 16.8 || 18.0.0", "react@>= 16.8.0", "react@>=0.13", "react@>=0.14.0", "react@>=0.16.8", "react@>=16", "react@>=16.3.3", "react@>=16.4.1", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@0.13.x || 0.14.x || ^15.0.0-0 || 15.x.x || ^16.0.0-0 || ^16.x.x || ^17.x.x || ^18.x.x", "react@0.14 || 15 || 16 || 17", "react@0.14.x || ^15.0.0 || ^16.0.0":
+"react@^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14 || ^15.0.0-rc || ^15.0.0 || ^16.0.0-rc || ^16.0.0 || ^17.0.0", "react@^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^0.14.9 || ^15.3.0 || ^16.0.0", "react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0", "react@^15.3.0 || ^16.0.0 || ^17.0.0", "react@^15.3.0 || 16 || 17 || 18", "react@^16 || ^17", "react@^16.2.0 || ^17.0.0", "react@^16.6.0 || 17 || 18", "react@^16.7.0 || ^17 || ^18", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.3 || ^17", "react@^16.8.5 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^16.x || 17.x || 18.x", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@^17.0.2 || ^18.2.0", "react@^18.0.0", "react@^18.2.0", "react@>= 0.14.0", "react@>= 16", "react@>= 16.12.0", "react@>= 16.14", "react@>= 16.3.0", "react@>= 16.8 || 18.0.0", "react@>= 16.8.0", "react@>=0.13", "react@>=0.14.0", "react@>=0.16.8", "react@>=15.3", "react@>=16", "react@>=16.3.3", "react@>=16.4.1", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@0.13.x || 0.14.x || ^15.0.0-0 || 15.x.x || ^16.0.0-0 || ^16.x.x || ^17.x.x || ^18.x.x", "react@0.14 || 15 || 16 || 17", "react@0.14.x || ^15.0.0 || ^16.0.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"
@@ -11347,6 +11434,15 @@
     "call-bind" "^1.0.0"
     "get-intrinsic" "^1.0.2"
     "object-inspect" "^1.9.0"
+
+"sigma@^2.4.0":
+  "integrity" "sha512-spi4C+c3cjlhCklT+RvAxJJcarMmjRpF6RPNvBIBYDduALq8iSNm7FwSpijQNGtI+ryeZ2EfvyBNLp36OFaZiw=="
+  "resolved" "https://registry.npmjs.org/sigma/-/sigma-2.4.0.tgz"
+  "version" "2.4.0"
+  dependencies:
+    "@yomguithereal/helpers" "^1.1.1"
+    "events" "^3.3.0"
+    "graphology-utils" "^2.5.0"
 
 "signal-exit@^3.0.2", "signal-exit@^3.0.3":
   "integrity" "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="

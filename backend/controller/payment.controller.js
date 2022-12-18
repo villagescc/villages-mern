@@ -1,6 +1,7 @@
 const Graph = require('graphology');
 const { allSimplePaths } = require('graphology-simple-path');
 
+const User = require('../models/User');
 const Account = require('../models/Account');
 const Payment = require('../models/Payment');
 const Endorsement = require('../models/Endorsement');
@@ -10,16 +11,46 @@ let graph;
 
 const buildGraph = async () => {
   graph = new Graph();
+  const users = await User.find();
+  for (let user of users) {
+    graph.addNode(user.id, {
+      ...user._doc
+    });
+  }
+  // layout manually
+  // graph.nodes().forEach((node, i) => {
+  //   const angle = (i * 2 * Math.PI) / graph.order;
+  //   graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
+  //   graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+  // });
   const endorsements = await Endorsement.find();
   endorsements.forEach(endorsement => {
-    graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, { trust: endorsement.weight });
+    graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, { limit: endorsement.weight });
   })
   const paylogs = await Paylog.find().populate('paymentId').exec();
   paylogs.forEach(paylog => {
     if(paylog.paymentId.status === 'Completed') {
-      graph.mergeEdge(paylog.endorserId, paylog.recipientId, { pay: paylog.amount });
+      if(graph.hasEdge(paylog.recipient, paylog.payer))
+        graph.updateEdgeAttribute(paylog.recipient, paylog.payer, 'limit', limit => (limit || 0) + paylog.amount);
+      else
+        graph.mergeEdge(paylog.recipient, paylog.payer, { limit: paylog.amount });
+
+      if(graph.hasEdge(paylog.payer, paylog.recipient))
+        graph.updateEdgeAttribute(paylog.payer, paylog.recipient, 'limit', limit => (limit || 0) - paylog.amount);
+      else
+        graph.mergeEdge(paylog.payer, paylog.recipient, { limit: -paylog.amount });
     }
   })
+}
+
+exports.getGraph = async (req, res, next) => {
+  try {
+    await buildGraph();
+    res.send(graph);
+  }
+  catch(err) {
+    next(err);
+  }
 }
 
 exports.getMaxLimit = async (req, res, next) => {
@@ -51,9 +82,10 @@ exports.pay = async (req, res, next) => {
     if(result.success) {
       try {
         await Paylog.insertMany(result.paylogs.map(paylog => ({ ...paylog, paymentId: payment._id })), { ordered: false });
+
         payment.status = 'Completed';
         payment.save();
-        res.send({ success: true })
+        res.send({ success: true, paylogs: result.paylogs })
       }
       catch(error) {
         payment.status = 'Failed';
@@ -107,7 +139,8 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
     let min;
     for(let i=0; i<path.length-1; i++) {
       let limit =
-        (graph.hasEdge(path[i], path[i+1]) && graph.getEdgeAttribute(path[i], path[i+1], 'trust') ? parseFloat(graph.getEdgeAttribute(path[i], path[i+1], 'trust')) : 0) - (graph.hasEdge(path[i], path[i+1]) && graph.getEdgeAttribute(path[i], path[i+1], 'pay') ? parseFloat(graph.getEdgeAttribute(path[i], path[i+1], 'pay')) : 0) + (graph.hasEdge(path[i+1], path[i]) && graph.getEdgeAttribute(path[i+1], path[i], 'pay') ? parseFloat(graph.getEdgeAttribute(path[i+1], path[i], 'pay')) : 0) - (graph.hasEdge(path[i], path[i+1]) && graph.getEdgeAttribute(path[i], path[i+1], 'tempPay') ? parseFloat(graph.getEdgeAttribute(path[i], path[i+1], 'tempPay')) : 0)
+        (graph.hasEdge(path[i], path[i+1]) && graph.getEdgeAttribute(path[i], path[i+1], 'limit') ? parseFloat(graph.getEdgeAttribute(path[i], path[i+1], 'limit')) : 0)
+        - (graph.hasEdge(path[i], path[i+1]) && graph.getEdgeAttribute(path[i], path[i+1], 'tempPay') ? parseFloat(graph.getEdgeAttribute(path[i], path[i+1], 'tempPay')) : 0)
       if(i === 0) min = limit;
       else min = min < limit ? min : limit
       console.log(limit)

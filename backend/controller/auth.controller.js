@@ -87,7 +87,7 @@ exports.verifyToken = async (req, res, next) => {
 exports.login = (req, res, next) => {
   const { password, email } = req.body;
 
-  User.findOne({ $or: [ { email }, { username: email } ] })
+  User.findOne({ $or: [ { email }, { username: email } ] }).select('+password')
     .then(async user => {
       if (!user) {
         return res.status(400).send({
