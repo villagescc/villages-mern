@@ -28,6 +28,8 @@ Navigate to frontend folder and install modules.
 cd frontend 
 yarn install 
 ```
+## Setting up .env variables
+Navigate to backend and frontend folder and fill the setting variables in .env file.
 ## Running Server
 Navigate to backend folder and run server as dev mode.
 ``` language
