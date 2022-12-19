@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      default: false
+      default: true // TODO mail verification
     },
     isStaff: {
       type: Boolean,
