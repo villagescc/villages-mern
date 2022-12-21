@@ -264,9 +264,6 @@ const AuthRegister = ({ ...others }) => {
                                 }
                                 inputProps={{}}
                             />
-                            {
-                                console.log(errors)
-                            }
                             {touched.password2 && errors.password2 && (
                                 <FormHelperText error id="standard-weight-helper-text-password2-register">
                                     {errors.password2}

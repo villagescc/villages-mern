@@ -6,16 +6,13 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user"
     },
-    name: {
-      type: String
-    },
     balance: {
       type: Number,
       default: 0
     },
     isActive: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   {

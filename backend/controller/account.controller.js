@@ -13,27 +13,10 @@ exports._getBalanceById = (id) => {
   return account.balance ? account.balance : 0;
 }
 
-exports._createAccount = async (userId, name="Default") => {
-  try {
-    const oldAccount = await Account.find({ userId, name });
-    if(oldAccount.length > 0) return {
-      success: false,
-      error: {
-        msg: "This account name exists already."
-      }
-    }
-    const account = await Account.create({ userId, name });
-    return {
-      success: true,
-      account
-    }
-  }
-  catch(error) {
-    return {
-      success: false,
-      error
-    }
-  }
+exports._createAccount = async () => {
+  const account = await Account.create({});
+
+  return account;
 }
 
 exports._removeAccountById = id => {

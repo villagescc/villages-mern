@@ -48,34 +48,34 @@ const JWTContext = createContext(null);
 export const JWTProvider = ({ children }) => {
     const [state, dispatch] = useReducer(accountReducer, initialState);
 
-    useEffect(() => {
-        const init = async () => {
-            try {
-                const serviceToken = window.localStorage.getItem('serviceToken');
-                if (serviceToken && verifyToken(serviceToken)) {
-                    setSession(serviceToken);
-                    const response = await axios.get('/auth');
-                    const user = response.data;
-                    dispatch({
-                        type: LOGIN,
-                        payload: {
-                            isLoggedIn: true,
-                            user
-                        }
-                    });
-                } else {
-                    dispatch({
-                        type: LOGOUT
-                    });
-                }
-            } catch (err) {
-                console.error(err);
+    const init = async () => {
+        try {
+            const serviceToken = window.localStorage.getItem('serviceToken');
+            if (serviceToken && verifyToken(serviceToken)) {
+                setSession(serviceToken);
+                const response = await axios.get('/auth');
+                const user = response.data;
+                dispatch({
+                    type: LOGIN,
+                    payload: {
+                        isLoggedIn: true,
+                        user
+                    }
+                });
+            } else {
                 dispatch({
                     type: LOGOUT
                 });
             }
-        };
+        } catch (err) {
+            console.error(err);
+            dispatch({
+                type: LOGOUT
+            });
+        }
+    };
 
+    useEffect(() => {
         init();
     }, []);
 
@@ -83,13 +83,14 @@ export const JWTProvider = ({ children }) => {
         const response = await axios.post('/auth/login', { email, password });
         const { serviceToken, user } = response.data;
         setSession(serviceToken);
-        dispatch({
-            type: LOGIN,
-            payload: {
-                isLoggedIn: true,
-                user
-            }
-        });
+        // dispatch({
+        //     type: LOGIN,
+        //     payload: {
+        //         isLoggedIn: true,
+        //         user
+        //     }
+        // });
+        init();
     };
 
     const register = async (email, password, password2, firstName, lastName, username) => {

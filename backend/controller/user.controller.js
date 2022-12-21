@@ -65,7 +65,7 @@ exports.getOne = async (req, res, next) => {
 
 const getUserDetail = async (id) => {
   let userInfo = {}
-  const user = await User.findById(id);
+  const user = await User.findById(id).populate("account").exec();
   const profile = await Profile.findById(user.profile)
 
   userInfo.id = id;
@@ -80,7 +80,7 @@ const getUserDetail = async (id) => {
   userInfo.avatar = profile?.avatar;
   userInfo.followers = await _getFollowers(id);
   userInfo.followings = await _getFollowings(id);
-  userInfo.accounts = await Account.find({ userId: id });
+  // userInfo.accounts = await Account.find({ userId: id });
 
   return userInfo;
 }

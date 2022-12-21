@@ -10,10 +10,8 @@ const accountController = require('./account.controller');
 const paymentController = require('./payment.controller');
 
 const _getUser = async id => {
-  const user = await User.findById(id).populate('profile').exec();
-  const accounts = await Account.find({ userId: user._id })
-  const userData = { ...user._doc, accounts };
-  return userData;
+  const user = await User.findById(id).populate('profile').populate('account').exec();
+  return user;
 }
 
 exports.getUser = async (req, res, next) => {
@@ -42,10 +40,10 @@ exports.registerUser = async (req, res, next) => {
     }
 
     profile = await profileController._createProfile({ name: `${firstName} ${lastName}` });
+    account = await accountController._createAccount();
 
     const token = crypto.randomBytes(32).toString("hex");
-    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id });
-    account = await accountController._createAccount(user.id);
+    user = new User({ password, username, firstName, lastName, email, token, profile: profile.id, account: account.id });
 
     const salt = await bcrypt.genSalt(10);
 
