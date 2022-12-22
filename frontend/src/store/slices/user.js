@@ -118,10 +118,11 @@ export function getPostings(id) {
     };
 }
 
-export function uploadAvatar(data) {
+export function uploadAvatar(data, successAction) {
     return async () => {
         try {
             const response = await axios.post(`/users/avatar`, data);
+            successAction();
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

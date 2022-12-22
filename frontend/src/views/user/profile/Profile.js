@@ -15,13 +15,12 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "store";
 import {getUser, saveProfile, uploadAvatar} from "store/slices/user";
 import {openSnackbar} from "store/slices/snackbar";
-import DefaultPostingIcon from "../../../assets/images/posting/default.png";
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const { user, init } = useAuth();
 
   const { user : currentUser, error } = useSelector(state => state.user);
 
@@ -59,7 +58,7 @@ const Profile = () => {
 
       const data = new FormData();
       data.append('file', target.files[0])
-      dispatch(uploadAvatar(data))
+      dispatch(uploadAvatar(data, init))
     };
   };
 
