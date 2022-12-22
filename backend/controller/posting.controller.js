@@ -34,6 +34,14 @@ exports.searchPosts = async (req, res, next) => {
           model: 'category'
         }
       })
+      .populate({
+        path: 'userId',
+        model: 'user',
+        populate: {
+          path: 'profile',
+          model: 'profile'
+        }
+      })
       .populate('tags')
       .exec();
     res.send({ total, posts: lists })
