@@ -10,6 +10,7 @@ import EmptyCard from 'ui-component/cards/EmptyCard'
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getPostings } from 'store/slices/user';
+import Empty from "../../../../ui-component/Empty";
 
 // ==============================|| SOCIAL PROFILE - GALLERY ||============================== //
 
@@ -25,9 +26,12 @@ const Postings = ({ user }) => {
         dispatch(getPostings(user.id));
     }, []);
 
-    let postingsResult = <EmptyCard />;
-    console.log(postings);
-    if (postings) {
+    let postingsResult = (
+      <Grid item container>
+          <Empty />
+      </Grid>
+    );
+    if (postings.length > 0) {
         postingsResult = postings.map((item, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                 <PostingCard
@@ -52,7 +56,6 @@ const Postings = ({ user }) => {
         >
             <Grid container direction="row" spacing={gridSpacing}>
                 {postingsResult}
-                <EmptyCard />
             </Grid>
         </MainCard>
     );

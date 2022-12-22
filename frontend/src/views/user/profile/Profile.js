@@ -33,7 +33,7 @@ const Profile = () => {
   const [ errors, setErrors ] = useState({});
 
   useEffect(() => {
-    dispatch(getUser(user._id));
+    dispatch(getUser(user?._id));
   }, [user]);
 
   useEffect(() => {
