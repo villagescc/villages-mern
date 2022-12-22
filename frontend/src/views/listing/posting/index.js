@@ -304,6 +304,7 @@ const Posting = () => {
                           title={post.title}
                           description={post.description}
                           own={post.userId === user?._id}
+                          author={post.userId}
                           onDelete={() => handleDeletePostClick(post)}
                           onEdit={() => handleEditPostClick(post)}
                         />

@@ -17,6 +17,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import useAuth from "../../hooks/useAuth";
+import React from "react";
+import {Link} from "react-router-dom";
 
 // styles
 const DeleteWrapper = styled(Button)({
@@ -91,79 +93,79 @@ const MessageWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ avatar, title, post, description, own, ...other }) => {
+const PostingCard = ({ avatar, title, post, author, description, own, ...other }) => {
     const theme = useTheme();
     const postImage = post ? 'http://localhost:5000/upload/posting/'+post : DefaultPostingIcon;
     const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : DefaultUserIcon;
 
     return (
-        <Card
-            sx={{
-                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
-                border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
-                borderColor: theme.palette.grey[100],
-                textAlign: 'center',
-            }}
-        >
-            <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
-            <CardContent sx={{ p: 2, pb: '16px !important' }}>
-                <Grid container spacing={gridSpacing} >
-                    <Grid item xs={12}>
-                        <Grid container spacing={gridSpacing}>
-                            <Grid item xs={12}>
-                                <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+      <Card
+        sx={{
+            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+            border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
+            borderColor: theme.palette.grey[100],
+            textAlign: 'center',
+        }}
+      >
+          <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
+          <CardContent sx={{ p: 2, pb: '16px !important' }}>
+              <Grid container spacing={gridSpacing} >
+                  <Grid item xs={12}>
+                      <Grid container spacing={gridSpacing}>
+                          <Grid item xs={12}>
+                              <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+                          </Grid>
+                      </Grid>
+                  </Grid>
+                  <Grid item xs={12} alignItems="center">
+                      <Grid container spacing={1}>
+                          <Grid item xs={12} sx={{ height: 50 }}>
+                              <Typography variant="h4">{title.length > 30 ? title.substring(0, 30) + "..." : title}</Typography>
+                          </Grid>
+                          <Grid item xs={12} sx={{ height: 100 }}>
+                              <Typography variant="body2">{description.length > 100 ? description.substring(0, 100) + "..." : description}</Typography>
+                          </Grid>
+                      </Grid>
+                  </Grid>
+                  <Grid item xs={12}>
+                      {
+                          own ? (
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <DeleteWrapper fullWidth>
+                                        <DeleteIcon onClick={other?.onDelete} />
+                                    </DeleteWrapper>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <EditWrapper fullWidth>
+                                        <EditIcon onClick={other?.onEdit} />
+                                    </EditWrapper>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} alignItems="center">
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sx={{ height: 50 }}>
-                                <Typography variant="h4">{title.length > 30 ? title.substring(0, 30) + "..." : title}</Typography>
+                          ) : (
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={4}>
+                                    <TrustWrapper fullWidth component={Link} to={`/ripple/trust/${author}`}>
+                                        <FavoriteIcon />
+                                    </TrustWrapper>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <PaymentWrapper fullWidth component={Link} to={`/ripple/pay/${author}`}>
+                                        <CurrencyExchangeIcon />
+                                    </PaymentWrapper>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <MessageWrapper fullWidth>
+                                        <ChatIcon />
+                                    </MessageWrapper>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} sx={{ height: 100 }}>
-                                <Typography variant="body2">{description.length > 100 ? description.substring(0, 100) + "..." : description}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {
-                            own ? (
-                              <Grid container spacing={2}>
-                                  <Grid item xs={12} md={6}>
-                                      <DeleteWrapper fullWidth>
-                                          <DeleteIcon onClick={other?.onDelete} />
-                                      </DeleteWrapper>
-                                  </Grid>
-                                  <Grid item xs={12} md={6}>
-                                      <EditWrapper fullWidth>
-                                          <EditIcon onClick={other?.onEdit} />
-                                      </EditWrapper>
-                                  </Grid>
-                              </Grid>
-                            ) : (
-                              <Grid container spacing={2}>
-                                  <Grid item xs={12} md={4}>
-                                      <TrustWrapper fullWidth>
-                                          <FavoriteIcon />
-                                      </TrustWrapper>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                      <PaymentWrapper fullWidth>
-                                          <CurrencyExchangeIcon />
-                                      </PaymentWrapper>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                      <MessageWrapper fullWidth>
-                                          <ChatIcon />
-                                      </MessageWrapper>
-                                  </Grid>
-                              </Grid>
-                            )
-                        }
-                    </Grid>
-                </Grid>
-            </CardContent>
-        </Card>
+                          )
+                      }
+                  </Grid>
+              </Grid>
+          </CardContent>
+      </Card>
     );
 };
 
