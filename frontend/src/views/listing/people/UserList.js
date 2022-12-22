@@ -24,6 +24,7 @@ import moment from 'moment';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
+import DefaultAvatar from "../../../assets/images/auth/default.png";
 
 // ==============================|| USER LIST 2 ||============================== //
 
@@ -69,7 +70,13 @@ const UserList = ({ users }) => {
               <TableCell>
                 <Grid container spacing={2}>
                   <Grid item>
-                    <Avatar alt={user.username} src={user.image} sx={{ width: 60, height: 60 }} component={Link} to={`/listing/person/${user.id}`}/>
+                    <Avatar
+                      alt={user.username}
+                      src={user.avatar ? 'http://localhost:5000/upload/avatar/'+user.avatar : DefaultAvatar}
+                      sx={{ width: 60, height: 60 }}
+                      component={Link}
+                      to={`/listing/person/${user.id}`}
+                    />
                   </Grid>
                   <Grid item sm zeroMinWidth>
                     <Grid container spacing={1}>
@@ -140,7 +147,11 @@ const UserList = ({ users }) => {
                       >
                         {
                           user.followers.map((each, index) => (
-                            <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
+                            <Avatar
+                              alt={each.username}
+                              src={each.profile.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile.avatar : DefaultAvatar}
+                              tooltip={each.username}
+                              key={index} />
                           ))
                         }
                         {
@@ -166,7 +177,12 @@ const UserList = ({ users }) => {
                       >
                         {
                           user.followings.map((each, index) => (
-                            <Avatar alt={each.username} src={each?.profile?.avatar} tooltip={each.username} key={index} />
+                            <Avatar
+                              alt={each.username}
+                              src={each.profile.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile.avatar : DefaultAvatar}
+                              tooltip={each.username}
+                              key={index}
+                            />
                           ))
                         }
                         {
