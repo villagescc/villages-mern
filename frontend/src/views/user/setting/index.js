@@ -71,7 +71,8 @@ const Index = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={true}
+                    checked={notificationCheck}
+                    onChange={() => setNotificationCheck(!notificationCheck)}
                     name="checked"
                     color="primary"
                   />
@@ -83,7 +84,8 @@ const Index = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={true}
+                    checked={updateCheck}
+                    onChange={() => setUpdateCheck(!updateCheck)}
                     name="checked"
                     color="primary"
                   />

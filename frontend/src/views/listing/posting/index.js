@@ -18,7 +18,7 @@ import {
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import PostingList from "ui-component/cards/Skeleton/PostingList";
+import PostingListSkeleton from "ui-component/cards/Skeleton/PostingList";
 import { listing_type, radius } from 'constant';
 
 // assets
@@ -214,7 +214,7 @@ const Posting = () => {
       >
         {
           loading ?
-            <PostingList /> : (
+            <PostingListSkeleton /> : (
               <CardContent>
                 <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
                   <Grid item xs={12} sm={3}>

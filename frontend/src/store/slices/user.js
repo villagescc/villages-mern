@@ -14,7 +14,8 @@ const initialState = {
     user: {},
     followers: [],
     followings: [],
-    postings: []
+    postings: [],
+    loading: false
 };
 
 const slice = createSlice({
@@ -24,6 +25,11 @@ const slice = createSlice({
         // HAS ERROR
         hasError(state, action) {
             state.error = action.payload;
+        },
+
+        // SET LOADING
+        setLoading(state, action) {
+            state.loading = action.payload;
         },
 
         // GET USERS STYLE 1
@@ -65,11 +71,14 @@ export default slice.reducer;
 
 export function getUserList(keyword = '', page = 1) {
     return async () => {
+        dispatch(slice.actions.setLoading(true));
         try {
             const response = await axios.post('/users/search', { keyword, page });
             dispatch(slice.actions.getUsersListSuccess(response.data));
+            dispatch(slice.actions.setLoading(false));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
+            dispatch(slice.actions.setLoading(false));
         }
     };
 }

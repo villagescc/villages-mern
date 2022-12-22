@@ -29,6 +29,7 @@ const Index = () => {
 
   const { isLoggedIn, user } = useAuth();
 
+  const [loading, setLoading] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   const [keyword, setKeyword] = React.useState('');
   const [page, setPage] = React.useState(1);
@@ -39,6 +40,7 @@ const Index = () => {
   React.useEffect(() => {
     setUsers(isLoggedIn ? userState.users.filter(item => item.id != user._id) : userState.users);
     setTotal(userState.total);
+    setLoading(userState.loading);
   }, [userState]);
 
   React.useEffect(() => {
@@ -81,7 +83,7 @@ const Index = () => {
         </Grid>
       }
     >
-      <UserList users={users} />
+      <UserList users={users} loading={loading} />
       <Grid item xs={12} sx={{ mt: 1.75 }}>
         <Grid container justifyContent="space-between" spacing={gridSpacing}>
           <Grid item>

@@ -36,7 +36,7 @@ exports.search = async (req, res, next) => {
       avatar
       followers: [],
       followings: [],
-      balance,
+      account,
     }
      */
     let userData = [];
@@ -80,7 +80,7 @@ const getUserDetail = async (id) => {
   userInfo.avatar = profile?.avatar;
   userInfo.followers = await _getFollowers(id);
   userInfo.followings = await _getFollowings(id);
-  // userInfo.accounts = await Account.find({ userId: id });
+  userInfo.account = user.account;
 
   return userInfo;
 }
