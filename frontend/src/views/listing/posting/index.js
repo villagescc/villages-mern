@@ -31,6 +31,7 @@ import {openSnackbar} from "store/slices/snackbar";
 import {openDialog} from "store/slices/dialog";
 import useAuth from "hooks/useAuth";
 import PostingCard from "ui-component/cards/PostingCard";
+import Empty from "ui-component/Empty";
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -246,20 +247,24 @@ const Posting = () => {
                     />
                   </Grid>
                 </Grid>
-                <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
-                  <Pagination
-                    count={Math.ceil(total / 12)}
-                    page={page}
-                    onChange={(e, p) => {
-                      setPage(p)
-                      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
-                    }}
-                    color="secondary"
-                  />
-                </Grid>
+                {
+                  posts.length > 0 && (
+                    <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
+                      <Pagination
+                        count={Math.ceil(total / 12)}
+                        page={page}
+                        onChange={(e, p) => {
+                          setPage(p)
+                          dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
+                        }}
+                        color="secondary"
+                      />
+                    </Grid>
+                  )
+                }
                 <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
                   {
-                    posts.map((post, index) => (
+                    posts.length > 0 ? posts.map((post, index) => (
                       <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <PostingCard
                           avatar={user?.avatar}
@@ -270,20 +275,28 @@ const Posting = () => {
                           onDelete={() => handleDeletePostClick(post)}
                         />
                       </Grid>
-                    ))
+                    )) : (
+                      <Grid item xs={12}>
+                        <Empty />
+                      </Grid>
+                    )
                   }
                 </Grid>
-                <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
-                  <Pagination
-                    count={Math.ceil(total / 12)}
-                    page={page}
-                    onChange={(e, p) => {
-                      setPage(p)
-                      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
-                    }}
-                    color="secondary"
-                  />
-                </Grid>
+                {
+                  posts.length > 0 && (
+                    <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
+                      <Pagination
+                        count={Math.ceil(total / 12)}
+                        page={page}
+                        onChange={(e, p) => {
+                          setPage(p)
+                          dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p))
+                        }}
+                        color="secondary"
+                      />
+                    </Grid>
+                  )
+                }
               </CardContent>
             )
         }
