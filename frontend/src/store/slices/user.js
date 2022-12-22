@@ -118,6 +118,16 @@ export function getPostings(id) {
     };
 }
 
+export function uploadAvatar(data) {
+    return async () => {
+        try {
+            const response = await axios.post(`/users/avatar`, data);
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    }
+}
+
 export function saveProfile(data, afterAction) {
     return async () => {
         try {

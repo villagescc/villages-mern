@@ -38,6 +38,7 @@ router.delete('/posting/:id', postController.deleteById);
 // ######################### POSTING ROUTER #############################
 router.post('/users/search', userController.search);
 router.get('/users/user/:id', userController.getOne);
+router.post('/users/avatar', authMiddleware.auth, userMiddleware.upload.single('file'), userController.uploadAvatar);
 router.post('/users/profile', authMiddleware.auth, userMiddleware.saveProfile, userController.saveProfile);
 router.post('/users/password', authMiddleware.auth, userMiddleware.changePassword, authController.changePassword);
 

@@ -85,6 +85,15 @@ const getUserDetail = async (id) => {
   return userInfo;
 }
 
+exports.uploadAvatar = async (req, res, next) => {
+  const uploadFile = req.file;
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+
+    })
+  }
+}
+
 exports.saveProfile = async (req, res, next) => {
   try {
     const { firstName, lastName, job, location, description } = req.body;

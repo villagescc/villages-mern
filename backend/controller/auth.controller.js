@@ -121,6 +121,8 @@ exports.login = (req, res, next) => {
               firstName: userData.firstName,
               lastName: userData.lastName,
               email: userData.email,
+              profile: userData.profile,
+              account: userData.account
             }
           };
 

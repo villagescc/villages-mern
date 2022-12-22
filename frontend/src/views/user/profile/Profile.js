@@ -13,7 +13,7 @@ import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
 import PersonIcon from '@mui/icons-material/Person';
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "store";
-import {getUser, saveProfile} from "store/slices/user";
+import {getUser, saveProfile, uploadAvatar} from "store/slices/user";
 import {openSnackbar} from "store/slices/snackbar";
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
@@ -54,6 +54,10 @@ const Profile = () => {
     fileReader.readAsDataURL(target.files[0]);
     fileReader.onload = (e) => {
       setAvatar(e.target.result);
+
+      const data = new FormData();
+      data.append('file', target.files[0])
+      dispatch(uploadAvatar(data))
     };
   };
 
@@ -81,7 +85,7 @@ const Profile = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
-      <Grid item sm={6} md={4}>
+      <Grid item md={6} xs={12}>
         <SubCard title="Profile Picture" contentSX={{ textAlign: 'center' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -164,7 +168,7 @@ const Profile = () => {
           </Grid>
         </SubCard>
       </Grid>
-      <Grid item sm={6} md={8}>
+      <Grid item md={6} xs={12}>
         <SubCard title="Edit Account Details">
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12} md={6}>
