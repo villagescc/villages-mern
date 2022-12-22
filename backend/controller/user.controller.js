@@ -88,9 +88,14 @@ const getUserDetail = async (id) => {
 exports.uploadAvatar = async (req, res, next) => {
   const uploadFile = req.file;
   try {
-    await User.findByIdAndUpdate(req.user._id, {
-
-    })
+    await Profile.findByIdAndUpdate(req.user.profile, {
+      avatar: uploadFile.filename
+    });
+    res.send({ success: true })
+  }
+  catch(err) {
+    console.log(err);
+    next(err);
   }
 }
 

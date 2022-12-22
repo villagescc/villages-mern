@@ -15,6 +15,7 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "store";
 import {getUser, saveProfile, uploadAvatar} from "store/slices/user";
 import {openSnackbar} from "store/slices/snackbar";
+import DefaultPostingIcon from "../../../assets/images/posting/default.png";
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
 
@@ -24,7 +25,7 @@ const Profile = () => {
 
   const { user : currentUser, error } = useSelector(state => state.user);
 
-  const [ avatar, setAvatar ] = useState(null);
+  const [ avatar, setAvatar ] = useState(DefaultAvatar);
   const [ firstName, setFirstName ] = useState('');
   const [ lastName, setLastName ] = useState('');
   const [ job, setJob ] = useState('');
@@ -37,6 +38,7 @@ const Profile = () => {
   }, [user]);
 
   useEffect(() => {
+    setAvatar(currentUser.avatar ? 'http://localhost:5000/upload/avatar/'+currentUser.avatar : DefaultAvatar);
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.job ? currentUser.job : '');
@@ -89,7 +91,7 @@ const Profile = () => {
         <SubCard title="Profile Picture" contentSX={{ textAlign: 'center' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Avatar alt="User 1" src={avatar || DefaultAvatar} sx={{ width: 100, height: 100, margin: '0 auto' }} />
+              <Avatar alt="User 1" src={avatar} sx={{ width: 100, height: 100, margin: '0 auto' }} />
             </Grid>
             {
               !!!avatar && (
