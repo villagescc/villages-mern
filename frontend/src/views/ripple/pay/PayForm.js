@@ -97,7 +97,7 @@ function PayForm({ recipientId }) {
                 onChange={(event, newValue) => {
                   setRecipient(newValue.id);
                 }}
-                renderInput={(params) => <TextField {...params} label="CHOOSE THE PAYMENT RECEIVER:" margin="normal" size={'small'} error={errors.recipient} helperText={errors?.recipient || maxLimit > 0 && `You can send up to ${maxLimit}VH`} />}
+                renderInput={(params) => <TextField {...params} label="CHOOSE THE PAYMENT RECEIVER:" margin="normal" size={'small'} error={errors.recipient} helperText={errors?.recipient || maxLimit > 0 ? `You can send up to ${maxLimit}VH` : 'You cannot send any value.'} />}
               />
             </Grid>
             <Grid item xs={12}>

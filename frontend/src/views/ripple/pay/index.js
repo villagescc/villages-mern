@@ -12,7 +12,7 @@ const Index = () => {
     <div>
       <Grid container spacing={3}>
         <Grid item xs={6}>
-          <PayForm />
+          <PayForm recipientId={userId} />
         </Grid>
         <Grid item xs={6}>
           <Graph />
