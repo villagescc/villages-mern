@@ -11,11 +11,42 @@ import { gridSpacing } from 'store/constant';
 // assets
 import DefaultUserIcon from '../../assets/images/auth/default.png';
 import DefaultPostingIcon from '../../assets/images/posting/default.png';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
+import useAuth from "../../hooks/useAuth";
 
 // styles
+const DeleteWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(153,141,141,0.2)',
+    '& svg': {
+        color: '#2b2a2a'
+    },
+    '&:hover': {
+        background: '#2b2a2a',
+        '& svg': {
+            color: '#fff'
+        }
+    }
+});
+
+const EditWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(242,214,29,0.2)',
+    '& svg': {
+        color: '#f2ab1d'
+    },
+    '&:hover': {
+        background: '#f2b61d',
+        '& svg': {
+            color: '#fff'
+        }
+    }
+});
+
 const TrustWrapper = styled(Button)({
     padding: 8,
     background: 'rgba(242,29,104,0.2)',
@@ -60,7 +91,7 @@ const MessageWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ avatar, title, post, description }) => {
+const PostingCard = ({ avatar, title, post, description, own, ...other }) => {
     const theme = useTheme();
     const postImage = post ? 'http://localhost:5000/upload/posting/'+post : DefaultPostingIcon;
     const avatarImage = avatar ? 'http://localhost:5000/upload/avatar/'+avatar : DefaultUserIcon;
@@ -74,7 +105,7 @@ const PostingCard = ({ avatar, title, post, description }) => {
                 textAlign: 'center',
             }}
         >
-            <CardMedia component="img" image={postImage} title="Slider5 image" sx={{ height: '125px' }} />
+            <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
             <CardContent sx={{ p: 2, pb: '16px !important' }}>
                 <Grid container spacing={gridSpacing} >
                     <Grid item xs={12}>
@@ -95,23 +126,40 @@ const PostingCard = ({ avatar, title, post, description }) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={4}>
-                                <TrustWrapper fullWidth>
-                                    <FavoriteIcon />
-                                </TrustWrapper>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <PaymentWrapper fullWidth>
-                                    <CurrencyExchangeIcon />
-                                </PaymentWrapper>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <MessageWrapper fullWidth>
-                                    <ChatIcon />
-                                </MessageWrapper>
-                            </Grid>
-                        </Grid>
+                        {
+                            own ? (
+                              <Grid container spacing={2}>
+                                  <Grid item xs={12} md={6}>
+                                      <DeleteWrapper fullWidth>
+                                          <DeleteIcon onClick={other?.onDelete} />
+                                      </DeleteWrapper>
+                                  </Grid>
+                                  <Grid item xs={12} md={6}>
+                                      <EditWrapper fullWidth>
+                                          <EditIcon />
+                                      </EditWrapper>
+                                  </Grid>
+                              </Grid>
+                            ) : (
+                              <Grid container spacing={2}>
+                                  <Grid item xs={12} md={4}>
+                                      <TrustWrapper fullWidth>
+                                          <FavoriteIcon />
+                                      </TrustWrapper>
+                                  </Grid>
+                                  <Grid item xs={12} md={4}>
+                                      <PaymentWrapper fullWidth>
+                                          <CurrencyExchangeIcon />
+                                      </PaymentWrapper>
+                                  </Grid>
+                                  <Grid item xs={12} md={4}>
+                                      <MessageWrapper fullWidth>
+                                          <ChatIcon />
+                                      </MessageWrapper>
+                                  </Grid>
+                              </Grid>
+                            )
+                        }
                     </Grid>
                 </Grid>
             </CardContent>

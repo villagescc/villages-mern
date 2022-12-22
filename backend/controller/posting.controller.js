@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
 const Listing = require('../models/Listing');
@@ -75,6 +76,21 @@ exports.getByUser = async (req, res, next) => {
     res.send(postings);
   }
   catch(err) {
+    next(err);
+  }
+}
+
+exports.deleteById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const post = await Listing.findById(id);
+    const path = `./upload/posting/${post.photo}`;
+    const isExist = fs.existsSync(path);
+    if(isExist) await fs.unlinkSync(path);
+    res.send({ success: true });
+  }
+  catch(err) {
+    console.log(err)
     next(err);
   }
 }

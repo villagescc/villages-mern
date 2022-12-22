@@ -9,6 +9,7 @@ import postingReducer from './slices/posting';
 import notificationReducer from './slices/notification';
 
 import snackbarReducer from './slices/snackbar';
+import dialogReducer from './slices/dialog';
 import customerReducer from './slices/customer';
 import endorsementReducer from './slices/endorsement';
 import paymentReducer from './slices/payment';
@@ -27,6 +28,7 @@ const reducer = combineReducers({
     posting: postingReducer,
 
     snackbar: snackbarReducer,
+    dialog: dialogReducer,
     cart: persistReducer(
         {
             key: 'cart',

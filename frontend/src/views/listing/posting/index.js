@@ -26,7 +26,9 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import {Search as SearchIcon, AddCircleRounded} from "@mui/icons-material";
 import FormControlSelect from "ui-component/extended/Form/FormControlSelect";
 import {useDispatch, useSelector} from "store";
-import {createPost, filterPost, getCategories, getSubCategories, getTags} from "store/slices/posting";
+import {createPost, filterPost, getCategories, getSubCategories, getTags, deletePost} from "store/slices/posting";
+import {openSnackbar} from "store/slices/snackbar";
+import {openDialog} from "store/slices/dialog";
 import useAuth from "hooks/useAuth";
 import PostingCard from "ui-component/cards/PostingCard";
 
@@ -69,7 +71,7 @@ const Posting = () => {
 
   const postingState = useSelector((state) => state.posting);
 
-  const handleDelete = (i) => {
+  const handleDeleteTag = (i) => {
     setTags(tags.filter((tag, index) => index !== i))
   }
 
@@ -118,6 +120,32 @@ const Posting = () => {
     }
 
     reader.readAsDataURL(file)
+  }
+
+  const handleDeletePostClick = (post) => {
+    dispatch(
+      openDialog({
+        open: true,
+        title: 'Confirm',
+        message: `Are you sure to delete ${post.title}?`,
+        okLabel: 'delete',
+        onOkClick: () => {
+          dispatch(deletePost(post._id, () => {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: "You deleted post successfully.",
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                close: false
+              })
+            )
+          }))
+        }
+      })
+    )
   }
 
   const submitPost = () => {
@@ -232,12 +260,14 @@ const Posting = () => {
                 <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
                   {
                     posts.map((post, index) => (
-                      <Grid item xs={12} sm={3} key={index}>
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <PostingCard
                           avatar={user?.avatar}
                           post={post.photo}
                           title={post.title}
                           description={post.description}
+                          own={post.userId === user?._id}
+                          onDelete={() => handleDeletePostClick(post)}
                         />
                       </Grid>
                     ))
@@ -369,7 +399,7 @@ const Posting = () => {
                       text: suggestion.title
                     }))
                   }
-                  handleDelete={handleDelete}
+                  handleDelete={handleDeleteTag}
                   handleAddition={handleAddition}
                   delimiters={delimiters}
                   placeholder={"Tags"}

@@ -33,6 +33,7 @@ router.get('/base/users/getRecipients', authMiddleware.auth, baseController.getR
 router.post('/posting/posts', postController.searchPosts);
 router.post('/posting/upload', authMiddleware.auth, postMiddleware.upload.single('file'), postMiddleware.create, postController.createPost);
 router.get('/posting/getByUser/:userId', postController.getByUser);
+router.delete('/posting/:id', postController.deleteById);
 
 // ######################### POSTING ROUTER #############################
 router.post('/users/search', userController.search);

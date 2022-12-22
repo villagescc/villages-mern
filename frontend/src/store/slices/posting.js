@@ -55,6 +55,12 @@ const slice = createSlice({
             state.total = action.payload.total;
             state.loading = false;
         },
+
+        // Delete POST
+        deletePostSuccess(state, action) {
+            state.posts = state.posts.filter(post => post._id !== action.payload);
+            state.loading = false;
+        },
     }
 });
 
@@ -115,13 +121,25 @@ export function filterPost(category = '', type = '', radius = '', keyword = '', 
 export function createPost(data, closeModal) {
     return async () => {
         try {
-            console.log(data);
             const response = await axios.postForm('/posting/upload', data, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             });
             closeModal();
+        } catch (error) {
+            console.log('error', error);
+            dispatch(slice.actions.hasError(error));
+        }
+    }
+}
+
+export function deletePost(id, successAction) {
+    return async () => {
+        try {
+            const response = await axios.delete(`/posting/${id}`);
+            dispatch(slice.actions.deletePostSuccess(id))
+            successAction();
         } catch (error) {
             console.log('error', error);
             dispatch(slice.actions.hasError(error));

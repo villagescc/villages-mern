@@ -14,7 +14,6 @@ import useAuth from "../../../../hooks/useAuth";
 const BalanceSection = () => {
   const theme = useTheme();
   const { user } = useAuth();
-  console.log("user", user);
 
   return (
     <Box
