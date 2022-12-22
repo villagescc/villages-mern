@@ -90,6 +90,7 @@ exports.pay = async (req, res, next) => {
       catch(error) {
         payment.status = 'Failed';
         payment.save();
+        console.log('add paylog error:', error)
         next(error);
       }
     }
@@ -104,6 +105,7 @@ exports.pay = async (req, res, next) => {
       payment.status = 'Failed';
       payment.save();
     }
+    console.log('pay error:', err);
     next(err);
   }
 }

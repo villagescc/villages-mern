@@ -11,13 +11,18 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import { IconSearch } from '@tabler/icons';
+import Empty from "../../../../ui-component/Empty";
 
 // ==============================|| SOCIAL PROFILE - FRIENDS ||============================== //
 
 const Followings = ({ user }) => {
     const theme = useTheme();
 
-    let friendsResult = <></>;
+    let friendsResult = (
+      <Grid item container>
+          <Empty />
+      </Grid>
+    );
     if (user.followings.length) {
         friendsResult = user.followings.map((following, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={3} xl={2}>

@@ -7,8 +7,8 @@ const Empty = () => {
     <Box
       style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300, border: '1px dashed grey', borderRadius: 5 }}
     >
-        <InboxIcon sx={{ fontSize: 100 }} color={'disabled'} />
-        <Typography variant={'h4'}> No Data </Typography>
+        <InboxIcon sx={{ fontSize: 100 }} color={'primary'} />
+        <Typography variant={'h3'}> No Data </Typography>
     </Box>
   );
 };
