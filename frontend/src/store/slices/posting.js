@@ -118,7 +118,7 @@ export function filterPost(category = '', type = '', radius = '', keyword = '', 
     };
 }
 
-export function createPost(data, closeModal) {
+export function submitPost(data, closeModal) {
     return async () => {
         try {
             const response = await axios.postForm('/posting/upload', data, {

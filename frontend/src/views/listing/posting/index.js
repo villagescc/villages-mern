@@ -26,12 +26,13 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import {Search as SearchIcon, AddCircleRounded} from "@mui/icons-material";
 import FormControlSelect from "ui-component/extended/Form/FormControlSelect";
 import {useDispatch, useSelector} from "store";
-import {createPost, filterPost, getCategories, getSubCategories, getTags, deletePost} from "store/slices/posting";
+import {submitPost, filterPost, getCategories, getSubCategories, getTags, deletePost} from "store/slices/posting";
 import {openSnackbar} from "store/slices/snackbar";
 import {openDialog} from "store/slices/dialog";
 import useAuth from "hooks/useAuth";
 import PostingCard from "ui-component/cards/PostingCard";
 import Empty from "ui-component/Empty";
+import DefaultPostingIcon from "../../../assets/images/posting/default.png";
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -47,7 +48,6 @@ const Posting = () => {
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
-  const [openCreate, setOpenCreate] = React.useState(false);
   const [keyword, setKeyword] = React.useState('');
   const [posts, setPosts] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -55,12 +55,15 @@ const Posting = () => {
   const [categories, setCategories] = React.useState([]);
   const [subCategories, setSubCategories] = React.useState([]);
   const [tagSuggestion, setTagSuggestion] = React.useState([]);
-  const [tags, setTags] = React.useState([]);
 
+  // FILTER POSTING
   const [filterCategory, setFilterCategory] = React.useState('');
   const [filterType, setFilterType] = React.useState('');
   const [filterRadius, setFilterRadius] = React.useState('');
 
+  // POST MODAL FORM
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [id, setId] = React.useState(null);
   const [type, setType] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -68,6 +71,7 @@ const Posting = () => {
   const [category, setCategory] = React.useState('');
   const [subCategory, setSubCategory] = React.useState('');
   const [file, setFile] = React.useState(null);
+  const [tags, setTags] = React.useState([]);
   const [previewImage, setPreviewImage] = React.useState(null);
 
   const postingState = useSelector((state) => state.posting);
@@ -123,6 +127,20 @@ const Posting = () => {
     reader.readAsDataURL(file)
   }
 
+  const handleCreatePostClick = () => {
+    setId(null);
+    setType("");
+    setTitle("");
+    setDescription("");
+    setPrice(0);
+    setCategory("");
+    setSubCategory("");
+    setTags([]);
+    setFile(null);
+    setPreviewImage(null);
+    setOpenCreate(true);
+  }
+
   const handleDeletePostClick = (post) => {
     dispatch(
       openDialog({
@@ -149,8 +167,22 @@ const Posting = () => {
     )
   }
 
-  const submitPost = () => {
+  const handleEditPostClick = (post) => {
+    setId(post._id);
+    setType(post.listingType);
+    setTitle(post.title);
+    setDescription(post.description);
+    setPrice(post.price);
+    setCategory(post.subcategoryId.categoryId._id);
+    setSubCategory(post.subcategoryId._id);
+    setTags([...post.tags.map(tag => ({ id: tag.title, text: tag.title }))]);
+    setPreviewImage(post.photo ? 'http://localhost:5000/upload/posting/'+post.photo : null);
+    setOpenCreate(true);
+  }
+
+  const handleSubmitPost = () => {
     const data = new FormData();
+    data.append('id', id);
     data.append('file', file);
     data.append('type', type)
     data.append('title', title)
@@ -161,7 +193,7 @@ const Posting = () => {
     tags.forEach(tag => {
       data.append('tags', tag.text);
     })
-    dispatch(createPost(data, () => {
+    dispatch(submitPost(data, () => {
       setOpenCreate(false);
       dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, page))
     }))
@@ -174,7 +206,7 @@ const Posting = () => {
         content={false}
         secondary={
           isLoggedIn ? (
-            <Button variant="contained" startIcon={<AddCircleRounded />} onClick={() => setOpenCreate(true)}>
+            <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
               Create
             </Button>
           ) : null
@@ -273,6 +305,7 @@ const Posting = () => {
                           description={post.description}
                           own={post.userId === user?._id}
                           onDelete={() => handleDeletePostClick(post)}
+                          onEdit={() => handleEditPostClick(post)}
                         />
                       </Grid>
                     )) : (
@@ -421,7 +454,7 @@ const Posting = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenCreate(false)}>Close</Button>
-              <Button onClick={submitPost} variant={'contained'}>Submit</Button>
+              <Button onClick={handleSubmitPost} variant={'contained'}>Submit</Button>
             </DialogActions>
           </>
         )}

@@ -136,7 +136,7 @@ const PostingCard = ({ avatar, title, post, description, own, ...other }) => {
                                   </Grid>
                                   <Grid item xs={12} md={6}>
                                       <EditWrapper fullWidth>
-                                          <EditIcon />
+                                          <EditIcon onClick={other?.onEdit} />
                                       </EditWrapper>
                                   </Grid>
                               </Grid>
