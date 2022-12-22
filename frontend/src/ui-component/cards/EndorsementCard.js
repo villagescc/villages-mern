@@ -22,7 +22,7 @@ const EndorsementCard = ({ endorsement, onActive }) => {
     const theme = useTheme();
     const { user, send_weight, send_text, receive_weight, receive_text } = endorsement;
 
-    const avatarImage = user?.avatar ? 'http://localhost:5000/upload/avatar/'+user?.avatar : DefaultUserIcon;
+    const avatarImage = user.profile.avatar ? 'http://localhost:5000/upload/avatar/'+user.profile.avatar : DefaultUserIcon;
 
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {

@@ -12,7 +12,6 @@ import { io } from "socket.io-client";
 import EndorsementCard from 'ui-component/cards/EndorsementCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import User1 from 'assets/images/users/avatar-1.png';
 import CreateModal from "./CreateModal";
 
 import { useDispatch, useSelector } from 'store';
