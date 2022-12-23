@@ -50,3 +50,13 @@ exports.readAllByUser = async (req, res, next) => {
     next(err);
   }
 }
+
+exports.deleteAllByUser = async (req, res, next) => {
+  try {
+    await Notification.deleteMany({ recipientId: req.user._id });
+    res.send(true);
+  }
+  catch(err) {
+    next(err);
+  }
+}

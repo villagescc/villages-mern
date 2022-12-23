@@ -8,6 +8,7 @@ import { dispatch } from '../index';
 // ----------------------------------------------------------------------
 
 const initialState = {
+  total: 0,
   notifications: [],
   errors: {},
   loading: false
@@ -55,6 +56,17 @@ export function setReadAll(successAction) {
   return async () => {
     try {
       const response = await axios.put('/notification/readAllByUser');
+      if(!!response.data) successAction()
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  }
+}
+
+export function deleteAll(successAction) {
+  return async () => {
+    try {
+      const response = await axios.put('/notification/deleteAllByUser');
       if(!!response.data) successAction()
     } catch (error) {
       dispatch(slice.actions.hasError(error));

@@ -21,14 +21,14 @@ exports.save = async (req, res, next) => {
     let notifyText;
     if(!endorsement) {
       endorsement = await Endorsement.create({ recipientId: recipientUser._id, endorserId: req.user._id, weight, text, referred })
-      notifyText = `${recipientUser.username} sent you ${weight}(V.H.) trust limit.`;
+      notifyText = `${req.user.username} sent you ${weight}(V.H.) trust limit.`;
     }
     else {
       endorsement.weight = weight;
       endorsement.text = text;
       endorsement.referred = referred;
       await endorsement.save();
-      notifyText = `${recipientUser.username} updated trust limit as ${weight}(V.H.).`;
+      notifyText = `${req.user.username} updated trust limit as ${weight}(V.H.).`;
     }
     const notification = await createNotification('TRUST', req.user._id, recipient, weight, notifyText);
     global.io.emit('newNotification', notification);

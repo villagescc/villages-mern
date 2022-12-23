@@ -93,7 +93,7 @@ const NotificationList = ({ notifications }) => {
               <ListItemWrapper>
                 <ListItem alignItems="center" style={{ minWidth: 300 }}>
                   <ListItemAvatar>
-                    <Badge color="primary" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
+                    <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
                       <Avatar alt={notification.notifierId.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
                     </Badge>
                   </ListItemAvatar>

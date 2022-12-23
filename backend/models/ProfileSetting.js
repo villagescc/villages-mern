@@ -28,9 +28,9 @@ const ProfileSettingSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
-    profileId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: 'user'
     }
   },
   {

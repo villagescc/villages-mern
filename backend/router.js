@@ -12,6 +12,7 @@ const authController = require('./controller/auth.controller');
 const baseController = require('./controller/base.controller');
 const postController = require('./controller/posting.controller');
 const userController = require('./controller/user.controller');
+const settingController = require('./controller/setting.controller');
 const accountController = require('./controller/account.controller');
 const endorsementController = require('./controller/endorsement.controller');
 const paymentController = require('./controller/payment.controller');
@@ -35,9 +36,12 @@ router.post('/posting/upload', authMiddleware.auth, postMiddleware.upload.single
 router.get('/posting/getByUser/:userId', postController.getByUser);
 router.delete('/posting/:id', postController.deleteById);
 
+// ######################### SETTING ROUTER #############################
+router.get('/setting', authMiddleware.auth, settingController.getById);
+
 // ######################### POSTING ROUTER #############################
 router.post('/users/search', userController.search);
-router.get('/users/user/:id', userController.getOne);
+router.get('/users/user/:id', userController.getById);
 router.post('/users/avatar', authMiddleware.auth, userMiddleware.upload.single('file'), userController.uploadAvatar);
 router.post('/users/profile', authMiddleware.auth, userMiddleware.saveProfile, userController.saveProfile);
 router.post('/users/password', authMiddleware.auth, userMiddleware.changePassword, authController.changePassword);
@@ -60,5 +64,6 @@ router.get('/payment/getGraph', paymentController.getGraph)
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)
 router.get('/notification/getByUser', authMiddleware.auth, notificationController.getByUser)
 router.put('/notification/readAllByUser', authMiddleware.auth, notificationController.readAllByUser)
+router.put('/notification/deleteAllByUser', authMiddleware.auth, notificationController.deleteAllByUser)
 
 module.exports = router;

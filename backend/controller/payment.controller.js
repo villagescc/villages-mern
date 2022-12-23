@@ -1,5 +1,6 @@
 const Graph = require('graphology');
 const { allSimplePaths } = require('graphology-simple-path');
+const { _create:createNotification } = require('./notification.controller');
 
 const User = require('../models/User');
 const Account = require('../models/Account');
@@ -85,6 +86,12 @@ exports.pay = async (req, res, next) => {
 
         payment.status = 'Completed';
         payment.save();
+
+        // Notify
+        const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
+        const notification = await createNotification('PAYMENT', req.user._id, recipient, amount, notifyText);
+        global.io.emit('newNotification', notification);
+
         res.send({ success: true, paylogs: result.paylogs })
       }
       catch(error) {

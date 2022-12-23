@@ -53,7 +53,7 @@ exports.search = async (req, res, next) => {
   }
 }
 
-exports.getOne = async (req, res, next) => {
+exports.getById = async (req, res, next) => {
   try {
     const user = await getUserDetail(req.params.id);
     res.send(user);

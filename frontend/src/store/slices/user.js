@@ -12,6 +12,7 @@ const initialState = {
     total: 0,
     users: [],
     user: {},
+    setting: {},
     followers: [],
     followings: [],
     postings: [],
@@ -38,9 +39,15 @@ const slice = createSlice({
             state.total = action.payload.total;
         },
 
-        // GET USERS STYLE 1
+        // GET USER DATA
         getUserSuccess(state, action) {
             state.user = action.payload;
+            state.error = null;
+        },
+
+        // GET USER SETTING DATA
+        getSettingSuccess(state, action) {
+            state.setting = action.payload;
             state.error = null;
         },
 
@@ -92,6 +99,17 @@ export function getUser(id) {
             dispatch(slice.actions.hasError(error));
         }
     };
+}
+
+export function getSetting() {
+    return async () => {
+        try {
+            const response = await axios.get(`/setting`);
+            dispatch(slice.actions.getSettingSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    }
 }
 
 export function getFollowers(id) {

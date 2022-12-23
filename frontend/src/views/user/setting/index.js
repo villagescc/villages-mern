@@ -5,14 +5,10 @@ import {useEffect, useRef, useState} from "react";
 import { useTheme } from '@mui/material/styles';
 import {
   Autocomplete,
-  Box,
   Button, CardActions,
   CardContent, Checkbox,
-  Dialog, DialogActions,
-  DialogContent,
-  DialogTitle, FormControlLabel,
+  FormControlLabel,
   Grid,
-  InputAdornment, Pagination,
   TextField,
 } from '@mui/material';
 
@@ -21,11 +17,8 @@ import MainCard from 'ui-component/cards/MainCard';
 import FormControlSelect from "ui-component/extended/Form/FormControlSelect";
 
 import {useDispatch, useSelector} from "store";
-import InputLabel from "../../../ui-component/extended/Form/InputLabel";
-import MuiTooltip from "@mui/material/Tooltip";
-import Help from "@mui/icons-material/Help";
-import {radius} from "../../../constant";
-import {filterPost} from "../../../store/slices/posting";
+import {radius} from "constant";
+import {getSetting} from "store/slices/user";
 
 // assets
 
@@ -40,13 +33,17 @@ const Index = () => {
   const [ notificationCheck, setNotificationCheck ] = useState(false);
   const [ updateCheck, setUpdateCheck ] = useState(false);
   const [ language, setLanguage ] = useState('');
-  const [ feedRadius, setFeedRadius ] = React.useState('');
+  const [ feedRadius, setFeedRadius ] = useState('');
 
   const defaultProps = {
     options: [],
     getOptionLabel: (option) => `${option}`,
     filterOptions: (options, { inputValue }) => options.filter(item => item.username.includes(inputValue) || item.email.includes(inputValue))
   };
+
+  useEffect(() => {
+    dispatch(getSetting())
+  }, [])
 
   return (
       <MainCard

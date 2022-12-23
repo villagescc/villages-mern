@@ -85,13 +85,13 @@ exports.validateEndorsementCreate = (data) => {
   let errors = {};
 
   data.recipient = !isEmpty(data.recipient) ? data.recipient : "";
-  data.weight = !isEmpty(data.weight) ? data.weight : "";
+  data.weight = !isEmpty(data.weight) ? data.weight : 0;
 
   if (validator.isEmpty(data.recipient)) {
     errors.recipient = "Please choose recipient.";
   }
 
-  if (validator.isEmpty(data.weight)) {
+  if (data.weight <= 0) {
     errors.weight = "Please input weight.";
   }
 

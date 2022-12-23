@@ -31,7 +31,7 @@ import NotificationList from './NotificationList';
 
 // assets
 import { IconBell } from '@tabler/icons';
-import {SERVER_URL} from "../../../../config";
+import {SERVER_URL} from "config";
 import {io} from "socket.io-client";
 import { useDispatch, useSelector } from 'store';
 import {getNotifications, setReadAll} from 'store/slices/notification';
