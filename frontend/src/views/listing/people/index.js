@@ -17,9 +17,9 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import { IconSearch } from '@tabler/icons';
-import {getUserList} from "../../../store/slices/user";
+import {getUserList} from "store/slices/user";
 import { useDispatch, useSelector } from 'store';
-import useAuth from "../../../hooks/useAuth";
+import useAuth from "hooks/useAuth";
 
 // ==============================|| USER LIST STYLE 2 ||============================== //
 

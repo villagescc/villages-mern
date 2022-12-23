@@ -29,9 +29,9 @@ import { gridSpacing } from 'store/constant';
 // assets
 import {openSnackbar} from "store/slices/snackbar";
 import ReactTimeAgo from "react-time-ago";
-import DefaultUserIcon from "../../../assets/images/auth/default.png";
-import {openDialog} from "../../../store/slices/dialog";
-import Empty from "../../../ui-component/Empty";
+import DefaultUserIcon from "assets/images/auth/default.png";
+import {openDialog} from "store/slices/dialog";
+import Empty from "ui-component/Empty";
 
 // assets
 
@@ -121,12 +121,6 @@ const Index = () => {
     height: 24,
     padding: '0 6px'
   };
-  const chipErrorSX = {
-    ...chipSX,
-    color: theme.palette.orange.dark,
-    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.orange.light,
-    marginRight: '5px'
-  };
 
   const chipWarningSX = {
     ...chipSX,
@@ -169,7 +163,7 @@ const Index = () => {
               }}
             >
               {
-                notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((notification, key) => (
+                [...notifications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((notification, key) => (
                   <Grid item xs={12}>
                     <Grid container spacing={2}>
                       <Grid item>

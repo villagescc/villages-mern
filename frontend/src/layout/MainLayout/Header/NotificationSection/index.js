@@ -271,7 +271,7 @@ const NotificationSection = () => {
                     {
                       notifications.length > 0 && (
                         <CardActions sx={{ p: 1.25, justifyContent: 'center' }}>
-                          <Button size="small" disableElevation>
+                          <Button component={Link} size="small" disableElevation to={'/personal/notification'}>
                             View All
                           </Button>
                         </CardActions>

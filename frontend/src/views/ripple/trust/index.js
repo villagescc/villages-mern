@@ -1,11 +1,11 @@
-import { useEffect, useState, Fragment } from 'react';
+import * as React from "react";
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Button, Divider, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 
 // third-party
-import { isEmpty } from 'lodash';
 import { io } from "socket.io-client";
 
 // project imports
@@ -16,16 +16,15 @@ import CreateModal from "./CreateModal";
 
 import { useDispatch, useSelector } from 'store';
 import { searchEndorsements, getUsers, saveEndorsement } from 'store/slices/endorsement';
+import {openSnackbar} from "store/slices/snackbar";
 
 // assets
 import { IconSearch } from '@tabler/icons';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import * as React from "react";
-import {openSnackbar} from "../../../store/slices/snackbar";
-import {SERVER_URL} from "../../../config";
-import {getNotifications} from "../../../store/slices/notification";
-import useAuth from "../../../hooks/useAuth";
+import {SERVER_URL} from "config";
+import useAuth from "hooks/useAuth";
 import {useParams} from "react-router-dom";
+import Empty from "ui-component/Empty";
 
 const Index = () => {
   const theme = useTheme();
@@ -151,23 +150,32 @@ const Index = () => {
               </Button>
             </Grid>
 
-            <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
-              {endorsements.map((item, i) => (
-                <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
-                  <EndorsementCard
-                    endorsement={item}
-                    onActive={() => {
-                      setEndorsement({
-                        recipient: item.user._id,
-                        text: item.send_text,
-                        weight: item.send_weight
-                      })
-                      setOpenCreate(true);
-                    }}
-                  />
+            {
+              endorsements.length > 0 ? (
+                <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
+                  {
+                    endorsements.map((item, i) => (
+                      <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
+                        <EndorsementCard
+                          endorsement={item}
+                          onActive={() => {
+                            setEndorsement({
+                              recipient: item.user._id,
+                              text: item.send_text,
+                              weight: item.send_weight
+                            })
+                            setOpenCreate(true);
+                          }}
+                        />
+                      </Grid>
+                    ))}
                 </Grid>
-              ))}
-            </Grid>
+              ) : (
+                <Grid container direction="row" sx={{ padding: 3 }}>
+                  <Empty />
+                </Grid>
+              )
+            }
 
           </Grid>
         </Grid>
