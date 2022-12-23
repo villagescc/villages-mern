@@ -31,6 +31,7 @@ import {openSnackbar} from "store/slices/snackbar";
 import ReactTimeAgo from "react-time-ago";
 import DefaultUserIcon from "../../../assets/images/auth/default.png";
 import {openDialog} from "../../../store/slices/dialog";
+import Empty from "../../../ui-component/Empty";
 
 // assets
 
@@ -143,73 +144,88 @@ const Index = () => {
   return (
     <MainCard title={'Notifications'} content={false}>
       <CardContent>
-        <Grid
-          container
-          spacing={gridSpacing}
-          alignItems="center"
-          sx={{
-            position: 'relative',
-            '&>*': {
-              position: 'relative',
-              zIndex: '5'
-            },
-            '&:after': {
-              content: '""',
-              position: 'absolute',
-              top: '0',
-              left: 150,
-              width: 2,
-              height: '100%',
-              background: '#ebebeb',
-              zIndex: '1'
-            }
-          }}
-        >
-          {
-            [...notifications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((notification, key) => (
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item sx={{ minWidth: 100 }}>
-                        <Typography align="right" variant="caption">
-                          <ReactTimeAgo date={new Date(notification.createdAt)} locale="en-US"/>
-                        </Typography>
-                        <Grid item>
-                          <Chip size={'small'} label={notification.notificationType} sx={notification.notificationType==='TRUST' ? chipSuccessSX : chipWarningSX} />
+        {
+          notifications.length > 0 ? (
+            <Grid
+              container
+              spacing={gridSpacing}
+              alignItems="center"
+              sx={{
+                position: 'relative',
+                '&>*': {
+                  position: 'relative',
+                  zIndex: '5'
+                },
+                '&:after': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '0',
+                  left: 150,
+                  width: 2,
+                  height: '100%',
+                  background: '#ebebeb',
+                  zIndex: '1'
+                }
+              }}
+            >
+              {
+                notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((notification, key) => (
+                  <Grid item xs={12}>
+                    <Grid container spacing={2}>
+                      <Grid item>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item sx={{ minWidth: 100 }}>
+                            <Typography align="right" variant="caption">
+                              <ReactTimeAgo date={new Date(notification.createdAt)} locale="en-US"/>
+                            </Typography>
+                            <Grid item>
+                              <Chip size={'small'} label={notification.notificationType} sx={notification.notificationType==='TRUST' ? chipSuccessSX : chipWarningSX} />
+                            </Grid>
+                          </Grid>
+                          <Grid item>
+                            <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
+                              <Avatar size={'md'} alt={notification.notifierId.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
+                            </Badge>
+                          </Grid>
                         </Grid>
                       </Grid>
-                      <Grid item>
-                        <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
-                          <Avatar size={'md'} alt={notification.notifierId.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
-                        </Badge>
+                      <Grid item xs zeroMinWidth>
+                        <Grid container spacing={1}>
+                          <Grid item xs={12}>
+                            <Typography component="div" align="left" variant="subtitle1">
+                              {notification.notifierId.username}
+                            </Typography>
+                            <Typography component="div" align="left" variant="subtitle2">
+                              {notification?.memo}
+                            </Typography>
+                          </Grid>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs zeroMinWidth>
-                    <Grid container spacing={1}>
-                      <Grid item xs={12}>
-                        <Typography component="div" align="left" variant="subtitle1">
-                          {notification.notifierId.username}
-                        </Typography>
-                        <Typography component="div" align="left" variant="subtitle2">
-                          {notification?.memo}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            ))
-          }
-        </Grid>
+                ))
+              }
+            </Grid>
+          ) : (
+            <Grid>
+              <Empty />
+            </Grid>
+          )
+        }
       </CardContent>
       <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button variant="text" size="small" onClick={handleDeleteAllClick}>
-          Delete all
-        </Button>
-      </CardActions>
+      {
+        notifications.length > 0 && (
+          <CardActions sx={{ justifyContent: 'flex-end' }}>
+            <Button variant="text" size="small" onClick={handleDeleteAllClick}>
+              Delete all
+            </Button>
+            <Button variant="text" size="small" onClick={handleReadAllClick}>
+              Mark as all read
+            </Button>
+          </CardActions>
+        )
+      }
     </MainCard>
   );
 };
