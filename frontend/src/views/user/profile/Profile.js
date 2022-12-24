@@ -34,7 +34,6 @@ const Profile = () => {
   const [ lastName, setLastName ] = useState('');
   const [ job, setJob ] = useState('');
   const [ location, setLocation ] = useState({});
-  const [ place, setPlace ] = useState('');
   const [ description, setDescription ] = useState('');
   const [ errors, setErrors ] = useState({});
 
@@ -47,7 +46,13 @@ const Profile = () => {
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.job ? currentUser.job : '');
-    setLocation(currentUser.location ? currentUser.location : '');
+    if(currentUser.placeId) {
+      geocodeByPlaceId(currentUser.placeId)
+        .then(results => setLocation({
+          placeId: currentUser.placeId,
+          description: results[0].formatted_address
+        }))
+    }
     setDescription(currentUser.description ? currentUser.description : '');
   }, [currentUser]);
 
@@ -71,7 +76,7 @@ const Profile = () => {
   const handleSaveProfileClick = () => {
     dispatch(
       saveProfile(
-        { firstName, lastName, job, location, description },
+        { firstName, lastName, job, placeId: (location.placeId || ''), description },
         () => {
           dispatch(
             openSnackbar({
@@ -215,35 +220,29 @@ const Profile = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              {/*<TextField*/}
-              {/*  name="location"*/}
-              {/*  fullWidth*/}
-              {/*  label="Location"*/}
-              {/*  value={location}*/}
-              {/*  InputLabelProps={{ shrink: true }}*/}
-              {/*  onChange={(e) => setLocation(e.target.value)}*/}
-              {/*  error={Boolean(errors?.location)}*/}
-              {/*  helperText={errors?.location}*/}
-              {/*/>*/}
-
               <PlacesAutocomplete
-                value={place}
-                onChange={(address) => setPlace(address)}
+                value={location.description || ''}
+                onChange={(address) => setLocation({description: address, placeId: ''})}
               >
-                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => {
+                {({ getInputProps, suggestions }) => {
                   return (
                     <Autocomplete
                       id="location"
                       value={location}
                       sx={{width: '100%'}}
-                      options={suggestions}
+                      options={suggestions.map(suggestion => ({
+                        description: suggestion.description,
+                        placeId: suggestion.placeId
+                      }))}
                       autoHighlight
                       getOptionLabel={(option) => option.description || ''}
                       renderOption={(props, option) => (
                         <Box
                           component="li"
                           {...props}
-                          onClick={() => setLocation(option)}
+                          onClick={() => {
+                            setLocation(option);
+                          }}
                         >
                           {option.description}
                         </Box>
@@ -255,10 +254,6 @@ const Profile = () => {
                             placeholder: 'Search Places ...',
                             className: 'location-search-input',
                           })}
-                          inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'new-password', // disable autocomplete and autofill
-                          }}
                         />
                       )}
                     />
