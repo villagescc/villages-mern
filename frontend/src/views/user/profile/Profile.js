@@ -1,5 +1,10 @@
 // material-ui
-import { Avatar, Button, Grid, Stack, TextField, Typography, List, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText, CardContent, Divider, Chip } from '@mui/material';
+import { Autocomplete, Avatar, Box, Button, Grid, Stack, TextField, Typography, List, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText, CardContent, Divider, Chip } from '@mui/material';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  geocodeByPlaceId,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 // project imports
 import useAuth from 'hooks/useAuth';
@@ -28,7 +33,8 @@ const Profile = () => {
   const [ firstName, setFirstName ] = useState('');
   const [ lastName, setLastName ] = useState('');
   const [ job, setJob ] = useState('');
-  const [ location, setLocation ] = useState('');
+  const [ location, setLocation ] = useState({});
+  const [ place, setPlace ] = useState('');
   const [ description, setDescription ] = useState('');
   const [ errors, setErrors ] = useState({});
 
@@ -209,16 +215,57 @@ const Profile = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                name="location"
-                fullWidth
-                label="Location"
-                value={location}
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => setLocation(e.target.value)}
-                error={Boolean(errors?.location)}
-                helperText={errors?.location}
-              />
+              {/*<TextField*/}
+              {/*  name="location"*/}
+              {/*  fullWidth*/}
+              {/*  label="Location"*/}
+              {/*  value={location}*/}
+              {/*  InputLabelProps={{ shrink: true }}*/}
+              {/*  onChange={(e) => setLocation(e.target.value)}*/}
+              {/*  error={Boolean(errors?.location)}*/}
+              {/*  helperText={errors?.location}*/}
+              {/*/>*/}
+
+              <PlacesAutocomplete
+                value={place}
+                onChange={(address) => setPlace(address)}
+              >
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => {
+                  return (
+                    <Autocomplete
+                      id="location"
+                      value={location}
+                      sx={{width: '100%'}}
+                      options={suggestions}
+                      autoHighlight
+                      getOptionLabel={(option) => option.description || ''}
+                      renderOption={(props, option) => (
+                        <Box
+                          component="li"
+                          {...props}
+                          onClick={() => setLocation(option)}
+                        >
+                          {option.description}
+                        </Box>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          {...getInputProps({
+                            placeholder: 'Search Places ...',
+                            className: 'location-search-input',
+                          })}
+                          inputProps={{
+                            ...params.inputProps,
+                            autoComplete: 'new-password', // disable autocomplete and autofill
+                          }}
+                        />
+                      )}
+                    />
+                  )
+                }}
+              </PlacesAutocomplete>
+
             </Grid>
             <Grid item xs={12}>
               <TextField

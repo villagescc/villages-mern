@@ -116,7 +116,8 @@ const Profile = ({ user }) => {
                           <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} />
                           <ListItemSecondaryAction>
                               <Typography variant="subtitle2" align="right">
-                                  {user?.locationId ? user?.locationId : <Chip label="No location" />}
+                                  {/*TODO convert to place description */}
+                                  {user.placeId ? user.placeId : <Chip label="No location" />}
                               </Typography>
                           </ListItemSecondaryAction>
                       </ListItemButton>
