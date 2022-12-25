@@ -30,7 +30,7 @@ exports.search = async (req, res, next) => {
       username,
       email,
       memberDate,
-      location,
+      placeId,
       job,
       description,
       avatar
@@ -74,7 +74,7 @@ const getUserDetail = async (id) => {
   userInfo.username = user.username;
   userInfo.email = user.email;
   userInfo.memberDate = user.createdAt;
-  userInfo.location = ''; // TODO
+  userInfo.placeId = profile.placeId;
   userInfo.job = profile?.job;
   userInfo.description = profile?.description;
   userInfo.avatar = profile?.avatar;
@@ -101,9 +101,9 @@ exports.uploadAvatar = async (req, res, next) => {
 
 exports.saveProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, job, location, description } = req.body;
+    const { firstName, lastName, job, placeId, description } = req.body;
     let user = await User.findOneAndUpdate({ _id: req.user._id }, { firstName, lastName })
-    await Profile.findOneAndUpdate({ _id: user.profile }, { job, description });
+    await Profile.findOneAndUpdate({ _id: user.profile }, { job, description, placeId });
     user = await getUserDetail(req.user._id);
     res.send({ success: true, user });
   }

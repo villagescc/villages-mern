@@ -20,9 +20,8 @@ const PostSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
-    locationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'location'
+    placeId: {
+      type: String,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

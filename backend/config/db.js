@@ -1,4 +1,8 @@
 const moongose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+
+const isEmpty = require('../validation/is-empty');
 
 //calling database using async await
 const db = process.env.mongoURI || 'mongodb://localhost:27017';
@@ -6,6 +10,15 @@ const db = process.env.mongoURI || 'mongodb://localhost:27017';
 const Category = require('../models/Category');
 const Subcategory = require('../models/Subcategory');
 const Tag = require('../models/Tag');
+const User = require('../models/User');
+const Endorsement = require('../models/Endorsement');
+
+const users = require('../DB/auth_user.json');
+const profiles = require('../DB/profile_profile.json');
+const endorsements = require('../DB/relate_endorsement.json');
+
+const profileController = require('../controller/profile.controller');
+const accountController = require('../controller/account.controller');
 
 const connectDB = async () => {
   try {
@@ -14,14 +27,14 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    function initialCategories() {
+    async function initialDB() {
       Category.estimatedDocumentCount((err, count) => {
         if (!err && count === 0) {
           Category.insertMany(
             [
-              { title: 'PRODUCTS', icon: 'categories/products.png' },
-              { title: 'SERVICES', icon: 'categories/services.png' },
-              { title: 'HOUSING', icon: 'categories/housing.png' },
+              {title: 'PRODUCTS', icon: 'categories/products.png'},
+              {title: 'SERVICES', icon: 'categories/services.png'},
+              {title: 'HOUSING', icon: 'categories/housing.png'},
             ]
           )
             .then(() => {
@@ -1537,9 +1550,89 @@ const connectDB = async () => {
             })
         }
       })
+
+      let profile_to_user_ids = [];
+
+      if (users.RECORDS && users.RECORDS.length > 0) {
+        for (const each of users.RECORDS) {
+          let profile, account, user;
+          try {
+            const {id:user_id, username, first_name: firstName, last_name: lastName, email} = each;
+            if(isEmpty(email)) continue;
+
+            user = await User.findOne({$or: [{email}, {username}]});
+            if (user) continue;
+
+            let profileData = {
+              name: `${firstName} ${lastName}`
+            }
+            if(profiles.RECORDS && profiles.RECORDS.find(profile => profile?.user_id === user_id)) {
+              profileData = {
+                ...profileData,
+                description: profiles.RECORDS.find(profile => profile?.user_id === user_id).description
+              }
+            }
+            profile = await profileController._createProfile(profileData);
+            account = await accountController._createAccount();
+
+            const token = crypto.randomBytes(32).toString("hex");
+            user = new User({
+              password: '123123',
+              username,
+              firstName,
+              lastName,
+              email,
+              token,
+              profile: profile.id,
+              account: account.id
+            });
+
+            const salt = await bcrypt.genSalt(10);
+
+            user.password = await bcrypt.hash('123123', salt);
+
+            await user.save();
+            if(profiles.RECORDS && profiles.RECORDS.find(profile => profile?.user_id === user_id)) {
+              profile_to_user_ids[profiles.RECORDS.find(profile => profile?.user_id === user_id).id] = user._id
+            }
+          }
+          catch(err) {
+            console.log(err)
+            if(profile) await profileController._removeProfileById(profile.id)
+            if(account) await accountController._removeAccountById(account.id)
+            if(user) await User.find({ id: user.id }).remove().exec();
+          }
+        }
+      }
+
+      if (endorsements.RECORDS && endorsements.RECORDS.length > 0) {
+        for(const each of endorsements.RECORDS) {
+          let endorsement;
+          try {
+            endorsement = await Endorsement.findOne({ endorserId: profile_to_user_ids[each.endorser_id], recipientId: profile_to_user_ids[each.recipient_id] })
+
+            if(endorsement) {
+              endorsement.weight = each.weight;
+              endorsement.text = each.text;
+              await endorsement.save()
+            }
+            else {
+              await Endorsement.create({
+                weight: each.weight,
+                text: each.text,
+                endorserId: profile_to_user_ids[each.endorser_id],
+                recipientId: profile_to_user_ids[each.recipient_id],
+              })
+            }
+          }
+          catch(err) {
+            if(endorsement) await Endorsement.find({ id: endorsement.id }).remove().exec();
+          }
+        }
+      }
     }
 
-    initialCategories()
+    initialDB()
 
     console.log('MongoDb Connected..');
   } catch (err) {

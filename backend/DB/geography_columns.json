@@ -1,0 +1,13 @@
+{
+  "RECORDS": [
+    {
+      "f_table_catalog": "villages_new_ui",
+      "f_table_schema": "public",
+      "f_table_name": "geo_location",
+      "f_geography_column": "point",
+      "coord_dimension": "2",
+      "srid": "4326",
+      "type": "Point"
+    }
+  ]
+}

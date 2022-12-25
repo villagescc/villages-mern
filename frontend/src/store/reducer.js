@@ -14,6 +14,7 @@ import customerReducer from './slices/customer';
 import endorsementReducer from './slices/endorsement';
 import paymentReducer from './slices/payment';
 import graphReducer from './slices/graph';
+import mapReducer from './slices/map';
 import productReducer from './slices/product';
 import chatReducer from './slices/chat';
 import calendarReducer from './slices/calendar';
@@ -42,6 +43,7 @@ const reducer = combineReducers({
     endorsement: endorsementReducer,
     payment: paymentReducer,
     graph: graphReducer,
+    map: mapReducer,
     notification: notificationReducer,
     product: productReducer,
     chat: chatReducer,

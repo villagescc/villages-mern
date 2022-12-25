@@ -16,6 +16,7 @@ const settingController = require('./controller/setting.controller');
 const accountController = require('./controller/account.controller');
 const endorsementController = require('./controller/endorsement.controller');
 const paymentController = require('./controller/payment.controller');
+const mapController = require('./controller/map.controller');
 const notificationController = require('./controller/notification.controller');
 
 // ######################### AUTH ROUTER #############################
@@ -65,5 +66,7 @@ router.post('/notification/create', authMiddleware.auth, notificationMiddleware.
 router.get('/notification/getByUser', authMiddleware.auth, notificationController.getByUser)
 router.put('/notification/readAllByUser', authMiddleware.auth, notificationController.readAllByUser)
 router.put('/notification/deleteAllByUser', authMiddleware.auth, notificationController.deleteAllByUser)
+
+router.get('/map/users', mapController.getUsers);
 
 module.exports = router;

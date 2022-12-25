@@ -11,9 +11,8 @@ const ProfileSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    locationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'location'
+    placeId: {
+      type: String
     },
     // user: {
     //   type: mongoose.Schema.Types.ObjectId,

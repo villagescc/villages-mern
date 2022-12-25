@@ -1,0 +1,46 @@
+{
+  "RECORDS": [
+    {
+      "id": "1",
+      "device_id": "0a5e6676-e8ed-4f04-9dd1-b48a05967618",
+      "device_type": "",
+      "created_at": "25/11/2022 18:43:00.861444+00",
+      "profile_id": "143"
+    },
+    {
+      "id": "2",
+      "device_id": "a51b4d8a-585c-4512-be78-e6d1f52c6bc9",
+      "device_type": "",
+      "created_at": "25/11/2022 20:20:44.52333+00",
+      "profile_id": "1524"
+    },
+    {
+      "id": "3",
+      "device_id": "627b1193-b496-46ba-bdcb-836f8cb8d09a",
+      "device_type": "",
+      "created_at": "26/11/2022 20:00:37.558917+00",
+      "profile_id": "1593"
+    },
+    {
+      "id": "4",
+      "device_id": "417ac0ae-0d53-4863-8bca-9f5809184cb0",
+      "device_type": "",
+      "created_at": "27/11/2022 00:15:21.657289+00",
+      "profile_id": "1594"
+    },
+    {
+      "id": "5",
+      "device_id": "10c48a1f-2ae3-459d-9afc-d95b1f558803",
+      "device_type": "",
+      "created_at": "7/12/2022 03:36:42.761329+00",
+      "profile_id": "1600"
+    },
+    {
+      "id": "6",
+      "device_id": "8db13f8b-4c20-450e-be3a-ae76355b16dc",
+      "device_type": "",
+      "created_at": "9/12/2022 21:06:26.760134+00",
+      "profile_id": "822"
+    }
+  ]
+}

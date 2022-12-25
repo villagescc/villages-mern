@@ -210,7 +210,7 @@ exports.validateProfileSave = (data) => {
   data.firstName = !isEmpty(data.firstName) ? data.firstName : "";
   data.lastName = !isEmpty(data.lastName) ? data.lastName : "";
   data.job = !isEmpty(data.job) ? data.job : "";
-  data.location = !isEmpty(data.location) ? data.location : "";
+  data.placeId = !isEmpty(data.placeId) ? data.placeId : "";
 
   if (!validator.isLength(data.firstName, { min: 2, max: 30 })) {
     errors.firstName = "First name must be between 2 and 30 characters";
@@ -228,8 +228,8 @@ exports.validateProfileSave = (data) => {
     errors.job = "Job field is required";
   }
 
-  if (validator.isEmpty(data.location)) {
-    errors.location = "Location field is required";
+  if (validator.isEmpty(data.placeId)) {
+    errors.placeId = "Location field is required";
   }
 
   return {

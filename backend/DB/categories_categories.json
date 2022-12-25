@@ -1,0 +1,19 @@
+{
+  "RECORDS": [
+    {
+      "id": "1",
+      "categories_text": "PRODUCTS",
+      "icon": "categories/products.png"
+    },
+    {
+      "id": "2",
+      "categories_text": "SERVICES",
+      "icon": "categories/services.png"
+    },
+    {
+      "id": "4",
+      "categories_text": "HOUSING",
+      "icon": "categories/housing.png"
+    }
+  ]
+}

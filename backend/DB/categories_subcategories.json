@@ -1,0 +1,194 @@
+{
+  "RECORDS": [
+    {
+      "id": "1",
+      "sub_categories_text": "AUTOMOTIVE",
+      "categories_id": "2"
+    },
+    {
+      "id": "2",
+      "sub_categories_text": "OTHER",
+      "categories_id": "1"
+    },
+    {
+      "id": "3",
+      "sub_categories_text": "TRAVEL",
+      "categories_id": "1"
+    },
+    {
+      "id": "4",
+      "sub_categories_text": "GARDEN",
+      "categories_id": "1"
+    },
+    {
+      "id": "6",
+      "sub_categories_text": "FILM & MOVIES",
+      "categories_id": "1"
+    },
+    {
+      "id": "7",
+      "sub_categories_text": "PETS & ANIMALS",
+      "categories_id": "1"
+    },
+    {
+      "id": "8",
+      "sub_categories_text": "ELECTRONICS",
+      "categories_id": "1"
+    },
+    {
+      "id": "9",
+      "sub_categories_text": "FOOD & KITCHEN",
+      "categories_id": "1"
+    },
+    {
+      "id": "10",
+      "sub_categories_text": "CAMPING & OUTDOORS",
+      "categories_id": "1"
+    },
+    {
+      "id": "11",
+      "sub_categories_text": "FURNITURE",
+      "categories_id": "1"
+    },
+    {
+      "id": "12",
+      "sub_categories_text": "GAMES & TOYS",
+      "categories_id": "1"
+    },
+    {
+      "id": "13",
+      "sub_categories_text": "BOOKS & MAGAZINES",
+      "categories_id": "1"
+    },
+    {
+      "id": "14",
+      "sub_categories_text": "MUSIC",
+      "categories_id": "1"
+    },
+    {
+      "id": "15",
+      "sub_categories_text": "SPORTS",
+      "categories_id": "1"
+    },
+    {
+      "id": "16",
+      "sub_categories_text": "TOOLS",
+      "categories_id": "1"
+    },
+    {
+      "id": "17",
+      "sub_categories_text": "BEAUTY",
+      "categories_id": "2"
+    },
+    {
+      "id": "18",
+      "sub_categories_text": "COMPUTER",
+      "categories_id": "2"
+    },
+    {
+      "id": "19",
+      "sub_categories_text": "CYCLE",
+      "categories_id": "2"
+    },
+    {
+      "id": "20",
+      "sub_categories_text": "FARM+GARDEN",
+      "categories_id": "2"
+    },
+    {
+      "id": "21",
+      "sub_categories_text": "FINANCIAL",
+      "categories_id": "2"
+    },
+    {
+      "id": "23",
+      "sub_categories_text": "LABOR",
+      "categories_id": "2"
+    },
+    {
+      "id": "24",
+      "sub_categories_text": "LEGAL",
+      "categories_id": "2"
+    },
+    {
+      "id": "25",
+      "sub_categories_text": "EDUCATION",
+      "categories_id": "2"
+    },
+    {
+      "id": "26",
+      "sub_categories_text": "PET",
+      "categories_id": "2"
+    },
+    {
+      "id": "27",
+      "sub_categories_text": "REAL ESTATE",
+      "categories_id": "2"
+    },
+    {
+      "id": "28",
+      "sub_categories_text": "SKILLED TRADE",
+      "categories_id": "2"
+    },
+    {
+      "id": "31",
+      "sub_categories_text": "THERAPEUTIC",
+      "categories_id": "2"
+    },
+    {
+      "id": "32",
+      "sub_categories_text": "MEDIA",
+      "categories_id": "2"
+    },
+    {
+      "id": "35",
+      "sub_categories_text": "HOUSING",
+      "categories_id": "4"
+    },
+    {
+      "id": "36",
+      "sub_categories_text": "OTHER",
+      "categories_id": "2"
+    },
+    {
+      "id": "37",
+      "sub_categories_text": "FARM",
+      "categories_id": "4"
+    },
+    {
+      "id": "38",
+      "sub_categories_text": "APARTMENTS",
+      "categories_id": "4"
+    },
+    {
+      "id": "39",
+      "sub_categories_text": "SHARED",
+      "categories_id": "4"
+    },
+    {
+      "id": "40",
+      "sub_categories_text": "TEMP",
+      "categories_id": "4"
+    },
+    {
+      "id": "41",
+      "sub_categories_text": "WORKTRADE",
+      "categories_id": "4"
+    },
+    {
+      "id": "42",
+      "sub_categories_text": "SWAP",
+      "categories_id": "4"
+    },
+    {
+      "id": "43",
+      "sub_categories_text": "CLOTHES & ACCESSORIES",
+      "categories_id": "1"
+    },
+    {
+      "id": "44",
+      "sub_categories_text": "HOUSEHOLD",
+      "categories_id": "2"
+    }
+  ]
+}
