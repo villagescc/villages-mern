@@ -299,12 +299,12 @@ const Posting = () => {
                     posts.length > 0 ? posts.map((post, index) => (
                       <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <PostingCard
-                          avatar={post.userId.profile.avatar}
+                          avatar={post.userId?.profile?.avatar}
                           post={post.photo}
                           title={post.title}
                           description={post.description}
-                          own={post.userId._id === user?._id}
-                          author={post.userId._id}
+                          own={post.userId?._id === user?._id}
+                          author={post.userId?._id}
                           onDelete={() => handleDeletePostClick(post)}
                           onEdit={() => handleEditPostClick(post)}
                         />

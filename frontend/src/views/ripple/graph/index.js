@@ -38,22 +38,22 @@ const Index = () => {
                 label: node?.attributes?.username,
                 color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main,
               })),
-              edges: graph?.edges.filter(edge => edge.attributes && edge.attributes.limit > 0).map(edge => ({
+              edges: graph?.edges.filter(edge => edge.attributes && edge.attributes.limit > 0 && edge.source !== edge.target).map(edge => ({
                 id: edge.key,
                 source: edge.source,
                 target: edge.target,
                 animated: true,
                 label: edge.attributes.limit.toString(),
-                size: 0.5
+                // size: 0.5
               }))
             }}
             settings={{
               drawEdgeLabels: true,
               drawEdges: true,
-              minEdgeSize: 2,
-              maxEdgeSize: 2,
-              minNodeSize: 10,
-              maxNodeSize: 10
+              // minEdgeSize: 2,
+              // maxEdgeSize: 2,
+              // minNodeSize: 10,
+              // maxNodeSize: 10
             }}
             style={{
               width: '100%',
@@ -65,7 +65,6 @@ const Index = () => {
             onOutNode={ e => setSelectedNode(null) }
           >
             <EdgeShapes default="curvedArrow"/>
-            <NodeShapes default="star" />
             <RandomizeNodePositions>
               <Filter neighborsOf={ selectedNode } />
               <ForceAtlas2
@@ -73,7 +72,7 @@ const Index = () => {
                 barnesHutTheta={0.6}
                 iterationsPerRender={1}
                 linLogMode
-                timeout={1000}
+                timeout={6000}
                 worker
               />
               <RelativeSize initialSize={15} />
