@@ -150,13 +150,22 @@ const Index = () => {
                 New
               </Button>
             </Grid>
-
+            {console.log("123456789012".split(''))}
             {
-              endorsements.length > 0 ? (
+              loading ? (
+                <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
+                  {
+                    "123456789012".split('').map((i, key) => (
+                      <Grid item xs={12} md={6} lg={4} xl={3} key={key}>
+                        <EndorsementCardSkeleton />
+                      </Grid>
+                    ))
+                  }
+                </Grid>
+              ) : endorsements.length > 0 ? (
                 <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
                   {
                     endorsements.map((item, i) => (
-                      <>
                       <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
                         <EndorsementCard
                           endorsement={item}
@@ -170,19 +179,14 @@ const Index = () => {
                           }}
                         />
                       </Grid>
-                      <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
-                        <EndorsementCardSkeleton />
-                      </Grid>
-                      </>
                     ))}
                 </Grid>
               ) : (
-                <Grid container direction="row" sx={{ padding: 3 }}>
+                <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
                   <Empty />
                 </Grid>
               )
             }
-
           </Grid>
         </Grid>
       </Grid>
