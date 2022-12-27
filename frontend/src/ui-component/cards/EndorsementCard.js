@@ -48,37 +48,6 @@ const EndorsementCard = ({ endorsement, onActive }) => {
                       <Grid item xs zeroMinWidth onClick={() => onActive && onActive()} style={{ cursor: 'pointer' }}>
                           <Avatar alt={user?.name} size="lg" src={avatarImage} sx={{ width: 72, height: 72 }} />
                       </Grid>
-                      <Grid item>
-                          <MoreHorizOutlinedIcon
-                            fontSize="small"
-                            sx={{ color: theme.palette.grey[500], cursor: 'pointer' }}
-                            aria-controls="menu-user-details-card"
-                            aria-haspopup="true"
-                            onClick={handleClick}
-                          />
-                          {anchorEl && (
-                            <Menu
-                              id="menu-user-details-card"
-                              anchorEl={anchorEl}
-                              keepMounted
-                              open={Boolean(anchorEl)}
-                              onClose={handleClose}
-                              variant="selectedMenu"
-                              anchorOrigin={{
-                                  vertical: 'bottom',
-                                  horizontal: 'right'
-                              }}
-                              transformOrigin={{
-                                  vertical: 'top',
-                                  horizontal: 'right'
-                              }}
-                            >
-                                <MenuItem onClick={handleClose}> Today</MenuItem>
-                                <MenuItem onClick={handleClose}> This Month</MenuItem>
-                                <MenuItem onClick={handleClose}> This Year </MenuItem>
-                            </Menu>
-                          )}
-                      </Grid>
                   </Grid>
               </Grid>
               <Grid item xs={12}>
