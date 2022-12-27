@@ -13,6 +13,7 @@ import EndorsementCard from 'ui-component/cards/EndorsementCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import CreateModal from "./CreateModal";
+import EndorsementCardSkeleton from 'ui-component/cards/Skeleton/EndorsementCard';
 
 import { useDispatch, useSelector } from 'store';
 import { searchEndorsements, getUsers, saveEndorsement } from 'store/slices/endorsement';
@@ -155,6 +156,7 @@ const Index = () => {
                 <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
                   {
                     endorsements.map((item, i) => (
+                      <>
                       <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
                         <EndorsementCard
                           endorsement={item}
@@ -168,6 +170,10 @@ const Index = () => {
                           }}
                         />
                       </Grid>
+                      <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
+                        <EndorsementCardSkeleton />
+                      </Grid>
+                      </>
                     ))}
                 </Grid>
               ) : (

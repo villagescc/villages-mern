@@ -22,12 +22,14 @@ const slice = createSlice({
         // HAS ERROR
         hasError(state, action) {
             state.errors = action.payload;
+            state.loading = false;
         },
 
         // GET ENDORSEMENTS
         searchEndorsementsSuccess(state, action) {
             state.endorsements = action.payload.endorsements;
             state.total = action.payload.total;
+            state.loading = false;
             state.errors = {};
         },
 
@@ -51,6 +53,7 @@ export default slice.reducer;
 
 export function searchEndorsements(keyword = '', page = 1) {
     return async () => {
+        dispatch(slice.actions.setLoading(true));
         try {
             const response = await axios.post('/endorsement/search', { keyword, page });
             dispatch(slice.actions.searchEndorsementsSuccess(response.data));
