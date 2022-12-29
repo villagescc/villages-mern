@@ -149,7 +149,6 @@ const Index = () => {
                 New
               </Button>
             </Grid>
-            {console.log("123456789012".split(''))}
             {
               loading ? (
                 <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>

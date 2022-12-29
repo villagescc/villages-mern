@@ -72,7 +72,7 @@ const Index = () => {
                 barnesHutTheta={0.6}
                 iterationsPerRender={1}
                 linLogMode
-                timeout={6000}
+                timeout={1000}
                 worker
               />
               <RelativeSize initialSize={15} />
