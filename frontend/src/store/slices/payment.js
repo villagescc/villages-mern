@@ -9,6 +9,7 @@ import { dispatch } from '../index';
 
 const initialState = {
     users: [],
+    paylogs: [],
     total: 0,
     maxLimit: 0,
     errors: {},
@@ -34,6 +35,7 @@ const slice = createSlice({
         // GET MAX LIMIT
         getMaxLimitSuccess(state, action) {
             state.maxLimit = action.payload.maxLimit;
+            state.paylogs = action.payload.paylogs;
             state.errors = {};
         },
 

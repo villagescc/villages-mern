@@ -31,11 +31,13 @@ const buildGraph = async () => {
   const paylogs = await Paylog.find().populate('paymentId').exec();
   paylogs.forEach(paylog => {
     if(paylog.paymentId.status === 'Completed') {
+      // increase limit for amount which you got paid
       if(graph.hasEdge(paylog.recipient, paylog.payer))
         graph.updateEdgeAttribute(paylog.recipient, paylog.payer, 'limit', limit => (limit || 0) + paylog.amount);
       else
         graph.mergeEdge(paylog.recipient, paylog.payer, { limit: paylog.amount });
 
+      // decrease limit for amount which you paid
       if(graph.hasEdge(paylog.payer, paylog.recipient))
         graph.updateEdgeAttribute(paylog.payer, paylog.recipient, 'limit', limit => (limit || 0) - paylog.amount);
       else

@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {
   Grid,
   TextField,
-  Divider,
+  Typography,
   InputAdornment,
   Autocomplete,
   CardContent,
@@ -16,13 +16,14 @@ import Help from '@mui/icons-material/Help';
 
 import {useDispatch, useSelector} from "store";
 import {getUsers, getMaxLimit, pay} from "store/slices/payment";
+import { gridSpacing } from 'store/constant';
+import {openSnackbar} from "store/slices/snackbar";
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
-import { gridSpacing } from 'store/constant';
-import {openSnackbar} from "../../../store/slices/snackbar";
-import {searchEndorsements} from "../../../store/slices/endorsement";
+import Graph from '../graph'
+import {getGraph} from "../../../store/slices/graph";
 
 // ==============================|| Layouts ||============================== //
 function PayForm({ recipientId }) {
@@ -32,6 +33,8 @@ function PayForm({ recipientId }) {
   const [users, setUsers] = useState([]);
   const [recipient, setRecipient] = useState('');
   const [maxLimit, setMaxLimit] = useState(0);
+  const [paylogs, setPaylogs] = useState([]);
+  const [showGraph, setShowGraph] = useState(false);
   const [amount, setAmount] = useState(0);
   const [memo, setMemo] = useState("");
   const [errors, setErrors] = useState({});
@@ -60,12 +63,16 @@ function PayForm({ recipientId }) {
   useEffect(() => {
     setUsers(paymentState.users);
     setMaxLimit(paymentState.maxLimit);
+    setPaylogs([...paymentState.paylogs]);
     setErrors(paymentState.errors)
   }, [paymentState]);
 
   useEffect(() => {
     if(!!recipient) {
       dispatch(getMaxLimit(recipient))
+    }
+    else {
+      setAmount(0);
     }
   }, [recipient])
 
@@ -86,6 +93,9 @@ function PayForm({ recipientId }) {
   return (
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
+        <Graph paylogs={paylogs} />
+      </Grid>
+      <Grid item xs={12}>
         <MainCard title="Payment">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
@@ -95,9 +105,9 @@ function PayForm({ recipientId }) {
                 id="recipient"
                 value={users.find(user => user.id === recipient) || null}
                 onChange={(event, newValue) => {
-                  setRecipient(newValue.id);
+                  setRecipient(newValue?.id);
                 }}
-                renderInput={(params) => <TextField {...params} label="CHOOSE THE PAYMENT RECEIVER:" margin="normal" size={'small'} error={errors.recipient} helperText={errors?.recipient || maxLimit > 0 ? `You can send up to ${maxLimit}VH` : 'You cannot send any value.'} />}
+                renderInput={(params) => <TextField {...params} label="CHOOSE THE PAYMENT RECEIVER:" margin="normal" size={'small'} error={errors.recipient} helperText={errors?.recipient || maxLimit > 0 ? `You can send up to ${maxLimit}VH` : recipient ? 'You cannot send any value.' : 'Please select the recipient'} />}
               />
             </Grid>
             <Grid item xs={12}>

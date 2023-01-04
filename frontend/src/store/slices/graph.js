@@ -9,6 +9,8 @@ import { dispatch } from '../index';
 
 const initialState = {
     graph: null,
+    nodes: [],
+    edges: [],
     errors: {},
     loading: false
 };
@@ -22,10 +24,18 @@ const slice = createSlice({
             state.errors = action.payload;
         },
 
-        // GET USERS
+        // GET GRAPH
         getGraphSuccess(state, action) {
             state.graph = action.payload;
             state.errors = {};
+            state.loading = false;
+        },
+
+        // GET GRAPH DATA
+        getPathSuccess(state, action) {
+            const { paylogs } = action.payload;
+            state.nodes = action.payload.nodes;
+            state.edges = action.payload.edges;
             state.loading = false;
         },
 

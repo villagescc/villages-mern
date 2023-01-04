@@ -7,16 +7,16 @@ import { getGraph } from "store/slices/graph";
 import useAuth from "hooks/useAuth";
 import useConfig from "hooks/useConfig";
 import {useTheme} from "@mui/material/styles";
-import {pay} from "../../../store/slices/payment";
 
-const Index = ({ paylogs = [] }) => {
+const Index = ({ recipient = null }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { borderRadius } = useConfig();
   const { user } = useAuth()
-  const graphState = useSelector((state) => state.graph);
+  const { graph } = useSelector((state) => state.graph);
 
-  const [ graph, setGraph ] = useState(null);
+  const [ nodes, setNodes ] = useState([]);
+  const [ edges, setEdges ] = useState([]);
   const [ selectedNode, setSelectedNode ] = useState(null);
 
   useEffect(() => {
@@ -24,10 +24,26 @@ const Index = ({ paylogs = [] }) => {
   }, [])
 
   useEffect(() => {
-    setGraph(graphState.graph);
-  }, [graphState])
-
-  console.log(paylogs);
+    if(graph.nodes && typeof graph.nodes === 'object') {
+      const nodes = graph.nodes.filter(node => !recipient ? node.key === recipient : true).map(node => ({
+        id: node?.key,
+        label: node?.attributes?.username,
+        color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main,
+      }))
+      setNodes(nodes);
+    }
+    if(graph.nodes && typeof graph.nodes === 'object') {
+      const edges = graph.edges.filter(edge => edge.attributes && edge.attributes.limit > 0 && edge.source !== edge.target).filter(edge => !recipient ? edge.source === recipient || edge.target === recipient : true).map(edge => ({
+        id: edge.key,
+        source: edge.source,
+        target: edge.target,
+        animated: true,
+        label: edge.attributes.limit.toString(),
+        // size: 0.5
+      }))
+      setEdges(edges)
+    }
+  }, [graph])
 
   return (
     <div>
@@ -36,26 +52,8 @@ const Index = ({ paylogs = [] }) => {
           <Sigma
             renderer="canvas"
             graph={{
-              nodes: graph?.nodes.map(node => ({
-                id: node?.key,
-                label: node?.attributes?.username,
-                color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main,
-              })),
-              edges: graph?.edges.filter(edge => edge.attributes && edge.attributes.limit > 0 && edge.source !== edge.target)
-                .filter(edge => {
-                  for(let paylog of paylogs) {
-                    if(paylog.payer === edge.source && paylog.recipient === edge.target) return true;
-                  }
-                  return false;
-                })
-                .map(edge => ({
-                  id: edge.key,
-                  source: edge.source,
-                  target: edge.target,
-                  animated: true,
-                  label: edge.attributes.limit.toString(),
-                  // size: 0.5
-                }))
+              nodes: nodes,
+              edges: edges
             }}
             settings={{
               drawEdgeLabels: true,

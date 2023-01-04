@@ -2,7 +2,6 @@ import React from 'react';
 import {useParams} from "react-router-dom";
 
 import PayForm from "./PayForm";
-import Graph from "../graph";
 import {Grid} from "@mui/material";
 
 const Index = () => {
