@@ -22,10 +22,12 @@ const accountController = require('../controller/account.controller');
 
 const connectDB = async () => {
   try {
-    await moongose.connect(db, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    try {
+      await moongose.connect(db);
+    }
+    catch(err) {
+      console.log('mongo connect error:', err)
+    }
 
     async function initialDB() {
       Category.estimatedDocumentCount((err, count) => {

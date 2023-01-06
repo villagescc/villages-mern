@@ -158,7 +158,7 @@ const UserList = ({ users, loading }) => {
                               user.followers.map((each, index) => (
                                 <Avatar
                                   alt={each.username}
-                                  src={each.profile.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile.avatar : DefaultAvatar}
+                                  src={each.profile?.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile?.avatar : DefaultAvatar}
                                   tooltip={each.username}
                                   key={index} />
                               ))
@@ -188,7 +188,7 @@ const UserList = ({ users, loading }) => {
                               user.followings.map((each, index) => (
                                 <Avatar
                                   alt={each.username}
-                                  src={each.profile.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile.avatar : DefaultAvatar}
+                                  src={each.profile?.avatar ? 'http://localhost:5000/upload/avatar/'+each.profile?.avatar : DefaultAvatar}
                                   tooltip={each.username}
                                   key={index}
                                 />

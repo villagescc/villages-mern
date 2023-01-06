@@ -1,6 +1,6 @@
 import LAYOUT_CONST from 'constant';
 
-export const SERVER_URL = 'http://localhost:5000';
+export const SERVER_URL = 'https://beta.villages.io';
 
 export const JWT_API = {
     secret: 'SECRET-KEY',
