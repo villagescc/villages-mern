@@ -32,9 +32,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
 import useAuth from 'hooks/useAuth';
-import User1 from 'assets/images/users/user-round.svg';
+import { SERVER_URL } from 'config';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser, IconKey } from '@tabler/icons';
@@ -92,33 +91,32 @@ const ProfileSection = () => {
         prevOpen.current = open;
     }, [open]);
 
-    if(!isLoggedIn) return (
-      <Chip
-        sx={{
-          height: '48px',
-          alignItems: 'center',
-          borderRadius: '27px',
-          transition: 'all .2s ease-in-out',
-          borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
-          backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
-          '&[aria-controls="menu-list-grow"], &:hover': {
-            borderColor: theme.palette.primary.main,
-            background: `${theme.palette.primary.main}!important`,
-            color: theme.palette.primary.light,
-            '& svg': {
-              stroke: theme.palette.primary.light
-            }
-          },
-        }}
-        icon={
-          <IconKey stroke={1.5} size="24px" color={theme.palette.primary.main} />
-        }
-        label={<FormattedMessage id="login" />}
-        variant="outlined"
-        onClick={() => navigate('login', { replace: true })}
-        color="primary"
-      />
-    );
+    if (!isLoggedIn)
+        return (
+            <Chip
+                sx={{
+                    height: '48px',
+                    alignItems: 'center',
+                    borderRadius: '27px',
+                    transition: 'all .2s ease-in-out',
+                    borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
+                    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
+                    '&[aria-controls="menu-list-grow"], &:hover': {
+                        borderColor: theme.palette.primary.main,
+                        background: `${theme.palette.primary.main}!important`,
+                        color: theme.palette.primary.light,
+                        '& svg': {
+                            stroke: theme.palette.primary.light
+                        }
+                    }
+                }}
+                icon={<IconKey stroke={1.5} size="24px" color={theme.palette.primary.main} />}
+                label={<FormattedMessage id="login" />}
+                variant="outlined"
+                onClick={() => navigate('login', { replace: true })}
+                color="primary"
+            />
+        );
 
     return (
         <>
@@ -144,7 +142,11 @@ const ProfileSection = () => {
                 }}
                 icon={
                     <Avatar
-                        src={user?.profile?.avatar ? `http://localhost:5000/upload/avatar/${user?.profile?.avatar}` : 'http://localhost:5000/upload/avatar/default.png'}
+                        src={
+                            user?.profile?.avatar
+                                ? `${SERVER_URL}/upload/avatar/${user?.profile?.avatar}`
+                                : '${SERVER_URL}/upload/avatar/default.png'
+                        }
                         sx={{
                             ...theme.typography.mediumAvatar,
                             margin: '8px 0 8px 8px !important',
@@ -164,7 +166,7 @@ const ProfileSection = () => {
                 onClick={handleToggle}
                 color="primary"
             />
-
+            {console.log(`${SERVER_URL}/upload/avatar/${user?.profile?.avatar}`)}
             <Popper
                 placement="bottom"
                 open={open}
