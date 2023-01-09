@@ -166,7 +166,6 @@ const ProfileSection = () => {
                 onClick={handleToggle}
                 color="primary"
             />
-            {console.log(`${SERVER_URL}/upload/avatar/${user?.profile?.avatar}`)}
             <Popper
                 placement="bottom"
                 open={open}
