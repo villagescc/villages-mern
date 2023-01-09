@@ -10,9 +10,11 @@ const Paylog = require('../models/Paylog');
 
 let graph;
 
-const buildGraph = async () => {
+const buildGraph = async (nodes = null) => {
   graph = new Graph();
-  const users = await User.find();
+  let users;
+  if(nodes === null) users = await User.find();
+  else users = await User.find({ _id: { "$in": nodes } });
   for (let user of users) {
     graph.addNode(user.id, {
       ...user._doc
@@ -24,7 +26,9 @@ const buildGraph = async () => {
   //   graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
   //   graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
   // });
-  const endorsements = await Endorsement.find();
+  let endorsements;
+  if(nodes === null) endorsements = await Endorsement.find();
+  else endorsements = await Endorsement.find({ $and: [ { endorserId: { $in: nodes } }, { recipientId: { $in: nodes } } ] })
   endorsements.forEach(endorsement => {
     graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, { limit: endorsement.weight });
   })
@@ -52,6 +56,30 @@ exports.getGraph = async (req, res, next) => {
     res.send(graph);
   }
   catch(err) {
+    next(err);
+  }
+}
+
+exports.getPath = async (req, res, next) => {
+  try {
+    const { senderId, recipientId } = req.body;
+
+    const result = await this._getMaxFlow(senderId, recipientId);
+    let nodes = [];
+    if(result.success) {
+      for(path of result.paths) {
+        nodes = [...nodes, ...path];
+      }
+      nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
+      await buildGraph(nodes);
+      res.send(graph);
+    }
+    else {
+      res.status(400).send(result.errors);
+    }
+  }
+  catch(err) {
+    console.log('getPath error:', err)
     next(err);
   }
 }
@@ -181,5 +209,5 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
 
   const paylogs = graph.edges().filter(edge => graph.hasEdgeAttribute(edge, 'tempPay')).map(edge => ({payer: graph.source(edge), recipient: graph.target(edge), amount: graph.getEdgeAttribute(edge, "tempPay")}))
 
-  return { success: true, maxLimit, paylogs };
+  return { success: true, maxLimit, paylogs, paths };
 }

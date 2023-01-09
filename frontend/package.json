@@ -106,7 +106,7 @@
         "yup": "^0.32.11"
     },
     "scripts": {
-        "start": "BROWSER=none react-app-rewired start",
+        "start": "react-app-rewired start",
         "build": "react-app-rewired build",
         "lint": "eslint --ext .js,.jsx ./src",
         "test": "react-scripts test",

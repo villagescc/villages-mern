@@ -18,10 +18,10 @@ const Index = () => {
 
     const [graph, setGraph] = useState(null);
     const [selectedNode, setSelectedNode] = useState(null);
-
-    useEffect(() => {
-        dispatch(getGraph());
-    }, []);
+    //
+    // useEffect(() => {
+    //     dispatch(getGraph());
+    // }, []);
 
     useEffect(() => {
         setGraph(graphState.graph);

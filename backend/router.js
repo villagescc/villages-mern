@@ -60,6 +60,7 @@ router.post('/account/create', authMiddleware.auth, accountMiddleware.create, ac
 router.get('/payment/getMaxLimit/:recipient', authMiddleware.auth, paymentController.getMaxLimit)
 router.post('/payment/pay', authMiddleware.auth, paymentMiddleware.pay, paymentController.pay)
 router.get('/payment/getGraph', paymentController.getGraph)
+router.post('/payment/getPath', paymentMiddleware.getPath, paymentController.getPath)
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post('/notification/create', authMiddleware.auth, notificationMiddleware.create, notificationController.create)

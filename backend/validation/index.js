@@ -269,3 +269,23 @@ exports.validateChangePassword = (data) => {
     isValid: isEmpty(errors)
   };
 };
+
+exports.validateGetPathInput = (data) => {
+  let errors = {};
+
+  data.senderId = !isEmpty(data.senderId) ? data.senderId : "";
+  data.recipientId = !isEmpty(data.recipientId) ? data.recipientId : "";
+
+  if (validator.isEmpty(data.senderId)) {
+    errors.senderId = "Sender must be selected";
+  }
+
+  if (validator.isEmpty(data.recipientId)) {
+    errors.recipientId = "Recipient must be selected";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  };
+};

@@ -5,8 +5,10 @@ import { Grid, TextField, Typography, InputAdornment, Autocomplete, CardContent,
 import MuiTooltip from '@mui/material/Tooltip';
 import Help from '@mui/icons-material/Help';
 
+import useAuth from "hooks/useAuth";
 import { useDispatch, useSelector } from 'store';
-import { getUsers, getMaxLimit, pay } from 'store/slices/payment';
+import { getUsers, pay } from 'store/slices/payment';
+import {getPath} from 'store/slices/graph';
 import { gridSpacing } from 'store/constant';
 import { openSnackbar } from 'store/slices/snackbar';
 
@@ -14,13 +16,12 @@ import { openSnackbar } from 'store/slices/snackbar';
 import MainCard from 'ui-component/cards/MainCard';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 import Graph from '../graph';
-import { getGraph } from '../../../store/slices/graph';
 
 // ==============================|| Layouts ||============================== //
 function PayForm({ recipientId }) {
     const dispatch = useDispatch();
     const paymentState = useSelector((state) => state.payment);
-
+    const { user } = useAuth();
     const [users, setUsers] = useState([]);
     const [recipient, setRecipient] = useState('');
     const [maxLimit, setMaxLimit] = useState(0);
@@ -60,7 +61,7 @@ function PayForm({ recipientId }) {
 
     useEffect(() => {
         if (!!recipient) {
-            dispatch(getMaxLimit(recipient));
+            dispatch(getPath(user._id, recipient));
         } else {
             setAmount(0);
         }

@@ -59,3 +59,14 @@ export function getGraph() {
         }
     };
 }
+
+export function getPath(senderId, recipientId) {
+    return async () => {
+        try {
+            const response = await axios.post('/payment/getPath', { senderId, recipientId });
+            dispatch(slice.actions.getGraphSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
