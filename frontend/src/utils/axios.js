@@ -12,7 +12,12 @@ const axiosServices = axios.create({
 // interceptor for http
 axiosServices.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject((error.response && error.response.data) || error)
+  (error) => {
+    if (error.response.status === 401) {
+      alert();
+    }
+    Promise.reject((error.response && error.response.data) || error)
+  }
 );
 
 export default axiosServices;
