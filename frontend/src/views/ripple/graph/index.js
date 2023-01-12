@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Graph from 'graphology';
-import { Sigma, EdgeShapes, NodeShapes, RandomizeNodePositions, RelativeSize, ForceAtlas2, Filter } from 'react-sigma';
+import { Sigma, EdgeShapes, RandomizeNodePositions, RelativeSize, ForceAtlas2, Filter } from 'react-sigma';
 
 import { useDispatch, useSelector } from 'store';
-import { getGraph } from 'store/slices/graph';
 import useAuth from 'hooks/useAuth';
 import useConfig from 'hooks/useConfig';
 import { useTheme } from '@mui/material/styles';
-import { pay } from '../../../store/slices/payment';
 
 const Index = () => {
     const dispatch = useDispatch();
@@ -18,7 +15,7 @@ const Index = () => {
 
     const [graph, setGraph] = useState(null);
     const [selectedNode, setSelectedNode] = useState(null);
-    //
+
     // useEffect(() => {
     //     dispatch(getGraph());
     // }, []);
@@ -36,7 +33,7 @@ const Index = () => {
                         nodes: graph?.nodes.map((node) => ({
                             id: node?.key,
                             label: node?.attributes?.username,
-                            color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main
+                            color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main,
                         })),
                         edges: graph?.edges
                             .filter((edge) => edge.attributes && edge.attributes.limit > 0 && edge.source !== edge.target)
