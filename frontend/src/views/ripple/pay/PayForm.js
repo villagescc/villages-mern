@@ -29,7 +29,7 @@ import Graph from '../graph/path';
 function PayForm({ recipientId }) {
     const dispatch = useDispatch();
     const paymentState = useSelector((state) => state.payment);
-    const { user } = useAuth();
+    const { user, init } = useAuth();
     const [users, setUsers] = useState([]);
     const [recipient, setRecipient] = useState('');
     const [maxLimit, setMaxLimit] = useState(0);
@@ -58,6 +58,7 @@ function PayForm({ recipientId }) {
         setRecipient('');
         setAmount(0);
         setMemo('');
+        init();
     };
 
     useEffect(() => {

@@ -14,10 +14,10 @@ const ProfileSchema = new mongoose.Schema(
     placeId: {
       type: String
     },
-    // user: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'user'
-    // },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+    },
     job: {
       type: String,
     },

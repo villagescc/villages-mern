@@ -1565,18 +1565,6 @@ const connectDB = async () => {
             user = await User.findOne({$or: [{email}, {username}]});
             if (user) continue;
 
-            let profileData = {
-              name: `${firstName} ${lastName}`
-            }
-            if(profiles.RECORDS && profiles.RECORDS.find(profile => profile?.user_id === user_id)) {
-              profileData = {
-                ...profileData,
-                description: profiles.RECORDS.find(profile => profile?.user_id === user_id).description
-              }
-            }
-            profile = await profileController._createProfile(profileData);
-            account = await accountController._createAccount();
-
             const token = crypto.randomBytes(32).toString("hex");
             user = new User({
               password: '123123',
@@ -1585,9 +1573,21 @@ const connectDB = async () => {
               lastName,
               email,
               token,
-              profile: profile.id,
-              account: account.id
             });
+
+            let profileData = {
+              user: user._id,
+              name: `${firstName} ${lastName}`
+            }
+            if(profiles.RECORDS && profiles.RECORDS.find(profile => profile?.user_id === user_id)) {
+              profileData = {
+                ...profileData,
+                description: profiles.RECORDS.find(profile => profile?.user_id === user_id).description
+              }
+            }
+
+            profile = await profileController._createProfile(profileData);
+            account = await accountController._createAccount({ user: user._id, balance: 0 });
 
             const salt = await bcrypt.genSalt(10);
 

@@ -123,6 +123,9 @@ exports.pay = async (req, res, next) => {
       try {
         await Paylog.insertMany(result.paylogs.map(paylog => ({ ...paylog, paymentId: payment._id })), { ordered: false });
 
+        await Account.findOneAndUpdate({ user: payer }, { $inc: { balance: -(amount) } }, { upsert: true, new: true, setDefaultsOnInsert: true })
+        await Account.findOneAndUpdate({ user: recipient }, { $inc: { balance: amount } }, { upsert: true, new: true, setDefaultsOnInsert: true })
+
         payment.status = 'Completed';
         payment.save();
 
@@ -134,6 +137,7 @@ exports.pay = async (req, res, next) => {
         res.send({ success: true, paylogs: result.paylogs })
       }
       catch(error) {
+        await Paylog.deleteMany({ paymentId: payment._id })
         payment.status = 'Failed';
         payment.save();
         console.log('add paylog error:', error)

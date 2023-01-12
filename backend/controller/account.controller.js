@@ -13,8 +13,8 @@ exports._getBalanceById = (id) => {
   return account.balance ? account.balance : 0;
 }
 
-exports._createAccount = async () => {
-  const account = await Account.create({});
+exports._createAccount = async (data) => {
+  const account = await Account.create(data);
 
   return account;
 }
