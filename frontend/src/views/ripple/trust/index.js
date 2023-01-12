@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Tab, Tabs, Typography, styled } from '@mui/material';
 
 import TrustList from "./TrustList";
-import Graph from "../graph/index";
+import Graph from "../graph/graph";
 
 // assets
 import MainCard from "ui-component/cards/MainCard";

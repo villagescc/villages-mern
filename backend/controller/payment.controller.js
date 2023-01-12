@@ -8,10 +8,8 @@ const Payment = require('../models/Payment');
 const Endorsement = require('../models/Endorsement');
 const Paylog = require('../models/Paylog');
 
-let graph;
-
 const buildGraph = async (nodes = null) => {
-  graph = new Graph();
+  const graph = await new Graph();
   const users = await User.find();
   for (let user of users) {
     if(nodes !== null && !nodes.includes(user.id)) continue;
@@ -57,11 +55,12 @@ const buildGraph = async (nodes = null) => {
           graph.mergeEdge(paylog.payer, paylog.recipient, { limit: -paylog.amount });
       }
     })
+  return graph;
 }
 
 exports.getGraph = async (req, res, next) => {
   try {
-    await buildGraph();
+    const graph = await buildGraph();
     res.send(graph);
   }
   catch(err) {
@@ -80,7 +79,7 @@ exports.getPath = async (req, res, next) => {
         nodes = [...nodes, ...path];
       }
       nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
-      await buildGraph(nodes);
+      const graph = await buildGraph();
       res.send(graph);
     }
     else {
@@ -106,6 +105,7 @@ exports.getMaxLimit = async (req, res, next) => {
     }
   }
   catch(error) {
+    console.log('get max limit error', error);
     next(error);
   }
 }
@@ -157,7 +157,7 @@ exports.pay = async (req, res, next) => {
 }
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
-  await buildGraph();
+  const graph = await buildGraph();
   if(!graph.hasNode(recipient)) {
     return {
       success: false,

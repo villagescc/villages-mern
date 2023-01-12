@@ -51,10 +51,13 @@ export default slice.reducer;
 
 export function getGraph() {
     return async () => {
+        dispatch(slice.actions.setLoading(true));
         try {
             const response = await axios.get('/payment/getGraph');
+            dispatch(slice.actions.setLoading(false));
             dispatch(slice.actions.getGraphSuccess(response.data));
         } catch (error) {
+            dispatch(slice.actions.setLoading(false));
             dispatch(slice.actions.hasError(error));
         }
     };

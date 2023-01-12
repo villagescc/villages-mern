@@ -4,10 +4,8 @@ import React, { useEffect, useState } from 'react';
 import {
     Grid,
     TextField,
-    Typography,
     InputAdornment,
     Autocomplete,
-    CardContent,
     CardActions,
     Button,
     Dialog
@@ -17,7 +15,7 @@ import Help from '@mui/icons-material/Help';
 
 import useAuth from "hooks/useAuth";
 import { useDispatch, useSelector } from 'store';
-import { getUsers, pay } from 'store/slices/payment';
+import { getUsers, pay, getMaxLimit } from 'store/slices/payment';
 import {getPath} from 'store/slices/graph';
 import { gridSpacing } from 'store/constant';
 import { openSnackbar } from 'store/slices/snackbar';
@@ -25,7 +23,7 @@ import { openSnackbar } from 'store/slices/snackbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
-import Graph from '../graph';
+import Graph from '../graph/path';
 
 // ==============================|| Layouts ||============================== //
 function PayForm({ recipientId }) {
@@ -72,6 +70,7 @@ function PayForm({ recipientId }) {
     useEffect(() => {
         if (!!recipient) {
             dispatch(getPath(user._id, recipient));
+            dispatch(getMaxLimit(recipient));
         } else {
             setAmount(0);
         }
@@ -159,7 +158,7 @@ function PayForm({ recipientId }) {
                                   <Button variant="contained" color="secondary" onClick={submitPayment}>
                                       Send Payment
                                   </Button>
-                                  <Button variant="contained" color="primary" onClick={() => setShowGraph(!showGraph)} sx={{ ml: 1 }} disabled={maxLimit === 0}>
+                                  <Button variant="contained" color="primary" onClick={() => setShowGraph(!showGraph)} sx={{ ml: 1 }} disabled={!(maxLimit > 0)}>
                                       Show Graph
                                   </Button>
                               </Grid>
