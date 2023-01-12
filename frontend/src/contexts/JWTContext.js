@@ -11,6 +11,8 @@ import accountReducer from 'store/accountReducer';
 // project imports
 import Loader from 'ui-component/Loader';
 import axios from 'utils/axios';
+
+import { useDispatch, useSelector } from 'store';
 // import services from 'utils/mockAdapter';
 
 // axios.defaults.adapter = services.original
@@ -32,7 +34,7 @@ const verifyToken = (serviceToken) => {
     return decoded.exp > Date.now() / 1000;
 };
 
-const setSession = (serviceToken) => {
+export const setSession = (serviceToken) => {
     if (serviceToken) {
         localStorage.setItem('serviceToken', serviceToken);
         axios.defaults.headers.common.Authorization = serviceToken;
@@ -46,7 +48,8 @@ const setSession = (serviceToken) => {
 const JWTContext = createContext(null);
 
 export const JWTProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(accountReducer, initialState);
+    const dispatch = useDispatch()
+    const state = useSelector((state) => state.account);
 
     const init = async () => {
         try {
