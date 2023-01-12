@@ -19,7 +19,7 @@ const dashboard = {
     type: 'group',
     children: [
         {
-            id: 'dashboard',
+            id: 'home',
             title: <FormattedMessage id="analytics" />,
             type: 'item',
             url: '/home',

@@ -36,15 +36,13 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import Google from 'assets/images/icons/social-google.svg';
+import { activeID } from 'store/slices/menu';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
-    const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const { borderRadius } = useConfig();
     const [checked, setChecked] = React.useState(true);
 
     const { login } = useAuth();
@@ -74,6 +72,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                     try {
                         await login(values.email, values.password).then(
                             () => {
+                                alert();
                                 // WARNING: do not set any formik state here as formik might be already destroyed here. You may get following error by doing so.
                                 // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application.
                                 // To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
