@@ -157,7 +157,7 @@ exports.login = (req, res, next) => {
 exports.changePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
-  User.findOne({ _id: req.user._id })
+  User.findOne({ _id: req.user._id }).select('password')
     .then(async user => {
       if (!user) {
         return res.status(400).send({
