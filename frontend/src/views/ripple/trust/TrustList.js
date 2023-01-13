@@ -181,7 +181,9 @@ const Index = () => {
                 </Grid>
               ) : (
                 <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
-                  <Empty />
+                  <Grid item xs={12}>
+                    <Empty />
+                  </Grid>
                 </Grid>
               )
             }
