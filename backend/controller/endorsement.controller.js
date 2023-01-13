@@ -171,27 +171,27 @@ exports.getFollowings = async (req, res, next) => {
 };
 
 exports._getFollowers = async (id) => {
-  const endorsers = await Endorsement.find({ recipientId: id })
-    .populate({
-      path: "endorserId",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
+  const endorsers = await Endorsement.find({ recipientId: id }).exec();
+  const followers = await Profile.find({
+    user: { $in: endorsers.map((endorser) => endorser.endorserId) },
+  })
+    .populate("user")
     .exec();
-  return endorsers.map((endorser) => ({
-    ...endorser.endorserId,
+  return followers.map((follower) => ({
+    ...follower.user._doc,
+    profile: follower,
   }));
 };
 
 exports._getFollowings = async (id) => {
-  const endorsers = await Endorsement.find({ endorserId: id })
-    .populate({
-      path: "recipientId",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
+  const endorsers = await Endorsement.find({ endorserId: id }).exec();
+  const followings = await Profile.find({
+    user: { $in: endorsers.map((endorser) => endorser.recipientId) },
+  })
+    .populate("user")
     .exec();
-  return endorsers.map((endorser) => ({
-    ...endorser.recipientId,
+  return followings.map((following) => ({
+    ...following.user._doc,
+    profile: following,
   }));
 };
