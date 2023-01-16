@@ -89,6 +89,7 @@ const Snackbar = () => {
                     <Alert
                         variant={alert.variant}
                         color={alert.color}
+                        severity={alert.severity}
                         action={
                             <>
                                 {actionButton !== false && (
