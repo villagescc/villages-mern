@@ -71,7 +71,7 @@ const UserList = ({ users, loading }) => {
                                                 src={user.avatar ? 'http://localhost:5000/upload/avatar/' + user.avatar : DefaultAvatar}
                                                 sx={{ width: 60, height: 60 }}
                                                 component={Link}
-                                                to={`/admin/user/${user.id}`}
+                                                to={`/admin/user/${user._id}`}
                                             />
                                         </Grid>
                                         <Grid item sm zeroMinWidth>
@@ -81,7 +81,7 @@ const UserList = ({ users, loading }) => {
                                                         align="left"
                                                         variant="subtitle1"
                                                         component={Link}
-                                                        to={`/admin/user/${user.id}`}
+                                                        to={`/admin/user/${user._id}`}
                                                         style={{ textDecoration: 'none' }}
                                                     >
                                                         {user?.username}
@@ -91,9 +91,9 @@ const UserList = ({ users, loading }) => {
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={12}>
-                                                    <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                                                        {user.description ? (
-                                                            user.description.slice(0, 100) + '...'
+                                                    <Typography align="left" variant="body2">
+                                                        {user?.profile?.description ? (
+                                                            user?.profile?.description.slice(0, 100) + '...'
                                                         ) : (
                                                             <Chip label="No Description" size="small" />
                                                         )}
@@ -205,7 +205,7 @@ const UserList = ({ users, loading }) => {
                                             size="small"
                                             sx={{ marginTop: 2 }}
                                             component={Link}
-                                            to={`/admin/user/${user.id}`}
+                                            to={`/admin/user/${user._id}`}
                                         >
                                             Detail
                                         </Button>

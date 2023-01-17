@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 // material-ui
@@ -12,7 +12,11 @@ import UserActivity from './UserActivity';
 import Trust from './Trust';
 import Credit from './Credit';
 import MainCard from 'ui-component/cards/MainCard';
+
+// store
 import { gridSpacing } from 'store/constant';
+import { dispatch } from 'store';
+import { getUser } from 'store/slices/user';
 
 // assets
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
@@ -68,20 +72,24 @@ const Index = () => {
     const theme = useTheme();
     const { userId } = useParams();
 
-    const [value, setValue] = useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
+    const [tab, setTab] = useState(0);
+    const handleTabChange = (event, newValue) => {
+        setTab(newValue);
     };
+
+    useEffect(() => {
+        dispatch(getUser(userId));
+    }, []);
 
     return (
         <MainCard>
             <Grid container spacing={gridSpacing}>
                 <Grid item xs={12}>
                     <Tabs
-                        value={value}
+                        value={tab}
                         indicatorColor="primary"
                         textColor="primary"
-                        onChange={handleChange}
+                        onChange={handleTabChange}
                         aria-label="simple tabs example"
                         variant="scrollable"
                         sx={{
@@ -114,16 +122,16 @@ const Index = () => {
                             <Tab key={index} component={Link} to="#" icon={tab.icon} label={tab.label} {...a11yProps(index)} />
                         ))}
                     </Tabs>
-                    <TabPanel value={value} index={0}>
+                    <TabPanel value={tab} index={0}>
                         <Profile />
                     </TabPanel>
-                    <TabPanel value={value} index={1}>
+                    <TabPanel value={tab} index={1}>
                         <UserActivity />
                     </TabPanel>
-                    <TabPanel value={value} index={2}>
+                    <TabPanel value={tab} index={2}>
                         <Trust />
                     </TabPanel>
-                    <TabPanel value={value} index={3}>
+                    <TabPanel value={tab} index={3}>
                         <Credit />
                     </TabPanel>
                 </Grid>
