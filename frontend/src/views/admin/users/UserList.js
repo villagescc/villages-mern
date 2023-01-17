@@ -199,45 +199,16 @@ const UserList = ({ users, loading }) => {
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12} container spacing={1}>
-                                        <Grid item xs={4}>
-                                            <Button
-                                                variant="outlined"
-                                                fullWidth
-                                                size="small"
-                                                color="error"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
-                                                startIcon={<FavoriteIcon />}
-                                                component={Link}
-                                                to={`/ripple/trust/${user.id}`}
-                                            >
-                                                Trust
-                                            </Button>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <Button
-                                                variant="outlined"
-                                                fullWidth
-                                                size="small"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
-                                                startIcon={<CurrencyExchangeIcon />}
-                                                component={Link}
-                                                to={`/ripple/pay/${user.id}`}
-                                            >
-                                                Pay
-                                            </Button>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <Button
-                                                variant="outlined"
-                                                color="success"
-                                                fullWidth
-                                                size="small"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
-                                                startIcon={<ChatIcon />}
-                                            >
-                                                Message
-                                            </Button>
-                                        </Grid>
+                                        <Button
+                                            variant="outlined"
+                                            fullWidth
+                                            size="small"
+                                            sx={{ marginTop: 2 }}
+                                            component={Link}
+                                            to={`/admin/user/${user.id}`}
+                                        >
+                                            Detail
+                                        </Button>
                                     </Grid>
                                 </TableCell>
                             </TableRow>

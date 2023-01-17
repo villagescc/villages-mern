@@ -7,7 +7,7 @@ import Loadable from 'ui-component/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // login routing
-const UsersAdmin = Loadable(lazy(() => import('views/admin/users/users')));
+const UsersAdmin = Loadable(lazy(() => import('views/admin/users')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
