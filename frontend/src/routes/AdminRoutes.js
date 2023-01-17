@@ -8,6 +8,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // login routing
 const UsersAdmin = Loadable(lazy(() => import('views/admin/users')));
+const UserAdmin = Loadable(lazy(() => import('views/admin/user')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
@@ -24,6 +25,10 @@ const AdminRoutes = {
         {
             path: 'users',
             element: <UsersAdmin />
+        },
+        {
+            path: 'user/:userId',
+            element: <UserAdmin />
         }
     ]
 };

@@ -18,7 +18,7 @@ const AdminGuard = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user.isSuperuser) {
+        if (!user?.isSuperuser) {
             dispatch(
                 openSnackbar({
                     open: true,

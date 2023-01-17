@@ -71,7 +71,7 @@ const UserList = ({ users, loading }) => {
                                                 src={user.avatar ? 'http://localhost:5000/upload/avatar/' + user.avatar : DefaultAvatar}
                                                 sx={{ width: 60, height: 60 }}
                                                 component={Link}
-                                                to={`/listing/person/${user.id}`}
+                                                to={`/admin/user/${user.id}`}
                                             />
                                         </Grid>
                                         <Grid item sm zeroMinWidth>
@@ -81,7 +81,7 @@ const UserList = ({ users, loading }) => {
                                                         align="left"
                                                         variant="subtitle1"
                                                         component={Link}
-                                                        to={`/listing/person/${user.id}`}
+                                                        to={`/admin/user/${user.id}`}
                                                         style={{ textDecoration: 'none' }}
                                                     >
                                                         {user?.username}
