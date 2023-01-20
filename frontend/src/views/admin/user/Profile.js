@@ -77,12 +77,6 @@ const Profile = () => {
     const { user } = useSelector((state) => state.user);
     const avatarImage = user?.avatar ? 'http://localhost:5000/upload/avatar/' + user?.avatar : DefaultUserIcon;
 
-    const rows = [
-        createData('Full Name', ':', user?.firstName + ' ' + user?.lastName),
-        createData('Zip Code', ':', '12345'),
-        createData('Signed Up', ':', user?.createdAt)
-    ];
-
     return (
         <Grid container spacing={gridSpacing}>
             <Grid item lg={4} xs={12}>
@@ -119,18 +113,6 @@ const Profile = () => {
                             <ListItemSecondaryAction>
                                 <Typography variant="subtitle2" align="right">
                                     {user?.email}
-                                </Typography>
-                            </ListItemSecondaryAction>
-                        </ListItemButton>
-                        <Divider />
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <PhonelinkRingTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                            </ListItemIcon>
-                            <ListItemText primary={<Typography variant="subtitle1">Phone</Typography>} />
-                            <ListItemSecondaryAction>
-                                <Typography variant="subtitle2" align="right">
-                                    {user?.phone}
                                 </Typography>
                             </ListItemSecondaryAction>
                         </ListItemButton>
@@ -202,13 +184,70 @@ const Profile = () => {
                                             size="small"
                                         >
                                             <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow key={row.name}>
-                                                        <TableCell variant="head">{row.name}</TableCell>
-                                                        <TableCell>{row.calories}</TableCell>
-                                                        <TableCell>{row.fat}</TableCell>
-                                                    </TableRow>
-                                                ))}
+                                                <TableRow>
+                                                    <TableCell variant="head">Full Name</TableCell>
+                                                    <TableCell>:</TableCell>
+                                                    <TableCell>
+                                                        {user?.firstName + ' ' + user?.lastName ? (
+                                                            user?.firstName + ' ' + user?.lastName
+                                                        ) : (
+                                                            <Chip size="small" label="empty" />
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell variant="head">Phone</TableCell>
+                                                    <TableCell>:</TableCell>
+                                                    <TableCell>
+                                                        {user?.profile?.phone ? user?.profile?.phone : <Chip size="small" label="empty" />}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell variant="head">Website</TableCell>
+                                                    <TableCell>:</TableCell>
+                                                    <TableCell>
+                                                        {user?.profile?.website ? (
+                                                            user?.profile?.website
+                                                        ) : (
+                                                            <Chip size="small" label="empty" />
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant="subtitle1">User Activity</Typography>
+                                </Grid>
+                                <Divider sx={{ pt: 1 }} />
+                                <Grid item xs={12}>
+                                    <TableContainer>
+                                        <Table
+                                            sx={{
+                                                '& td': {
+                                                    borderBottom: 'none'
+                                                }
+                                            }}
+                                            size="small"
+                                        >
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell variant="head">Signed Up</TableCell>
+                                                    <TableCell>:</TableCell>
+                                                    <TableCell>{user?.createdAt}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell variant="head">Recent use time</TableCell>
+                                                    <TableCell>:</TableCell>
+                                                    <TableCell>
+                                                        {user.logs?.length > 0 ? (
+                                                            user.logs?.reduce((a, b) => (a.createdAt > b.createdAt ? a : b))?.createdAt
+                                                        ) : (
+                                                            <Chip size="small" label="empty" />
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
                                             </TableBody>
                                         </Table>
                                     </TableContainer>

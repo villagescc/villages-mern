@@ -7,6 +7,7 @@ const {
 } = require("../controller/endorsement.controller");
 const { _getBalanceById } = require("../controller/account.controller");
 const Listing = require("../models/Listing");
+const Log = require("../models/Log");
 
 exports.search = async (req, res, next) => {
   let { keyword, page } = req.body;
@@ -25,22 +26,7 @@ exports.search = async (req, res, next) => {
       };
     }
     const users = await User.find(query).populate("profile").exec();
-    /*
-    user data format:
-    {
-      firstName, lastName,
-      username,
-      email,
-      memberDate,
-      placeId,
-      job,
-      description,
-      avatar
-      followers: [],
-      followings: [],
-      account,
-    }
-     */
+
     let userData = [];
     for (
       let i = 0;
@@ -73,7 +59,8 @@ const getUserDetail = async (id) => {
   const profile = await Profile.findOne({ user: id });
   const account = await Account.findOne({ user: id });
   // TODO update fields name in model
-  const postings = await Listing.findOne({ userId: id });
+  const postings = await Listing.find({ userId: id });
+  const logs = await Log.find({ user: id });
 
   const userInfo = {
     ...user._doc,
@@ -82,20 +69,8 @@ const getUserDetail = async (id) => {
     postings,
     followers: await _getFollowers(id),
     followings: await _getFollowings(id),
+    logs,
   };
-  // userInfo.id = id;
-  // userInfo.firstName = user.firstName;
-  // userInfo.lastName = user.lastName;
-  // userInfo.username = user.username;
-  // userInfo.email = user.email;
-  // userInfo.memberDate = user.createdAt;
-  // userInfo.placeId = profile.placeId;
-  // userInfo.job = profile?.job;
-  // userInfo.description = profile?.description;
-  // userInfo.avatar = profile?.avatar;
-  // userInfo.followers = await _getFollowers(id);
-  // userInfo.followings = await _getFollowings(id);
-  // userInfo.account = account;
 
   return userInfo;
 };

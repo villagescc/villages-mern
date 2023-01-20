@@ -71,7 +71,7 @@ const UserList = ({ users, loading }) => {
                                                 src={user.avatar ? 'http://localhost:5000/upload/avatar/' + user.avatar : DefaultAvatar}
                                                 sx={{ width: 60, height: 60 }}
                                                 component={Link}
-                                                to={`/listing/person/${user.id}`}
+                                                to={`/listing/person/${user._id}`}
                                             />
                                         </Grid>
                                         <Grid item sm zeroMinWidth>
@@ -81,7 +81,7 @@ const UserList = ({ users, loading }) => {
                                                         align="left"
                                                         variant="subtitle1"
                                                         component={Link}
-                                                        to={`/listing/person/${user.id}`}
+                                                        to={`/listing/person/${user._id}`}
                                                         style={{ textDecoration: 'none' }}
                                                     >
                                                         {user?.username}
@@ -208,7 +208,7 @@ const UserList = ({ users, loading }) => {
                                                 sx={{ minWidth: '30%', marginTop: 1 }}
                                                 startIcon={<FavoriteIcon />}
                                                 component={Link}
-                                                to={`/ripple/trust/${user.id}`}
+                                                to={`/ripple/trust/${user._id}`}
                                             >
                                                 Trust
                                             </Button>
@@ -221,7 +221,7 @@ const UserList = ({ users, loading }) => {
                                                 sx={{ minWidth: '30%', marginTop: 1 }}
                                                 startIcon={<CurrencyExchangeIcon />}
                                                 component={Link}
-                                                to={`/ripple/pay/${user.id}`}
+                                                to={`/ripple/pay/${user._id}`}
                                             >
                                                 Pay
                                             </Button>

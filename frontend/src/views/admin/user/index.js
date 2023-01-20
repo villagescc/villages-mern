@@ -8,7 +8,6 @@ import { Box, Grid, Tab, Tabs } from '@mui/material';
 
 // project imports
 import Profile from './Profile';
-import UserActivity from './UserActivity';
 import Trust from './Trust';
 import Credit from './Credit';
 import MainCard from 'ui-component/cards/MainCard';
@@ -20,9 +19,8 @@ import { getUser } from 'store/slices/user';
 
 // assets
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
-import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
-import LibraryBooksTwoToneIcon from '@mui/icons-material/LibraryBooksTwoTone';
-import LockTwoToneIcon from '@mui/icons-material/LockTwoTone';
+import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
+import PaymentOutlined from '@mui/icons-material/Payment';
 
 // tabs panel
 function TabPanel({ children, value, index, ...other }) {
@@ -53,16 +51,12 @@ const tabsOption = [
         icon: <AccountCircleTwoToneIcon sx={{ fontSize: '1.3rem' }} />
     },
     {
-        label: 'User activity',
-        icon: <DescriptionTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
         label: 'Trust',
-        icon: <LibraryBooksTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+        icon: <FavoriteOutlined sx={{ fontSize: '1.3rem' }} />
     },
     {
-        label: 'Credit',
-        icon: <LockTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+        label: 'Payment',
+        icon: <PaymentOutlined sx={{ fontSize: '1.3rem' }} />
     }
 ];
 
@@ -126,12 +120,9 @@ const Index = () => {
                         <Profile />
                     </TabPanel>
                     <TabPanel value={tab} index={1}>
-                        <UserActivity />
-                    </TabPanel>
-                    <TabPanel value={tab} index={2}>
                         <Trust />
                     </TabPanel>
-                    <TabPanel value={tab} index={3}>
+                    <TabPanel value={tab} index={2}>
                         <Credit />
                     </TabPanel>
                 </Grid>

@@ -180,6 +180,9 @@ exports._getFollowers = async (id) => {
   return followers.map((follower) => ({
     ...follower.user._doc,
     profile: follower,
+    endorsement: endorsers.find(
+      (endorser) => endorser.endorserId == follower.user._id.toString()
+    ),
   }));
 };
 
@@ -193,5 +196,8 @@ exports._getFollowings = async (id) => {
   return followings.map((following) => ({
     ...following.user._doc,
     profile: following,
+    endorsement: endorsers.find(
+      (endorser) => endorser.recipientId == following.user._id.toString()
+    ),
   }));
 };
