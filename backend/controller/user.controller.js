@@ -8,6 +8,7 @@ const {
 const { _getBalanceById } = require("../controller/account.controller");
 const Listing = require("../models/Listing");
 const Log = require("../models/Log");
+const Payment = require("../models/Payment");
 
 exports.search = async (req, res, next) => {
   let { keyword, page } = req.body;
@@ -61,6 +62,28 @@ const getUserDetail = async (id) => {
   // TODO update fields name in model
   const postings = await Listing.find({ userId: id });
   const logs = await Log.find({ user: id });
+  const payments = await Payment.find({
+    $or: [
+      {
+        payer: id,
+      },
+      {
+        recipient: id,
+      },
+    ],
+    status: "Completed",
+  })
+    .populate({
+      path: "recipient",
+      model: "user",
+      populate: { path: "profile", model: "profile" },
+    })
+    .populate({
+      path: "payer",
+      model: "user",
+      populate: { path: "profile", model: "profile" },
+    })
+    .exec();
 
   const userInfo = {
     ...user._doc,
@@ -70,6 +93,7 @@ const getUserDetail = async (id) => {
     followers: await _getFollowers(id),
     followings: await _getFollowings(id),
     logs,
+    payments,
   };
 
   return userInfo;

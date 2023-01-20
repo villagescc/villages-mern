@@ -75,7 +75,7 @@ const BalanceCard = ({ isLoading, balance = 0 }) => {
                 <SkeletonBalanceCard />
             ) : (
                 <CardWrapper border={false} content={false}>
-                    <Box sx={{ p: 2.25 }}>
+                    <Box sx={{ p: 3.25 }}>
                         <Grid container direction="column">
                             <Grid item>
                                 <Grid container justifyContent="space-between">

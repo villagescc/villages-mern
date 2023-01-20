@@ -82,7 +82,7 @@ export function pay(paymentData, successAction) {
         try {
             const response = await axios.post(`/payment/pay`, paymentData);
             dispatch(slice.actions.paySuccess());
-            successAction()
+            successAction();
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

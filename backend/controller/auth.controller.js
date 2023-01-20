@@ -11,8 +11,10 @@ const paymentController = require("./payment.controller");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
-  user.account = await Account.findOne({ user: user._id }).exec();
-  user.profile = await Profile.findOne({ user: user._id }).exec();
+  if (user) {
+    user.account = await Account.findOne({ user: user._id }).exec();
+    user.profile = await Profile.findOne({ user: user._id }).exec();
+  }
 
   return user;
 };
@@ -56,6 +58,8 @@ exports.registerUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
 
     user.password = await bcrypt.hash(password, salt);
+    user.profile = profile._id;
+    user.account = account._id;
 
     await user.save();
 
