@@ -7,7 +7,7 @@ import MarketShareAreaChartCard from './MarketShareAreaChartCard';
 import TotalRevenueCard from './TotalRevenueCard';
 import LatestCustomerTableCard from './LatestCustomerTableCard';
 import MainCard from 'ui-component/cards/MainCard';
-import RevenueCard from 'ui-component/cards/RevenueCard';
+import RevenueCard from 'ui-component/cards/BalanceCard';
 import UserCountCard from 'ui-component/cards/UserCountCard';
 import { gridSpacing } from 'store/constant';
 
