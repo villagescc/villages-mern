@@ -1554,6 +1554,9 @@ const connectDB = async () => {
 
       let profile_to_user_ids = [];
 
+      await User.deleteMany({});
+      await Endorsement.deleteMany({});
+
       if (users.RECORDS && users.RECORDS.length > 0) {
         for (const each of users.RECORDS) {
           let profile, account, user;
