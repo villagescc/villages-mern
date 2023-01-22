@@ -14,6 +14,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../../assets/images/auth/default.png';
+import { SERVER_URL } from 'config';
 
 // ==============================|| USER LIST 2 ||============================== //
 

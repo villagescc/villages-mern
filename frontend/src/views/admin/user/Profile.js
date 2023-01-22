@@ -34,7 +34,7 @@ import PhonelinkRingTwoToneIcon from '@mui/icons-material/PhonelinkRingTwoTone';
 import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
 import DefaultUserIcon from 'assets/images/auth/default.png';
-
+import { SERVER_URL } from 'config';
 import { useSelector } from 'store';
 
 // progress

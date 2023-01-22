@@ -19,7 +19,7 @@ import {
 // assets
 import DefaultUserIcon from 'assets/images/auth/default.png';
 import MainCard from 'ui-component/cards/MainCard';
-
+import { SERVER_URL } from 'config';
 // table data
 function createData(time, subTime, avatar, name, title, subtext) {
     return { time, subTime, avatar, name, title, subtext };

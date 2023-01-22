@@ -11,7 +11,7 @@ import { gridSpacing } from 'store/constant';
 // assets
 import WatchLaterTwoToneIcon from '@mui/icons-material/WatchLaterTwoTone';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-
+import { SERVER_URL } from 'config';
 import DefaultUserIcon from 'assets/images/auth/default.png';
 
 // ===========================|| DATA WIDGET - USER ACTIVITY CARD ||=========================== //

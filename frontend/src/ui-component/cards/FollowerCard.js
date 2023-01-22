@@ -4,7 +4,7 @@ import { useState } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Button, Card, Grid, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
-
+import { SERVER_URL } from 'config';
 // assets
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone';

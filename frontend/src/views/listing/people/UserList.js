@@ -8,6 +8,7 @@ import { AvatarGroup, Button, Grid, Table, TableBody, TableCell, TableContainer,
 // project imports
 import Avatar from 'ui-component/extended/Avatar';
 import UserListSkeleton from 'ui-component/cards/Skeleton/UserList';
+import { SERVER_URL } from 'config';
 
 import moment from 'moment';
 import FavoriteIcon from '@mui/icons-material/Favorite';

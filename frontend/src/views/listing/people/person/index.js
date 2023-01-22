@@ -16,7 +16,7 @@ import Avatar from 'ui-component/extended/Avatar';
 import MainCard from 'ui-component/cards/MainCard';
 import ImagePlaceholder from 'ui-component/cards/Skeleton/ImagePlaceholder';
 import { gridSpacing } from 'store/constant';
-
+import { SERVER_URL } from 'config';
 // assets
 import { IconFriends, IconInbox, IconPhoto, IconUserPlus, IconUsers } from '@tabler/icons';
 import ChatIcon from '@mui/icons-material/Chat';

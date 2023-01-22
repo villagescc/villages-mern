@@ -22,7 +22,7 @@ import useAuth from 'hooks/useAuth';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
-
+import { SERVER_URL } from 'config';
 // assets
 import DefaultAvatar from 'assets/images/auth/default.png';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';

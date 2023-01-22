@@ -18,7 +18,7 @@ import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import DefaultUserIcon from '../../assets/images/auth/default.png';
-
+import { SERVER_URL } from 'config';
 const avatarImage = require.context('assets/images/profile', true);
 
 // ==============================|| SOCIAL PROFILE - FRIENDS CARD ||============================== //
