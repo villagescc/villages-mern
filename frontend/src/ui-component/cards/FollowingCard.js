@@ -17,7 +17,7 @@ import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
-import DefaultUserIcon from "../../assets/images/auth/default.png";
+import DefaultUserIcon from '../../assets/images/auth/default.png';
 
 const avatarImage = require.context('assets/images/profile', true);
 
@@ -26,7 +26,7 @@ const avatarImage = require.context('assets/images/profile', true);
 const FollowingCard = (following) => {
     const theme = useTheme();
 
-    const avatarProfile = following?.profile?.avatar ? 'http://localhost:5000/upload/avatar/'+following?.profile?.avatar : DefaultUserIcon;
+    const avatarProfile = following?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + following?.profile?.avatar : DefaultUserIcon;
 
     const btnSX = {
         borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],

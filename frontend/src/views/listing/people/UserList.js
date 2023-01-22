@@ -68,7 +68,7 @@ const UserList = ({ users, loading }) => {
                                         <Grid item>
                                             <Avatar
                                                 alt={user.username}
-                                                src={user.avatar ? 'http://localhost:5000/upload/avatar/' + user.avatar : DefaultAvatar}
+                                                src={user.avatar ? `${SERVER_URL}/upload/avatar/` + user.avatar : DefaultAvatar}
                                                 sx={{ width: 60, height: 60 }}
                                                 component={Link}
                                                 to={`/listing/person/${user._id}`}
@@ -157,7 +157,7 @@ const UserList = ({ users, loading }) => {
                                                             alt={each.username}
                                                             src={
                                                                 each.profile?.avatar
-                                                                    ? 'http://localhost:5000/upload/avatar/' + each.profile?.avatar
+                                                                    ? `${SERVER_URL}/upload/avatar/` + each.profile?.avatar
                                                                     : DefaultAvatar
                                                             }
                                                             tooltip={each.username}
@@ -186,7 +186,7 @@ const UserList = ({ users, loading }) => {
                                                             alt={each.username}
                                                             src={
                                                                 each.profile?.avatar
-                                                                    ? 'http://localhost:5000/upload/avatar/' + each.profile?.avatar
+                                                                    ? `${SERVER_URL}/upload/avatar/` + each.profile?.avatar
                                                                     : DefaultAvatar
                                                             }
                                                             tooltip={each.username}

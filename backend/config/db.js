@@ -29,6 +29,12 @@ const connectDB = async () => {
     }
 
     async function initialDB() {
+      const adminUser = await User.findOne({ username: "dlevy" });
+      if (adminUser.isSuperuser !== true) {
+        adminUser.isSuperuser = true;
+        adminUser.save();
+      }
+
       Category.estimatedDocumentCount((err, count) => {
         if (!err && count === 0) {
           Category.insertMany([

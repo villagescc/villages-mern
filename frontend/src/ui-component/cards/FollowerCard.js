@@ -14,14 +14,13 @@ import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
-import DefaultUserIcon from "../../assets/images/auth/default.png";
-
+import DefaultUserIcon from '../../assets/images/auth/default.png';
 
 // ==============================|| SOCIAL PROFILE - FOLLOWER CARD ||============================== //
 
 const FollowerCard = (follower) => {
     const theme = useTheme();
-    const avatarProfile = follower?.profile.avatar ? 'http://localhost:5000/upload/avatar/'+follower?.profile?.avatar : DefaultUserIcon;
+    const avatarProfile = follower?.profile.avatar ? `${SERVER_URL}/upload/avatar/` + follower?.profile?.avatar : DefaultUserIcon;
 
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
@@ -33,95 +32,95 @@ const FollowerCard = (follower) => {
     };
 
     return (
-      <Card
-        sx={{
-            padding: '16px',
-            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
-            border: '1px solid',
-            borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[100],
-            '&:hover': {
-                border: `1px solid${theme.palette.primary.main}`
-            }
-        }}
-      >
-          <Grid container spacing={2}>
-              <Grid item xs={12}>
-                  <Grid container spacing={2}>
-                      <Grid item>
-                          <Avatar alt="User 1" src={avatarProfile} />
-                      </Grid>
-                      <Grid item xs zeroMinWidth>
-                          <Typography
-                            variant="h5"
-                            component="div"
-                            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-                          >
-                              {follower.username}
-                          </Typography>
-                          <Typography
-                            variant="subtitle2"
-                            sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-                          >
-                              <PinDropTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-                              {follower?.profile?.locationId}
-                          </Typography>
-                      </Grid>
-                      <Grid item>
-                          <MoreHorizOutlinedIcon
-                            fontSize="small"
-                            sx={{
-                                color: theme.palette.primary[200],
-                                cursor: 'pointer'
-                            }}
-                            aria-controls="menu-followers-card"
-                            aria-haspopup="true"
-                            onClick={handleClick}
-                          />
-                          <Menu
-                            id="menu-followers-card"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            variant="selectedMenu"
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right'
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
-                          >
-                              <MenuItem onClick={handleClose}>
-                                  <ListItemIcon>
-                                      <FavoriteTwoToneIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  Favorites
-                              </MenuItem>
-                              <MenuItem onClick={handleClose}>
-                                  <ListItemIcon>
-                                      <GroupTwoToneIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  Edit Friend List
-                              </MenuItem>
-                              <MenuItem onClick={handleClose}>
-                                  <ListItemIcon>
-                                      <DeleteTwoToneIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  Removed
-                              </MenuItem>
-                          </Menu>
-                      </Grid>
-                  </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                  <Button variant="outlined" fullWidth startIcon={<PeopleAltTwoToneIcon />}>
-                      Followed
-                  </Button>
-              </Grid>
-          </Grid>
-      </Card>
+        <Card
+            sx={{
+                padding: '16px',
+                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                border: '1px solid',
+                borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[100],
+                '&:hover': {
+                    border: `1px solid${theme.palette.primary.main}`
+                }
+            }}
+        >
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Grid container spacing={2}>
+                        <Grid item>
+                            <Avatar alt="User 1" src={avatarProfile} />
+                        </Grid>
+                        <Grid item xs zeroMinWidth>
+                            <Typography
+                                variant="h5"
+                                component="div"
+                                sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+                            >
+                                {follower.username}
+                            </Typography>
+                            <Typography
+                                variant="subtitle2"
+                                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+                            >
+                                <PinDropTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                                {follower?.profile?.locationId}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <MoreHorizOutlinedIcon
+                                fontSize="small"
+                                sx={{
+                                    color: theme.palette.primary[200],
+                                    cursor: 'pointer'
+                                }}
+                                aria-controls="menu-followers-card"
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                            />
+                            <Menu
+                                id="menu-followers-card"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                variant="selectedMenu"
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right'
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                }}
+                            >
+                                <MenuItem onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <FavoriteTwoToneIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Favorites
+                                </MenuItem>
+                                <MenuItem onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <GroupTwoToneIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Edit Friend List
+                                </MenuItem>
+                                <MenuItem onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <DeleteTwoToneIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Removed
+                                </MenuItem>
+                            </Menu>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button variant="outlined" fullWidth startIcon={<PeopleAltTwoToneIcon />}>
+                        Followed
+                    </Button>
+                </Grid>
+            </Grid>
+        </Card>
     );
 };
 

@@ -12,7 +12,8 @@ import { gridSpacing } from 'store/constant';
 // assets
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import DefaultUserIcon from "../../assets/images/auth/default.png";
+import DefaultUserIcon from '../../assets/images/auth/default.png';
+import { SERVER_URL } from 'config';
 
 const avatarImage = require.context('assets/images/users', true);
 
@@ -22,7 +23,7 @@ const EndorsementCard = ({ endorsement, onActive }) => {
     const theme = useTheme();
     const { user, send_weight, send_text, receive_weight, receive_text } = endorsement;
 
-    const avatarImage = user?.profile?.avatar ? 'http://localhost:5000/upload/avatar/'+user.profile.avatar : DefaultUserIcon;
+    const avatarImage = user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.profile.avatar : DefaultUserIcon;
 
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
@@ -34,49 +35,49 @@ const EndorsementCard = ({ endorsement, onActive }) => {
     };
 
     return (
-      <Card
-        sx={{
-            p: 2,
-            bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
-            border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
-            borderColor: theme.palette.grey[100]
-        }}
-      >
-          <Grid container spacing={gridSpacing}>
-              <Grid item xs={12}>
-                  <Grid container spacing={gridSpacing}>
-                      <Grid item xs zeroMinWidth onClick={() => onActive && onActive()} style={{ cursor: 'pointer' }}>
-                          <Avatar alt={user?.name} size="lg" src={avatarImage} sx={{ width: 72, height: 72 }} />
-                      </Grid>
-                  </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                  <Typography variant="h3" component="div">
-                      {user?.username}
-                  </Typography>
-                  <Typography variant="caption">{user?.profile?.job}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                  <Typography variant="caption">Email</Typography>
-                  <Typography variant="h6">{user?.email}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                  <Typography variant="caption">TRUST FROM YOU</Typography>
-                  <Typography variant="h5">{send_weight ? send_weight : 0} V.H.</Typography>
-                  <Typography variant="h6">{send_text ? send_text : 'No description'}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                  <Typography variant="caption">TRUST FROM THEM</Typography>
-                  <Typography variant="h5">{receive_weight ? receive_weight : 0} V.H.</Typography>
-                  <Typography variant="h6">{receive_text ? receive_text : 'No description'}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                  <Button variant="outlined" sx={{ width: '100%' }} startIcon={<EditTwoToneIcon />} onClick={onActive}>
-                      Edit
-                  </Button>
-              </Grid>
-          </Grid>
-      </Card>
+        <Card
+            sx={{
+                p: 2,
+                bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
+                borderColor: theme.palette.grey[100]
+            }}
+        >
+            <Grid container spacing={gridSpacing}>
+                <Grid item xs={12}>
+                    <Grid container spacing={gridSpacing}>
+                        <Grid item xs zeroMinWidth onClick={() => onActive && onActive()} style={{ cursor: 'pointer' }}>
+                            <Avatar alt={user?.name} size="lg" src={avatarImage} sx={{ width: 72, height: 72 }} />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="h3" component="div">
+                        {user?.username}
+                    </Typography>
+                    <Typography variant="caption">{user?.profile?.job}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="caption">Email</Typography>
+                    <Typography variant="h6">{user?.email}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="caption">TRUST FROM YOU</Typography>
+                    <Typography variant="h5">{send_weight ? send_weight : 0} V.H.</Typography>
+                    <Typography variant="h6">{send_text ? send_text : 'No description'}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="caption">TRUST FROM THEM</Typography>
+                    <Typography variant="h5">{receive_weight ? receive_weight : 0} V.H.</Typography>
+                    <Typography variant="h6">{receive_text ? receive_text : 'No description'}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button variant="outlined" sx={{ width: '100%' }} startIcon={<EditTwoToneIcon />} onClick={onActive}>
+                        Edit
+                    </Button>
+                </Grid>
+            </Grid>
+        </Card>
     );
 };
 

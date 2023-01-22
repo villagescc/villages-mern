@@ -53,7 +53,7 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        setAvatar(currentUser.avatar ? 'http://localhost:5000/upload/avatar/' + currentUser.avatar : DefaultAvatar);
+        setAvatar(currentUser.avatar ? `${SERVER_URL}/upload/avatar/` + currentUser.avatar : DefaultAvatar);
         setFirstName(currentUser.firstName ? currentUser.firstName : '');
         setLastName(currentUser.lastName ? currentUser.lastName : '');
         setJob(currentUser.job ? currentUser.job : '');

@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import {Box, Button, CardMedia, Chip, Grid, Tab, Tabs, Typography} from '@mui/material';
+import { Box, Button, CardMedia, Chip, Grid, Tab, Tabs, Typography } from '@mui/material';
 
 // project imports
 import Profile from './Profile';
@@ -24,9 +24,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 import Cover from 'assets/images/profile/img-profile-bg1.jpg';
-import {useDispatch, useSelector} from "store";
-import {getUser} from "store/slices/user";
-import DefaultUserIcon from "../../../../assets/images/auth/default.png";
+import { useDispatch, useSelector } from 'store';
+import { getUser } from 'store/slices/user';
+import DefaultUserIcon from '../../../../assets/images/auth/default.png';
 
 function TabPanel({ children, value, index, ...other }) {
     return (
@@ -73,7 +73,7 @@ const tabOptions = [
     {
         icon: <IconPhoto stroke={1.5} size="17px" />,
         label: 'Posting'
-    },
+    }
 ];
 
 // ==============================|| PUBLIC PROFILE ||============================== //
@@ -84,8 +84,8 @@ const SocialProfile = () => {
 
     const { borderRadius } = useConfig();
     const { id, tab } = useParams();
-    const { user } = useSelector(state => state.user);
-    const avatarImage = user?.avatar ? 'http://localhost:5000/upload/avatar/'+user?.avatar : DefaultUserIcon;
+    const { user } = useSelector((state) => state.user);
+    const avatarImage = user?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.avatar : DefaultUserIcon;
 
     let selectedTab = 0;
     switch (tab) {
@@ -175,7 +175,9 @@ const SocialProfile = () => {
                         <Grid item xs={12} md={9}>
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12} md={4}>
-                                    <Typography variant="h5">{user?.firstName} {user?.lastName}</Typography>
+                                    <Typography variant="h5">
+                                        {user?.firstName} {user?.lastName}
+                                    </Typography>
                                     <Typography variant="subtitle2">{user?.job || <Chip label="No job" />}</Typography>
                                 </Grid>
                                 <Grid item xs={12} md={8}>
@@ -195,12 +197,24 @@ const SocialProfile = () => {
                                             </Button>
                                         </Grid>
                                         <Grid item>
-                                            <Button component={Link} to={`/ripple/trust/${id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
+                                            <Button
+                                                component={Link}
+                                                to={`/ripple/trust/${id}`}
+                                                variant="contained"
+                                                color={'error'}
+                                                startIcon={<FavoriteIcon />}
+                                            >
                                                 Trust
                                             </Button>
                                         </Grid>
                                         <Grid item>
-                                            <Button component={Link} to={`/ripple/pay/${id}`} color={'success'} variant="outlined" startIcon={<CurrencyExchangeIcon />}>
+                                            <Button
+                                                component={Link}
+                                                to={`/ripple/pay/${id}`}
+                                                color={'success'}
+                                                variant="outlined"
+                                                startIcon={<CurrencyExchangeIcon />}
+                                            >
                                                 Pay
                                             </Button>
                                         </Grid>

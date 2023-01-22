@@ -75,7 +75,7 @@ function createData(name, calories, fat, carbs, protein) {
 
 const Profile = () => {
     const { user } = useSelector((state) => state.user);
-    const avatarImage = user?.avatar ? 'http://localhost:5000/upload/avatar/' + user?.avatar : DefaultUserIcon;
+    const avatarImage = user?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.avatar : DefaultUserIcon;
 
     return (
         <Grid container spacing={gridSpacing}>

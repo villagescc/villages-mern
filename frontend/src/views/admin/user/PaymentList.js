@@ -55,7 +55,7 @@ const PaymentList = ({ title, payments }) => (
                                                 alt="User 1"
                                                 src={
                                                     row?.payer?.profile?.avatar
-                                                        ? 'http://localhost:5000/upload/avatar/' + row?.payer?.profile?.avatar
+                                                        ? `${SERVER_URL}/upload/avatar/` + row?.payer?.profile?.avatar
                                                         : DefaultUserIcon
                                                 }
                                             />
@@ -74,7 +74,7 @@ const PaymentList = ({ title, payments }) => (
                                                 alt="User 1"
                                                 src={
                                                     row?.recipient?.profile?.avatar
-                                                        ? 'http://localhost:5000/upload/avatar/' + row?.recipient?.profile?.avatar
+                                                        ? `${SERVER_URL}/upload/avatar/` + row?.recipient?.profile?.avatar
                                                         : DefaultUserIcon
                                                 }
                                             />

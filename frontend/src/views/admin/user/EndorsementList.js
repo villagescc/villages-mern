@@ -38,7 +38,7 @@ const EndorsementList = ({ title, followings }) => {
                                             alt="image"
                                             src={
                                                 following?.profile?.avatar
-                                                    ? 'http://localhost:5000/upload/avatar/' + following?.profile?.avatar
+                                                    ? `${SERVER_URL}/upload/avatar/` + following?.profile?.avatar
                                                     : DefaultUserIcon
                                             }
                                         />
