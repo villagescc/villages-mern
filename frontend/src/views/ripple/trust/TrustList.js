@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Button, Divider, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import {Button, Divider, Grid, InputAdornment, OutlinedInput, Pagination, Typography} from '@mui/material';
 
 // third-party
 import { io } from "socket.io-client";
@@ -25,6 +25,7 @@ import {SERVER_URL} from "config";
 import useAuth from "hooks/useAuth";
 import {useParams} from "react-router-dom";
 import Empty from "ui-component/Empty";
+import {getUserList} from "../../../store/slices/user";
 
 const Index = () => {
   const theme = useTheme();
@@ -53,6 +54,7 @@ const Index = () => {
     setEndorsements(endorsementState.endorsements);
     setUsers(endorsementState.users);
     setLoading(endorsementState.loading);
+    setTotal(endorsementState.total);
     setErrors(endorsementState.errors);
   }, [endorsementState]);
 
@@ -178,6 +180,17 @@ const Index = () => {
                         />
                       </Grid>
                     ))}
+                  <Grid>
+                    <Pagination
+                      count={Math.ceil(total / 12)}
+                      page={page}
+                      onChange={(e, p) => {
+                        setPage(p)
+                        dispatch(searchEndorsements(keyword, p));
+                      }}
+                      color="secondary"
+                    />
+                  </Grid>
                 </Grid>
               ) : (
                 <Grid container direction="row" spacing={gridSpacing} sx={{ padding: 3 }}>
