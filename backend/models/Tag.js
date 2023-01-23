@@ -4,7 +4,7 @@ const TagSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      // required: true
     }
   },
   {
