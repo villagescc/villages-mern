@@ -17,7 +17,7 @@ exports.validateLoginInput = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -77,7 +77,7 @@ exports.validateRegisterInput = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -97,7 +97,7 @@ exports.validateEndorsementCreate = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -117,7 +117,7 @@ exports.validatePaymentInput = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -136,14 +136,16 @@ exports.validateAccountCreate = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
 exports.validateNotificationCreate = (data) => {
   let errors = {};
 
-  data.notificationType = !isEmpty(data.notificationType) ? data.notificationType : "";
+  data.notificationType = !isEmpty(data.notificationType)
+    ? data.notificationType
+    : "";
   data.notifierId = !isEmpty(data.notifierId) ? data.notifierId : "";
   data.recipientId = !isEmpty(data.recipientId) ? data.recipientId : "";
   data.amount = !isEmpty(data.amount) ? data.amount : "";
@@ -166,7 +168,7 @@ exports.validateNotificationCreate = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -200,7 +202,7 @@ exports.validatePostingCreate = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -234,7 +236,7 @@ exports.validateProfileSave = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -243,7 +245,9 @@ exports.validateChangePassword = (data) => {
 
   data.oldPassword = !isEmpty(data.oldPassword) ? data.oldPassword : "";
   data.newPassword = !isEmpty(data.newPassword) ? data.newPassword : "";
-  data.confirmPassword = !isEmpty(data.confirmPassword) ? data.confirmPassword : "";
+  data.confirmPassword = !isEmpty(data.confirmPassword)
+    ? data.confirmPassword
+    : "";
 
   if (validator.isEmpty(data.oldPassword)) {
     errors.oldPassword = "Current password field is required";
@@ -266,7 +270,7 @@ exports.validateChangePassword = (data) => {
   }
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
@@ -286,6 +290,40 @@ exports.validateGetPathInput = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
+  };
+};
+
+exports.validateGetPaymentHistoryInput = (data) => {
+  let errors = {};
+
+  data.page = !isEmpty(data.page) ? data.page : 0;
+  data.period = !isEmpty(data.period) ? data.period : [];
+
+  if (!(data.page > 0)) {
+    errors.page = "Please input page number";
+  }
+
+  if (data.period.length !== 2) {
+    errors.period = "Please input correct period";
+  }
+
+  if (
+    !(new Date(data.period[0]) instanceof Date) ||
+    isNaN(new Date(data.period[0]))
+  ) {
+    errors.period = "Please choose correct start date";
+  }
+
+  if (
+    !(new Date(data.period[1]) instanceof Date) ||
+    isNaN(new Date(data.period[1]))
+  ) {
+    errors.period = "Please choose correct end date";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
   };
 };

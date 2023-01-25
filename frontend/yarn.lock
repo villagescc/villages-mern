@@ -2406,6 +2406,42 @@
     prop-types "^15.8.1"
     reselect "^4.1.6"
 
+"@mui/x-date-pickers-pro@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers-pro/-/x-date-pickers-pro-5.0.15.tgz#57e5ba2c44b9e30d0f06120970f3c7d076b46fbf"
+  integrity sha512-tpN+zhufCHkzeZrKh8xvQcaNZ5TD45EWqLCw6yWvdcO4P0CQ3FuZa4id1mvmV/lmr/txjQ1r+S4GJGhhVkA5UQ==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@date-io/date-fns" "^2.15.0"
+    "@date-io/dayjs" "^2.15.0"
+    "@date-io/luxon" "^2.15.0"
+    "@date-io/moment" "^2.15.0"
+    "@mui/utils" "^5.10.3"
+    "@mui/x-date-pickers" "5.0.15"
+    "@mui/x-license-pro" "5.17.12"
+    clsx "^1.2.1"
+    prop-types "^15.7.2"
+    react-transition-group "^4.4.5"
+    rifm "^0.12.1"
+
+"@mui/x-date-pickers@5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-5.0.15.tgz#6003e0d12dd7584f600cb8a986e28ea5842450c3"
+  integrity sha512-jQPwiB961fYT79H419/sfSqWRefo9aCx5MEDGZOifMuRv6k5gcZCrSFjmLC5Lt4PZ20BsitJYvSKpmvYZYh+mg==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@date-io/core" "^2.15.0"
+    "@date-io/date-fns" "^2.15.0"
+    "@date-io/dayjs" "^2.15.0"
+    "@date-io/luxon" "^2.15.0"
+    "@date-io/moment" "^2.15.0"
+    "@mui/utils" "^5.10.3"
+    "@types/react-transition-group" "^4.4.5"
+    clsx "^1.2.1"
+    prop-types "^15.7.2"
+    react-transition-group "^4.4.5"
+    rifm "^0.12.1"
+
 "@mui/x-date-pickers@^5.0.0":
   version "5.0.0"
   resolved "https://registry.npmjs.org/@mui/x-date-pickers/-/x-date-pickers-5.0.0.tgz"
@@ -2423,6 +2459,14 @@
     prop-types "^15.7.2"
     react-transition-group "^4.4.5"
     rifm "^0.12.1"
+
+"@mui/x-license-pro@5.17.12":
+  version "5.17.12"
+  resolved "https://registry.yarnpkg.com/@mui/x-license-pro/-/x-license-pro-5.17.12.tgz#d069416b7191f9f5b77b2bf7375d2c51aead497c"
+  integrity sha512-UzFaE+9A30kfguCuME0D5zqsItqbHZ3xZwmyrJr8MvZOEoqiJWF4NT4Pvlg2nqaPYt/h81j7sjVFa3KiwT0vbg==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@mui/utils" "^5.10.3"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -4850,6 +4894,11 @@ date-fns@^2.29.2:
   version "2.29.2"
   resolved "https://registry.npmjs.org/date-fns/-/date-fns-2.29.2.tgz"
   integrity sha512-0VNbwmWJDS/G3ySwFSJA3ayhbURMTJLtwM2DTxf9CWondCnh6DTNlO9JgRSq6ibf4eD0lfMJNBxUdEAHHix+bA==
+
+dayjs@^1.11.7:
+  version "1.11.7"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
+  integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
 
 debug@2.6.9, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"

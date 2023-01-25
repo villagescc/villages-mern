@@ -11,6 +11,7 @@ const initialState = {
     users: [],
     paylogs: [],
     total: 0,
+    history: [],
     maxLimit: 0,
     errors: {},
     loading: false
@@ -43,6 +44,11 @@ const slice = createSlice({
         paySuccess(state) {
             state.maxLimit = 0;
             state.errors = {};
+        },
+
+        getPaymentHistorySuccess(state, action) {
+            state.history = action.payload.history;
+            state.total = action.payload.total;
         },
 
         // MODIFY CONTACT
@@ -83,6 +89,17 @@ export function pay(paymentData, successAction) {
             const response = await axios.post(`/payment/pay`, paymentData);
             dispatch(slice.actions.paySuccess());
             successAction();
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getPaymentHistory(filterData) {
+    return async () => {
+        try {
+            const response = await axios.post('/payment/history', filterData);
+            dispatch(slice.actions.getPaymentHistorySuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

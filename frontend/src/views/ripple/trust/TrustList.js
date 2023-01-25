@@ -180,7 +180,7 @@ const Index = () => {
                         />
                       </Grid>
                     ))}
-                  <Grid>
+                  <Grid item xs={12}>
                     <Pagination
                       count={Math.ceil(total / 12)}
                       page={page}
