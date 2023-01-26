@@ -1,7 +1,7 @@
 const {
   validatePaymentInput,
   validateGetPathInput,
-  validateGetPaymentHistoryInput,
+  validateSearchTransactionsInput,
 } = require("../validation");
 
 exports.pay = (req, res, next) => {
@@ -22,8 +22,8 @@ exports.getPath = (req, res, next) => {
   next();
 };
 
-exports.getHistory = (req, res, next) => {
-  const { errors, isValid } = validateGetPaymentHistoryInput(req.body);
+exports.searchTransactions = (req, res, next) => {
+  const { errors, isValid } = validateSearchTransactionsInput(req.body);
 
   if (!isValid) {
     return res.status(400).json(errors);

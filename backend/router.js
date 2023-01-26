@@ -118,11 +118,12 @@ router.post(
   paymentController.getPath
 );
 router.post(
-  "/payment/history",
+  "/payment/transactions",
   authMiddleware.auth,
-  paymentMiddleware.getHistory,
-  paymentController.getHistory
+  paymentMiddleware.searchTransactions,
+  paymentController.searchTransactions
 );
+router.get("/payment/transaction/:id", paymentController.getTransaction);
 
 // ######################### NOTIFICATION ROUTER #############################
 router.post(

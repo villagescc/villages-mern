@@ -278,7 +278,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
   return { success: true, maxLimit, paylogs, paths };
 };
 
-exports.getHistory = async (req, res, next) => {
+exports.searchTransactions = async (req, res, next) => {
   try {
     const total = await Payment.find({
       $or: [{ payer: req.user._id }, { recipient: req.user._id }],
@@ -317,7 +317,7 @@ exports.getHistory = async (req, res, next) => {
       query.where("status", req.body.status);
     }
     query.skip(req.body.page * 10 - 10).limit(10);
-    const history = await query
+    const transactions = await query
       .populate({
         path: "recipient",
         model: "user",
@@ -335,9 +335,36 @@ exports.getHistory = async (req, res, next) => {
         },
       })
       .exec();
-    res.send({ total, history });
+    res.send({ total, transactions });
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+exports.getTransaction = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const transaction = await Payment.findById(id)
+      .populate({
+        path: "recipient",
+        model: "user",
+        populate: {
+          path: "profile",
+          model: "profile",
+        },
+      })
+      .populate({
+        path: "payer",
+        model: "user",
+        populate: {
+          path: "profile",
+          model: "profile",
+        },
+      })
+      .exec();
+    res.send({ success: true, transaction });
+  } catch (error) {
     next(error);
   }
 };

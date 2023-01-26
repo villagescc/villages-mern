@@ -294,7 +294,7 @@ exports.validateGetPathInput = (data) => {
   };
 };
 
-exports.validateGetPaymentHistoryInput = (data) => {
+exports.validateSearchTransactionsInput = (data) => {
   let errors = {};
 
   data.page = !isEmpty(data.page) ? data.page : 0;

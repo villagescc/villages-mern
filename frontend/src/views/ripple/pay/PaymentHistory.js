@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 // material-ui
@@ -26,7 +27,11 @@ import {
     MenuItem,
     OutlinedInput,
     InputAdornment,
-    Box
+    Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
@@ -36,6 +41,7 @@ import moment from 'moment';
 import { SERVER_URL } from 'config';
 
 import MainCard from 'ui-component/cards/MainCard';
+import PaperComponent from 'ui-component/extended/PaperComponent';
 // assets
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -46,9 +52,11 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 
 // redux
 import { dispatch } from 'store';
-import { getPaymentHistory } from 'store/slices/payment';
+import { getTransactions, getTransaction } from 'store/slices/payment';
 import { useSelector } from 'react-redux';
 import useAuth from 'hooks/useAuth';
+import TransactionDescription from './TransactionDescription';
+import TransactionDetail from './TransactionDetail';
 
 // ===========================|| DASHBOARD ANALYTICS - TOTAL REVENUE CARD ||=========================== //
 
@@ -56,7 +64,7 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
     const successSX = { color: 'success.dark' };
     const errorSX = { color: 'error.main' };
 
-    const { history, total } = useSelector((state) => state.payment);
+    const { transactions, transaction, total } = useSelector((state) => state.payment);
     const { user } = useAuth();
 
     const [page, setPage] = useState(1);
@@ -67,10 +75,16 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
     const [period, setPeriod] = useState([new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date(Date.now())]);
 
     const [showFilter, setShowFilter] = useState(false);
+    const [openDetail, setOpenDetail] = useState(false);
+
+    const handleDetailClick = (id) => {
+        dispatch(getTransaction(id));
+        setOpenDetail(true);
+    };
 
     useEffect(() => {
         dispatch(
-            getPaymentHistory({
+            getTransactions({
                 page,
                 keyword,
                 status,
@@ -83,7 +97,7 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
 
     useEffect(() => {
         dispatch(
-            getPaymentHistory({
+            getTransactions({
                 page,
                 keyword,
                 status,
@@ -242,7 +256,7 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {history.map((row, index) => (
+                        {transactions.map((row, index) => (
                             <TableRow hover key={index}>
                                 <TableCell>
                                     {row?.payer?._id === user?._id ? (
@@ -263,7 +277,15 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
                                         />
                                     )}
                                 </TableCell>
-                                <TableCell>{row?.payer?._id === user?._id ? row.recipient.username : row.payer.username}</TableCell>
+                                <TableCell>
+                                    <Typography
+                                        variant="body1"
+                                        component={Link}
+                                        to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
+                                    >
+                                        {row?.payer?._id === user?._id ? row.recipient.username : row.payer.username}
+                                    </Typography>
+                                </TableCell>
                                 <TableCell>{row.memo.length > 50 ? row.memo.slice(0, 50) + '...' : row.memo}</TableCell>
                                 <TableCell align="right">
                                     {row?.payer?._id === user?._id ? (
@@ -278,7 +300,7 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
                                 </TableCell>
                                 <TableCell align="center" sx={{ pr: 3 }}>
                                     <Stack direction="row" justifyContent="center" alignItems="center">
-                                        <IconButton color="primary" size="large">
+                                        <IconButton color="primary" size="large" onClick={() => handleDetailClick(row._id)}>
                                             <VisibilityIcon />
                                         </IconButton>
                                         <IconButton color="inherit" size="large">
@@ -297,20 +319,35 @@ const PaymentHistory = ({ title, handleCreateClick }) => {
                     page={page}
                     onChange={(e, p) => {
                         setPage(p);
-                        dispatch(
-                            getPaymentHistory({
-                                page: p,
-                                keyword,
-                                status,
-                                address,
-                                paymentType,
-                                period
-                            })
-                        );
                     }}
                     color="secondary"
                 />
             </CardActions>
+            <Dialog
+                fullWidth
+                open={openDetail}
+                onClose={() => setOpenDetail(false)}
+                scroll={'body'}
+                aria-labelledby="draggable-dialog-title"
+                PaperComponent={PaperComponent}
+                maxWidth="md"
+            >
+                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                    Payment Description
+                </DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={12}>
+                            <TransactionDetail transaction={transaction} />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" autoFocus onClick={() => setOpenDetail(false)}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </MainCard>
     );
 };

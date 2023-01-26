@@ -29,17 +29,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import InputLabel from 'ui-component/extended/Form/InputLabel';
 import Graph from '../graph/path';
 
-// third party
-import Draggable from 'react-draggable';
-
-// draggable
-function PaperComponent(props) {
-    return (
-        <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
-            <Paper {...props} />
-        </Draggable>
-    );
-}
+import PaperComponent from 'ui-component/extended/PaperComponent';
 
 // ==============================|| Layouts ||============================== //
 function PaymentDialog({ open, setOpen, recipientId }) {
