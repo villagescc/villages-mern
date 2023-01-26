@@ -215,13 +215,13 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
   }
 
   let paths = allSimplePaths(graph, sender, recipient);
-  console.log(paths);
+  // console.log(paths);
   // TODO sort for balancing routes
 
   let maxLimit = 0;
   let finished = false;
   for (const path of paths) {
-    console.log(path.join("->"));
+    // console.log(path.join("->"));
     let min;
     for (let i = 0; i < path.length - 1; i++) {
       let limit =
@@ -235,7 +235,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
           : 0);
       if (i === 0) min = limit;
       else min = min < limit ? min : limit;
-      console.log(limit);
+      // console.log(limit);
     }
 
     if (amount && amount - maxLimit < min) {
@@ -252,11 +252,11 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       if (tempPayAmount > 0)
         graph.setEdgeAttribute(path[i], path[i + 1], "tempPay", tempPayAmount);
     }
-    console.log("min:", min);
+    // console.log("min:", min);
     maxLimit += min;
     if (finished) break;
   }
-  console.log("maxLimit:", maxLimit);
+  // console.log("maxLimit:", maxLimit);
 
   if (amount > maxLimit)
     return {
@@ -363,7 +363,28 @@ exports.getTransaction = async (req, res, next) => {
         },
       })
       .exec();
-    res.send({ success: true, transaction });
+    const paylogs = await Paylog.find({ paymentId: id })
+      .populate({
+        path: "recipient",
+        model: "user",
+        populate: {
+          path: "profile",
+          model: "profile",
+        },
+      })
+      .populate({
+        path: "payer",
+        model: "user",
+        populate: {
+          path: "profile",
+          model: "profile",
+        },
+      })
+      .exec();
+    res.send({
+      success: true,
+      transaction: { ...transaction.toObject(), paylogs },
+    });
   } catch (error) {
     next(error);
   }
