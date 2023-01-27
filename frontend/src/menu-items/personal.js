@@ -2,14 +2,15 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconBell, IconUser, IconSettings } from '@tabler/icons';
+import { IconBell, IconUser, IconSettings, IconMessage } from '@tabler/icons';
 
 // constant
 const icons = {
     IconBell,
     IconUser,
-    IconSettings
-}
+    IconSettings,
+    IconMessage
+};
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -24,6 +25,14 @@ const personal = {
             type: 'item',
             url: '/personal/notification',
             icon: icons.IconBell,
+            breadcrumbs: false
+        },
+        {
+            id: 'message',
+            title: <FormattedMessage id="message" />,
+            type: 'item',
+            url: '/personal/message',
+            icon: icons.IconMessage,
             breadcrumbs: false
         },
         {

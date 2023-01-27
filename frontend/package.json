@@ -39,7 +39,7 @@
         "dayjs": "^1.11.7",
         "draft-js": "^0.11.7",
         "emoji-picker-react": "^3.6.1",
-        "firebase": "^9.9.0",
+        "firebase": "^9.16.0",
         "formik": "^2.2.9",
         "framer-motion": "^7.2.1",
         "google-map-react": "^2.2.0",
