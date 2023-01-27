@@ -9,6 +9,7 @@ import { dispatch } from '../index';
 
 const initialState = {
     error: null,
+    loading: false,
     chats: [],
     user: {},
     users: []

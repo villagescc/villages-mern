@@ -1,0 +1,30 @@
+import PropTypes from 'prop-types';
+
+// material-ui
+import { Avatar, Badge } from '@mui/material';
+
+// project imports
+import AvatarStatus from './AvatarStatus';
+import DefaultUserIcon from 'assets/images/auth/default.png';
+import { SERVER_URL } from 'config';
+
+// ==============================|| CHAT USER AVATAR WITH STATUS ICON ||============================== //
+
+const UserAvatar = ({ user }) => (
+    <Badge
+        overlap="circular"
+        badgeContent={<AvatarStatus status={user.online_status} />}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+        }}
+    >
+        <Avatar alt={user.name} src={user.avatar ? `${SERVER_URL}/upload/avatar/` + user.avatar : DefaultUserIcon} />
+    </Badge>
+);
+
+UserAvatar.propTypes = {
+    user: PropTypes.object
+};
+
+export default UserAvatar;

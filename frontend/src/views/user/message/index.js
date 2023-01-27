@@ -1,26 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Grid } from '@mui/material';
 import { messaging, getToken } from 'firebaseConfig';
 
 const Index = () => {
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         // Token can be sent to server from here.
-        getToken(messaging, { vapidKey: 'BPPYdIu5ghzit4OvHjje7HOoXgB1wN4NvoBVjPhsn2BtZsw3gFdipAat-Weyi1JBOoVoOKFo4x2gFJh-aYDaR90' })
+        getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
             .then((currentToken) => {
                 if (currentToken) {
+                    setLoading(false);
                     console.log(currentToken);
-                    // Send the token to your server and update the UI if necessary
-                    // ...
                 } else {
-                    // Show permission request UI
+                    setLoading(false);
                     console.log('No registration token available. Request permission to generate one.');
-                    // ...
                 }
             })
             .catch((err) => {
+                setLoading(false);
                 console.log('An error occurred while retrieving token. ', err);
-                // ...
             });
     }, []);
 

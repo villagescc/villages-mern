@@ -11,7 +11,7 @@ const Pay = Loadable(lazy(() => import('views/ripple/pay')));
 
 // personal routing
 const Notification = Loadable(lazy(() => import('views/user/notification')));
-const Message = Loadable(lazy(() => import('views/user/message')));
+const Message = Loadable(lazy(() => import('views/user/chat')));
 const ProfileView = Loadable(lazy(() => import('views/user/profile')));
 const ProfileEdit = Loadable(lazy(() => import('views/user/profile/edit')));
 const Setting = Loadable(lazy(() => import('views/user/setting')));
