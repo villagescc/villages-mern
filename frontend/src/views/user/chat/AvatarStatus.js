@@ -11,7 +11,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 const AvatarStatus = ({ status, mr }) => {
     const theme = useTheme();
     switch (status) {
-        case 'available':
+        case 'Online':
             return (
                 <FiberManualRecordIcon
                     sx={{
@@ -24,7 +24,7 @@ const AvatarStatus = ({ status, mr }) => {
                 />
             );
 
-        case 'do_not_disturb':
+        case 'Do not disturb':
             return (
                 <FiberManualRecordIcon
                     sx={{
@@ -37,7 +37,7 @@ const AvatarStatus = ({ status, mr }) => {
                 />
             );
 
-        case 'offline':
+        case 'Offline':
             return (
                 <FiberManualRecordIcon
                     sx={{

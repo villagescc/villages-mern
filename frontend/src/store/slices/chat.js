@@ -10,6 +10,7 @@ import { dispatch } from '../index';
 const initialState = {
     error: null,
     loading: false,
+    state: null,
     chats: [],
     user: {},
     users: []
@@ -26,17 +27,22 @@ const slice = createSlice({
 
         // GET USER
         getUserSuccess(state, action) {
-            state.user = action.payload;
+            state.user = action.payload.user;
         },
 
         // GET USER CHATS
         getUserChatsSuccess(state, action) {
-            state.chats = action.payload;
+            state.chats = action.payload.chats;
         },
 
         // GET USERS
         getUsersSuccess(state, action) {
             state.users = action.payload;
+        },
+
+        // GET STATE
+        getStateSuccess(state, action) {
+            state.state = action.payload.state;
         }
     }
 });
@@ -49,7 +55,7 @@ export default slice.reducer;
 export function getUser(id) {
     return async () => {
         try {
-            const response = await axios.post('/api/chat/users/id', { id });
+            const response = await axios.get(`/chat/user/${id}`);
             dispatch(slice.actions.getUserSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
@@ -57,10 +63,11 @@ export function getUser(id) {
     };
 }
 
-export function getUserChats(user) {
+export function getUserChats(recipient) {
+    alert(recipient);
     return async () => {
         try {
-            const response = await axios.post('/api/chat/filter', { user });
+            const response = await axios.post('/chat/chats/filter', { recipient });
             dispatch(slice.actions.getUserChatsSuccess(response.data));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
@@ -71,7 +78,7 @@ export function getUserChats(user) {
 export function insertChat(chat) {
     return async () => {
         try {
-            await axios.post('/api/chat/insert', chat);
+            await axios.post('/chat/create', chat);
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
@@ -81,8 +88,41 @@ export function insertChat(chat) {
 export function getUsers() {
     return async () => {
         try {
-            const response = await axios.get('/api/chat/users');
+            const response = await axios.get('/chat/users');
             dispatch(slice.actions.getUsersSuccess(response.data.users));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function searchUsers(keyword) {
+    return async () => {
+        try {
+            const response = await axios.post('/chat/users/search', { keyword });
+            dispatch(slice.actions.getUsersSuccess(response.data.users));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getState() {
+    return async () => {
+        try {
+            const response = await axios.get('/chat/state');
+            dispatch(slice.actions.getStateSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function setState(state) {
+    return async () => {
+        try {
+            const response = await axios.put('/chat/state', { state });
+            dispatch(slice.actions.getStateSuccess({ state }));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

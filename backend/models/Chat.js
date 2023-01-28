@@ -1,12 +1,7 @@
 const mongoose = require("mongoose");
 
-const MessageSchema = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema(
   {
-    status: {
-      type: String,
-      enum: ["READ", "NEW"],
-      default: "NEW",
-    },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -15,9 +10,13 @@ const MessageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    message: {
+    text: {
       type: String,
       default: "",
+    },
+    isNew: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -25,4 +24,4 @@ const MessageSchema = new mongoose.Schema(
   }
 );
 
-module.exports = Message = mongoose.model("message", MessageSchema);
+module.exports = Chat = mongoose.model("chat", ChatSchema);

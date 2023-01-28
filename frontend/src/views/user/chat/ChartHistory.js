@@ -14,7 +14,7 @@ const ChartHistory = ({ data, theme, user }) => (
         <Grid container spacing={gridSpacing}>
             {data.map((history, index) => (
                 <React.Fragment key={index}>
-                    {history.from !== user.name ? (
+                    {history.sender !== user?.user?._id ? (
                         <Grid item xs={12}>
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={2} />

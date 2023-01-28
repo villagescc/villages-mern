@@ -33,7 +33,12 @@ const slice = createSlice({
             state.loading = action.payload;
         },
 
-        // GET USERS STYLE 1
+        // GET USERS
+        getUsersSuccess(state, action) {
+            state.users = action.payload;
+        },
+
+        // GET USERS List
         getUsersListSuccess(state, action) {
             state.users = action.payload.users;
             state.total = action.payload.total;
@@ -67,7 +72,7 @@ const slice = createSlice({
         getPostingsSuccess(state, action) {
             state.postings = action.payload;
             state.error = null;
-        },
+        }
     }
 });
 
@@ -75,6 +80,19 @@ const slice = createSlice({
 export default slice.reducer;
 
 // ----------------------------------------------------------------------
+export function getUsers() {
+    return async () => {
+        dispatch(slice.actions.setLoading(true));
+        try {
+            const response = await axios.get('/base/users/getRecipients');
+            dispatch(slice.actions.getUsersSuccess(response.data));
+            dispatch(slice.actions.setLoading(false));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+            dispatch(slice.actions.setLoading(false));
+        }
+    };
+}
 
 export function getUserList(keyword = '', page = 1) {
     return async () => {
@@ -109,7 +127,7 @@ export function getSetting() {
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
-    }
+    };
 }
 
 export function getFollowers(id) {
@@ -153,32 +171,32 @@ export function uploadAvatar(data, successAction) {
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
-    }
+    };
 }
 
 export function saveProfile(data, afterAction) {
     return async () => {
         try {
             const response = await axios.post(`/users/profile`, data);
-            if(response.data?.success) {
+            if (response.data?.success) {
                 afterAction();
             }
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
-    }
+    };
 }
 
 export function changePassword(data, afterAction) {
     return async () => {
         try {
             const response = await axios.post(`/users/password`, data);
-            if(response.data?.success) {
+            if (response.data?.success) {
                 afterAction();
                 dispatch(slice.actions.hasError({}));
             }
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
-    }
+    };
 }

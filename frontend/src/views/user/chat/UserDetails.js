@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Card, CardContent, CardMedia, Divider, Grid, Typography } from '@mui/material';
+import { Avatar, Chip, Card, CardContent, CardMedia, Divider, Grid, Typography } from '@mui/material';
 
 // project imports
 import AvatarStatus from './AvatarStatus';
@@ -17,8 +17,9 @@ import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import images1 from 'assets/images/pages/img-catalog1.png';
 import images2 from 'assets/images/pages/img-catalog2.png';
 import images3 from 'assets/images/pages/img-catalog3.png';
+import { SERVER_URL } from 'config';
 
-const avatarImage = require.context('assets/images/users', true);
+import DefaultUserIcon from 'assets/images/auth/default.png';
 
 // ==============================|| USER PROFILE / DETAILS ||============================== //
 
@@ -39,22 +40,25 @@ const UserDetails = ({ user }) => {
                             <Grid item xs={12}>
                                 <Avatar
                                     alt={user.name}
-                                    src={user.avatar && avatarImage(`./${user.avatar}`)}
+                                    src={
+                                        user?.user?.profile?.avatar
+                                            ? `${SERVER_URL}/upload/avatar/` + user?.user?.profile?.avatar
+                                            : DefaultUserIcon
+                                    }
                                     sx={{
                                         m: '0 auto',
                                         width: 130,
                                         height: 130,
                                         border: '1px solid',
                                         borderColor: theme.palette.primary.main,
-                                        p: 1,
                                         bgcolor: 'transparent'
                                     }}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <AvatarStatus status={user.online_status} />
+                                <AvatarStatus status={user.state} />
                                 <Typography variant="caption" component="div">
-                                    {user?.online_status.replaceAll('_', ' ')}
+                                    {user?.state}
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
@@ -87,83 +91,25 @@ const UserDetails = ({ user }) => {
                             <Grid container spacing={1}>
                                 <Grid item xs={12}>
                                     <Typography variant="body2">
-                                        <PinDropTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} /> 32188 Sips
-                                        Parkways, U.S
+                                        <PinDropTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} />{' '}
+                                        {user?.user?.profile?.location ? (
+                                            user?.user?.profile?.location
+                                        ) : (
+                                            <Chip label="No location" size="small" />
+                                        )}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Typography variant="body2">
-                                        <PhoneTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} /> 995-250-1803
+                                        <PhoneTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} />{' '}
+                                        {user?.user?.profile?.phone ? user?.user?.profile?.phone : <Chip label="No phone" size="small" />}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Typography variant="body2">
-                                        <EmailTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} />{' '}
-                                        O’Keefe@codedtheme.com
+                                        <EmailTwoToneIcon sx={{ verticalAlign: 'sub', fontSize: '1.125rem', mr: 0.625 }} />
+                                        {user?.user?.email ? user?.user?.email : <Chip label="No email" size="small" />}
                                     </Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Divider />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="h5" component="div">
-                                Attachment
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1}>
-                                        <Grid item>
-                                            <CardMedia component="img" image={images1} title="image" sx={{ width: 42, height: 42 }} />
-                                        </Grid>
-                                        <Grid item xs zeroMinWidth>
-                                            <Grid container spacing={0}>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="h6">File Name.jpg</Typography>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="caption">4/16/2021 07:47:03</Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1}>
-                                        <Grid item>
-                                            <CardMedia component="img" image={images2} title="image" sx={{ width: 42, height: 42 }} />
-                                        </Grid>
-                                        <Grid item xs zeroMinWidth>
-                                            <Grid container spacing={0}>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="h6">File Name.ai</Typography>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="caption">4/16/2021 07:47:03</Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={1}>
-                                        <Grid item>
-                                            <CardMedia component="img" image={images3} title="image" sx={{ width: 42, height: 42 }} />
-                                        </Grid>
-                                        <Grid item xs zeroMinWidth>
-                                            <Grid container spacing={0}>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="h6">File Name.pdf</Typography>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    <Typography variant="caption">4/16/2021 07:47:03</Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -20,6 +20,9 @@ import { appDrawerWidth as drawerWidth, gridSpacing } from 'store/constant';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useConfig from 'hooks/useConfig';
+import { useDispatch } from 'store';
+import { getUsers, searchUsers, setState } from 'store/slices/chat';
+import { useSelector } from 'react-redux';
 
 // ==============================|| CHAT DRAWER ||============================== //
 
@@ -27,7 +30,10 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
     const theme = useTheme();
 
     const { user } = useAuth();
+    const chatState = useSelector((state) => state.chat);
+    const { users: allUsers } = useSelector((state) => state.user);
     const { borderRadius } = useConfig();
+    const dispatch = useDispatch();
     const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
 
     // show menu to set current user status
@@ -40,12 +46,25 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
         setAnchorEl(null);
     };
 
+    const handleUserSearchInput = (event) => {
+        if (event.target.value === '') {
+            dispatch(getUsers());
+        } else {
+            dispatch(searchUsers(event.target.value));
+        }
+    };
+
     // set user status on status menu click
-    const [status, setStatus] = useState('available');
+    const [status, setStatus] = useState('Online');
     const handleRightMenuItemClick = (userStatus) => () => {
         setStatus(userStatus);
+        dispatch(setState(userStatus));
         handleCloseRightMenu();
     };
+
+    useEffect(() => {
+        setStatus(chatState.state);
+    }, [chatState]);
 
     const drawerBG = theme.palette.mode === 'dark' ? 'dark.main' : 'grey.50';
 
@@ -109,16 +128,16 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
                                                 horizontal: 'right'
                                             }}
                                         >
-                                            <MenuItem onClick={handleRightMenuItemClick('available')}>
-                                                <AvatarStatus status="available" mr={1} />
-                                                Available
+                                            <MenuItem onClick={handleRightMenuItemClick('Online')}>
+                                                <AvatarStatus status="Online" mr={1} />
+                                                Online
                                             </MenuItem>
-                                            <MenuItem onClick={handleRightMenuItemClick('do_not_disturb')}>
-                                                <AvatarStatus status="do_not_disturb" mr={1} />
+                                            <MenuItem onClick={handleRightMenuItemClick('Do not disturb')}>
+                                                <AvatarStatus status="Do not disturb" mr={1} />
                                                 Do not disturb
                                             </MenuItem>
-                                            <MenuItem onClick={handleRightMenuItemClick('offline')}>
-                                                <AvatarStatus status="offline" mr={1} />
+                                            <MenuItem onClick={handleRightMenuItemClick('Offline')}>
+                                                <AvatarStatus status="Offline" mr={1} />
                                                 Offline
                                             </MenuItem>
                                         </Menu>
@@ -135,6 +154,7 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
                                             <SearchTwoToneIcon fontSize="small" />
                                         </InputAdornment>
                                     }
+                                    onChange={handleUserSearchInput}
                                 />
                             </Grid>
                         </Grid>

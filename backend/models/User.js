@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
     password: {
       type: String,
       required: true,
-      select: false
+      select: false,
     },
     lastLogin: {
       type: Date,
@@ -34,31 +34,32 @@ const UserSchema = new mongoose.Schema(
     },
     token: {
       type: String,
-      required: true
+      required: true,
     },
     verified: {
       type: Boolean,
-      default: true // TODO mail verification
+      default: true, // TODO mail verification
     },
     isStaff: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isActive: {
       type: Boolean,
-      default: true
+      default: true,
     },
     profile: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: "profile",
     },
     account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'account'
-    }
+      ref: "account",
+    },
   },
   {
-    timestamps: true
-  });
+    timestamps: true,
+  }
+);
 
-module.exports = User = mongoose.model('user', UserSchema);
+module.exports = User = mongoose.model("user", UserSchema);

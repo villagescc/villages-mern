@@ -8,7 +8,7 @@ import { Chip, Divider, Grid, List, ListItemButton, ListItemAvatar, ListItemText
 import UserAvatar from './UserAvatar';
 
 import { useDispatch, useSelector } from 'store';
-import { getUsers } from 'store/slices/chat';
+import { getUser, getUserChats, getUsers } from 'store/slices/chat';
 
 // ==============================|| CHAT USER LIST ||============================== //
 
@@ -32,11 +32,11 @@ const UserList = ({ setUser }) => {
                 <Fragment key={user.id}>
                     <ListItemButton
                         onClick={() => {
-                            setUser(user);
+                            dispatch(getUser(user?.user?._id));
                         }}
                     >
                         <ListItemAvatar>
-                            <UserAvatar user={user} />
+                            <UserAvatar user={{ online_status: user.state, avatar: user?.user?.profile?.avatar }} />
                         </ListItemAvatar>
                         <ListItemText
                             primary={
@@ -53,12 +53,12 @@ const UserList = ({ setUser }) => {
                                                 display: 'block'
                                             }}
                                         >
-                                            {user.name}
+                                            {user?.user?.username}
                                         </Typography>
                                     </Grid>
                                     <Grid item component="span">
                                         <Typography component="span" variant="subtitle2">
-                                            {user.lastMessage}
+                                            {user?.lastMessage}
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -76,24 +76,8 @@ const UserList = ({ setUser }) => {
                                                 display: 'block'
                                             }}
                                         >
-                                            {user.status}
+                                            {user?.user?.profile?.name}
                                         </Typography>
-                                    </Grid>
-                                    <Grid item component="span">
-                                        {user.unReadChatCount !== 0 && (
-                                            <Chip
-                                                label={user.unReadChatCount}
-                                                component="span"
-                                                color="secondary"
-                                                sx={{
-                                                    width: 20,
-                                                    height: 20,
-                                                    '& .MuiChip-label': {
-                                                        px: 0.5
-                                                    }
-                                                }}
-                                            />
-                                        )}
                                     </Grid>
                                 </Grid>
                             }

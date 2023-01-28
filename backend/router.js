@@ -18,6 +18,7 @@ const endorsementController = require("./controller/endorsement.controller");
 const paymentController = require("./controller/payment.controller");
 const mapController = require("./controller/map.controller");
 const notificationController = require("./controller/notification.controller");
+const chatController = require("./controller/chat.controller");
 
 // ######################### AUTH ROUTER #############################
 router.get("/auth", authMiddleware.auth, authController.getUser);
@@ -147,6 +148,25 @@ router.put(
   authMiddleware.auth,
   notificationController.deleteAllByUser
 );
+
+// ######################### CHAT ROUTER #############################
+router.get("/chat/users", authMiddleware.auth, chatController.getUsers);
+// TODO keyword validate
+router.post(
+  "/chat/users/search",
+  authMiddleware.auth,
+  chatController.searchUsers
+);
+router.get("/chat/user/:id", chatController.getUserById);
+router.post(
+  "/chat/chats/filter",
+  authMiddleware.auth,
+  chatController.getChatsByUserId
+);
+// TODO input validate
+router.post("/chat/create", authMiddleware.auth, chatController.createChat);
+router.get("/chat/state", authMiddleware.auth, chatController.getState);
+router.put("/chat/state", authMiddleware.auth, chatController.setState);
 
 router.get("/map/users", mapController.getUsers);
 
