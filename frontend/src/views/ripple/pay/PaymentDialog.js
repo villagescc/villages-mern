@@ -124,9 +124,9 @@ function PaymentDialog({ open, setOpen, recipientId }) {
                                 <Autocomplete
                                     {...defaultProps}
                                     id="recipient"
-                                    value={users.find((user) => user.id === recipient) || null}
+                                    value={users.find((user) => user._id === recipient) || null}
                                     onChange={(event, newValue) => {
-                                        setRecipient(newValue?.id);
+                                        setRecipient(newValue?._id);
                                     }}
                                     renderInput={(params) => (
                                         <TextField
