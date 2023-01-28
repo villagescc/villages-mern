@@ -20,6 +20,7 @@ import {
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Picker, { SKIN_TONE_MEDIUM_DARK } from 'emoji-picker-react';
+import { messaging, getToken, onMessage } from 'firebaseConfig';
 
 // project imports
 import UserDetails from './UserDetails';
@@ -89,6 +90,10 @@ const ChatMainPage = () => {
         }
     });
 
+    onMessage(messaging, (payload) => {
+        console.log('received message', payload);
+    });
+
     const { user: authUser } = useAuth();
 
     // set chat details page open when user is selected from sidebar
@@ -108,6 +113,7 @@ const ChatMainPage = () => {
         setOpenChatDrawer(!matchDownSM);
     }, [matchDownSM]);
 
+    const [token, setToken] = useState('');
     const [user, setUser] = useState({});
     const [data, setData] = React.useState([]);
     const chatState = useSelector((state) => state.chat);
@@ -121,11 +127,21 @@ const ChatMainPage = () => {
     }, [chatState.chats]);
 
     useEffect(() => {
-        // hide left drawer when email app opens
         dispatch(openDrawer(false));
         dispatch(getState());
         dispatch(getUsers());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
+            .then((currentToken) => {
+                if (currentToken) {
+                    setToken(currentToken);
+                } else {
+                    console.log('No registration token available. Request permission to generate one.');
+                }
+            })
+            .catch((err) => {
+                console.log('An error occurred while retrieving token. ', err);
+            });
     }, []);
 
     useEffect(() => {
@@ -144,7 +160,7 @@ const ChatMainPage = () => {
             text: message
         };
         setData((prevState) => [...prevState, newMessage]);
-        dispatch(insertChat(newMessage));
+        dispatch(insertChat(newMessage, token));
     };
 
     const handleEnter = (event) => {

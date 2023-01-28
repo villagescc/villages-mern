@@ -64,7 +64,6 @@ export function getUser(id) {
 }
 
 export function getUserChats(recipient) {
-    alert(recipient);
     return async () => {
         try {
             const response = await axios.post('/chat/chats/filter', { recipient });
@@ -75,9 +74,10 @@ export function getUserChats(recipient) {
     };
 }
 
-export function insertChat(chat) {
+export function insertChat(chat, token) {
     return async () => {
         try {
+            axios.post('https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast', { receiverFcm: token, message: chat.text });
             await axios.post('/chat/create', chat);
         } catch (error) {
             dispatch(slice.actions.hasError(error));
