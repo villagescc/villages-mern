@@ -16,8 +16,12 @@ const ChatEmptyCard = ({ handleDrawerOpen, openChatDrawer }) => {
             justifyContent={'center'}
         >
             <InboxIcon sx={{ fontSize: 150 }} color={'disabled'} />
-            <Typography variant={'h1'}> It's nice to chat with someone </Typography>
-            <Typography variant={'body'}> Pick a person from left menu and start your conversation </Typography>
+            <Typography variant={'h1'} align="center">
+                It's nice to chat with someone
+            </Typography>
+            <Typography variant={'body'} align="center">
+                Pick a person from left menu and start your conversation
+            </Typography>
             <Button onClick={handleDrawerOpen}>{openChatDrawer ? 'Hide menu' : 'Show menu'}</Button>
         </Stack>
     );
