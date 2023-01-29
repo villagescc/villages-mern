@@ -190,7 +190,13 @@ const ChatMainPage = () => {
         <Box sx={{ display: 'flex' }}>
             <ChatDrawer openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} setUser={setUser} />
             {isEmpty(user) ? (
-                <ChatEmptyCard />
+                <Main theme={theme} open={openChatDrawer}>
+                    <Grid container spacing={gridSpacing}>
+                        <Grid item xs={12}>
+                            <ChatEmptyCard openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} />
+                        </Grid>
+                    </Grid>
+                </Main>
             ) : (
                 <Main theme={theme} open={openChatDrawer}>
                     <Grid container spacing={gridSpacing}>

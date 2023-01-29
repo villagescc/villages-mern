@@ -1,24 +1,25 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import InboxIcon from '@mui/icons-material/Inbox';
+import { Stack, Button, Typography } from '@mui/material';
+import InboxIcon from '@mui/icons-material/MessageTwoTone';
 
-const ChatEmptyCard = () => {
+const ChatEmptyCard = ({ handleDrawerOpen, openChatDrawer }) => {
     return (
-        <Box
-            style={{
+        <Stack
+            sx={{
                 width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: 300,
-                border: '1px dashed grey',
-                borderRadius: 5
+                mx: 2,
+                height: 'calc(100vh - 440px)',
+                overflowX: 'hidden',
+                minHeight: 525
             }}
+            alignItems="center"
+            justifyContent={'center'}
         >
-            <InboxIcon sx={{ fontSize: 100 }} color={'primary'} />
-            <Typography variant={'h3'}> No Data </Typography>
-        </Box>
+            <InboxIcon sx={{ fontSize: 150 }} color={'disabled'} />
+            <Typography variant={'h1'}> It's nice to chat with someone </Typography>
+            <Typography variant={'body'}> Pick a person from left menu and start your conversation </Typography>
+            <Button onClick={handleDrawerOpen}>{openChatDrawer ? 'Hide menu' : 'Show menu'}</Button>
+        </Stack>
     );
 };
 

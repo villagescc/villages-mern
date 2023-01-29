@@ -28,11 +28,12 @@ exports.broadcast = functions.https.onRequest(async (req, res) => {
       const response = await admin
         .messaging()
         .sendToDevice([receiverFcm], payload);
+      functions.logger.log(response);
       functions.logger.log(
         "Notifications have been sent and tokens cleaned up.",
         response
       );
-      return res.send({ success: true });
+      return res.send({ success: true, response });
     }
   });
 });
