@@ -246,7 +246,7 @@ const Posting = () => {
                             </Grid>
                             <Grid item xs={12} sm={3}>
                                 <FormControlSelect
-                                    currencies={listing_type}
+                                    currencies={listing_type.filter((type) => type.value)}
                                     currency={filterType}
                                     onChange={(e) => {
                                         setFilterType(e.target.value);
@@ -350,7 +350,7 @@ const Posting = () => {
                                 }}
                             >
                                 <FormControlSelect
-                                    currencies={listing_type}
+                                    currencies={listing_type.filter((type) => type.value)}
                                     currency={type}
                                     onChange={(e) => {
                                         setType(e.target.value);
