@@ -57,7 +57,11 @@ exports.searchPosts = async (req, res, next) => {
 exports.createPost = async (req, res, next) => {
   let uploadFile = req.file;
   let tagId = [];
-  let tags = Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags];
+  let tags = Array.isArray(req.body.tags)
+    ? req.body.tags
+    : req.body.tags
+    ? [req.body.tags]
+    : null;
   let listing;
   try {
     if (tags && tags.length > 0) {

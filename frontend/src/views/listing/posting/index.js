@@ -35,6 +35,7 @@ import useAuth from 'hooks/useAuth';
 import PostingCard from 'ui-component/cards/PostingCard';
 import Empty from 'ui-component/Empty';
 import DefaultPostingIcon from '../../../assets/images/posting/default.png';
+import { isEmpty } from 'lodash';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -389,10 +390,6 @@ const Posting = () => {
                                 />
                                 <FormControlSelect
                                     currencies={[
-                                        {
-                                            value: '',
-                                            label: 'All categories'
-                                        },
                                         ...categories.map((category) => ({
                                             value: category._id,
                                             label: category.title
@@ -400,17 +397,19 @@ const Posting = () => {
                                     ]}
                                     currency={category}
                                     onChange={(e) => {
-                                        dispatch(getSubCategories(e.target.value));
                                         setCategory(e.target.value);
+                                        setSubCategory('');
                                     }}
                                     error={errors?.category}
                                     captionLabel="CATEGORY"
                                 />
                                 <FormControlSelect
-                                    currencies={subCategories.map((category) => ({
-                                        value: category._id,
-                                        label: category.title
-                                    }))}
+                                    currencies={subCategories
+                                        .filter((subCategory) => subCategory.categoryId === category)
+                                        .map((category) => ({
+                                            value: category._id,
+                                            label: category.title
+                                        }))}
                                     currency={subCategory}
                                     onChange={(e) => setSubCategory(e.target.value)}
                                     captionLabel="SUB-CATEGORY"
