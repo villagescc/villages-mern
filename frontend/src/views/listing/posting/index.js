@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-    Autocomplete,
     Box,
     Button,
     CardContent,
@@ -34,8 +33,6 @@ import { openDialog } from 'store/slices/dialog';
 import useAuth from 'hooks/useAuth';
 import PostingCard from 'ui-component/cards/PostingCard';
 import Empty from 'ui-component/Empty';
-import DefaultPostingIcon from '../../../assets/images/posting/default.png';
-import { isEmpty } from 'lodash';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -302,6 +299,7 @@ const Posting = () => {
                                 posts.map((post, index) => (
                                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                                         <PostingCard
+                                            id={post._id}
                                             avatar={post.userId?.profile?.avatar}
                                             post={post.photo}
                                             title={post.title}

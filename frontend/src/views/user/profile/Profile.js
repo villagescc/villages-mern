@@ -15,6 +15,7 @@ import {
     ListItemText,
     Divider
 } from '@mui/material';
+import { WithContext as ReactTags } from 'react-tag-input';
 import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
 
 // project imports
@@ -33,6 +34,11 @@ import { getUser, saveProfile, uploadAvatar } from 'store/slices/user';
 import { openSnackbar } from 'store/slices/snackbar';
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
+const KeyCodes = {
+    comma: 188,
+    enter: 13
+};
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -46,6 +52,8 @@ const Profile = () => {
     const [job, setJob] = useState('');
     const [location, setLocation] = useState({});
     const [description, setDescription] = useState('');
+    const [tags, setTags] = React.useState([]);
+    const [tagSuggestion, setTagSuggestion] = React.useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -71,6 +79,14 @@ const Profile = () => {
     useEffect(() => {
         setErrors(error);
     }, [error]);
+
+    const handleDeleteTag = (i) => {
+        setTags(tags.filter((tag, index) => index !== i));
+    };
+
+    const handleAddition = (newTag) => {
+        setTags([...tags, newTag]);
+    };
 
     const handleFileChange = ({ target }) => {
         const fileReader = new FileReader();
@@ -276,11 +292,24 @@ const Profile = () => {
                         </Grid>
 
                         <Grid item xs={12}>
+                            <ReactTags
+                                tags={tags}
+                                suggestions={tagSuggestion.map((suggestion) => ({
+                                    id: suggestion.title,
+                                    text: suggestion.title
+                                }))}
+                                handleDelete={handleDeleteTag}
+                                handleAddition={handleAddition}
+                                delimiters={delimiters}
+                                placeholder={'Tags'}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
                             <Stack direction="row">
                                 <AnimateButton>
                                     <Button variant="contained" onClick={handleSaveProfileClick}>
-                                        {' '}
-                                        Save{' '}
+                                        Save
                                     </Button>
                                 </AnimateButton>
                             </Stack>

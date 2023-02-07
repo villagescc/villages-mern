@@ -14,6 +14,7 @@ const initialState = {
     categories: [],
     subCategories: [],
     posts: [],
+    post: {},
     total: 0
 };
 
@@ -53,6 +54,12 @@ const slice = createSlice({
         filterPostSuccess(state, action) {
             state.posts = action.payload.posts;
             state.total = action.payload.total;
+            state.loading = false;
+        },
+
+        // GET POST
+        getPostSuccess(state, action) {
+            state.post = action.payload;
             state.loading = false;
         },
 
@@ -113,6 +120,19 @@ export function filterPost(category = '', type = '', radius = '', keyword = '', 
             dispatch(slice.actions.filterPostSuccess(response.data));
         } catch (error) {
             console.log('error', error);
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getPost(id) {
+    return async () => {
+        dispatch(slice.actions.setLoading(true));
+        try {
+            const response = await axios.get(`/posting/post/${id}`);
+            dispatch(slice.actions.getPostSuccess(response.data));
+            dispatch(slice.actions.setLoading(false));
+        } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };

@@ -54,6 +54,40 @@ exports.searchPosts = async (req, res, next) => {
   }
 };
 
+exports.getById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const post = await Listing.findById(id)
+      .populate({
+        path: "subcategoryId",
+        model: "subcategory",
+        populate: {
+          path: "categoryId",
+          model: "category",
+        },
+      })
+      .populate({
+        path: "userId",
+        model: "user",
+        populate: [
+          {
+            path: "profile",
+            model: "profile",
+          },
+          {
+            path: "account",
+            model: "account",
+          },
+        ],
+      })
+      .populate("tags")
+      .exec();
+    res.send(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.createPost = async (req, res, next) => {
   let uploadFile = req.file;
   let tagId = [];

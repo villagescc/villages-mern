@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // material-ui
@@ -17,8 +19,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import useAuth from '../../hooks/useAuth';
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { SERVER_URL } from 'config';
 
 // styles
@@ -94,7 +94,7 @@ const MessageWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ avatar, title, post, author, description, own, ...other }) => {
+const PostingCard = ({ id, avatar, title, post, author, description, own, ...other }) => {
     const theme = useTheme();
     const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
     const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
@@ -121,7 +121,9 @@ const PostingCard = ({ avatar, title, post, author, description, own, ...other }
                     <Grid item xs={12} alignItems="center">
                         <Grid container spacing={1}>
                             <Grid item xs={12} sx={{ height: 50 }}>
-                                <Typography variant="h4">{title.length > 30 ? title.substring(0, 30) + '...' : title}</Typography>
+                                <Typography variant="h4" component={Link} to={`/listing/post/${id}`}>
+                                    {title.length > 30 ? title.substring(0, 30) + '...' : title}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12} sx={{ height: 100 }}>
                                 <Typography variant="body2">
