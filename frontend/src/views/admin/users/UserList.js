@@ -15,11 +15,36 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../../assets/images/auth/default.png';
 import { SERVER_URL } from 'config';
+import { dispatch } from 'store';
+import { userActivate, deletUser } from 'store/slices/user';
+import { openSnackbar } from 'store/slices/snackbar';
 
 // ==============================|| USER LIST 2 ||============================== //
 
 const UserList = ({ users, loading }) => {
     const theme = useTheme();
+
+    const handleUserActivate = (index) => {
+        dispatch(userActivate(users[index], successAction));
+    };
+
+    const handleUserDelete = (index) => {
+        dispatch(deletUser(users[index], successAction));
+    };
+
+    const successAction = () => {
+        dispatch(
+            openSnackbar({
+                open: true,
+                message: 'You have edited user data successfully.',
+                variant: 'alert',
+                alert: {
+                    color: 'success'
+                },
+                close: false
+            })
+        );
+    };
 
     return (
         <TableContainer>
@@ -69,7 +94,11 @@ const UserList = ({ users, loading }) => {
                                         <Grid item>
                                             <Avatar
                                                 alt={user.username}
-                                                src={user.avatar ? `${SERVER_URL}/upload/avatar/` + user.avatar : DefaultAvatar}
+                                                src={
+                                                    user?.profile?.avatar
+                                                        ? `${SERVER_URL}/upload/avatar/` + user?.profile?.avatar
+                                                        : DefaultAvatar
+                                                }
                                                 sx={{ width: 60, height: 60 }}
                                                 component={Link}
                                                 to={`/admin/user/${user._id}`}
@@ -200,16 +229,44 @@ const UserList = ({ users, loading }) => {
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12} container spacing={1}>
-                                        <Button
-                                            variant="outlined"
-                                            fullWidth
-                                            size="small"
-                                            sx={{ marginTop: 2 }}
-                                            component={Link}
-                                            to={`/admin/user/${user._id}`}
-                                        >
-                                            Detail
-                                        </Button>
+                                        <Grid item xs={4}>
+                                            <Button
+                                                variant="outlined"
+                                                fullWidth
+                                                size="small"
+                                                sx={{ marginTop: 2 }}
+                                                component={Link}
+                                                to={`/admin/user/${user._id}`}
+                                            >
+                                                Detail
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Button
+                                                variant="outlined"
+                                                fullWidth
+                                                size="small"
+                                                sx={{ marginTop: 2 }}
+                                                onClick={() => {
+                                                    handleUserActivate(index);
+                                                }}
+                                            >
+                                                {user.isActive ? 'Active' : 'NoActive'}
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Button
+                                                variant="outlined"
+                                                fullWidth
+                                                size="small"
+                                                sx={{ marginTop: 2 }}
+                                                onClick={() => {
+                                                    handleUserDelete(index);
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Grid>
                                     </Grid>
                                 </TableCell>
                             </TableRow>

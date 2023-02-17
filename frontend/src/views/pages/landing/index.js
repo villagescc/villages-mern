@@ -3,17 +3,17 @@ import { styled } from '@mui/material/styles';
 
 // project imports
 import Header from './Header';
-import Feature from './Feature';
-import Demos from './Demos';
-import Layouts from './Layouts';
-import KeyFeature from './KeyFeature';
+import HowItWorks from './How-it-works';
+import Cycle from './Cycle';
+import Hours from './Hours';
+import Graph from './Graph';
 import Subscribe from './Subscribe';
 import Footer from './Footer';
 import Customization from 'layout/Customization';
 import AppBar from 'ui-component/extended/AppBar';
 
 const HeaderWrapper = styled('div')(({ theme }) => ({
-    paddingTop: 30,
+    paddingTop: 78,
     overflowX: 'hidden',
     overflowY: 'clip',
     [theme.breakpoints.down('md')]: {
@@ -22,7 +22,7 @@ const HeaderWrapper = styled('div')(({ theme }) => ({
 }));
 
 const SecondWrapper = styled('div')(({ theme }) => ({
-    paddingTop: 160,
+    paddingTop: 64,
     [theme.breakpoints.down('md')]: {
         paddingTop: 60
     }
@@ -37,16 +37,16 @@ const Landing = () => (
             <Header />
         </HeaderWrapper>
         <SecondWrapper>
-            <Feature />
+            <HowItWorks />
         </SecondWrapper>
         <SecondWrapper>
-            <Demos />
+            <Cycle />
         </SecondWrapper>
         <SecondWrapper>
-            <Layouts />
+            <Hours />
         </SecondWrapper>
         <SecondWrapper>
-            <KeyFeature />
+            <Graph />
         </SecondWrapper>
         <SecondWrapper>
             <Subscribe />

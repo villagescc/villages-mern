@@ -21,7 +21,7 @@ import calendarReducer from './slices/calendar';
 import userReducer from './slices/user';
 import cartReducer from './slices/cart';
 import kanbanReducer from './slices/kanban';
-import accountReducer from "./accountReducer";
+import accountReducer from './accountReducer';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 

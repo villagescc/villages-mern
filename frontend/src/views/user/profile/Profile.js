@@ -61,7 +61,7 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        setAvatar(currentUser.avatar ? `${SERVER_URL}/upload/avatar/` + currentUser.avatar : DefaultAvatar);
+        setAvatar(currentUser?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + currentUser?.profile?.avatar : DefaultAvatar);
         setFirstName(currentUser.firstName ? currentUser.firstName : '');
         setLastName(currentUser.lastName ? currentUser.lastName : '');
         setJob(currentUser.job ? currentUser.job : '');
@@ -89,6 +89,7 @@ const Profile = () => {
     };
 
     const handleFileChange = ({ target }) => {
+        console.log(target)
         const fileReader = new FileReader();
 
         fileReader.readAsDataURL(target.files[0]);

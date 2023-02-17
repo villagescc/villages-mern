@@ -192,7 +192,7 @@ div.ReactTags__suggestions {
 }
 div.ReactTags__suggestions ul {
     list-style-type: none;
-    box-shadow: .05em .01em .5em rgba(0,0,0,.2);
+    box-shadow: 0.05em 0.01em 0.5em rgba(0, 0, 0, 0.2);
     background: white;
     width: 200px;
 }
@@ -209,4 +209,55 @@ div.ReactTags__suggestions li mark {
 div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
     background: #b7cfe0;
     cursor: pointer;
+}
+
+.link {
+    font-weight: 600;
+    height: 38px;
+    font-size: 0.875rem;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 122px;
+    text-transform: none;
+    background-color: #fff;
+    border: 2px solid #fff;
+    color: #1d90b5;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    margin-right: 1.5rem !important;
+    text-decoration: none;
+}
+
+.link:hover {
+    background-color: #e6e6e6;
+    border-color: #e6e6e6;
+    color: #1d90b5;
+}
+
+.link-transparent {
+    border: 2px solid #fff;
+    font-weight: 600;
+    height: 38px;
+    font-size: 0.875rem;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 122px;
+    text-transform: none;
+    background-color: transparent;
+    color: #fff;
+    margin-right: 1.5rem !important;
+    text-decoration: none;
+}
+
+.link-transparent:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #fff;
 }

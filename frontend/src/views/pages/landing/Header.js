@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, Router } from 'react-router-dom';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -17,6 +17,9 @@ import { gridSpacing } from 'store/constant';
 import dashboard from 'assets/images/landing/dashboard.png';
 import widget1 from 'assets/images/landing/widget-1.png';
 import widget2 from 'assets/images/landing/widget-2.png';
+import background from 'assets/images/pages/couch-kids.jpg';
+import background_everyone from 'assets/images/pages/everyone.png';
+import mouse from 'assets/images/pages/mouse.png';
 
 // styles
 const HeaderImage = styled('img')(({ theme }) => ({
@@ -40,15 +43,68 @@ const HeaderPage = () => {
     const theme = useTheme();
 
     return (
-        <Container>
-            <Grid
-                container
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={gridSpacing}
-                sx={{ mt: { xs: 10, sm: 6, md: 18.75 }, mb: { xs: 2.5, md: 10 } }}
-            >
-                <Grid item xs={12} md={5}>
+        <Grid alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
+            <div style={{ backgroundImage: `url(${background})`, backgroundSize: `cover`, padding: `4rem 2rem` }}>
+                <div style={{ textAlign: `center` }}>
+                    <h1
+                        style={{
+                            marginBottom: `1em`,
+                            textAlign: `center`,
+                            color: `#fff`,
+                            fontSize: `2.375em`,
+                            textTransform: `uppercase`,
+                            lineHeight: `1.2`,
+                            fontFamily: `OpenSans, sans-serif`
+                        }}
+                    >
+                        <img
+                            src={background_everyone}
+                            alt="everyone"
+                            style={{ verticalAlign: `middle`, height: `auto`, margin: `0 auto -0.78em`, display: `block` }}
+                        ></img>
+                        <span style={{ marginLeft: `1.5em`, fontWeight: `300` }}>has value</span>
+                        <span style={{ marginLeft: `2em`, fontWeight: `600` }}>to share!</span>
+                    </h1>
+                    <div
+                        style={{
+                            display: `flex`,
+                            justifyContent: `center`,
+                            alignItems: `center`,
+                            flexFlow: `row wrap`,
+                            textAlign: `center`,
+                            padding: `0 15px`
+                        }}
+                    >
+                        <p style={{ color: `#fff`, marginBottom: `2em`, flex: `0 0 100%` }}>
+                            By clicking Sign Up, I agree to the Terms of Service and Privacy Policy.
+                        </p>
+                    </div>
+                    <div
+                        style={{
+                            display: `flex`,
+                            justifyContent: `center`,
+                            alignItems: `center`,
+                            flexFlow: `row wrap`,
+                            marginBottom: `2em`
+                        }}
+                    >
+                        <RouterLink to={`/register`} className="link">
+                            Join Now
+                        </RouterLink>
+                        <RouterLink to={`/register`} className="link-transparent">
+                            Login
+                        </RouterLink>
+                    </div>
+                    <RouterLink to={`/#how-it-works`} style={{ cursor: `pointer` }}>
+                        <img
+                            src={mouse}
+                            alt="scroll down"
+                            style={{ verticalAlign: `middle`, borderStyle: `none`, overflowClipMargin: `contect-box`, overflow: `clip` }}
+                        ></img>
+                    </RouterLink>
+                </div>
+            </div>
+            {/* <Grid item xs={12} md={5}>
                     <Grid container spacing={gridSpacing} sx={{ pr: 10, [theme.breakpoints.down('lg')]: { pr: 0, textAlign: 'center' } }}>
                         <Grid item xs={12}>
                             <motion.div
@@ -262,9 +318,9 @@ const HeaderPage = () => {
                             </motion.div>
                         </Box>
                     </Box>
-                </Grid>
-            </Grid>
-        </Container>
+                </Grid> */}
+            <Grid container alignItems="center" justifyContent="center"></Grid>
+        </Grid>
     );
 };
 

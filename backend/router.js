@@ -12,6 +12,7 @@ const authController = require("./controller/auth.controller");
 const baseController = require("./controller/base.controller");
 const postController = require("./controller/posting.controller");
 const userController = require("./controller/user.controller");
+const adminController = require("./controller/admin.controller");
 const settingController = require("./controller/setting.controller");
 const accountController = require("./controller/account.controller");
 const endorsementController = require("./controller/endorsement.controller");
@@ -76,6 +77,32 @@ router.post(
   authMiddleware.auth,
   userMiddleware.changePassword,
   authController.changePassword
+);
+
+// ######################### Admin ROUTER #############################
+router.post(
+  "/admin/users/avatar",
+  authMiddleware.auth,
+  userMiddleware.upload.single("file"),
+  adminController.uploadAvatar
+);
+
+router.post(
+  "/admin/users/edit",
+  authMiddleware.auth,
+  adminController.editUserData
+);
+
+router.post(
+  "/admin/users/activate",
+  authMiddleware.auth,
+  adminController.userActivate
+);
+
+router.post(
+  "/admin/users/delete",
+  authMiddleware.auth,
+  adminController.deleteUser
 );
 
 // ######################### Trust ROUTER #############################

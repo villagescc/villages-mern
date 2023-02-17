@@ -1,6 +1,7 @@
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import { Container, Grid, Typography } from '@mui/material';
+import { Link as RouterLink, Router } from 'react-router-dom';
 
 // project imports
 import MailerSubscriber from '../maintenance/ComingSoon/ComingSoon1/MailerSubscriber';
@@ -88,13 +89,25 @@ const Subscribe = () => {
                                         Subscribe
                                     </Typography>
                                 </Grid>
-                                <Grid item sm={12}>
+                                {/* <Grid item sm={12}>
                                     <Typography variant="body2">
                                         Subscribe for the latest news &#38; updates of Berry admin template. We never send spam newsletters.
                                     </Typography>
-                                </Grid>
+                                </Grid> */}
                                 <Grid item sm={12}>
-                                    <MailerSubscriber />
+                                    {/* <MailerSubscriber /> */}
+                                    <RouterLink
+                                        to={`/register`}
+                                        className="link"
+                                        style={{
+                                            backgroundColor:
+                                                theme.palette.mode === 'dark' ? theme.palette.dark[900] : theme.palette.primary.light,
+                                            borderColor:
+                                                theme.palette.mode === 'dark' ? theme.palette.dark[900] : theme.palette.primary.light
+                                        }}
+                                    >
+                                        Join Now
+                                    </RouterLink>
                                 </Grid>
                             </Grid>
                         </SubscribeCard>
