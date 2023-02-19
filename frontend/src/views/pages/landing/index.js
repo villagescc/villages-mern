@@ -13,11 +13,11 @@ import Customization from 'layout/Customization';
 import AppBar from 'ui-component/extended/AppBar';
 
 const HeaderWrapper = styled('div')(({ theme }) => ({
-    paddingTop: 78,
+    paddingTop: 56,
     overflowX: 'hidden',
     overflowY: 'clip',
     [theme.breakpoints.down('md')]: {
-        paddingTop: 42
+        paddingTop: 56
     }
 }));
 

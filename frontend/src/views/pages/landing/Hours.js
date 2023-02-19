@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 
 // material-ui
 import { Button, ButtonBase, Container, Grid, Typography } from '@mui/material';
@@ -22,6 +22,57 @@ const imageStyle = {
     borderRadius: '12px'
 };
 
+const Paragraph = styled('p')(({ theme }) => ({
+    color: `#b0b0b0`,
+    flex: `0 0 60%`,
+    fontFamily: `"Open Sans", sans-serif`,
+    lineHeight: `1.5em`,
+    fontSize: `1.5em`,
+    textAlign: `left`,
+    marginTop: `0`,
+    [theme.breakpoints.down(1140)]: {
+        fontSize: `1.4em`
+    },
+    [theme.breakpoints.down(1025)]: {
+        fontSize: `1.25em`
+    },
+    [theme.breakpoints.down(935)]: {
+        textAlign: `center`,
+        paddingTop: `1em`,
+        flex: `0 0 100%`
+    },
+    [theme.breakpoints.down(`sm`)]: {
+        fontSize: `1em`
+    }
+}));
+
+const FrameBox = styled(`div`)(({ theme }) => ({
+    padding: `3.75em 3em 1.5em 3em`,
+    border: `3px solid #1695c8`,
+    display: `flex`,
+    justifyContent: `space-between`,
+    alignItems: `center`,
+    flexFlow: `row wrap`,
+    height: `100%`,
+    [theme.breakpoints.down(935)]: {
+        justifyContent: `center`,
+        alignItems: `flex-start`
+    }
+}));
+
+const Divider = styled(`div`)(({ theme }) => ({
+    height: `120px`,
+    margin: `0 1em`,
+    width: `3px`,
+    backgroundColor: `#eaeaea`,
+    [theme.breakpoints.down(935)]: {
+        display: `none`
+    }
+}));
+
+const Img = styled(`img`)(({ theme }) => ({
+    maxWidth: `7.5em`
+}));
 // ==============================|| LANDING - DEMOS PAGE ||============================== //
 
 const Hours = () => {
@@ -49,94 +100,34 @@ const Hours = () => {
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                    <Grid container justifyContent="center" spacing={gridSpacing} sx={{ textAlign: 'center' }}>
-                        <Grid item sm={6} xs={12}>
-                            <FadeInWhenVisible>
-                                <Grid
-                                    xs={12}
-                                    sx={{
-                                        padding: `3.75em 3em`,
-                                        fontSize: `1em`,
-                                        border: `3px solid #1695c8`,
-                                        display: `flex`,
-                                        justifyContent: `space-between`,
-                                        alignItems: `center`,
-                                        flexFlow: `row wrap`,
-                                        height: `100%`
-                                    }}
-                                >
-                                    <img src={box1} alt="box 1" style={{ marginLeft: `18px` }}></img>
+                    <FadeInWhenVisible>
+                        <Grid container justifyContent="center" spacing={gridSpacing} sx={{ textAlign: 'center' }}>
+                            <Grid item sm={6} xs={12}>
+                                <FrameBox>
+                                    <Img src={box1} alt="box 1"></Img>
+                                    <Divider />
 
-                                    <p
-                                        style={{
-                                            marginBottom: `0`,
-                                            color: `#b0b0b0`,
-                                            flex: `0 0 60%`,
-                                            fontFamily: `"Open Sans", sans-serif`,
-                                            lineHeight: `1.5em`
-                                        }}
-                                    >
+                                    <Paragraph>
                                         A sustainable hour's wage is different in every community but it always remains a stable measure of
                                         value.
-                                    </p>
-                                    <p
-                                        style={{
-                                            marginBottom: `0`,
-                                            color: `#b0b0b0`,
-                                            flex: `0 0 60%`,
-                                            fontFamily: `"Open Sans", sans-serif`,
-                                            lineHeight: `1.5em`
-                                        }}
-                                    >
-                                        From this base, members negotiate a fair price for their products and services
-                                    </p>
-                                </Grid>
-                            </FadeInWhenVisible>
-                        </Grid>
-                        <Grid item sm={6} xs={12}>
-                            <FadeInWhenVisible>
-                                <Grid
-                                    xs={12}
-                                    sx={{
-                                        padding: `3.75em 3em`,
-                                        fontSize: `1em`,
-                                        border: `3px solid #1695c8`,
-                                        display: `flex`,
-                                        justifyContent: `space-between`,
-                                        alignItems: `center`,
-                                        flexFlow: `row wrap`,
-                                        height: `100%`
-                                    }}
-                                >
-                                    <img src={box2} alt="box 2" style={{ marginLeft: `18px` }}></img>
+                                    </Paragraph>
+                                    <Paragraph>From this base, members negotiate a fair price for their products and services</Paragraph>
+                                </FrameBox>
+                            </Grid>
+                            <Grid item sm={6} xs={12}>
+                                <FrameBox>
+                                    <Img src={box2} alt="box 2"></Img>
+                                    <Divider />
 
-                                    <p
-                                        style={{
-                                            marginBottom: `0`,
-                                            color: `#b0b0b0`,
-                                            flex: `0 0 60%`,
-                                            fontFamily: `"Open Sans", sans-serif`,
-                                            lineHeight: `1.5em`
-                                        }}
-                                    >
+                                    <Paragraph>
                                         This is an effective and useful complementary currency system that can be used anywhere in the
                                         world.
-                                    </p>
-                                    <p
-                                        style={{
-                                            marginBottom: `0`,
-                                            color: `#b0b0b0`,
-                                            flex: `0 0 60%`,
-                                            fontFamily: `"Open Sans", sans-serif`,
-                                            lineHeight: `1.5em`
-                                        }}
-                                    >
-                                        What is a sustainable wage in your community?
-                                    </p>
-                                </Grid>
-                            </FadeInWhenVisible>
+                                    </Paragraph>
+                                    <Paragraph>What is a sustainable wage in your community?</Paragraph>
+                                </FrameBox>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    </FadeInWhenVisible>
                 </Grid>
             </Grid>
         </Container>

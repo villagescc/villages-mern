@@ -25,10 +25,30 @@ import mouse from 'assets/images/pages/mouse.png';
 const HeaderImage = styled('img')(({ theme }) => ({
     maxWidth: '100%',
     borderRadius: '20px',
-    transform: 'scale(1.7)',
-    transformOrigin: theme.direction === 'rtl' ? '100% 50%' : '0 50%',
-    [theme.breakpoints.down('lg')]: {
-        transform: 'scale(1.2)'
+    // transform: 'scale(1.7)',
+    // transformOrigin: theme.direction === 'rtl' ? '100% 50%' : '0 50%',
+    verticalAlign: `middle`,
+    maxWidth: `100%`,
+    height: `auto`,
+    margin: `0 auto -0.78em`,
+    display: `block`,
+    paddingLeft: `3rem`,
+    paddingRight: `3rem`,
+    [theme.breakpoints.down('md')]: {
+        margin: `0 auto -0.5em`
+    }
+}));
+
+const Span = styled('span')(({ theme }) => ({
+    fontSize: `1.5em`,
+    [theme.breakpoints.down(700)]: {
+        fontSize: `1.2em`
+    },
+    [theme.breakpoints.down(560)]: {
+        fontSize: `0.9em`
+    },
+    [theme.breakpoints.down(440)]: {
+        fontSize: `0.6em`
     }
 }));
 
@@ -44,26 +64,30 @@ const HeaderPage = () => {
 
     return (
         <Grid alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-            <div style={{ backgroundImage: `url(${background})`, backgroundSize: `cover`, padding: `4rem 2rem` }}>
+            <div
+                style={{
+                    backgroundImage: `url(${background})`,
+                    backgroundSize: `cover`,
+                    padding: `4rem 0`,
+                    backgroundPosition: `top center`,
+                    backgroundRepeat: `no-repeat`,
+                    marginTop: ''
+                }}
+            >
                 <div style={{ textAlign: `center` }}>
                     <h1
                         style={{
                             marginBottom: `1em`,
                             textAlign: `center`,
                             color: `#fff`,
-                            fontSize: `2.375em`,
                             textTransform: `uppercase`,
                             lineHeight: `1.2`,
                             fontFamily: `OpenSans, sans-serif`
                         }}
                     >
-                        <img
-                            src={background_everyone}
-                            alt="everyone"
-                            style={{ verticalAlign: `middle`, height: `auto`, margin: `0 auto -0.78em`, display: `block` }}
-                        ></img>
-                        <span style={{ marginLeft: `1.5em`, fontWeight: `300` }}>has value</span>
-                        <span style={{ marginLeft: `2em`, fontWeight: `600` }}>to share!</span>
+                        <HeaderImage src={background_everyone} alt="everyone"></HeaderImage>
+                        <Span style={{ marginLeft: `1.5em`, fontWeight: `300` }}>has value</Span>
+                        <Span style={{ marginLeft: `2em`, fontWeight: `600` }}>to share!</Span>
                     </h1>
                     <div
                         style={{

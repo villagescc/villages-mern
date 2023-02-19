@@ -48,7 +48,11 @@ const Graph = () => {
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                    <img src={graph} alt="cycle" style={{ margin: `auto`, visibility: `visible`, display: `block` }}></img>
+                    <img
+                        src={graph}
+                        alt="cycle"
+                        style={{ margin: `auto`, visibility: `visible`, display: `block`, maxWidth: `100%`, height: `auto` }}
+                    ></img>
                 </Grid>
             </Grid>
         </Container>
