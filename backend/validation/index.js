@@ -193,11 +193,11 @@ exports.validatePostingCreate = (data) => {
   }
 
   if (validator.isEmpty(data.category)) {
-    errors.category = "Type field is required";
+    errors.category = "Category field is required";
   }
 
   if (validator.isEmpty(data.subCategory)) {
-    errors.subCategory = "Type field is required";
+    errors.subCategory = "Subcategory field is required";
   }
 
   return {

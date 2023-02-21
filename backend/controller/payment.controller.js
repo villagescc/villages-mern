@@ -100,7 +100,7 @@ exports.getPath = async (req, res, next) => {
         nodes = [...nodes, ...path];
       }
       nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
-      const graph = await buildGraph();
+      const graph = await buildGraph(nodes);
       res.send(graph);
     } else {
       res.status(400).send(result.errors);

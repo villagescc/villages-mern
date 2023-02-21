@@ -57,7 +57,7 @@ router.delete("/posting/:id", postController.deleteById);
 // ######################### SETTING ROUTER #############################
 router.get("/setting", authMiddleware.auth, settingController.getById);
 
-// ######################### POSTING ROUTER #############################
+// ######################### USER ROUTER #############################
 router.post("/users/search", userController.search);
 router.get("/users/user/:id", userController.getById);
 router.post(
