@@ -84,6 +84,7 @@ const LoadGraphWithByProp = () => {
             graph.forEachNode((node, attributes) => {
                 graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 3);
             });
+            const positions = random(graph, { dimensions: ['x1', 'x2'] });
             random.assign(graph);
             loadGraph(graph);
         }, [loadGraph]);
