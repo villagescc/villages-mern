@@ -2582,6 +2582,11 @@
   resolved "https://registry.npmjs.org/@react-sigma/core/-/core-3.1.0.tgz"
   integrity sha512-b/Jq91WGTBIdQrD+Z34BASkn+mXRVLiLyxJS/n5Q9wPKjiIt6qlaqpbjdgj1sN8C7w3brA0+bAMl1ZnGjxOuIg==
 
+"@react-sigma/core@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@react-sigma/core/-/core-3.2.0.tgz#76caf10a2c0b7f116f8206438665ecc937257200"
+  integrity sha512-+nT03EGfzUymqlGRYAHWicGXWAf4MuZuWxT8/vG+N9FypFtGe5DvYaK85/5NEh1eyxpHaAPfOFLIGJrynpxPHA==
+
 "@react-sigma/layout-core@^3.1.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@react-sigma/layout-core/-/layout-core-3.1.0.tgz"
@@ -2589,12 +2594,26 @@
   dependencies:
     "@react-sigma/core" "^3.1.0"
 
+"@react-sigma/layout-core@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@react-sigma/layout-core/-/layout-core-3.2.0.tgz#ebad307ac82caa91deecfbe56cf61bc1809334bf"
+  integrity sha512-NlNzyYNOdcYzdaSIlrFyRYLiqBXDUJBrLs6kU8qKzlyFZ0vuIs5J8YR37DVvRaBwB588RyrslJzAX5PLV4Xp4A==
+  dependencies:
+    "@react-sigma/core" "^3.2.0"
+
 "@react-sigma/layout-forceatlas2@^3.1.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@react-sigma/layout-forceatlas2/-/layout-forceatlas2-3.1.0.tgz"
   integrity sha512-sHHAdR/MtjgFNfyHpupPO80kPSFHOigt7m5ps3iCuQylLoLWadiibck56CX2HHAIOWHkb4qFqATg98uN5gi1RA==
   dependencies:
     "@react-sigma/layout-core" "^3.1.0"
+
+"@react-sigma/layout-random@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@react-sigma/layout-random/-/layout-random-3.2.0.tgz#3f65bf720a2c18fb4f62eaee4d845c627b0ca29b"
+  integrity sha512-4faJoalzGzmuX3kuy9Hi8AVRQ4TtpNIC9raKgeCWoB8K2xvXRBmWS5GV4t811pZVeSpwtokOVXKbRpcx0DCXww==
+  dependencies:
+    "@react-sigma/layout-core" "^3.2.0"
 
 "@reduxjs/toolkit@^1.8.5":
   version "1.8.5"
@@ -6453,6 +6472,14 @@ graphology-layout@0.6.0:
     graphology-utils "^2.3.0"
     pandemonium "^1.5.0"
 
+graphology-layout@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/graphology-layout/-/graphology-layout-0.6.1.tgz#e7c1d65c022e337b11c977e2d30abe4076a0327d"
+  integrity sha512-m9aMvbd0uDPffUCFPng5ibRkb2pmfNvdKjQWeZrf71RS1aOoat5874+DcyNfMeCT4aQguKC7Lj9eCbqZj/h8Ag==
+  dependencies:
+    graphology-utils "^2.3.0"
+    pandemonium "^2.4.0"
+
 graphology-utils@^2.0.0, graphology-utils@^2.1.0, graphology-utils@^2.3.0, graphology-utils@^2.4.2, graphology-utils@^2.5.0:
   version "2.5.2"
   resolved "https://registry.npmjs.org/graphology-utils/-/graphology-utils-2.5.2.tgz"
@@ -8830,6 +8857,13 @@ mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+mnemonist@^0.39.2:
+  version "0.39.5"
+  resolved "https://registry.yarnpkg.com/mnemonist/-/mnemonist-0.39.5.tgz#5850d9b30d1b2bc57cc8787e5caa40f6c3420477"
+  integrity sha512-FPUtkhtJ0efmEFGpU14x7jGbTB+s18LrzRL2KgoWz9YvcY3cPomz8tih01GbHwnGk/OmkOKfqd/RAQoc8Lm7DQ==
+  dependencies:
+    obliterator "^2.0.1"
+
 moment@^2.29.4:
   version "2.29.4"
   resolved "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
@@ -9049,7 +9083,7 @@ object.values@^1.1.0, object.values@^1.1.5:
     define-properties "^1.1.3"
     es-abstract "^1.19.1"
 
-obliterator@^2.0.2:
+obliterator@^2.0.1, obliterator@^2.0.2:
   version "2.0.4"
   resolved "https://registry.npmjs.org/obliterator/-/obliterator-2.0.4.tgz"
   integrity sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==
@@ -9189,6 +9223,13 @@ pandemonium@^1.5.0:
   version "1.5.0"
   resolved "https://registry.npmjs.org/pandemonium/-/pandemonium-1.5.0.tgz"
   integrity sha512-9PU9fy93rJhZHLMjX+4M1RwZPEYl6g7DdWKGmGNhkgBZR5+tOBVExNZc00kzdEGMxbaAvWdQy9MqGAScGwYlcA==
+
+pandemonium@^2.4.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/pandemonium/-/pandemonium-2.4.1.tgz#bd51ca72184c6ae135f9049a33c8605bfdb9574d"
+  integrity sha512-wRqjisUyiUfXowgm7MFH2rwJzKIr20rca5FsHXCMNm1W5YPP1hCtrZfgmQ62kP7OZ7Xt+cR858aB28lu5NX55g==
+  dependencies:
+    mnemonist "^0.39.2"
 
 param-case@^3.0.4:
   version "3.0.4"

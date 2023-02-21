@@ -19,7 +19,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-    name: 'mail',
+    name: 'posting',
     initialState,
     reducers: {
         // HAS ERROR

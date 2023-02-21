@@ -395,6 +395,7 @@ const Posting = () => {
                                     ]}
                                     currency={category}
                                     onChange={(e) => {
+                                        console.log('category = ', e.target.value);
                                         setCategory(e.target.value);
                                         setSubCategory('');
                                     }}

@@ -115,7 +115,7 @@ const HeaderPage = () => {
                         <RouterLink to={`/register`} className="link">
                             Join Now
                         </RouterLink>
-                        <RouterLink to={`/register`} className="link-transparent">
+                        <RouterLink to={`/login`} className="link-transparent">
                             Login
                         </RouterLink>
                     </div>

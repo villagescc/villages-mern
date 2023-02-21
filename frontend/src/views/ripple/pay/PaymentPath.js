@@ -65,6 +65,7 @@ const DisplayGraph = ({ paylogs }) => {
                 nodeProgramClasses: { image: getNodeProgramImage() },
                 defaultNodeType: 'image',
                 defaultEdgeType: 'arrow',
+                renderEdgeLabels: true,
                 labelDensity: 0.07,
                 labelGridCellSize: 60,
                 labelRenderedSizeThreshold: 15,

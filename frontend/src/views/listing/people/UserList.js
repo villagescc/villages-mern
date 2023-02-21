@@ -38,7 +38,7 @@ const UserList = ({ users, loading }) => {
                     '& tbody tr:last-of-type  td': {
                         borderBottom: 'none'
                     },
-                    [theme.breakpoints.down('xl')]: {
+                    [theme.breakpoints.down(1256)]: {
                         '& tr:not(:last-of-type)': {
                             borderBottom: '1px solid',
                             borderBottomColor: theme.palette.mode === 'dark' ? 'rgb(132, 146, 196, .2)' : 'rgba(224, 224, 224, 1)'
@@ -206,7 +206,7 @@ const UserList = ({ users, loading }) => {
                                                 fullWidth
                                                 size="small"
                                                 color="error"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
+                                                sx={{ minWidth: '33%', marginTop: 1 }}
                                                 startIcon={<FavoriteIcon />}
                                                 component={Link}
                                                 to={`/ripple/trust/${user._id}`}
@@ -219,7 +219,7 @@ const UserList = ({ users, loading }) => {
                                                 variant="outlined"
                                                 fullWidth
                                                 size="small"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
+                                                sx={{ minWidth: '33%', marginTop: 1 }}
                                                 startIcon={<CurrencyExchangeIcon />}
                                                 component={Link}
                                                 to={`/ripple/pay/${user._id}`}
@@ -233,8 +233,8 @@ const UserList = ({ users, loading }) => {
                                                 color="success"
                                                 fullWidth
                                                 size="small"
-                                                sx={{ minWidth: '30%', marginTop: 1 }}
-                                                startIcon={<ChatIcon />}
+                                                sx={{ minWidth: '33%', marginTop: 1 }}
+                                                startIcon={<ChatIcon sx={{ marginLeft: `-1px`, marginRight: `-2px` }} />}
                                             >
                                                 Message
                                             </Button>
