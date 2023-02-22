@@ -235,6 +235,8 @@ const UserList = ({ users, loading }) => {
                                                 size="small"
                                                 sx={{ minWidth: '33%', marginTop: 1 }}
                                                 startIcon={<ChatIcon sx={{ marginLeft: `-1px`, marginRight: `-2px` }} />}
+                                                component={Link}
+                                                to={`/personal/message/${user._id}`}
                                             >
                                                 Message
                                             </Button>

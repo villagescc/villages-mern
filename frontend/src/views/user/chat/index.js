@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -81,6 +82,15 @@ const ChatMainPage = () => {
     const matchDownSM = useMediaQuery(theme.breakpoints.down('lg'));
 
     const dispatch = useDispatch();
+
+    const { userId } = useParams();
+
+    useEffect(() => {
+        if (!!userId) {
+            setOpenChatDrawer(true);
+            dispatch(getUser(userId));
+        }
+    }, [userId]);
 
     const scrollRef = useRef();
 

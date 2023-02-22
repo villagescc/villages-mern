@@ -51,6 +51,10 @@ const PersonalRoute = {
             element: <Message />
         },
         {
+            path: '/personal/message/:userId',
+            element: <Message />
+        },
+        {
             path: '/personal/profile',
             element: <ProfileView />
         },

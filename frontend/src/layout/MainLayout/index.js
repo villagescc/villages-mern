@@ -102,7 +102,7 @@ const MainLayout = () => {
 
     useEffect(() => {
         if (matchDownMd) {
-            dispatch(openDrawer(true));
+            dispatch(openDrawer(false));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matchDownMd]);

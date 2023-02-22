@@ -100,7 +100,11 @@ function PaymentDialog({ open, setOpen, recipientId }) {
         options: users,
         getOptionLabel: (option) => `${option.username} (${option.email})`,
         filterOptions: (options, { inputValue }) =>
-            options.filter((item) => item.username.includes(inputValue) || item.email.includes(inputValue))
+            options.filter(
+                (item) =>
+                    item.username.toLowerCase().includes(inputValue.toLowerCase()) ||
+                    item.email.toLowerCase().includes(inputValue.toLowerCase())
+            )
     };
 
     return (

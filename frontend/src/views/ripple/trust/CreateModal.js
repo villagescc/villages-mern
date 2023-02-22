@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -21,14 +22,22 @@ import { Receipt } from '@mui/icons-material';
 
 const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement, errors }) => {
     const theme = useTheme();
+    const navigation = useNavigate();
     const defaultProps = {
         options: users,
         getOptionLabel: (option) => `${option.username} (${option.email})`,
         filterOptions: (options, { inputValue }) =>
-            options.filter((item) => item.username.includes(inputValue) || item.email.includes(inputValue))
+            options.filter(
+                (item) =>
+                    item.username.toLowerCase().includes(inputValue.toLowerCase()) ||
+                    item.email.toLowerCase().includes(inputValue.toLowerCase())
+            )
     };
 
     const [recipient, setRecipient] = React.useState({});
+    useEffect(() => {
+        setRecipient(users.find((user) => user._id === endorsement.recipient) || null);
+    }, [endorsement]);
 
     return (
         <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
@@ -55,6 +64,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                                     console.log('recipient = ', newValue);
                                     setRecipient(users.find((user) => user._id === newValue._id) || null);
                                     setEndorsement({ ...endorsement, recipient: newValue._id });
+                                    navigation(`/ripple/trust/${newValue._id}`);
                                 }}
                                 renderInput={(params) => (
                                     <TextField
