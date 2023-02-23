@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, Divider, Typography } from '@mui/materia
 
 // constant
 const headerSX = {
-    '& .MuiCardHeader-action': { mr: 0 }
+    '& .MuiCardHeader-action': { mr: 0, pt: 2, pb: 2 },
+    '&.MuiCardHeader-root': { flexFlow: `wrap` }
 };
 
 // ==============================|| CUSTOM MAIN CARD ||============================== //
