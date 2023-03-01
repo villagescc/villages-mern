@@ -72,7 +72,22 @@ function PaymentDialog({ open, setOpen, recipientId }) {
     };
 
     useEffect(() => {
-        setUsers(paymentState.users);
+        let relatedUsers = [];
+        let transactions = [...paymentState.transactions];
+        for (const transaction of transactions.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        })) {
+            let user = { _id: transaction.recipient._id, username: transaction.recipient.username, email: transaction.recipient.email };
+            if (!relatedUsers.find((userr) => userr._id === user._id)) {
+                relatedUsers.push(user);
+            }
+        }
+
+        for (const user of paymentState.users) {
+            if (!relatedUsers.find((userr) => userr._id === user._id)) relatedUsers.push(user);
+        }
+        // setUsers(paymentState.users);
+        setUsers(relatedUsers);
         setMaxLimit(paymentState.maxLimit);
         setPaylogs([...paymentState.paylogs]);
         setErrors(paymentState.errors);
