@@ -47,6 +47,12 @@ exports.save = async (req, res, next) => {
     );
     global.io.emit("newNotification", notification);
     res.send(endorsement);
+
+    axios.post('https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast', { 
+      receiverFcm: recipientUser.deviceToken, 
+      message: notifyText 
+    });
+
   } catch (err) {
     next(err);
   }

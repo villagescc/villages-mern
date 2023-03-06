@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -38,6 +38,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { activeID } from 'store/slices/menu';
 
+import {messaging, getToken, onMessage} from "firebaseConfig";
+
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ loginProp, ...others }) => {
@@ -52,9 +54,26 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
         setShowPassword(!showPassword);
     };
 
+    const [token, setToken] = useState('');
+
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    useEffect(() => {
+
+        getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
+            .then((currentToken) => {
+                if (currentToken) {
+                    setToken(currentToken);
+                } else {
+                    console.log('No registration token available. Request permission to generate one.');
+                }
+            })
+            .catch((err) => {
+                console.log('An error occurred while retrieving token. ', err);
+            });
+    }, []);
 
     return (
         <>
@@ -62,7 +81,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 initialValues={{
                     email: '',
                     password: '',
-                    submit: null
+                    submit: null,
                 }}
                 validationSchema={Yup.object().shape({
                     email: Yup.string().max(255).required('Email is required'),
@@ -70,7 +89,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
-                        await login(values.email, values.password).then(
+                        await login(values.email, values.password, token).then(
                             () => {
                             },
                             (err) => {
@@ -187,7 +206,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                                     variant="contained"
                                     color="secondary"
                                 >
-                                    Sign in
+                                    Sign In
                                 </Button>
                             </AnimateButton>
                         </Box>

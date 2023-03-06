@@ -99,7 +99,7 @@ exports.verifyToken = async (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  const { password, email } = req.body;
+  const { password, email, deviceToken } = req.body;
 
   User.findOne({ $or: [{ email }, { username: email }] })
     .select("+password")
@@ -132,6 +132,11 @@ exports.login = (req, res, next) => {
           }
 
           const userData = await _getUser(user.id);
+
+          await User.findByIdAndUpdate(user._id, {
+            deviceToken
+          });
+
           const payload = {
             user: {
               _id: userData._id,

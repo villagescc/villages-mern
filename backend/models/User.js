@@ -56,6 +56,9 @@ const UserSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "account",
     },
+    deviceToken: {
+      type: String,
+    }
   },
   {
     timestamps: true,
