@@ -33,7 +33,7 @@ exports.broadcast = functions.https.onRequest(async (req, res) => {
         "Notifications have been sent and tokens cleaned up.",
         response
       );
-      return res.send({ success: true, response });
+      return res.send({ success: true });
     }
   });
 });
