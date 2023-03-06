@@ -131,6 +131,7 @@ const AuthRegister = ({ ...others }) => {
                                     type="text"
                                     value={values.firstName}
                                     sx={{ ...theme.typography.customInput }}
+                                    error={Boolean(touched.firstName && errors.firstName)}
                                 />
                                 {touched.firstName && errors.firstName && (
                                   <FormHelperText error id="standard-weight-helper-text--register">
@@ -149,6 +150,7 @@ const AuthRegister = ({ ...others }) => {
                                   type="text"
                                   value={values.lastName}
                                   sx={{ ...theme.typography.customInput }}
+                                  error={Boolean(touched.lastName && errors.lastName)}
                                 />
                                 {touched.lastName && errors.lastName && (
                                   <FormHelperText error id="standard-weight-helper-text--register">
