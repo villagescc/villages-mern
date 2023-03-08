@@ -38,7 +38,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { activeID } from 'store/slices/menu';
 
-import {messaging, getToken, onMessage} from "firebaseConfig";
+import { messaging, getToken, onMessage } from 'firebaseConfig';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -61,11 +61,11 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     };
 
     useEffect(() => {
-
         getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
             .then((currentToken) => {
                 if (currentToken) {
                     setToken(currentToken);
+                    console.log(currentToken);
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
                 }
@@ -81,17 +81,17 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 initialValues={{
                     email: '',
                     password: '',
-                    submit: null,
+                    submit: null
                 }}
                 validationSchema={Yup.object().shape({
                     email: Yup.string().max(255).required('Email is required'),
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                    console.log(token);
                     try {
                         await login(values.email, values.password, token).then(
-                            () => {
-                            },
+                            () => {},
                             (err) => {
                                 setStatus({ success: false });
                                 setErrors(err);

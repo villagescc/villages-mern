@@ -5,7 +5,9 @@ importScripts('/__/firebase/9.2.0/firebase-app-compat.js');
 importScripts('/__/firebase/9.2.0/firebase-messaging-compat.js');
 importScripts('/__/firebase/init.js');
 
-const messaging = firebase.messaging();
+import { messaging } from 'firebaseConfig';
+
+// const messaging = firebase.messaging();
 
 /**
  * Here is is the code snippet to initialize Firebase Messaging in the Service
