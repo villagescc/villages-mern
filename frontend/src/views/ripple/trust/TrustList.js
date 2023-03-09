@@ -27,6 +27,8 @@ import { useParams } from 'react-router-dom';
 import Empty from 'ui-component/Empty';
 import { getUserList } from '../../../store/slices/user';
 
+import { messaging, onMessage } from 'firebaseConfig';
+
 const Index = () => {
     const theme = useTheme();
     const { userId } = useParams();
@@ -121,6 +123,21 @@ const Index = () => {
         dispatch(searchEndorsements(keyword, page));
         setOpenCreate(false);
     };
+
+    onMessage(messaging, (payload) => {
+        console.log('received trust message' + payload);
+        dispatch(
+            openSnackbar({
+                open: true,
+                message: payload.notification.body,
+                variant: 'alert',
+                alert: {
+                    color: 'success'
+                },
+                close: false
+            })
+        );
+    });
 
     return (
         <>
