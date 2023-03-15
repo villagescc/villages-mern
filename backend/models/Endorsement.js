@@ -1,25 +1,28 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const EndorsementSchema = new mongoose.Schema(
   {
     weight: {
-      type: Number
+      type: Number,
     },
     text: {
-      type: String
+      type: String,
     },
     recipientId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: "user",
     },
     endorserId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: "user",
+    },
+    referred: {
+      type: String,
     },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = Endorsement = mongoose.model('endorsement', EndorsementSchema);
+module.exports = Endorsement = mongoose.model("endorsement", EndorsementSchema);

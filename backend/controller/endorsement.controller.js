@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Notification = require("../models/Notification");
 const { _create: createNotification } = require("./notification.controller");
 
-const axios = require('axios');
+const axios = require("axios");
 
 exports.save = async (req, res, next) => {
   let errors = {};
@@ -43,16 +43,24 @@ exports.save = async (req, res, next) => {
 
     console.log(recipientUser.deviceToken);
 
-    axios.post('https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast', {
-      receiverFcm: recipientUser.deviceToken, 
-      message: notifyText 
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    axios
+      .post(
+        "https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast",
+        {
+          receiverFcm: recipientUser.deviceToken,
+          message: notifyText,
+          type: "trust",
+          senderid: "",
+          sender: "",
+          image: "",
+        }
+      )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 
     const notification = await createNotification(
       "TRUST",
@@ -63,7 +71,6 @@ exports.save = async (req, res, next) => {
     );
     global.io.emit("newNotification", notification);
     res.send(endorsement);
-
   } catch (err) {
     next(err);
   }

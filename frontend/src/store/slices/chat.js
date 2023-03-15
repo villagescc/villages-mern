@@ -74,10 +74,9 @@ export function getUserChats(recipient) {
     };
 }
 
-export function insertChat(chat, token) {
+export function insertChat(chat) {
     return async () => {
         try {
-            axios.post('https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast', { receiverFcm: token, message: chat.text });
             await axios.post('/chat/create', chat);
         } catch (error) {
             dispatch(slice.actions.hasError(error));
