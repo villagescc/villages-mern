@@ -61,17 +61,17 @@ const Profile = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log(currentUser);
+    console.log('currentUser', currentUser);
     setAvatar(currentUser?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + currentUser?.profile?.avatar : DefaultAvatar);
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.profile?.job ? currentUser.profile.job : '');
-    console.log(currentUser.profile.placeId);
-    console.log(currentUser.placeId);
-    if (currentUser.placeId) {
-      geocodeByPlaceId(currentUser.placeId).then((results) =>
+    console.log(currentUser?.profile?.placeId);
+    // console.log(currentUser.placeId);
+    if (currentUser && currentUser.profile && currentUser.profile.placeId) {
+      geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
         setLocation({
-          placeId: currentUser.placeId,
+          placeId: currentUser.profile.placeId,
           description: results[0].formatted_address
         })
       );

@@ -22,16 +22,26 @@ import DefaultAvatar from 'assets/images/auth/default.png';
 import ChatBubbleTwoToneIcon from '@mui/icons-material/FavoriteOutlined';
 import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone';
 
+import { geocodeByPlaceId } from 'react-places-autocomplete';
+
 const PostingDetail = () => {
   const { id } = useParams();
   const { borderRadius } = useConfig();
   const theme = useTheme();
+
+  const [location, setLocation] = React.useState('');
 
   const { post } = useSelector((state) => state.posting);
 
   useEffect(() => {
     dispatch(getPost(id));
   }, [id]);
+
+  useEffect(() => {
+    if (post && post.userId && post.userId.profile && post.userId.profile.placeId) {
+      geocodeByPlaceId(post?.userId?.profile?.placeId).then((results) => setLocation(results[0].formatted_address));
+    }
+  }, [post]);
 
   return (
     <MainCard title={'Posting Detail'} border={false} elevation={16} content={false} boxShadow>
@@ -144,9 +154,10 @@ const PostingDetail = () => {
                     Location
                   </Typography>
                   <Typography variant="caption" sx={{ marginLeft: 1 }}>
-                    {post?.userId?.profile?.location ? (
-                      post?.userId?.profile?.location
+                    {post?.userId?.profile?.placeId ? (
+                      <Chip label={location} size="small" chipcolor={'warning'} />
                     ) : (
+                      // post?.userId?.profile?.placeId
                       <Chip label="No location" size="small" chipcolor={'warning'} />
                     )}
                   </Typography>
