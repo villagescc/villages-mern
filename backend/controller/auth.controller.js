@@ -109,65 +109,76 @@ exports.login = (req, res, next) => {
           email: "This credential does not exist.",
         });
       }
-
-      bcrypt
-        .compare(password, user.password)
-        .then(async (isMatch) => {
-          if (!isMatch) {
-            return res.status(400).send({
-              password: "Password is incorrect.",
-            });
-          }
-
-          if (!user.verified) {
-            return res.status(400).send({
-              email: "Email is not verified",
-            });
-          }
-
-          if (!user.isActive) {
-            return res.status(400).send({
-              email: "Account is not active",
-            });
-          }
-
-          const userData = await _getUser(user.id);
-
-          await User.findByIdAndUpdate(user._id, {
-            deviceToken
-          });
-
-          const payload = {
-            user: {
-              _id: userData._id,
-              username: userData.username,
-              firstName: userData.firstName,
-              lastName: userData.lastName,
-              email: userData.email,
-              isSuperuser: userData.isSuperuser,
-              isStaff: userData.isStaff,
-              profile: userData.profile,
-              account: userData.account,
-            },
-          };
-
-          jwt.sign(
-            payload,
-            process.env.jwtSecret,
-            { expiresIn: 3600 },
-            (err, serviceToken) => {
-              if (err) {
-                console.log("jwt sign error", err);
-                next(err);
-              }
-              return res.json({ serviceToken, user: userData });
+      if (user.password) {
+        bcrypt
+          .compare(password, user.password)
+          .then(async (isMatch) => {
+            if (!isMatch) {
+              return res.status(400).send({
+                password: "Password is incorrect.",
+              });
             }
-          );
-        })
-        .catch((err) => {
-          console.log("bcrypt compare error", err);
-          next(err);
-        });
+
+            if (!user.verified) {
+              return res.status(400).send({
+                email: "Email is not verified",
+              });
+            }
+
+            if (!user.isActive) {
+              return res.status(400).send({
+                email: "Account is not active",
+              });
+            }
+
+            const userData = await _getUser(user.id);
+
+            await User.findByIdAndUpdate(user._id, {
+              deviceToken,
+            });
+
+            const payload = {
+              user: {
+                _id: userData._id,
+                username: userData.username,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                isSuperuser: userData.isSuperuser,
+                isStaff: userData.isStaff,
+                profile: userData.profile,
+                account: userData.account,
+              },
+            };
+
+            jwt.sign(
+              payload,
+              process.env.jwtSecret,
+              { expiresIn: 3600 },
+              (err, serviceToken) => {
+                if (err) {
+                  console.log("jwt sign error", err);
+                  next(err);
+                }
+                return res.json({ serviceToken, user: userData });
+              }
+            );
+          })
+          .catch((err) => {
+            console.log("bcrypt compare error", err);
+            next(err);
+          });
+      } else {
+        const salt = await bcrypt.genSalt(10);
+        const token = crypto.randomBytes(32).toString("hex");
+        user.password = await bcrypt.hash(password, salt);
+        user.token = token;
+        user.deviceToken = deviceToken;
+        user
+          .save()
+          .then(() => res.send({ success: true }))
+          .catch((err) => next(err));
+      }
     })
     .catch((err) => {
       console.log("find user error", err);
