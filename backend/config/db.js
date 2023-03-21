@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const isEmpty = require("../validation/is-empty");
 
 //calling database using async await
-const db = process.env.mongoURI || "mongodb://localhost:27017";
+const db = process.env.mongoURI || "mongodb://137.184.39.38:27017/villages";
 
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
@@ -16,13 +16,15 @@ const Profile = require("../models/Profile");
 const Account = require("../models/Account");
 
 const { RECORDS: users } = require("../DB/auth_user.json");
-const { RECORDS: profiles} = require("../DB/profile_profile.json");
+const { RECORDS: profiles } = require("../DB/profile_profile.json");
 const { RECORDS: accounts } = require("../DB/account_account.json");
 const { RECORDS: nodes } = require("../DB/account_node.json");
 const { RECORDS: endorsements } = require("../DB/relate_endorsement.json");
 const { RECORDS: categories } = require("../DB/categories_categories.json");
-const { RECORDS: subCategories } = require("../DB/categories_subcategories.json");
-const { RECORDS: tags } = require('../DB/tags_tag.json');
+const {
+  RECORDS: subCategories,
+} = require("../DB/categories_subcategories.json");
+const { RECORDS: tags } = require("../DB/tags_tag.json");
 
 const profileController = require("../controller/profile.controller");
 const accountController = require("../controller/account.controller");
@@ -37,25 +39,33 @@ const connectDB = async () => {
 
     async function initialDB() {
       Category.estimatedDocumentCount(async (err, count) => {
-        if(!err && count === 0) {
-          for(let category of categories) {
+        if (!err && count === 0) {
+          for (let category of categories) {
             let newCategory = await Category.create({
-              title: category.categories_text
+              title: category.categories_text,
             });
-            let newSubCategories = subCategories.filter(subCategory => category.id === subCategory.categories_id).map(subCategory => ({
-              title: subCategory.sub_categories_text,
-              categoryId: newCategory.id
-            }))
+            let newSubCategories = subCategories
+              .filter(
+                (subCategory) => category.id === subCategory.categories_id
+              )
+              .map((subCategory) => ({
+                title: subCategory.sub_categories_text,
+                categoryId: newCategory.id,
+              }));
             await Subcategory.insertMany(newSubCategories);
           }
         }
-      })
+      });
 
       Tag.estimatedDocumentCount((err, count) => {
         if (!err && count === 0) {
-          Tag.insertMany(tags.filter(tag => !isEmpty(tag.name)).map(tag => ({
-            title: tag.name.trim()
-          })))
+          Tag.insertMany(
+            tags
+              .filter((tag) => !isEmpty(tag.name))
+              .map((tag) => ({
+                title: tag.name.trim(),
+              }))
+          )
             .then(() => {
               console.log("Tags are initialized.");
             })
@@ -69,7 +79,7 @@ const connectDB = async () => {
     async function loadUsers(freshUsers = false) {
       let profile_to_user_ids = {};
 
-      if(freshUsers) {
+      if (freshUsers) {
         await User.deleteMany({});
         await Profile.deleteMany({});
         await Account.deleteMany({});
@@ -105,7 +115,10 @@ const connectDB = async () => {
               user: user._id,
               name: `${firstName} ${lastName}`,
             };
-            if (profiles && profiles.find((profile) => profile?.user_id === user_id)) {
+            if (
+              profiles &&
+              profiles.find((profile) => profile?.user_id === user_id)
+            ) {
               let oldProfile = profiles.find(
                 (profile) => profile?.user_id === user_id
               );
@@ -117,17 +130,26 @@ const connectDB = async () => {
 
               let accountData = {
                 user: user._id,
-              }
-              if (nodes && nodes.find((node) => node?.alias === oldProfile.id)) {
-                let oldNode = nodes.find((node) => node?.alias === oldProfile.id);
-                if(accounts && accounts.find(account => account?.id === oldNode.id)) {
-                  let oldAccount = accounts.find(account => account?.id === oldNode.id);
+              };
+              if (
+                nodes &&
+                nodes.find((node) => node?.alias === oldProfile.id)
+              ) {
+                let oldNode = nodes.find(
+                  (node) => node?.alias === oldProfile.id
+                );
+                if (
+                  accounts &&
+                  accounts.find((account) => account?.id === oldNode.id)
+                ) {
+                  let oldAccount = accounts.find(
+                    (account) => account?.id === oldNode.id
+                  );
                   accountData.balance = oldAccount.balance;
                 }
               }
               account = await accountController._createAccount(accountData);
-            }
-            else {
+            } else {
               profile = await profileController._createProfile(profileData);
               account = await accountController._createAccount({
                 user: user._id,
@@ -147,10 +169,8 @@ const connectDB = async () => {
               profiles.find((profile) => profile?.user_id === user_id)
             ) {
               profile_to_user_ids[
-                profiles.find(
-                  (profile) => profile?.user_id === user_id
-                ).id
-                ] = user._id;
+                profiles.find((profile) => profile?.user_id === user_id).id
+              ] = user._id;
             }
           } catch (err) {
             console.log(err);
@@ -165,7 +185,11 @@ const connectDB = async () => {
         for (const each of endorsements) {
           let endorsement;
           try {
-            if(profile_to_user_ids[each.endorser_id] === undefined || profile_to_user_ids[each.recipient_id] === undefined) continue;
+            if (
+              profile_to_user_ids[each.endorser_id] === undefined ||
+              profile_to_user_ids[each.recipient_id] === undefined
+            )
+              continue;
 
             endorsement = await Endorsement.findOne({
               endorserId: profile_to_user_ids[each.endorser_id],

@@ -1,3 +1,4 @@
+
 import LAYOUT_CONST from "constant";
 
 export const SERVER_URL = "https://villages.io";
