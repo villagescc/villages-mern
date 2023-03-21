@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const isEmpty = require("../validation/is-empty");
 
 //calling database using async await
-const db = process.env.mongoURI || "mongodb://137.184.39.38:27017/villages";
+const db = process.env.mongoURI || "mongodb://127.0.0.1:27017";
 
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
