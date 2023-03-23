@@ -2,10 +2,18 @@ const moongose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
+const username = encodeURIComponent(process.env.mongoUsername);
+const password = encodeURIComponent(process.env.mongoPassword);
+
 const isEmpty = require("../validation/is-empty");
 
 //calling database using async await
-const db = process.env.mongoURI || "mongodb://127.0.0.1:27017";
+const db =
+  "mongodb+srv://" +
+  username +
+  ":" +
+  password +
+  "@cluster0.hu14qc2.mongodb.net/UserData?retryWrites=true&w=majority";
 
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
