@@ -13,7 +13,7 @@ const db =
   username +
   ":" +
   password +
-  "@cluster0.hu14qc2.mongodb.net/UserData?retryWrites=true&w=majority";
+  "@cluster0.hu14qc2.mongodb.net/villages";
 
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
