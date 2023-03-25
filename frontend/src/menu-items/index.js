@@ -9,7 +9,7 @@ import admin from './admin';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [dashboard, listing, map, ripple, personal, documentation, admin]
+  items: [listing, map, ripple, personal, documentation]
 };
 
 export default menuItems;

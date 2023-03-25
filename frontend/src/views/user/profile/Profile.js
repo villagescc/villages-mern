@@ -43,6 +43,9 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, init } = useAuth();
+  useEffect(() => {
+    dispatch(getUser(user?._id));
+  }, [user]);
 
   const { user: currentUser, error } = useSelector((state) => state.user);
 
@@ -55,10 +58,6 @@ const Profile = () => {
   const [tags, setTags] = React.useState([]);
   const [tagSuggestion, setTagSuggestion] = React.useState([]);
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    dispatch(getUser(user?._id));
-  }, [user]);
 
   useEffect(() => {
     console.log('currentUser', currentUser);
@@ -192,7 +191,7 @@ const Profile = () => {
                     {currentUser?.followers?.length}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
-                    Followers
+                    Trusted By
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -200,7 +199,7 @@ const Profile = () => {
                     {currentUser?.followings?.length}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
-                    Following
+                    Trust Given
                   </Typography>
                 </Grid>
               </Grid>

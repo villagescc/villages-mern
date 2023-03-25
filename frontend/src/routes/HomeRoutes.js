@@ -5,7 +5,7 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Analytics')));
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 
 // listing routing
 const Posting = Loadable(lazy(() => import('views/listing/posting')));
@@ -30,7 +30,7 @@ const HomeRoutes = {
   children: [
     {
       path: '/home',
-      element: <DashboardDefault />
+      element: <Posting />
     },
     {
       path: '/listing/posts',

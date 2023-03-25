@@ -6,23 +6,25 @@ import MainCard from 'ui-component/cards/MainCard';
 import Chip from 'ui-component/extended/Chip';
 import { Stack, useTheme } from '@mui/system';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
-import { IconTallymark1 } from '@tabler/icons';
+// import { IconTallymark1 } from '@tabler/icons';
 
 import { useSelector } from 'react-redux';
 import { getPost } from 'store/slices/posting';
 import { dispatch } from 'store';
 
-import isEmpty from 'utils/is-empty';
+// import isEmpty from 'utils/is-empty';
 import { SERVER_URL } from 'config';
 import useConfig from 'hooks/useConfig';
 
 // assets
 import DefaultPostingIcon from 'assets/images/posting/default.png';
 import DefaultAvatar from 'assets/images/auth/default.png';
-import ChatBubbleTwoToneIcon from '@mui/icons-material/FavoriteOutlined';
+// import ChatBubbleTwoToneIcon from '@mui/icons-material/FavoriteOutlined';
 import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone';
 
 import { geocodeByPlaceId } from 'react-places-autocomplete';
+
+import ChatIcon from '@mui/icons-material/Chat';
 
 const PostingDetail = () => {
   const { id } = useParams();
@@ -43,6 +45,8 @@ const PostingDetail = () => {
     }
   }, [post]);
 
+  console.log(post);
+
   return (
     <MainCard title={'Posting Detail'} border={false} elevation={16} content={false} boxShadow>
       <Box sx={{ p: 2 }}>
@@ -62,7 +66,7 @@ const PostingDetail = () => {
                     <Grid item xs={12}>
                       <Chip
                         size="small"
-                        label={post.listingType}
+                        label={post.listing_type}
                         chipcolor={'success'}
                         sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
                       />
@@ -81,17 +85,17 @@ const PostingDetail = () => {
                       [theme.breakpoints.down('md')]: { justifyContent: 'flex-start' }
                     }}
                   >
-                    <Grid item>
+                    {/* <Grid item>
                       <Tooltip placement="top" title="Message">
                         <Button variant="outlined" sx={{ minWidth: 32, height: 32, p: 0 }}>
                           <ChatBubbleTwoToneIcon fontSize="small" />
                         </Button>
                       </Tooltip>
-                    </Grid>
+                    </Grid> */}
                     <Grid item>
-                      <Tooltip placement="top" title="Call">
+                      <Tooltip placement="top" title="Message">
                         <Button variant="outlined" color="secondary" sx={{ minWidth: 32, height: 32, p: 0 }}>
-                          <PhoneTwoToneIcon fontSize="small" />
+                          <ChatIcon fontSize="small" />
                         </Button>
                       </Tooltip>
                     </Grid>

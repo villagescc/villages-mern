@@ -171,7 +171,7 @@ const Posting = () => {
 
   const handleEditPostClick = (post) => {
     setId(post._id);
-    setType(post.listingType);
+    setType(post.listing_type);
     setTitle(post.title);
     setDescription(post.description);
     setPrice(post.price);
@@ -243,7 +243,10 @@ const Posting = () => {
               </Grid>
               <Grid item xs={12} sm={3}>
                 <FormControlSelect
-                  currencies={listing_type.filter((type) => type.value)}
+                  currencies={listing_type.filter((type) => ({
+                    value: type.value,
+                    label: type.value
+                  }))}
                   currency={filterType}
                   onChange={(e) => {
                     setFilterType(e.target.value);
