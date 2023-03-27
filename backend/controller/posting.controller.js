@@ -19,7 +19,7 @@ exports.searchPosts = async (req, res, next) => {
         .in(subCategories.map((subCategory) => subCategory._id));
     }
     if (type !== "") {
-      query.where("listingType", type);
+      query.where("listing_type", type);
     }
     if (keyword !== "") {
       query.or([
@@ -114,7 +114,7 @@ exports.createPost = async (req, res, next) => {
       const updateData = {
         title: req.body.title,
         price: req.body.price,
-        listingType: req.body.type,
+        listing_type: req.body.type,
         userId: req.user._id,
         subcategoryId: req.body.subCategory,
         description: req.body.description,
@@ -126,7 +126,7 @@ exports.createPost = async (req, res, next) => {
       const postData = {
         title: req.body.title,
         price: req.body.price,
-        listingType: req.body.type,
+        listing_type: req.body.type,
         photo: uploadFile ? uploadFile.filename : null,
         userId: req.user._id,
         subcategoryId: req.body.subCategory,

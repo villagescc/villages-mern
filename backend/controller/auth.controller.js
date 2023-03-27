@@ -9,6 +9,8 @@ const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
 const paymentController = require("./payment.controller");
 
+const axios = require("axios");
+
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
   if (user) {
@@ -44,6 +46,7 @@ exports.registerUser = async (req, res, next) => {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
+    // const verifyCode =
     user = new User({ password, username, firstName, lastName, email, token });
 
     profile = await profileController._createProfile({
@@ -61,15 +64,36 @@ exports.registerUser = async (req, res, next) => {
     user.profile = profile._id;
     user.account = account._id;
 
-    await user.save();
+    user.save((err) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.send({
+        success: true,
+        message: "User was registered successfully! Please check your email",
+      });
 
-    // TODO : Send a verification mail
-    // const message = `${process.env.BASE_URL}/auth/verify/${user.id}/${token}`;
-    // await sendEmail(user.email, "Verify Email", message);
-
-    res.send({
-      success: true,
-      message: "An Email sent to your account. please verify",
+      // nodemailer.sendConfirmationEmail(user.username, user.email, user.token);
+      axios
+        .post(
+          "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+          {
+            subject: "Please confirm your account",
+            dest: email,
+            data: `<h1>Email Confirmation</h1>
+              <h2>Hello ${firstName} ${lastName}</h2>
+              <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+              <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
+              <br>`,
+          }
+        )
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     });
   } catch (err) {
     if (profile) await profileController._removeProfileById(profile.id);
@@ -154,7 +178,7 @@ exports.login = (req, res, next) => {
             jwt.sign(
               payload,
               process.env.jwtSecret,
-              { expiresIn: 3600 },
+              { expiresIn: 3600 * 24 },
               (err, serviceToken) => {
                 if (err) {
                   console.log("jwt sign error", err);
@@ -223,6 +247,76 @@ exports.changePassword = async (req, res, next) => {
     })
     .catch((err) => {
       console.log("find user error", err);
+      next(err);
+    });
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  console.log("asdfasd");
+  const { email } = req.body;
+  console.log(email);
+  user = User.findOne({ email: email }).then(async (user) => {
+    if (!user) {
+      return res.status(400).send({
+        email: "This email doesn't exist",
+      });
+    }
+    const token = crypto.randomBytes(32).toString("hex");
+    User.findByIdAndUpdate(user._id, { token: token })
+      .then(() => {
+        res.send({
+          success: true,
+          message: "Please check your email to reset password",
+        });
+        axios
+          .post(
+            "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+            {
+              subject: "Please Reset Your Password",
+              dest: email,
+              data: `<h1>Reseting Password</h1>
+                <h2>Hello ${user.firstName} ${user.lastName}</h2>
+                <p>Please follow the link to reset your password</p>
+                <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
+                <br>`,
+            }
+          )
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      })
+      .catch((err) => {
+        console.log("update user error", err);
+        next(err);
+      });
+  });
+};
+
+exports.resetPassword = async (req, res, next) => {
+  console.log(req.params.id);
+  console.log(req.params.token);
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(req.body.password, salt);
+  User.findOne({ _id: req.params.id, token: req.params.token })
+    .then((user) => {
+      if (!user) return res.status(400).send("Invalid link");
+      User.findByIdAndUpdate(user._id, { password: password })
+        .then(() =>
+          res.send({
+            success: true,
+            message: "Password has been changed successfully",
+          })
+        )
+        .catch((err) => {
+          console.log("update user error", err);
+          next(err);
+        });
+    })
+    .catch((err) => {
+      console.log("find user error");
       next(err);
     });
 };

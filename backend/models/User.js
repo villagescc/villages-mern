@@ -21,11 +21,11 @@ const UserSchema = new mongoose.Schema(
     },
     firstName: {
       type: String,
-      // required: true,
+      required: true,
     },
     lastName: {
       type: String,
-      // required: true,
+      required: true,
     },
     email: {
       type: String,
@@ -35,10 +35,11 @@ const UserSchema = new mongoose.Schema(
     token: {
       type: String,
       required: true,
+      unique: true,
     },
     verified: {
       type: Boolean,
-      default: true, // TODO mail verification
+      default: false, // TODO mail verification
     },
     isStaff: {
       type: Boolean,
@@ -58,7 +59,7 @@ const UserSchema = new mongoose.Schema(
     },
     deviceToken: {
       type: String,
-    }
+    },
   },
   {
     timestamps: true,

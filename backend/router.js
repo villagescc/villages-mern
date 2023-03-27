@@ -30,6 +30,8 @@ router.post(
 );
 router.get("/auth/verify/:id/:token", authController.verifyToken);
 router.post("/auth/login", authMiddleware.login, authController.login);
+router.post("/auth/forgot-password", authController.forgotPassword);
+router.post("/auth/reset-password/:id/:token", authController.resetPassword);
 
 // ######################### BASE ROUTER #############################
 router.get("/base/tags", baseController.getTags);

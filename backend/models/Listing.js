@@ -1,47 +1,49 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ListingSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     price: {
       type: Number,
       set: function (v) {
         return Math.round(v * 100) / 100;
-      }
+      },
     },
-    listingType: {
+    listing_type: {
       type: String,
-      required: true
+      required: true,
     },
     photo: {
-      type: String
+      type: String,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: "user",
     },
     subcategoryId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'subcategory'
+      ref: "subcategory",
     },
     description: {
-      type: String
+      type: String,
     },
     profileId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'profile'
+      ref: "profile",
     },
-    tags: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'tag'
-    }]
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "tag",
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = Listing = mongoose.model('listing', ListingSchema);
+module.exports = Listing = mongoose.model("listing", ListingSchema);
