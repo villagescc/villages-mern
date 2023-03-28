@@ -118,8 +118,7 @@ function PaymentDialog({ open, setOpen, recipientId }) {
 
   const defaultProps = {
     options: users,
-    getOptionLabel: (option) =>
-      option.name ? `${option.name} - ${option.username} (${option.email})` : `${option.username} (${option.email})`,
+    getOptionLabel: (option) => (option.name ? `${option.name} (${option.username})` : `${option.username}`),
     filterOptions: (options, { inputValue }) =>
       options.filter(
         (item) =>

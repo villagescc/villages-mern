@@ -13,7 +13,7 @@ const Payment = require("../models/Payment");
 exports.search = async (req, res, next) => {
   let { keyword, page } = req.body;
   if (!page) page = 1;
-
+  console.log(page);
   let query = {};
   try {
     if (keyword && keyword !== "") {
@@ -27,17 +27,12 @@ exports.search = async (req, res, next) => {
       };
     }
     const users = await User.find(query).populate("profile").exec();
-
+    let filteredUsers = [...users].reverse().slice((page - 1) * 10, page * 10);
     let userData = [];
-    for (
-      let i = 0;
-      i < [...users].slice((page - 1) * 10, page * 10).length;
-      i++
-    ) {
-      let userInfo = await getUserDetail(users[i]["id"]);
+    for (let i = 0; i < filteredUsers.length; i++) {
+      let userInfo = await getUserDetail(filteredUsers[i]["id"]);
       userData.push(userInfo);
     }
-
     res.send({ total: users.length, users: userData });
   } catch (err) {
     console.log("filter error:", err);

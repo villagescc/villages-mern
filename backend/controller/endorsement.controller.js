@@ -122,6 +122,7 @@ exports.search = async (req, res, next) => {
       });
     }
     const endorsements = await Endorsement.find(query)
+      .sort({ _id: -1 })
       .populate({
         path: "recipientId",
         model: "user",

@@ -75,7 +75,7 @@ const Profile = ({ user }) => {
     createData('Last Name', ':', user?.lastName),
     createData('Zip Code', ':', user?.website ? user.phone : ''),
     createData('Phone', ':', user?.phone ? user.phone : ''),
-    createData('Email', ':', user?.email),
+    // createData('Email', ':', user?.email),
     createData('Website', ':', user?.website ? user.phone : '')
   ];
 
@@ -96,7 +96,7 @@ const Profile = ({ user }) => {
               </ListItemSecondaryAction>
             </ListItemButton>
             <Divider />
-            <ListItemButton>
+            {/* <ListItemButton>
               <ListItemIcon>
                 <MailTwoToneIcon sx={{ fontSize: '1.3rem' }} />
               </ListItemIcon>
@@ -106,7 +106,7 @@ const Profile = ({ user }) => {
                   {user.email}
                 </Typography>
               </ListItemSecondaryAction>
-            </ListItemButton>
+            </ListItemButton> */}
             <Divider />
             <ListItemButton>
               <ListItemIcon>

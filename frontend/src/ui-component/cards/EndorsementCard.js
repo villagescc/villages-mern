@@ -54,13 +54,13 @@ const EndorsementCard = ({ endorsement, onActive }) => {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="h3" component="div">
-            {user?.profile?.name} ({user?.username})
+            {user?.profile?.name}
           </Typography>
           <Typography variant="caption">{user?.profile?.job}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="caption">Email</Typography>
-          <Typography variant="h6">{user?.email}</Typography>
+          <Typography variant="caption">Username</Typography>
+          <Typography variant="h6">{user?.username}</Typography>
         </Grid>
         <Grid item xs={12}>
           <Typography variant="caption">TRUST FROM YOU</Typography>

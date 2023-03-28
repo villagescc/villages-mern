@@ -85,10 +85,7 @@ const UserList = ({ users, loading }) => {
                             to={`/listing/person/${user._id}`}
                             style={{ textDecoration: 'none' }}
                           >
-                            {user?.username}
-                          </Typography>
-                          <Typography align="left" variant="subtitle2" sx={{ whiteSpace: 'break-spaces' }}>
-                            {user?.profile?.job}
+                            {user?.firstName} {user?.lastName}
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
@@ -109,14 +106,15 @@ const UserList = ({ users, loading }) => {
                 <TableCell>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                      <Typography variant="caption">Email</Typography>
-                      <Typography variant="h6">{user.email}</Typography>
+                      <Typography variant="caption">User Job</Typography>
+                      {/* <Typography variant="h6">{user.email}</Typography> */}
+                      <Typography align="left" variant="h6" sx={{ whiteSpace: 'break-spaces' }}>
+                        {user?.profile?.job ? user?.profile?.job : <Chip label="No Description" size="small" />}
+                      </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <Typography variant="caption">Fullname</Typography>
-                      <Typography variant="h6">
-                        {user?.firstName} {user?.lastName}
-                      </Typography>
+                      <Typography variant="caption">Username</Typography>
+                      <Typography variant="h6">{user?.username}</Typography>
                     </Grid>
                   </Grid>
                 </TableCell>

@@ -90,17 +90,25 @@ exports.getGraph = async (req, res, next) => {
 };
 
 exports.getPath = async (req, res, next) => {
+  console.log("asdfa");
   try {
     const { senderId, recipientId } = req.body;
-
+    console.log(senderId + ":" + recipientId);
     const result = await this._getMaxFlow(senderId, recipientId);
     let nodes = [];
     if (result.success) {
+      cosole.log("a");
       for (path of result.paths) {
         nodes = [...nodes, ...path];
       }
+      cosole.log("b");
+
       nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
+      cosole.log("b");
+
       const graph = await buildGraph(nodes);
+      cosole.log("d");
+
       res.send(graph);
     } else {
       res.status(400).send(result.errors);
@@ -128,6 +136,7 @@ exports.getMaxLimit = async (req, res, next) => {
 };
 
 exports.pay = async (req, res, next) => {
+  console.log(req.body);
   const { recipient, amount, memo } = req.body;
   const payer = req.user._id;
   let payment;
@@ -196,7 +205,9 @@ exports.pay = async (req, res, next) => {
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
   const graph = await buildGraph();
+  console.log(graph);
   if (!graph.hasNode(recipient)) {
+    console.log("error");
     return {
       success: false,
       errors: {
@@ -206,6 +217,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
   }
 
   if (sender === recipient) {
+    console.log("selferror");
     return {
       success: false,
       errors: {
@@ -213,9 +225,10 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       },
     };
   }
-
+  console.log("before path");
   let paths = allSimplePaths(graph, sender, recipient);
-  // console.log(paths);
+
+  // console.log(SimplePathsLengthN(graph, sender, recipient));
   // TODO sort for balancing routes
 
   let maxLimit = 0;
@@ -283,7 +296,17 @@ exports.searchTransactions = async (req, res, next) => {
     const total = await Payment.find({
       $or: [{ payer: req.user._id }, { recipient: req.user._id }],
     }).countDocuments();
-    const query = Payment.find();
+    const query = Payment.find().sort({ _id: -1 });
+    if (req.body && req.body.period.length === 1) {
+      query.and([
+        {
+          createdAt: {
+            $gte: new Date(req.body.period[0]),
+            // $lt: new Date(req.body.period[1]),
+          },
+        },
+      ]);
+    }
     if (req.body && req.body.period.length === 2) {
       query.and([
         {
@@ -310,6 +333,12 @@ exports.searchTransactions = async (req, res, next) => {
         }
       }
     }
+    // if (keyword !== "") {
+    //   query.or([
+    //     { title: { $regex: keyword, $options: "i" } },
+    //     { description: { $regex: keyword, $options: "i" } },
+    //   ]);
+    // }
     if (req.body && !isEmpty(req.body.keyword)) {
       query.and([{ memo: { $regex: req.body.keyword, $options: "i" } }]);
     }
@@ -389,3 +418,22 @@ exports.getTransaction = async (req, res, next) => {
     next(error);
   }
 };
+// SimplePathsLengthN = function (graph, sender, recipient, pathlength = null) {
+//   SP = list();
+//   if (pathlength == 1) {
+//     if (recipient in neighbors(graph, sender)) {
+//       SP[[1]] = c(sender, recipient);
+//     }
+//     return SP;
+//   }
+//   Nbrs2 = neighbors(graph, recipient);
+//   for (nbr2 in Nbrs2) {
+//     ASPn2 = SimplePathsLengthN(graph, sender, nbr2, pathlength - 1);
+//     for (i in seq_along(ASPn2)) {
+//       if (!(recipient in ASPn2[[i]])) {
+//         SP = append(SP, list(c(ASPn2[[i]], recipient)));
+//       }
+//     }
+//   }
+//   return SP;
+// };

@@ -33,6 +33,8 @@ import { openDialog } from 'store/slices/dialog';
 import useAuth from 'hooks/useAuth';
 import PostingCard from 'ui-component/cards/PostingCard';
 import Empty from 'ui-component/Empty';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -73,6 +75,7 @@ const Posting = () => {
   const [file, setFile] = React.useState(null);
   const [tags, setTags] = React.useState([]);
   const [previewImage, setPreviewImage] = React.useState(null);
+  const [showFilter, setShowFilter] = React.useState(false);
 
   const postingState = useSelector((state) => state.posting);
 
@@ -210,80 +213,113 @@ const Posting = () => {
         content={false}
         secondary={
           isLoggedIn ? (
-            <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
-              Create
-            </Button>
-          ) : null
+            // <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
+            //   Create
+            // </Button>
+            <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
+              <Grid item>
+                <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
+                  Create Payment
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color={'secondary'}
+                  startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                  onClick={() => setShowFilter(!showFilter)}
+                >
+                  Filter
+                </Button>
+              </Grid>
+            </Grid>
+          ) : (
+            <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color={'secondary'}
+                  startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                  onClick={() => setShowFilter(!showFilter)}
+                >
+                  Filter
+                </Button>
+              </Grid>
+            </Grid>
+          )
         }
       >
         {loading ? (
           <PostingListSkeleton />
         ) : (
           <CardContent>
-            <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-              <Grid item xs={12} sm={3}>
-                <FormControlSelect
-                  currencies={[
-                    {
-                      value: '',
-                      label: 'All categories'
-                    },
-                    ...categories.map((category) => ({
-                      value: category.title,
-                      label: category.title
-                    }))
-                  ]}
-                  currency={filterCategory}
-                  onChange={(e) => {
-                    setFilterCategory(e.target.value);
-                    dispatch(filterPost(e.target.value, filterType, filterRadius, keyword, page));
-                  }}
-                  captionLabel="Posting"
-                />
+            {showFilter && (
+              <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
+                <Grid item xs={12} sm={3}>
+                  <FormControlSelect
+                    currencies={[
+                      {
+                        value: '',
+                        label: 'All categories'
+                      },
+                      ...categories.map((category) => ({
+                        value: category.title,
+                        label: category.title
+                      }))
+                    ]}
+                    currency={filterCategory}
+                    onChange={(e) => {
+                      setFilterCategory(e.target.value);
+                      dispatch(filterPost(e.target.value, filterType, filterRadius, keyword, page));
+                    }}
+                    captionLabel="Posting"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <FormControlSelect
+                    currencies={listing_type.filter((type) => ({
+                      value: type.value,
+                      label: type.value
+                    }))}
+                    currency={filterType}
+                    onChange={(e) => {
+                      setFilterType(e.target.value);
+                      dispatch(filterPost(filterCategory, e.target.value, filterRadius, keyword, page));
+                    }}
+                    captionLabel="Post type"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <FormControlSelect
+                    currencies={radius}
+                    currency={filterRadius}
+                    onChange={(e) => {
+                      setFilterRadius(e.target.value);
+                      dispatch(filterPost(filterCategory, filterType, e.target.value, keyword, page));
+                    }}
+                    captionLabel="Search area"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      )
+                    }}
+                    fullWidth
+                    onChange={handleSearch}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Search Post"
+                    value={keyword}
+                    size="small"
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <FormControlSelect
-                  currencies={listing_type.filter((type) => ({
-                    value: type.value,
-                    label: type.value
-                  }))}
-                  currency={filterType}
-                  onChange={(e) => {
-                    setFilterType(e.target.value);
-                    dispatch(filterPost(filterCategory, e.target.value, filterRadius, keyword, page));
-                  }}
-                  captionLabel="Post type"
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <FormControlSelect
-                  currencies={radius}
-                  currency={filterRadius}
-                  onChange={(e) => {
-                    setFilterRadius(e.target.value);
-                    dispatch(filterPost(filterCategory, filterType, e.target.value, keyword, page));
-                  }}
-                  captionLabel="Search area"
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon fontSize="small" />
-                      </InputAdornment>
-                    )
-                  }}
-                  fullWidth
-                  onChange={handleSearch}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Search Post"
-                  value={keyword}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
+            )}
+
             {posts.length > 0 && (
               <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
                 <Pagination

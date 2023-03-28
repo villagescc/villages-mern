@@ -242,7 +242,11 @@ const PaymentHistory = ({ handleCreateClick }) => {
           <TableBody>
             {transactions.map((row, index) => (
               <TableRow hover key={index}>
-                <TableCell>
+                <TableCell
+                  component={Link}
+                  to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
+                  style={{ textDecoration: 'none' }}
+                >
                   {row?.payer?._id === user?._id ? (
                     <Avatar
                       src={
@@ -260,6 +264,7 @@ const PaymentHistory = ({ handleCreateClick }) => {
                     variant="body1"
                     component={Link}
                     to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
+                    style={{ textDecoration: 'none' }}
                   >
                     {row?.payer?._id === user?._id ? row.recipient.profile?.name + '(' + row.recipient.username + ')' : row.payer.username}
                   </Typography>
