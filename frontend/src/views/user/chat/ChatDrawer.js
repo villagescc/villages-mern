@@ -49,9 +49,11 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
   const handleUserSearchInput = (event) => {
     if (event.target.value === '') {
       dispatch(getUsers());
-    } else {
+    } else if (event.target.value.length >= 3) {
       dispatch(searchUsers(event.target.value));
     }
+    // console.log(event.target.value.length);
+    // if (event.target.value.length >= 3) dispatch(searchUsers(event.target.value));
   };
 
   // set user status on status menu click

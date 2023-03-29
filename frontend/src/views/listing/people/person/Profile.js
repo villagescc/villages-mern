@@ -31,7 +31,9 @@ import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
 import PersonTwoTone from '@mui/icons-material/PersonTwoTone';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+import { geocodeByPlaceId } from 'react-places-autocomplete';
 
 // progress
 function LinearProgressWithLabel({ value, ...others }) {
@@ -78,6 +80,19 @@ const Profile = ({ user }) => {
     // createData('Email', ':', user?.email),
     createData('Website', ':', user?.website ? user.phone : '')
   ];
+  const [location, setLocation] = useState('');
+  useEffect(() => {
+    if (user && user.profile && user.profile.placeId) {
+      console.log(user.profile.placeId);
+      geocodeByPlaceId(user.profile.placeId).then((results) => {
+        console.log(results[0].formatted_address);
+        setLocation(results[0].formatted_address);
+      });
+    }
+  }, [user]);
+  console.log(user);
+
+  console.log(user);
 
   return (
     <Grid container spacing={gridSpacing}>
@@ -116,7 +131,7 @@ const Profile = ({ user }) => {
               <ListItemSecondaryAction>
                 <Typography variant="subtitle2" align="right">
                   {/*TODO convert to place description */}
-                  {user.placeId ? user.placeId : <Chip label="No location" />}
+                  {user?.profile?.placeId ? location : <Chip label="No location" />}
                 </Typography>
               </ListItemSecondaryAction>
             </ListItemButton>
@@ -149,7 +164,7 @@ const Profile = ({ user }) => {
             <SubCard title="About me">
               <Grid container direction="column" spacing={2}>
                 <Grid item xs={12}>
-                  <Typography variant="body2">{user?.description}</Typography>
+                  <Typography variant="body2">{user?.profile?.description}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="subtitle1">Personal Details</Typography>

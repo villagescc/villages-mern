@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // material-ui
@@ -15,6 +15,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../../assets/images/auth/default.png';
+import { geocodeByPlaceId } from 'react-places-autocomplete';
+import UserListCard from 'ui-component/cards/UserListCard';
 
 // ==============================|| USER LIST 2 ||============================== //
 
@@ -62,173 +64,7 @@ const UserList = ({ users, loading }) => {
               <UserListSkeleton />
             </>
           ) : (
-            users.map((user, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Grid container spacing={2}>
-                    <Grid item>
-                      <Avatar
-                        alt={user.username}
-                        src={user.avatar ? `${SERVER_URL}/upload/avatar/` + user.avatar : DefaultAvatar}
-                        sx={{ width: 60, height: 60 }}
-                        component={Link}
-                        to={`/listing/person/${user._id}`}
-                      />
-                    </Grid>
-                    <Grid item sm zeroMinWidth>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12}>
-                          <Typography
-                            align="left"
-                            variant="subtitle1"
-                            component={Link}
-                            to={`/listing/person/${user._id}`}
-                            style={{ textDecoration: 'none' }}
-                          >
-                            {user?.firstName} {user?.lastName}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                            {user.description ? user.description.slice(0, 100) + '...' : <Chip label="No Description" size="small" />}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                            {user?.account?.balance}
-                            {' V.H.'}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </TableCell>
-                <TableCell>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Typography variant="caption">User Job</Typography>
-                      {/* <Typography variant="h6">{user.email}</Typography> */}
-                      <Typography align="left" variant="h6" sx={{ whiteSpace: 'break-spaces' }}>
-                        {user?.profile?.job ? user?.profile?.job : <Chip label="No Description" size="small" />}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography variant="caption">Username</Typography>
-                      <Typography variant="h6">{user?.username}</Typography>
-                    </Grid>
-                  </Grid>
-                </TableCell>
-                <TableCell>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <Typography variant="caption">Joined at</Typography>
-                      <Typography variant="h6">{moment(user.createdAt).format('YYYY-MM-DD')}</Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography variant="caption">Location</Typography>
-                      <Typography variant="h6">{user.location ? user.location : <Chip label="No location" />}</Typography>
-                    </Grid>
-                  </Grid>
-                </TableCell>
-                <TableCell>
-                  <Grid item xs={12} container spacing={1}>
-                    <Grid item xs={6}>
-                      <Typography variant="caption">Trusted By</Typography>
-                      <Grid container>
-                        <AvatarGroup
-                          max={4}
-                          sx={{
-                            '& .MuiAvatar-root': {
-                              width: 32,
-                              height: 32,
-                              fontSize: '1rem'
-                            }
-                          }}
-                        >
-                          {user.followers.map((each, index) => (
-                            <Avatar
-                              alt={each.username}
-                              src={each.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + each.profile?.avatar : DefaultAvatar}
-                              tooltip={each.username}
-                              key={index}
-                            />
-                          ))}
-                          {user.followers.length === 0 && <Chip label="No followers" />}
-                        </AvatarGroup>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="caption">Trust Given</Typography>
-                      <Grid container>
-                        <AvatarGroup
-                          max={4}
-                          sx={{
-                            '& .MuiAvatar-root': {
-                              width: 32,
-                              height: 32,
-                              fontSize: '1rem'
-                            }
-                          }}
-                        >
-                          {user.followings.map((each, index) => (
-                            <Avatar
-                              alt={each.username}
-                              src={each.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + each.profile?.avatar : DefaultAvatar}
-                              tooltip={each.username}
-                              key={index}
-                            />
-                          ))}
-                          {user.followings.length === 0 && <Chip label="No followings" />}
-                        </AvatarGroup>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={12} container spacing={1}>
-                    <Grid item xs={4}>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        color="error"
-                        sx={{ minWidth: '33%', marginTop: 1 }}
-                        startIcon={<FavoriteIcon />}
-                        component={Link}
-                        to={`/ripple/trust/${user._id}`}
-                      >
-                        Trust
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        sx={{ minWidth: '33%', marginTop: 1 }}
-                        startIcon={<CurrencyExchangeIcon />}
-                        component={Link}
-                        to={`/ripple/pay/${user._id}`}
-                      >
-                        Pay
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        fullWidth
-                        size="small"
-                        sx={{ minWidth: '33%', marginTop: 1 }}
-                        startIcon={<ChatIcon sx={{ marginLeft: `-1px`, marginRight: `-2px` }} />}
-                        component={Link}
-                        to={`/personal/message/${user._id}`}
-                      >
-                        Message
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-            ))
+            users?.map((user, index) => <UserListCard user={user} key={index} />)
           )}
         </TableBody>
       </Table>

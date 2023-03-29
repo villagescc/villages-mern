@@ -20,11 +20,13 @@ import useConfig from 'hooks/useConfig';
 import DefaultPostingIcon from 'assets/images/posting/default.png';
 import DefaultAvatar from 'assets/images/auth/default.png';
 // import ChatBubbleTwoToneIcon from '@mui/icons-material/FavoriteOutlined';
-import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone';
+// import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone';
 
 import { geocodeByPlaceId } from 'react-places-autocomplete';
 
 import ChatIcon from '@mui/icons-material/Chat';
+
+import { Link } from 'react-router-dom';
 
 const PostingDetail = () => {
   const { id } = useParams();
@@ -45,7 +47,7 @@ const PostingDetail = () => {
     }
   }, [post]);
 
-  console.log(post);
+  // console.log(post?.userId?._id);
 
   return (
     <MainCard title={'Posting Detail'} border={false} elevation={16} content={false} boxShadow>
@@ -94,7 +96,13 @@ const PostingDetail = () => {
                     </Grid> */}
                     <Grid item>
                       <Tooltip placement="top" title="Message">
-                        <Button variant="outlined" color="secondary" sx={{ minWidth: 32, height: 32, p: 0 }}>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          sx={{ minWidth: 32, height: 32, p: 0 }}
+                          component={Link}
+                          to={`/personal/message/${post?.userId?._id}`}
+                        >
                           <ChatIcon fontSize="small" />
                         </Button>
                       </Tooltip>

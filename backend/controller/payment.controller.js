@@ -9,6 +9,8 @@ const Endorsement = require("../models/Endorsement");
 const Paylog = require("../models/Paylog");
 const isEmpty = require("../validation/is-empty");
 
+const axios = require("axios");
+
 const buildGraph = async (nodes = null) => {
   const graph = await new Graph();
   const users = await User.find();
@@ -90,7 +92,6 @@ exports.getGraph = async (req, res, next) => {
 };
 
 exports.getPath = async (req, res, next) => {
-  console.log("asdfa");
   try {
     const { senderId, recipientId } = req.body;
     console.log(senderId + ":" + recipientId);
@@ -179,7 +180,25 @@ exports.pay = async (req, res, next) => {
           notifyText
         );
         global.io.emit("newNotification", notification);
-
+        axios
+          .post(
+            "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+            {
+              subject: "Notification from Villages.io",
+              dest: recipientUser.email,
+              data: `<h1>You has been paid by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
+                <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
+                <p>${notifyText}</p>
+                <a href=https://villages.io/auth/ripple/pay> Click here</a>
+                <br>`,
+            }
+          )
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
         res.send({ success: true, paylogs: result.paylogs });
       } catch (error) {
         await Paylog.deleteMany({ paymentId: payment._id });
@@ -296,7 +315,7 @@ exports.searchTransactions = async (req, res, next) => {
     const total = await Payment.find({
       $or: [{ payer: req.user._id }, { recipient: req.user._id }],
     }).countDocuments();
-    const query = Payment.find().sort({ _id: -1 });
+    const query = Payment.find();
     if (req.body && req.body.period.length === 1) {
       query.and([
         {

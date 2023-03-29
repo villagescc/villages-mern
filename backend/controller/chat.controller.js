@@ -32,10 +32,10 @@ exports.searchUsers = async (req, res, next) => {
     let users = [];
     const usersIdArray = await User.find({
       $or: [
-        {
-          username: { $regex: req.body.keyword, $options: "i" },
-          email: { $regex: req.body.keyword, $options: "i" },
-        },
+        { username: { $regex: req.body.keyword, $options: "i" } },
+        { email: { $regex: req.body.keyword, $options: "i" } },
+        { firstName: { $regex: req.body.keyword, $options: "i" } },
+        { lastName: { $regex: req.body.keyword, $options: "i" } },
       ],
     }).select("_id");
     for (each of usersIdArray) {

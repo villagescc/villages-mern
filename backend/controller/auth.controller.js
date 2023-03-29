@@ -123,7 +123,8 @@ exports.verifyToken = async (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  const { password, email, deviceToken } = req.body;
+  const { password, email, deviceToken, placeId } = req.body;
+  console.log(placeId);
 
   User.findOne({ $or: [{ email }, { username: email }] })
     .select("+password")
@@ -160,6 +161,12 @@ exports.login = (req, res, next) => {
             await User.findByIdAndUpdate(user._id, {
               deviceToken,
             });
+            console.log(
+              await Profile.findOneAndUpdate(
+                { user: user._id },
+                { placeId: placeId }
+              )
+            );
 
             const payload = {
               user: {
@@ -172,6 +179,7 @@ exports.login = (req, res, next) => {
                 isStaff: userData.isStaff,
                 profile: userData.profile,
                 account: userData.account,
+                deviceToken: userData.deviceToken,
               },
             };
 
@@ -198,6 +206,10 @@ exports.login = (req, res, next) => {
         user.password = await bcrypt.hash(password, salt);
         user.token = token;
         user.deviceToken = deviceToken;
+        await Profile.findOneAndUpdate(
+          { user: user._id },
+          { placeId: placeId }
+        );
         user
           .save()
           .then(() => res.send({ success: true }))

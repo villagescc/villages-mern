@@ -40,6 +40,10 @@ import { activeID } from 'store/slices/menu';
 
 import { messaging, getToken, onMessage } from 'firebaseConfig';
 
+// import { geocodeByPlaceId } from 'react-places-autocomplete';
+import { geocodeByLatLng } from 'react-google-places-autocomplete';
+import { result } from 'lodash';
+
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ loginProp, ...others }) => {
@@ -55,11 +59,29 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   };
 
   const [token, setToken] = useState('');
+  const [placeId, setPlaceId] = useState('');
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
+  const successCallback = (position) => {
+    console.log(position);
+    console.log(position.coords.latitude);
+    console.log(position.coords.longitude);
+    // // geocodeByPlaceId('ChIJH_imbZDuDzkR2AjlbPGYKVE')
+    // //   .then((results) => console.log(results))
+    // //   .catch((error) => console.error(error));
+    geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
+      .then((results) => {
+        setPlaceId(results[results.length - 2].place_id);
+        console.log(results);
+      })
+      .catch((error) => console.error(error));
+  };
+  const errorCallback = (error) => {
+    console.log(error);
+  };
   useEffect(() => {
     getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
       .then((currentToken) => {
@@ -73,6 +95,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
       .catch((err) => {
         console.log('An error occurred while retrieving token. ', err);
       });
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   }, []);
 
   return (
@@ -90,7 +113,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           console.log(token);
           try {
-            await login(values.email, values.password, token).then(
+            await login(values.email, values.password, token, placeId).then(
               () => {},
               (err) => {
                 setStatus({ success: false });

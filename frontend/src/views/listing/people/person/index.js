@@ -192,7 +192,13 @@ const SocialProfile = () => {
                     }}
                   >
                     <Grid item>
-                      <Button variant="contained" color={'secondary'} startIcon={<ChatIcon />}>
+                      <Button
+                        variant="contained"
+                        color={'secondary'}
+                        startIcon={<ChatIcon />}
+                        component={Link}
+                        to={`/personal/message/${user?._id}`}
+                      >
                         Message
                       </Button>
                     </Grid>
