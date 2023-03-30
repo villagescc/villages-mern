@@ -18,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 // import useAuth from '../../hooks/useAuth';
 import { SERVER_URL } from 'config';
 
@@ -113,7 +114,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>
             <Grid container spacing={gridSpacing}>
-              <Grid item xs={12} component={Link} to={`/listing/person/${author}`} style={{ textDecoration: 'none' }}>
+              <Grid item xs={12} component={Link} to={`/listing/post/${id}`} style={{ textDecoration: 'none' }}>
                 <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
               </Grid>
             </Grid>
@@ -134,13 +135,13 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
             {own ? (
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
-                  <DeleteWrapper fullWidth>
-                    <DeleteIcon onClick={other?.onDelete} />
+                  <DeleteWrapper fullWidth onClick={other?.onDelete}>
+                    <DeleteIcon />
                   </DeleteWrapper>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <EditWrapper fullWidth>
-                    <EditIcon onClick={other?.onEdit} />
+                  <EditWrapper fullWidth onClick={other?.onEdit}>
+                    <EditIcon />
                   </EditWrapper>
                 </Grid>
               </Grid>
@@ -153,7 +154,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <PaymentWrapper fullWidth component={Link} to={`/ripple/pay/${author}`}>
-                    <CurrencyExchangeIcon />
+                    <AccountBalanceWalletOutlined />
                   </PaymentWrapper>
                 </Grid>
                 <Grid item xs={12} md={4}>

@@ -23,7 +23,7 @@ const UserListCard = (user, index) => {
   useEffect(() => {
     if (user && user.user && user.user.profile && user.user.profile.placeId) {
       console.log(user.user.profile.placeId);
-      geocodeByPlaceId(user.user.profile.placeId).then((results) => {
+      geocodeByPlaceId(user?.user?.profile?.placeId).then((results) => {
         console.log(results[0].formatted_address);
         setLocation(results[0].formatted_address);
       });
@@ -34,16 +34,16 @@ const UserListCard = (user, index) => {
     <TableRow key={index}>
       <TableCell>
         <Grid container spacing={2}>
-          <Grid item>
+          <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Avatar
               alt={user?.user?.username}
-              src={user.user.avatar ? `${SERVER_URL}/upload/avatar/` + user.user.avatar : DefaultAvatar}
-              sx={{ width: 60, height: 60 }}
+              src={user.user.profile.avatar ? `${SERVER_URL}/upload/avatar/` + user.user.profile.avatar : DefaultAvatar}
+              sx={{ width: 70, height: 70 }}
               component={Link}
               to={`/listing/person/${user.user._id}`}
             />
           </Grid>
-          <Grid item sm zeroMinWidth>
+          <Grid item sm lg={8}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <Typography

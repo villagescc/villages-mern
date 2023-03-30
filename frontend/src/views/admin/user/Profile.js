@@ -44,6 +44,8 @@ import { SERVER_URL } from 'config';
 import { useSelector, dispatch } from 'store';
 import DefaultAvatar from 'assets/images/auth/default.png';
 
+import { geocodeByPlaceId } from 'react-places-autocomplete';
+
 import EditModal from './EditModal';
 
 // progress
@@ -88,10 +90,15 @@ const Profile = () => {
   const [tempData, setTempData] = useState({});
   const [openModal, setOpenModal] = useState(false);
 
+  const [location, setLocation] = useState('');
+
   const [avatar, setAvatar] = useState('');
 
   useEffect(() => {
-    setTempData({ user });
+    if (user && user.profile && user.profile.placeId) {
+      geocodeByPlaceId(user?.profile?.placeId).then((results) => setLocation(results[0].formatted_address));
+      setAvatar(user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.profile?.avatar : DefaultUserIcon);
+    }
   }, [user]);
 
   const handleFileChange = ({ target }) => {
@@ -131,10 +138,6 @@ const Profile = () => {
     setOpenModal(false);
   };
 
-  useEffect(() => {
-    setAvatar(user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.profile?.avatar : DefaultUserIcon);
-  }, [user]);
-
   return (
     <>
       <Grid container spacing={gridSpacing}>
@@ -156,7 +159,7 @@ const Profile = () => {
                     {user?.username}
                   </Typography>
                   <Typography align="left" variant="subtitle2">
-                    {user?.job || <Chip label="No job" size="small" />}
+                    {user?.profile?.job || <Chip label="No job" size="small" />}
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -185,7 +188,7 @@ const Profile = () => {
                 <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} />
                 <ListItemSecondaryAction>
                   <Typography variant="subtitle2" align="right">
-                    {user?.profile?.placeId}
+                    {location}
                   </Typography>
                 </ListItemSecondaryAction>
               </ListItemButton>

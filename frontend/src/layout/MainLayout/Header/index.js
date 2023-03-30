@@ -19,7 +19,7 @@ import { openDrawer } from 'store/slices/menu';
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
-import useAuth from "../../../hooks/useAuth";
+import useAuth from '../../../hooks/useAuth';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -73,14 +73,14 @@ const Header = () => {
       </Box>
 
       {/* header search */}
-      <SearchSection />
+      {/* <SearchSection /> */}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 
       {/* mega-menu */}
-      <Box sx={{ display: { xs: 'none', sm: 'block' }, marginRight: isLoggedIn ? 0 : 2 }}>
+      {/* <Box sx={{ display: { xs: 'none', sm: 'block' }, marginRight: isLoggedIn ? 0 : 2 }}>
         <MegaMenuSection />
-      </Box>
+      </Box> */}
 
       {/* live customization & localization */}
       {/*<Box sx={{ display: { xs: 'none', sm: 'block' } }}>*/}
@@ -88,14 +88,12 @@ const Header = () => {
       {/*</Box>*/}
 
       {/* notification & profile */}
-      {
-        isLoggedIn && (
-          <>
-            <NotificationSection />
-            <BalanceSection />
-          </>
-        )
-      }
+      {isLoggedIn && (
+        <>
+          <NotificationSection />
+          <BalanceSection />
+        </>
+      )}
       <ProfileSection />
 
       {/* mobile header */}

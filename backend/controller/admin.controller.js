@@ -25,17 +25,24 @@ exports.uploadAvatar = async (req, res, next) => {
 };
 
 exports.editUserData = async (req, res, next) => {
-  const { email, username, location, description, user } = req.body;
+  console.log(req.body);
+  const { userId, email, username, job, description } = req.body;
 
   try {
-    await User.findByIdAndUpdate(user._id, {
-      email,
-      username,
-      location,
-    });
-    await Profile.findByIdAndUpdate(user.profile._id, {
-      description,
-    });
+    await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        email,
+        username,
+      }
+    );
+    await Profile.findOneAndUpdate(
+      { user: userId },
+      {
+        job,
+        description,
+      }
+    );
     res.send({ success: true });
   } catch (error) {
     console.log(error);

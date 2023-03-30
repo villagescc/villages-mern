@@ -180,8 +180,8 @@ const Posting = () => {
     setPrice(post.price);
     setCategory(post.subcategoryId.categoryId._id);
     setSubCategory(post.subcategoryId._id);
-    setTags([...post.tags.map((tag) => ({ id: tag.title, text: tag.title }))]);
-    setPreviewImage(post.photo ? 'http://localhost:5000/upload/posting/' + post.photo : null);
+    setTags([...post?.tags?.map((tag) => ({ id: tag?.title, text: tag?.title }))]);
+    setPreviewImage(post.photo ? 'https://villages.io/api/upload/posting/' + post.photo : null);
     setOpenCreate(true);
   };
 
@@ -335,24 +335,21 @@ const Posting = () => {
             )}
             <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
               {posts.length > 0 ? (
-                posts
-                  .slice(0)
-                  .reverse()
-                  .map((post, index) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                      <PostingCard
-                        id={post._id}
-                        avatar={post.userId?.profile?.avatar}
-                        post={post.photo}
-                        title={post.title}
-                        description={post.description}
-                        own={post.userId?._id === user?._id}
-                        author={post.userId?._id}
-                        onDelete={() => handleDeletePostClick(post)}
-                        onEdit={() => handleEditPostClick(post)}
-                      />
-                    </Grid>
-                  ))
+                posts.slice(0).map((post, index) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <PostingCard
+                      id={post._id}
+                      avatar={post.userId?.profile?.avatar}
+                      post={post.photo}
+                      title={post.title}
+                      description={post.description}
+                      own={post.userId?._id === user?._id}
+                      author={post.userId?._id}
+                      onDelete={() => handleDeletePostClick(post)}
+                      onEdit={() => handleEditPostClick(post)}
+                    />
+                  </Grid>
+                ))
               ) : (
                 <Grid item xs={12}>
                   <Empty />

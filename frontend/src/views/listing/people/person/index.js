@@ -85,7 +85,7 @@ const SocialProfile = () => {
   const { borderRadius } = useConfig();
   const { id, tab } = useParams();
   const { user } = useSelector((state) => state.user);
-  const avatarImage = user?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.avatar : DefaultUserIcon;
+  const avatarImage = user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.profile.avatar : DefaultUserIcon;
 
   let selectedTab = 0;
   switch (tab) {
@@ -178,7 +178,7 @@ const SocialProfile = () => {
                   <Typography variant="h5">
                     {user?.firstName} {user?.lastName}
                   </Typography>
-                  <Typography variant="subtitle2">{user?.job || <Chip label="No job" />}</Typography>
+                  <Typography variant="subtitle2">{user?.profile.job || <Chip label="No job" />}</Typography>
                 </Grid>
                 <Grid item xs={12} md={8}>
                   <Grid

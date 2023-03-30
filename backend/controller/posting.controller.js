@@ -9,7 +9,7 @@ exports.searchPosts = async (req, res, next) => {
   const { category, type, radius, keyword, page } = req.body;
   try {
     const total = await Listing.countDocuments();
-    const query = Listing.find();
+    const query = Listing.find().sort({ updatedAt: -1 });
     if (category !== "") {
       const cate = await Category.findOne({ title: category });
       const categoryId = cate._id;
