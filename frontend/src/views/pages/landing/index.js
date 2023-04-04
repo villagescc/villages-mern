@@ -13,47 +13,47 @@ import Customization from 'layout/Customization';
 import AppBar from 'ui-component/extended/AppBar';
 
 const HeaderWrapper = styled('div')(({ theme }) => ({
-    paddingTop: 56,
-    overflowX: 'hidden',
-    overflowY: 'clip',
-    [theme.breakpoints.down('md')]: {
-        paddingTop: 56
-    }
+  paddingTop: 56,
+  overflowX: 'hidden',
+  overflowY: 'clip',
+  [theme.breakpoints.down('md')]: {
+    paddingTop: 56
+  }
 }));
 
 const SecondWrapper = styled('div')(({ theme }) => ({
-    paddingTop: 64,
-    [theme.breakpoints.down('md')]: {
-        paddingTop: 60
-    }
+  paddingTop: 64,
+  [theme.breakpoints.down('md')]: {
+    paddingTop: 60
+  }
 }));
 
 // =============================|| LANDING MAIN ||============================= //
 
 const Landing = () => (
-    <>
-        <HeaderWrapper id="home">
-            <AppBar />
-            <Header />
-        </HeaderWrapper>
-        <SecondWrapper>
-            <HowItWorks />
-        </SecondWrapper>
-        <SecondWrapper>
-            <Cycle />
-        </SecondWrapper>
-        <SecondWrapper>
-            <Hours />
-        </SecondWrapper>
-        <SecondWrapper>
-            <Graph />
-        </SecondWrapper>
-        <SecondWrapper>
-            <Subscribe />
-        </SecondWrapper>
-        <Footer />
-        <Customization />
-    </>
+  <>
+    <HeaderWrapper id="home">
+      <AppBar />
+      <Header />
+    </HeaderWrapper>
+    <SecondWrapper>
+      <HowItWorks />
+    </SecondWrapper>
+    <SecondWrapper>
+      <Cycle />
+    </SecondWrapper>
+    <SecondWrapper>
+      <Hours />
+    </SecondWrapper>
+    <SecondWrapper>
+      <Graph />
+    </SecondWrapper>
+    <SecondWrapper>
+      <Subscribe />
+    </SecondWrapper>
+    <Footer />
+    {/* <Customization /> */}
+  </>
 );
 
 export default Landing;
