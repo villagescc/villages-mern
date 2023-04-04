@@ -71,7 +71,7 @@ const LoadGraphWithByProp = () => {
           label: node?.attributes?.username,
           color: node?.key === user?._id ? theme.palette.error.main : theme.palette.secondary.main,
           type: 'image',
-          image: node?.attributes?.avatar ? `${SERVER_URL}/upload/avatar/` + node?.attributes?.profile?.avatar : DefaultUserIcon
+          image: node?.attributes?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + node?.attributes?.profile?.avatar : DefaultUserIcon
         });
       });
       graphData?.edges.forEach((edge) => {
@@ -82,7 +82,8 @@ const LoadGraphWithByProp = () => {
         });
       });
       graph.forEachNode((node, attributes) => {
-        graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 3);
+        if (node == user._id) graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 10);
+        else graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 3);
       });
       const positions = random(graph, { dimensions: ['x1', 'x2'] });
       random.assign(graph);

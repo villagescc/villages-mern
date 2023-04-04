@@ -37,6 +37,10 @@ const HomeRoutes = {
       element: <Posting />
     },
     {
+      path: '/listing/posts/page/:pageId',
+      element: <Posting />
+    },
+    {
       path: '/listing/post/:id',
       element: <PostingDetail />
     },

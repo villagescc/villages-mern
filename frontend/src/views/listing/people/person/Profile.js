@@ -83,16 +83,11 @@ const Profile = ({ user }) => {
   const [location, setLocation] = useState('');
   useEffect(() => {
     if (user && user.profile && user.profile.placeId) {
-      console.log(user.profile.placeId);
       geocodeByPlaceId(user.profile.placeId).then((results) => {
-        console.log(results[0].formatted_address);
         setLocation(results[0].formatted_address);
       });
     }
   }, [user]);
-  console.log(user);
-
-  console.log(user);
 
   return (
     <Grid container spacing={gridSpacing}>

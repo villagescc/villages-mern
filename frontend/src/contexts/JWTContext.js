@@ -82,8 +82,8 @@ export const JWTProvider = ({ children }) => {
     init();
   }, []);
 
-  const login = async (email, password, deviceToken, placeId) => {
-    const response = await axios.post('/auth/login', { email, password, deviceToken, placeId });
+  const login = async (email, password, deviceToken, placeId, latitude, longitude) => {
+    const response = await axios.post('/auth/login', { email, password, deviceToken, placeId, latitude, longitude });
     const { serviceToken, user } = response.data;
     setSession(serviceToken);
     // dispatch({
@@ -111,7 +111,6 @@ export const JWTProvider = ({ children }) => {
   };
 
   const verify = async (userid, token) => {
-    console.log(userid, token);
     const response = await axios.get(`auth/verify/${userid}/${token}`);
     return response.data;
   };
@@ -122,13 +121,11 @@ export const JWTProvider = ({ children }) => {
   };
 
   const forgotPassword = async (email) => {
-    console.log(email);
     const response = await axios.post('auth/forgot-password', { email });
     return response.data;
   };
 
   const resetPassword = async (id, token, password) => {
-    console.log('id:' + id + 'token:' + token + 'password:' + password);
     const response = await axios.post(`auth/reset-password/${id}/${token}`, { password });
     return response.data;
   };

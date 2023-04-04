@@ -1,13 +1,10 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import {
-  Box,
-  Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 // assets
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import useAuth from "../../../../hooks/useAuth";
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+import useAuth from '../../../../hooks/useAuth';
 
 // ==============================|| LOCALIZATION ||============================== //
 
@@ -26,13 +23,11 @@ const BalanceSection = () => {
         alignItems: 'center'
       }}
     >
-      <CurrencyExchangeIcon color={'secondary'} sx={{ marginRight: 1 }} />
-      <Typography variant={'h3'} sx={{ marginRight: 1 }} color={"secondary"}>
-        { user?.account?.balance }
+      <AccountBalanceWalletOutlined color={'secondary'} sx={{ marginRight: 1 }} />
+      <Typography variant={'h3'} sx={{ marginRight: 1 }} color={'secondary'}>
+        {user?.account?.balance}
       </Typography>
-      <Typography variant={'h3'}>
-        V.H.
-      </Typography>
+      <Typography variant={'h3'}>V.H.</Typography>
     </Box>
   );
 };

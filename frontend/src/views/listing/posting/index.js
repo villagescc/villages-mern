@@ -35,6 +35,8 @@ import PostingCard from 'ui-component/cards/PostingCard';
 import Empty from 'ui-component/Empty';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -45,6 +47,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 const Posting = () => {
   const theme = useTheme();
+  let { pageId } = useParams();
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useAuth();
 
@@ -53,15 +56,21 @@ const Posting = () => {
   const [keyword, setKeyword] = React.useState('');
   const [posts, setPosts] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [page, setPage] = React.useState(1);
   const [categories, setCategories] = React.useState([]);
   const [subCategories, setSubCategories] = React.useState([]);
   const [tagSuggestion, setTagSuggestion] = React.useState([]);
 
   // FILTER POSTING
-  const [filterCategory, setFilterCategory] = React.useState('');
-  const [filterType, setFilterType] = React.useState('');
-  const [filterRadius, setFilterRadius] = React.useState('');
+  // const [filterCategory, setFilterCategory] = React.useState('');
+  // const [filterType, setFilterType] = React.useState('');
+  // const [filterRadius, setFilterRadius] = React.useState('');
+  const [filterData, setFilterData] = React.useState({
+    filterCategory: '',
+    filterType: '',
+    filterRadius: '',
+    keyword: '',
+    page: pageId ? Number(pageId) : 1
+  });
 
   // POST MODAL FORM
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -83,9 +92,15 @@ const Posting = () => {
     setTags(tags.filter((tag, index) => index !== i));
   };
 
+  const navigate = useNavigate();
+
   const handleAddition = (newTag) => {
     setTags([...tags, newTag]);
   };
+
+  // useEffect(() => {
+  //   dispatch(filterPost(filterData));
+  // }, [location, pageId]);
 
   useEffect(() => {
     setLoading(postingState.loading);
@@ -102,8 +117,8 @@ const Posting = () => {
     dispatch(getTags());
     dispatch(getCategories());
     dispatch(getSubCategories());
-    dispatch(filterPost());
-  }, []);
+    dispatch(filterPost(filterData));
+  }, [filterData]);
 
   const handleSearch = (event) => {
     const newString = event?.target.value;
@@ -112,7 +127,7 @@ const Posting = () => {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, page));
+      setFilterData({ ...filterData, keyword: keyword });
     }
   };
 
@@ -201,7 +216,7 @@ const Posting = () => {
     dispatch(
       submitPost(data, () => {
         setOpenCreate(false);
-        dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, page));
+        dispatch(filterData);
       })
     );
   };
@@ -267,10 +282,9 @@ const Posting = () => {
                         label: category.title
                       }))
                     ]}
-                    currency={filterCategory}
+                    currency={filterData.filterCategory}
                     onChange={(e) => {
-                      setFilterCategory(e.target.value);
-                      dispatch(filterPost(e.target.value, filterType, filterRadius, keyword, page));
+                      setFilterData({ ...filterData, filterCategory: e.target.value });
                     }}
                     captionLabel="Posting"
                   />
@@ -281,10 +295,9 @@ const Posting = () => {
                       value: type.value,
                       label: type.value
                     }))}
-                    currency={filterType}
+                    currency={filterData.filterType}
                     onChange={(e) => {
-                      setFilterType(e.target.value);
-                      dispatch(filterPost(filterCategory, e.target.value, filterRadius, keyword, page));
+                      setFilterData({ ...filterData, filterType: e.target.value });
                     }}
                     captionLabel="Post type"
                   />
@@ -292,10 +305,9 @@ const Posting = () => {
                 <Grid item xs={12} sm={3}>
                   <FormControlSelect
                     currencies={radius}
-                    currency={filterRadius}
+                    currency={filterData.filterRadius}
                     onChange={(e) => {
-                      setFilterRadius(e.target.value);
-                      dispatch(filterPost(filterCategory, filterType, e.target.value, keyword, page));
+                      setFilterData({ ...filterData, filterRadius: e.target.value });
                     }}
                     captionLabel="Search area"
                   />
@@ -324,10 +336,11 @@ const Posting = () => {
               <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
                 <Pagination
                   count={Math.ceil(total / 12)}
-                  page={page}
+                  defaultPage={Number(pageId)}
+                  page={filterData.page}
                   onChange={(e, p) => {
-                    setPage(p);
-                    dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p));
+                    navigate(`/listing/posts/page/${p}`);
+                    setFilterData({ ...filterData, page: p });
                   }}
                   color="secondary"
                 />
@@ -360,10 +373,11 @@ const Posting = () => {
               <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
                 <Pagination
                   count={Math.ceil(total / 12)}
-                  page={page}
+                  defaultPage={Number(pageId)}
+                  page={filterData.page}
                   onChange={(e, p) => {
-                    setPage(p);
-                    dispatch(filterPost(filterCategory, filterType, filterRadius, keyword, p));
+                    navigate(`/listing/posts/page/${p}`);
+                    setFilterData({ ...filterData, page: p });
                   }}
                   color="secondary"
                 />
@@ -434,7 +448,6 @@ const Posting = () => {
                   ]}
                   currency={category}
                   onChange={(e) => {
-                    console.log('category = ', e.target.value);
                     setCategory(e.target.value);
                     setSubCategory('');
                   }}

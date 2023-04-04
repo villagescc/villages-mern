@@ -19,7 +19,7 @@ import Help from '@mui/icons-material/Help';
 
 import useAuth from 'hooks/useAuth';
 import { useDispatch, useSelector } from 'store';
-import { getUsers, pay, getMaxLimit } from 'store/slices/payment';
+import { getUsers, pay, getMaxLimit, getTransactions } from 'store/slices/payment';
 import { getPath } from 'store/slices/graph';
 import { gridSpacing } from 'store/constant';
 import { openSnackbar } from 'store/slices/snackbar';
@@ -49,8 +49,11 @@ function PaymentDialog({ open, setOpen, recipientId }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const submitPayment = () => {
-    dispatch(pay({ recipient, amount, memo }, successAction));
+    setIsSubmitting(true);
+    dispatch(pay({ recipient, amount, memo }, successAction, setIsSubmitting));
   };
 
   const successAction = () => {
@@ -65,9 +68,11 @@ function PaymentDialog({ open, setOpen, recipientId }) {
         close: false
       })
     );
+    setIsSubmitting(false);
     setRecipient('');
     setAmount(0);
     setMemo('');
+    setOpen(false);
     init();
   };
 
@@ -206,7 +211,7 @@ function PaymentDialog({ open, setOpen, recipientId }) {
             </Dialog>
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" color="secondary" onClick={submitPayment}>
+            <Button variant="contained" color="secondary" onClick={submitPayment} disabled={isSubmitting}>
               Send Payment
             </Button>
             {maxLimit > 0 && (

@@ -103,8 +103,6 @@ const ChatMainPage = () => {
   });
 
   onMessage(messaging, (payload) => {
-    console.log(payload);
-    console.log(payload.data.senderid);
     const newData = [...data];
     newData.push({
       sender: payload.data.senderid,
@@ -143,7 +141,6 @@ const ChatMainPage = () => {
   }, [chatState.user]);
 
   useEffect(() => {
-    console.log(chatState.chats);
     setData(chatState.chats);
   }, [chatState.chats]);
 
@@ -174,9 +171,6 @@ const ChatMainPage = () => {
   const [message, setMessage] = useState('');
   const handleOnSend = () => {
     const d = new Date();
-    console.log(user);
-    console.log(authUser);
-    console.log(user.user.email);
     setMessage('');
     const newMessage = {
       sender: authUser._id,

@@ -60,13 +60,10 @@ const Profile = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log('currentUser', currentUser);
     setAvatar(currentUser?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + currentUser?.profile?.avatar : DefaultAvatar);
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.profile?.job ? currentUser.profile.job : '');
-    console.log(currentUser?.profile?.placeId);
-    // console.log(currentUser.placeId);
     if (currentUser && currentUser.profile && currentUser.profile.placeId) {
       geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
         setLocation({
@@ -91,7 +88,6 @@ const Profile = () => {
   };
 
   const handleFileChange = ({ target }) => {
-    console.log(target);
     const fileReader = new FileReader();
 
     fileReader.readAsDataURL(target.files[0]);
@@ -108,12 +104,6 @@ const Profile = () => {
     var placeId = location.placeId;
     dispatch(
       saveProfile({ firstName, lastName, job, placeId, description }, () => {
-        console.log(firstName);
-        console.log(lastName);
-        console.log(job);
-        console.log(placeId);
-        console.log(description);
-
         dispatch(
           openSnackbar({
             open: true,

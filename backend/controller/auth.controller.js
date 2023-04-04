@@ -9,6 +9,12 @@ const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
 const paymentController = require("./payment.controller");
 
+// const client = require("@mailchimp/mailchimp_marketing");
+// client.setConfig({
+//   apiKey: process.env.MAILCHIMP_APIKEY,
+//   server: "us2",
+// });
+
 const axios = require("axios");
 
 const _getUser = async (id) => {
@@ -39,7 +45,8 @@ exports.registerUser = async (req, res, next) => {
 
     user = await User.findOne({ $or: [{ email }, { username }] });
     if (user) {
-      if (user.email === email) errors.email = "Email already exists";
+      if (user.email.toLowerCase() === email.toLowerCase())
+        errors.email = "Email already exists";
       else errors.username = "Username already exists";
 
       return res.status(400).send(errors);
@@ -47,7 +54,14 @@ exports.registerUser = async (req, res, next) => {
 
     const token = crypto.randomBytes(32).toString("hex");
     // const verifyCode =
-    user = new User({ password, username, firstName, lastName, email, token });
+    user = new User({
+      password,
+      username: username.toLowerCase(),
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      token,
+    });
 
     profile = await profileController._createProfile({
       user: user._id,
@@ -123,10 +137,11 @@ exports.verifyToken = async (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  const { password, email, deviceToken, placeId } = req.body;
-  console.log(placeId);
-
-  User.findOne({ $or: [{ email }, { username: email }] })
+  const { password, email, deviceToken, placeId, latitude, longitude } =
+    req.body;
+  User.findOne({
+    $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
+  })
     .select("+password")
     .then(async (user) => {
       if (!user) {
@@ -160,12 +175,13 @@ exports.login = (req, res, next) => {
 
             await User.findByIdAndUpdate(user._id, {
               deviceToken,
+              latitude,
+              longitude,
             });
-            console.log(
-              await Profile.findOneAndUpdate(
-                { user: user._id },
-                { placeId: placeId }
-              )
+
+            await Profile.findOneAndUpdate(
+              { user: user._id },
+              { placeId: placeId }
             );
 
             const payload = {
@@ -180,6 +196,8 @@ exports.login = (req, res, next) => {
                 profile: userData.profile,
                 account: userData.account,
                 deviceToken: userData.deviceToken,
+                latitude: userData.latitute,
+                longitude: userData.longitude,
               },
             };
 
@@ -206,6 +224,8 @@ exports.login = (req, res, next) => {
         user.password = await bcrypt.hash(password, salt);
         user.token = token;
         user.deviceToken = deviceToken;
+        user.latitute = latitude;
+        user.longitude = longitude;
         await Profile.findOneAndUpdate(
           { user: user._id },
           { placeId: placeId }

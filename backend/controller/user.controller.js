@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Profile = require("../models/Profile");
+const ProfileSetting = require("../models/ProfileSetting");
 const Account = require("../models/Account");
 const {
   _getFollowers,
@@ -13,7 +14,6 @@ const Payment = require("../models/Payment");
 exports.search = async (req, res, next) => {
   let { keyword, page } = req.body;
   if (!page) page = 1;
-  console.log(page);
   let query = {};
   try {
     if (keyword && keyword !== "") {
@@ -26,8 +26,11 @@ exports.search = async (req, res, next) => {
         ],
       };
     }
-    const users = await User.find(query).populate("profile").exec();
-    let filteredUsers = [...users].reverse().slice((page - 1) * 10, page * 10);
+    const users = await User.find(query)
+      .sort({ createdAt: -1 })
+      .populate("profile")
+      .exec();
+    let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
     let userData = [];
     for (let i = 0; i < filteredUsers.length; i++) {
       let userInfo = await getUserDetail(filteredUsers[i]["id"]);
@@ -120,6 +123,39 @@ exports.saveProfile = async (req, res, next) => {
     );
     user = await getUserDetail(req.user._id);
     res.send({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.saveProfileSetting = async (req, res, next) => {
+  try {
+    const { email, notificationCheck, updateCheck, language, feedRadius } =
+      req.body;
+
+    let user = await User.findOne({ _id: req.user._id });
+    let profileSetting = await ProfileSetting.findOne({ user: req.user._id });
+    if (profileSetting) {
+      profileSetting.receiveNotifications = notificationCheck;
+      profileSetting.receiveUpdates = updateCheck;
+      profileSetting.feedRadius = feedRadius;
+      profileSetting.language = language;
+      profileSetting.user = req.user._id;
+      await profileSetting.save();
+    } else {
+      await ProfileSetting.create({
+        receiveNotifications: notificationCheck,
+        receiveUpdates: updateCheck,
+        feedRadius: feedRadius,
+        language: language,
+        user: req.user._id,
+      });
+    }
+    if (email !== "") {
+      user.email = email;
+      await user.save();
+    }
+    res.send({ success: true });
   } catch (err) {
     next(err);
   }

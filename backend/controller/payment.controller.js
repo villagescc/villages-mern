@@ -11,13 +11,24 @@ const isEmpty = require("../validation/is-empty");
 
 const axios = require("axios");
 
+const _getUser = async (id) => {
+  const user = await User.findById(id).exec();
+  if (user) {
+    user.account = await Account.findOne({ user: user._id }).exec();
+    user.profile = await Profile.findOne({ user: user._id }).exec();
+  }
+
+  return user;
+};
+
 const buildGraph = async (nodes = null) => {
   const graph = await new Graph();
   const users = await User.find();
   for (let user of users) {
+    const userData = await _getUser(user.id);
     if (nodes !== null && !nodes.includes(user.id)) continue;
     graph.addNode(user.id, {
-      ...user._doc,
+      ...userData._doc,
     });
   }
 
@@ -94,21 +105,15 @@ exports.getGraph = async (req, res, next) => {
 exports.getPath = async (req, res, next) => {
   try {
     const { senderId, recipientId } = req.body;
-    console.log(senderId + ":" + recipientId);
     const result = await this._getMaxFlow(senderId, recipientId);
     let nodes = [];
     if (result.success) {
-      cosole.log("a");
       for (path of result.paths) {
         nodes = [...nodes, ...path];
       }
-      cosole.log("b");
-
       nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
-      cosole.log("b");
 
       const graph = await buildGraph(nodes);
-      cosole.log("d");
 
       res.send(graph);
     } else {
@@ -137,7 +142,6 @@ exports.getMaxLimit = async (req, res, next) => {
 };
 
 exports.pay = async (req, res, next) => {
-  console.log(req.body);
   const { recipient, amount, memo } = req.body;
   const payer = req.user._id;
   let payment;
@@ -167,10 +171,6 @@ exports.pay = async (req, res, next) => {
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
 
-        payment.status = "Completed";
-        payment.save();
-
-        // Notify
         const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
         const notification = await createNotification(
           "PAYMENT",
@@ -180,17 +180,18 @@ exports.pay = async (req, res, next) => {
           notifyText
         );
         global.io.emit("newNotification", notification);
+        const receiveUser = await User.findById(recipient);
         axios
           .post(
             "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
             {
               subject: "Notification from Villages.io",
-              dest: recipientUser.email,
-              data: `<h1>You has been paid by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
-                <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
-                <p>${notifyText}</p>
-                <a href=https://villages.io/auth/ripple/pay> Click here</a>
-                <br>`,
+              dest: receiveUser?.email,
+              data: `<h1>You has been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+              <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
+              <p>${notifyText}</p>
+              <a href=https://villages.io/auth/ripple/pay> Click here</a>
+              <br>`,
             }
           )
           .then(function (response) {
@@ -199,6 +200,12 @@ exports.pay = async (req, res, next) => {
           .catch(function (error) {
             console.log(error);
           });
+
+        payment.status = "Completed";
+        payment.save();
+
+        // Notify
+
         res.send({ success: true, paylogs: result.paylogs });
       } catch (error) {
         await Paylog.deleteMany({ paymentId: payment._id });
@@ -224,7 +231,6 @@ exports.pay = async (req, res, next) => {
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
   const graph = await buildGraph();
-  console.log(graph);
   if (!graph.hasNode(recipient)) {
     console.log("error");
     return {
@@ -244,7 +250,6 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       },
     };
   }
-  console.log("before path");
   let paths = allSimplePaths(graph, sender, recipient);
 
   // console.log(SimplePathsLengthN(graph, sender, recipient));
@@ -311,22 +316,16 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
 };
 
 exports.searchTransactions = async (req, res, next) => {
+  const { page, keyword, status, address, paymentType, period } = req.body;
   try {
-    const total = await Payment.find({
-      $or: [{ payer: req.user._id }, { recipient: req.user._id }],
-    }).countDocuments();
-    const query = Payment.find();
-    if (req.body && req.body.period.length === 1) {
-      query.and([
-        {
-          createdAt: {
-            $gte: new Date(req.body.period[0]),
-            // $lt: new Date(req.body.period[1]),
-          },
-        },
-      ]);
-    }
-    if (req.body && req.body.period.length === 2) {
+    // const total = await Payment.find({
+    //   $or: [{ payer: req.user._id }, { recipient: req.user._id }],
+    // })
+    //   .sort({ createdAt: -1 })
+    //   .countDocuments();
+    // console.log(total);
+    const query = Payment.find().sort({ createdAt: -1 });
+    if (period?.length === 2) {
       query.and([
         {
           createdAt: {
@@ -336,19 +335,19 @@ exports.searchTransactions = async (req, res, next) => {
         },
       ]);
     }
-    if (req.body && req.body.paymentType === "All") {
+    if (paymentType === "All") {
       query.or([{ payer: req.user._id }, { recipient: req.user._id }]);
     } else {
-      if (req.body && req.body.paymentType === "Withdraw") {
+      if (paymentType === "Withdraw") {
         query.where("payer", req.user._id);
-        if (req.body.address && !isEmpty(req.body.address)) {
-          query.where("recipient", req.body.address);
+        if (!isEmpty(address)) {
+          query.where("recipient", address);
         }
       }
-      if (req.body && req.body.paymentType === "Deposit") {
+      if (paymentType === "Deposit") {
         query.where("recipient", req.user._id);
-        if (req.body.address && !isEmpty(req.body.address)) {
-          query.where("payer", req.body.address);
+        if (!isEmpty(address)) {
+          query.where("payer", address);
         }
       }
     }
@@ -358,13 +357,15 @@ exports.searchTransactions = async (req, res, next) => {
     //     { description: { $regex: keyword, $options: "i" } },
     //   ]);
     // }
-    if (req.body && !isEmpty(req.body.keyword)) {
-      query.and([{ memo: { $regex: req.body.keyword, $options: "i" } }]);
+    if (keyword !== "") {
+      query.and([{ memo: { $regex: keyword, $options: "i" } }]);
     }
-    if (req.body && req.body.status !== "All") {
-      query.where("status", req.body.status);
+    if (status !== "All") {
+      query.where({ status: status });
     }
-    query.skip(req.body.page * 10 - 10).limit(10);
+    const total = await Payment.find(query).countDocuments();
+    // console.log(query);
+    query.skip(page * 10 - 10).limit(10);
     const transactions = await query
       .populate({
         path: "recipient",
@@ -437,22 +438,3 @@ exports.getTransaction = async (req, res, next) => {
     next(error);
   }
 };
-// SimplePathsLengthN = function (graph, sender, recipient, pathlength = null) {
-//   SP = list();
-//   if (pathlength == 1) {
-//     if (recipient in neighbors(graph, sender)) {
-//       SP[[1]] = c(sender, recipient);
-//     }
-//     return SP;
-//   }
-//   Nbrs2 = neighbors(graph, recipient);
-//   for (nbr2 in Nbrs2) {
-//     ASPn2 = SimplePathsLengthN(graph, sender, nbr2, pathlength - 1);
-//     for (i in seq_along(ASPn2)) {
-//       if (!(recipient in ASPn2[[i]])) {
-//         SP = append(SP, list(c(ASPn2[[i]], recipient)));
-//       }
-//     }
-//   }
-//   return SP;
-// };

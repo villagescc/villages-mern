@@ -60,6 +60,12 @@ const UserSchema = new mongoose.Schema(
     deviceToken: {
       type: String,
     },
+    latitude: {
+      type: String,
+    },
+    longitude: {
+      type: String,
+    },
   },
   {
     timestamps: true,

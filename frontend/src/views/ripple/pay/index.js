@@ -117,14 +117,6 @@ const Index = () => {
       <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId} />
     </MainCard>
   );
-
-  return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <PaymentHistory title={'Payment History'} handleCreateClick={handleCreateClick} />
-      </Grid>
-    </Grid>
-  );
 };
 
 export default Index;

@@ -51,6 +51,9 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   const scriptedRef = useScriptRef();
   const [checked, setChecked] = React.useState(true);
 
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+
   const { login } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -66,16 +69,11 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   };
 
   const successCallback = (position) => {
-    console.log(position);
-    console.log(position.coords.latitude);
-    console.log(position.coords.longitude);
-    // // geocodeByPlaceId('ChIJH_imbZDuDzkR2AjlbPGYKVE')
-    // //   .then((results) => console.log(results))
-    // //   .catch((error) => console.error(error));
+    setLatitude(position.coords.latitude);
+    setLongitude(position.coords.longitude);
     geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
       .then((results) => {
         setPlaceId(results[results.length - 2].place_id);
-        console.log(results);
       })
       .catch((error) => console.error(error));
   };
@@ -87,7 +85,6 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
       .then((currentToken) => {
         if (currentToken) {
           setToken(currentToken);
-          console.log(currentToken);
         } else {
           console.log('No registration token available. Request permission to generate one.');
         }
@@ -111,9 +108,8 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          console.log(token);
           try {
-            await login(values.email, values.password, token, placeId).then(
+            await login(values.email, values.password, token, placeId, longitude, latitude).then(
               () => {},
               (err) => {
                 setStatus({ success: false });

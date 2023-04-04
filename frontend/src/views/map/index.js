@@ -1,12 +1,15 @@
 import React from 'react';
 import GoogleMap from 'google-map-react';
-import DefaultAvatar from "assets/images/auth/default.png";
-import Avatar from "ui-component/extended/Avatar";
-import {getUsers} from "../../store/slices/map";
-import {useDispatch, useSelector} from "../../store";
+import DefaultAvatar from 'assets/images/auth/default.png';
+import Avatar from 'ui-component/extended/Avatar';
+import { getUsers } from '../../store/slices/map';
+import { useDispatch, useSelector } from '../../store';
+import useAuth from 'hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const dispatch = useDispatch();
+  const { user } = useAuth();
 
   return (
     <div style={{ height: '80vh', width: '100%' }}>
@@ -16,18 +19,21 @@ const Index = () => {
           libraries: ['places']
         }}
         yesIWantToUseGoogleMapApiInternals
-        center={[19.741755, -155.844437]}
+        center={[Number(user?.latitude), Number(user?.longitude)]}
         zoom={9}
         defaultZoom={10}
       >
         {/*{*/}
         {/*  users.map((user, index) => (*/}
-            <Avatar
-              lat={19.741755} lng={-155.844437}
-              alt={"a"}
-              src={DefaultAvatar}
-              tooltip={"a"}
-            />
+        <Avatar
+          lat={Number(user?.latitude)}
+          lng={Number(user?.longitude)}
+          alt={'a'}
+          src={DefaultAvatar}
+          tooltip={user?.username}
+          component={Link}
+          to={'/personal/profile'}
+        />
         {/*  ))*/}
         {/*}*/}
       </GoogleMap>

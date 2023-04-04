@@ -56,7 +56,7 @@ exports.getByUser = async (req, res, next) => {
         model: "user",
         populate: { path: "profile", model: "profile" },
       })
-      .sort({ _id: -1 });
+      .sort({ createdAt: -1 });
     res.send(notifications);
   } catch (err) {
     next(err);

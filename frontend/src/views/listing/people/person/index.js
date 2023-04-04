@@ -178,7 +178,7 @@ const SocialProfile = () => {
                   <Typography variant="h5">
                     {user?.firstName} {user?.lastName}
                   </Typography>
-                  <Typography variant="subtitle2">{user?.profile.job || <Chip label="No job" />}</Typography>
+                  <Typography variant="subtitle2">{user?.profile?.job || <Chip label="No job" />}</Typography>
                 </Grid>
                 <Grid item xs={12} md={8}>
                   <Grid

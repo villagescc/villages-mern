@@ -90,7 +90,6 @@ const AuthResetPassword = ({ ...others }) => {
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          console.log(path[3] + ':' + path[4] + ':' + values.password);
           await resetPassword(path[3], path[4], values.password).then(
             () => {
               setStatus({ success: true });

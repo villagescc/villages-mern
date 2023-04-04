@@ -86,7 +86,6 @@ function createData(name, calories, fat, carbs, protein) {
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
-  console.log('user = ', user);
   const [tempData, setTempData] = useState({});
   const [openModal, setOpenModal] = useState(false);
 

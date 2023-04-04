@@ -75,6 +75,11 @@ router.post(
   userController.saveProfile
 );
 router.post(
+  "/users/profile/setting",
+  authMiddleware.auth,
+  userController.saveProfileSetting
+);
+router.post(
   "/users/password",
   authMiddleware.auth,
   userMiddleware.changePassword,

@@ -42,8 +42,6 @@ exports.save = async (req, res, next) => {
       notifyText = `${req.user.username} updated trust limit as ${weight}(V.H.).`;
     }
 
-    console.log(recipientUser.deviceToken);
-
     axios
       .post(
         "https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast",
@@ -122,7 +120,7 @@ exports.search = async (req, res, next) => {
       });
     }
     const endorsements = await Endorsement.find(query)
-      .sort({ _id: -1 })
+      .sort({ createdAt: -1 })
       .populate({
         path: "recipientId",
         model: "user",

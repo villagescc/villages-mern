@@ -73,8 +73,7 @@ const PaymentHistory = ({ handleCreateClick }) => {
   const [keyword, setKeyword] = useState('');
   const [address, setAddress] = useState('');
   const [paymentType, setPaymentType] = useState('All'); // "Deposit", "Withdraw"
-  const [period, setPeriod] = useState([new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date(Date.now())]);
-
+  const [period, setPeriod] = useState([new Date('2011-01-01'), new Date(Date.now())]);
   const [showFilter, setShowFilter] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
 

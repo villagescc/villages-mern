@@ -22,14 +22,11 @@ const UserListCard = (user, index) => {
   const [location, setLocation] = useState('');
   useEffect(() => {
     if (user && user.user && user.user.profile && user.user.profile.placeId) {
-      console.log(user.user.profile.placeId);
       geocodeByPlaceId(user?.user?.profile?.placeId).then((results) => {
-        console.log(results[0].formatted_address);
         setLocation(results[0].formatted_address);
       });
     }
   }, [user]);
-  console.log(user);
   return (
     <TableRow key={index}>
       <TableCell>

@@ -6,28 +6,30 @@ const Tag = require("../models/Tag");
 const isEmpty = require("../validation/is-empty");
 
 exports.searchPosts = async (req, res, next) => {
-  const { category, type, radius, keyword, page } = req.body;
+  const { filterData } = req.body;
   try {
-    const total = await Listing.countDocuments();
+    // const total = await Listing.countDocuments();
     const query = Listing.find().sort({ updatedAt: -1 });
-    if (category !== "") {
-      const cate = await Category.findOne({ title: category });
+    if (!isEmpty(filterData.filterCategory)) {
+      const cate = await Category.findOne({ title: filterData.filterCategory });
       const categoryId = cate._id;
       const subCategories = await Subcategory.find({ categoryId }).lean();
       query
         .where("subcategoryId")
         .in(subCategories.map((subCategory) => subCategory._id));
     }
-    if (type !== "") {
-      query.where("listing_type", type);
+    if (!isEmpty(filterData.filterType)) {
+      query.where("listing_type", filterData.filterType);
     }
-    if (keyword !== "") {
+    if (!isEmpty(filterData.keyword)) {
       query.or([
-        { title: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
+        { title: { $regex: filterData.keyword, $options: "i" } },
+        { description: { $regex: filterData.keyword, $options: "i" } },
       ]);
     }
-    query.skip(page * 12 - 12).limit(12);
+    const total = await Listing.find(query).countDocuments();
+    if (filterData.page * 12 - 12 > total) filterData.page = 1;
+    query.skip(filterData.page * 12 - 12).limit(12);
     const lists = await query
       .populate({
         path: "subcategoryId",

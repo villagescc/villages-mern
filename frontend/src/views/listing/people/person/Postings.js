@@ -31,7 +31,6 @@ const Postings = ({ user }) => {
       <Empty />
     </Grid>
   );
-  console.log(postings);
   if (user?.postings.length > 0) {
     postingsResult = user?.postings.map((item, index) => (
       <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
