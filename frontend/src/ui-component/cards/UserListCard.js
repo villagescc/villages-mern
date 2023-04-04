@@ -16,6 +16,7 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../assets/images/auth/default.png';
 import { geocodeByPlaceId } from 'react-places-autocomplete';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 
 const UserListCard = (user, index) => {
   const theme = useTheme();
@@ -193,7 +194,7 @@ const UserListCard = (user, index) => {
               fullWidth
               size="small"
               sx={{ minWidth: '33%', marginTop: 1 }}
-              startIcon={<CurrencyExchangeIcon />}
+              startIcon={<AccountBalanceWalletOutlined />}
               component={Link}
               to={`/ripple/pay/${user?.user?._id}`}
             >

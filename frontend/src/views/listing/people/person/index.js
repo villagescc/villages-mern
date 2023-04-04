@@ -27,6 +27,7 @@ import Cover from 'assets/images/profile/img-profile-bg1.jpg';
 import { useDispatch, useSelector } from 'store';
 import { getUser } from 'store/slices/user';
 import DefaultUserIcon from '../../../../assets/images/auth/default.png';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -213,7 +214,7 @@ const SocialProfile = () => {
                         to={`/ripple/pay/${id}`}
                         color={'success'}
                         variant="outlined"
-                        startIcon={<CurrencyExchangeIcon />}
+                        startIcon={<AccountBalanceWalletOutlined />}
                       >
                         Pay
                       </Button>
