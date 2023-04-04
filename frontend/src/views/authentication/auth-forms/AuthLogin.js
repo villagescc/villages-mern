@@ -68,32 +68,32 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     event.preventDefault();
   };
 
-  const successCallback = (position) => {
-    setLatitude(position.coords.latitude);
-    setLongitude(position.coords.longitude);
-    geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
-      .then((results) => {
-        setPlaceId(results[results.length - 2].place_id);
-      })
-      .catch((error) => console.error(error));
-  };
-  const errorCallback = (error) => {
-    console.log(error);
-  };
-  useEffect(() => {
-    getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
-      .then((currentToken) => {
-        if (currentToken) {
-          setToken(currentToken);
-        } else {
-          console.log('No registration token available. Request permission to generate one.');
-        }
-      })
-      .catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-      });
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-  }, []);
+  // const successCallback = (position) => {
+  //   setLatitude(position.coords.latitude);
+  //   setLongitude(position.coords.longitude);
+  //   geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
+  //     .then((results) => {
+  //       setPlaceId(results[results.length - 2].place_id);
+  //     })
+  //     .catch((error) => console.error(error));
+  // };
+  // const errorCallback = (error) => {
+  //   console.log(error);
+  // };
+  // useEffect(() => {
+  //   getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
+  //     .then((currentToken) => {
+  //       if (currentToken) {
+  //         setToken(currentToken);
+  //       } else {
+  //         console.log('No registration token available. Request permission to generate one.');
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log('An error occurred while retrieving token. ', err);
+  //     });
+  //   navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+  // }, []);
 
   return (
     <>
