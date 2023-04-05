@@ -20,7 +20,7 @@ const ripple = {
   children: [
     {
       id: 'pay',
-      title: <FormattedMessage id="payment" />,
+      title: <FormattedMessage id="Payment" />,
       type: 'item',
       url: '/ripple/pay',
       icon: icons.IconWallet,
@@ -28,7 +28,7 @@ const ripple = {
     },
     {
       id: 'trust',
-      title: <FormattedMessage id="trust" />,
+      title: <FormattedMessage id="Trust" />,
       type: 'item',
       url: '/ripple/trust',
       icon: icons.IconHeart,
