@@ -25,12 +25,18 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
   const navigation = useNavigate();
   const defaultProps = {
     options: users,
-    getOptionLabel: (option) => (option.name ? `${option.name} (${option.username})` : `${option.username}`),
-    filterOptions: (options, { inputValue }) =>
-      options.filter(
-        (item) =>
-          item.username.toLowerCase().includes(inputValue.toLowerCase()) || item.email.toLowerCase().includes(inputValue.toLowerCase())
-      )
+    getOptionLabel: (option) => {
+      return option.firstName || option.lastName
+        ? `${option.firstName} ${option.lastName} (${option.username})`
+        : option.profile?.name
+        ? `${option?.profile?.name} (${option.username})`
+        : `${option.username}`;
+    },
+    filterOptions: (options, { inputValue }) => {
+      return options.filter((item) => {
+        return item.username.toLowerCase().includes(inputValue?.toLowerCase());
+      });
+    }
   };
 
   const [recipient, setRecipient] = React.useState({});

@@ -91,6 +91,7 @@ const Index = () => {
   }, [userId]);
 
   const [showModal, setShowModal] = useState(false);
+  const [count, setCount] = useState(0);
 
   const handleCreateClick = () => {
     setShowModal(true);
@@ -109,12 +110,12 @@ const Index = () => {
         <AntTab icon={<GraphTwoToneIcon sx={{ fontSize: '1.3rem' }} />} />
       </AntTabs>
       <TabPanel value={value} index={0}>
-        <PaymentHistory handleCreateClick={handleCreateClick} />
+        <PaymentHistory handleCreateClick={handleCreateClick} count={count} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Path />
       </TabPanel>
-      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId} />
+      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId} setCount={setCount} />
     </MainCard>
   );
 };

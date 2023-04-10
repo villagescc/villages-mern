@@ -202,7 +202,7 @@ exports.pay = async (req, res, next) => {
           });
 
         payment.status = "Completed";
-        payment.save();
+        await payment.save();
 
         // Notify
 
@@ -210,19 +210,19 @@ exports.pay = async (req, res, next) => {
       } catch (error) {
         await Paylog.deleteMany({ paymentId: payment._id });
         payment.status = "Failed";
-        payment.save();
+        await payment.save();
         console.log("add paylog error:", error);
         next(error);
       }
     } else {
       payment.status = "Failed";
-      payment.save();
+      await payment.save();
       res.status(400).send(result.errors);
     }
   } catch (err) {
     if (payment) {
       payment.status = "Failed";
-      payment.save();
+      await payment.save();
     }
     console.log("pay error:", err);
     next(err);
@@ -250,7 +250,8 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       },
     };
   }
-  let paths = allSimplePaths(graph, sender, recipient);
+  console.log("hello");
+  let paths = allSimplePaths(graph, sender, recipient, amount);
 
   // console.log(SimplePathsLengthN(graph, sender, recipient));
   // TODO sort for balancing routes
@@ -326,14 +327,24 @@ exports.searchTransactions = async (req, res, next) => {
     // console.log(total);
     const query = Payment.find().sort({ createdAt: -1 });
     if (period?.length === 2) {
-      query.and([
-        {
+      const subquery = [];
+      if (period[0]) {
+        subquery.push({
           createdAt: {
-            $gte: new Date(req.body.period[0]),
-            $lt: new Date(req.body.period[1]),
+            $gte: new Date(period[0]),
           },
-        },
-      ]);
+        });
+      }
+      if (period[1]) {
+        subquery.push({
+          createdAt: {
+            $lte: new Date(period[1]),
+          },
+        });
+      }
+      if (subquery.length > 0) {
+        query.and(subquery);
+      }
     }
     if (paymentType === "All") {
       query.or([{ payer: req.user._id }, { recipient: req.user._id }]);

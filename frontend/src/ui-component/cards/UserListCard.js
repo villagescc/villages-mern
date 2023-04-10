@@ -22,11 +22,17 @@ const UserListCard = (user, index) => {
   const theme = useTheme();
   const [location, setLocation] = useState('');
   useEffect(() => {
-    if (user && user.user && user.user.profile && user.user.profile.placeId) {
-      geocodeByPlaceId(user?.user?.profile?.placeId).then((results) => {
-        setLocation(results[0].formatted_address);
-      });
+    async function fetchData() {
+      if (user && user.user && user.user.profile && user.user.profile.placeId) {
+        try {
+          const results = await geocodeByPlaceId(user.user.profile.placeId);
+          setLocation(results[0].formatted_address);
+        } catch {
+          setLocation('No Description');
+        }
+      } else setLocation('No Description');
     }
+    fetchData();
   }, [user]);
   return (
     <TableRow key={index}>
@@ -38,7 +44,7 @@ const UserListCard = (user, index) => {
               src={user.user.profile.avatar ? `${SERVER_URL}/upload/avatar/` + user.user.profile.avatar : DefaultAvatar}
               sx={{ width: 70, height: 70 }}
               component={Link}
-              to={`/listing/person/${user.user._id}`}
+              to={`/listing/person/${user.user._id}/${user.user.username}`}
             />
           </Grid>
           <Grid item sm lg={8}>
@@ -48,10 +54,10 @@ const UserListCard = (user, index) => {
                   align="left"
                   variant="subtitle1"
                   component={Link}
-                  to={`/listing/person/${user._id}`}
+                  to={`/listing/person/${user.user._id}/${user.user.username}`}
                   style={{ textDecoration: 'none' }}
                 >
-                  {user?.user?.firstName} {user?.user?.lastName}
+                  {user?.user?.username}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -95,8 +101,10 @@ const UserListCard = (user, index) => {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="caption">Username</Typography>
-            <Typography variant="h6">{user?.user?.username}</Typography>
+            <Typography variant="caption">Full Name</Typography>
+            <Typography variant="h6">
+              {user?.user?.profile?.name ? user.user.profile.name : user?.user?.firstName + ' ' + user?.user?.lastName}
+            </Typography>
           </Grid>
         </Grid>
       </TableCell>

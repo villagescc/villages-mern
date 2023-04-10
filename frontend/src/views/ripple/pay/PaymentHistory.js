@@ -61,7 +61,7 @@ import TransactionDetail from './TransactionDetail';
 
 // ===========================|| DASHBOARD ANALYTICS - TOTAL REVENUE CARD ||=========================== //
 
-const PaymentHistory = ({ handleCreateClick }) => {
+const PaymentHistory = ({ handleCreateClick, count }) => {
   const successSX = { color: 'success.dark' };
   const errorSX = { color: 'error.main' };
 
@@ -73,7 +73,7 @@ const PaymentHistory = ({ handleCreateClick }) => {
   const [keyword, setKeyword] = useState('');
   const [address, setAddress] = useState('');
   const [paymentType, setPaymentType] = useState('All'); // "Deposit", "Withdraw"
-  const [period, setPeriod] = useState([new Date('2011-01-01'), new Date(Date.now())]);
+  const [period, setPeriod] = useState([null, null]);
   const [showFilter, setShowFilter] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
 
@@ -106,7 +106,7 @@ const PaymentHistory = ({ handleCreateClick }) => {
         period
       })
     );
-  }, [page, status, keyword, paymentType, period]);
+  }, [page, status, keyword, paymentType, period, count]);
 
   return (
     <>
@@ -241,20 +241,22 @@ const PaymentHistory = ({ handleCreateClick }) => {
           <TableBody>
             {transactions.map((row, index) => (
               <TableRow hover key={index}>
-                <TableCell
-                  component={Link}
-                  to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
-                  style={{ textDecoration: 'none' }}
-                >
+                <TableCell>
                   {row?.payer?._id === user?._id ? (
                     <Avatar
                       src={
                         row?.recipient?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + row?.recipient?.profile?.avatar : DefaultAvatar
                       }
+                      component={Link}
+                      to={`/listing/person/${row?.recipient?._id}`}
+                      style={{ textDecoration: 'none' }}
                     />
                   ) : (
                     <Avatar
                       src={row?.payer?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + row?.payer?.profile?.avatar : DefaultAvatar}
+                      component={Link}
+                      to={`/listing/person/${row?.payer?._id}`}
+                      style={{ textDecoration: 'none' }}
                     />
                   )}
                 </TableCell>
@@ -265,7 +267,18 @@ const PaymentHistory = ({ handleCreateClick }) => {
                     to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
                     style={{ textDecoration: 'none' }}
                   >
-                    {row?.payer?._id === user?._id ? row.recipient.profile?.name + '(' + row.recipient.username + ')' : row.payer.username}
+                    {/* {row?.payer?._id === user?._id ? row.recipient.profile?.name + '(' + row.recipient.username + ')' : row.payer.username} */}
+                    {row?.payer?._id === user?._id
+                      ? row.recipient.profile?.name
+                        ? row.recipient.profile?.name + '(' + row.recipient.username + ')'
+                        : row.recipient.firstName || row.recipient.lastName
+                        ? row.recipient.firstName + ' ' + row.recipient.lastName + '(' + row.recipient.username + ')'
+                        : row.recipient.username
+                      : row.payer.profile?.name
+                      ? row.payer.profile?.name + '(' + row.payer.username + ')'
+                      : row.payer.firstName || row.payer.lastName
+                      ? row.payer.firstName + ' ' + row.payer.lastName + '(' + row.payer.username + ')'
+                      : row.payer.username}
                   </Typography>
                 </TableCell>
                 <TableCell>{row.memo.length > 50 ? row.memo.slice(0, 50) + '...' : row.memo}</TableCell>

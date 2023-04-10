@@ -10,6 +10,9 @@ const { _getBalanceById } = require("../controller/account.controller");
 const Listing = require("../models/Listing");
 const Log = require("../models/Log");
 const Payment = require("../models/Payment");
+const sharp = require("sharp");
+const path = require("path");
+const fs = require("fs");
 
 exports.search = async (req, res, next) => {
   let { keyword, page } = req.body;
@@ -26,10 +29,7 @@ exports.search = async (req, res, next) => {
         ],
       };
     }
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .populate("profile")
-      .exec();
+    const users = await User.find(query).sort({ createdAt: -1 }).select("id");
     let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
     let userData = [];
     for (let i = 0; i < filteredUsers.length; i++) {
@@ -53,6 +53,7 @@ exports.getById = async (req, res, next) => {
 };
 
 const getUserDetail = async (id) => {
+  const start = Date.now();
   // let userInfo = {};
   const user = await User.findById(id).exec();
   const profile = await Profile.findOne({ user: id });
@@ -94,14 +95,26 @@ const getUserDetail = async (id) => {
     payments,
   };
 
+  const span = Date.now() - start;
+  console.log(`fetched ${id} - ${span}`);
   return userInfo;
 };
 
 exports.uploadAvatar = async (req, res, next) => {
   const uploadFile = req.file;
+  const { filename: image } = req.file;
+  try {
+    await sharp(req.file.path)
+      .resize(200, 200)
+      .jpeg({ quality: 90 })
+      .toFile(path.resolve(req.file.destination, "resized", image));
+    fs.unlinkSync(req.file.path);
+  } catch (err) {
+    console.log(err);
+  }
   try {
     await Profile.findByIdAndUpdate(req.user.profile, {
-      avatar: uploadFile.filename,
+      avatar: `resized/${uploadFile.filename}`,
     });
     res.send({ success: true });
   } catch (err) {

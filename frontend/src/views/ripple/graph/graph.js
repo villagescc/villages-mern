@@ -82,7 +82,7 @@ const LoadGraphWithByProp = () => {
         });
       });
       graph.forEachNode((node, attributes) => {
-        if (node == user._id) graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 10);
+        if (node == user._id) graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 15);
         else graph.setNodeAttribute(node, 'size', graph.degree(node) / 30 + 3);
       });
       const positions = random(graph, { dimensions: ['x1', 'x2'] });

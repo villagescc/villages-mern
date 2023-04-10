@@ -173,16 +173,20 @@ exports.login = (req, res, next) => {
 
             const userData = await _getUser(user.id);
 
-            await User.findByIdAndUpdate(user._id, {
-              deviceToken,
-              latitude,
-              longitude,
-            });
-
-            await Profile.findOneAndUpdate(
-              { user: user._id },
-              { placeId: placeId }
-            );
+            if (deviceToken !== "")
+              await User.findByIdAndUpdate(user._id, {
+                deviceToken,
+              });
+            if (latitude !== "" && longitude !== "")
+              await User.findByIdAndUpdate(user._id, {
+                latitude,
+                longitude,
+              });
+            if (placeId !== "")
+              await Profile.findOneAndUpdate(
+                { user: user._id },
+                { placeId: placeId }
+              );
 
             const payload = {
               user: {
@@ -223,13 +227,16 @@ exports.login = (req, res, next) => {
         const token = crypto.randomBytes(32).toString("hex");
         user.password = await bcrypt.hash(password, salt);
         user.token = token;
-        user.deviceToken = deviceToken;
-        user.latitute = latitude;
-        user.longitude = longitude;
-        await Profile.findOneAndUpdate(
-          { user: user._id },
-          { placeId: placeId }
-        );
+        if (deviceToken !== "") user.deviceToken = deviceToken;
+        if (latitude !== "" && longitude !== "") {
+          user.latitute = latitude;
+          user.longitude = longitude;
+        }
+        if (placeId !== "")
+          await Profile.findOneAndUpdate(
+            { user: user._id },
+            { placeId: placeId }
+          );
         user
           .save()
           .then(() => res.send({ success: true }))

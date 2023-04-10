@@ -14,13 +14,13 @@ const icons = {
 
 const ripple = {
   id: 'ripple',
-  title: <FormattedMessage id="Payments" />,
+  title: <FormattedMessage id="payments" />,
   icon: icons.IconDashboard,
   type: 'group',
   children: [
     {
       id: 'pay',
-      title: <FormattedMessage id="Payment" />,
+      title: <FormattedMessage id="payment" />,
       type: 'item',
       url: '/ripple/pay',
       icon: icons.IconWallet,
@@ -28,7 +28,7 @@ const ripple = {
     },
     {
       id: 'trust',
-      title: <FormattedMessage id="Trust" />,
+      title: <FormattedMessage id="trust" />,
       type: 'item',
       url: '/ripple/trust',
       icon: icons.IconHeart,

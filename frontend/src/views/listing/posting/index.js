@@ -37,6 +37,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { isEmpty } from 'lodash';
+import { SERVER_URL } from 'config';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -48,6 +49,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 const Posting = () => {
   const theme = useTheme();
   let { pageId } = useParams();
+  if (!pageId) pageId = 1;
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useAuth();
 
@@ -196,7 +198,7 @@ const Posting = () => {
     setCategory(post.subcategoryId.categoryId._id);
     setSubCategory(post.subcategoryId._id);
     setTags([...post?.tags?.map((tag) => ({ id: tag?.title, text: tag?.title }))]);
-    setPreviewImage(post.photo ? 'https://villages.io/api/upload/posting/' + post.photo : null);
+    setPreviewImage(post.photo ? `${SERVER_URL}/upload/posting/` + post.photo : null);
     setOpenCreate(true);
   };
 

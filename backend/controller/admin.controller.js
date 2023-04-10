@@ -9,13 +9,26 @@ const { _getBalanceById } = require("../controller/account.controller");
 const Listing = require("../models/Listing");
 const Log = require("../models/Log");
 const Payment = require("../models/Payment");
+const sharp = require("sharp");
+const path = require("path");
+const fs = require("fs");
 
 exports.uploadAvatar = async (req, res, next) => {
   const uploadFile = req.file;
+  const { filename: image } = req.file;
+  try {
+    await sharp(req.file.path)
+      .resize(200, 200)
+      .jpeg({ quality: 90 })
+      .toFile(path.resolve(req.file.destination, "resized", image));
+    fs.unlinkSync(req.file.path);
+  } catch (err) {
+    console.log(err);
+  }
   const user = JSON.parse(req.body.user);
   try {
     await Profile.findByIdAndUpdate(user.profile._id, {
-      avatar: uploadFile.filename,
+      avatar: `resized/${uploadFile.filename}`,
     });
     res.send({ success: true });
   } catch (err) {

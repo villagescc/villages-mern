@@ -33,7 +33,10 @@ exports.getSubcategories = async (req, res, next) => {
 
 exports.getRecipients = async (req, res, next) => {
   try {
-    const users = await User.find().select("id username email");
+    const users = await User.find(
+      {},
+      "id username firstName lastName"
+    ).populate("profile", "name");
     res.send(users);
   } catch (err) {
     next(err);

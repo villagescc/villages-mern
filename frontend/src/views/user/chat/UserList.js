@@ -80,7 +80,7 @@ const UserList = ({ setUser }) => {
                         display: 'block'
                       }}
                     >
-                      {user?.user?.profile?.name}
+                      {user?.user?.profile?.name ? user.user.profile.name : user?.user?.firstName + ' ' + user?.user?.lastName}
                     </Typography>
                   </Grid>
                 </Grid>

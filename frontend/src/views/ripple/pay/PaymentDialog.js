@@ -32,7 +32,7 @@ import Graph from '../graph/path';
 import PaperComponent from 'ui-component/extended/PaperComponent';
 
 // ==============================|| Layouts ||============================== //
-function PaymentDialog({ open, setOpen, recipientId }) {
+function PaymentDialog({ open, setOpen, recipientId, setCount }) {
   const dispatch = useDispatch();
   const paymentState = useSelector((state) => state.payment);
   const { user, init } = useAuth();
@@ -74,6 +74,7 @@ function PaymentDialog({ open, setOpen, recipientId }) {
     setMemo('');
     setOpen(false);
     init();
+    setCount((prevCount) => prevCount + 1);
   };
 
   useEffect(() => {
@@ -85,8 +86,9 @@ function PaymentDialog({ open, setOpen, recipientId }) {
       let user = {
         _id: transaction.recipient._id,
         username: transaction.recipient.username,
-        email: transaction.recipient.email,
-        name: transaction.recipient.profile?.name
+        firstName: transaction.recipient.firstName,
+        lastName: transaction.recipient.lastName,
+        profile: transaction.recipient.profile
       };
       if (!relatedUsers.find((userr) => userr._id === user._id)) {
         relatedUsers.push(user);
@@ -123,12 +125,18 @@ function PaymentDialog({ open, setOpen, recipientId }) {
 
   const defaultProps = {
     options: users,
-    getOptionLabel: (option) => (option.name ? `${option.name} (${option.username})` : `${option.username}`),
-    filterOptions: (options, { inputValue }) =>
-      options.filter(
-        (item) =>
-          item.username.toLowerCase().includes(inputValue.toLowerCase()) || item.email.toLowerCase().includes(inputValue.toLowerCase())
-      )
+    getOptionLabel: (option) => {
+      return option.firstName || option.lastName
+        ? `${option.firstName} ${option.lastName} (${option.username})`
+        : option.profile?.name
+        ? `${option?.profile?.name} (${option.username})`
+        : `${option.username}`;
+    },
+    filterOptions: (options, { inputValue }) => {
+      return options.filter((item) => {
+        return item.username.toLowerCase().includes(inputValue?.toLowerCase());
+      });
+    }
   };
 
   return (

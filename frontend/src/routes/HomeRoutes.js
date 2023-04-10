@@ -49,6 +49,10 @@ const HomeRoutes = {
       element: <People />
     },
     {
+      path: '/listing/person/:id/:username',
+      element: <Person />
+    },
+    {
       path: '/listing/person/:id',
       element: <Person />
     },
