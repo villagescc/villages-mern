@@ -7,8 +7,11 @@ const crypto = require("crypto");
 
 const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
-const paymentController = require("./payment.controller");
+// const paymentController = require("./payment.controller");
 
+const MailChimp = require("mailchimp-api-v3");
+const mailchimp = new MailChimp(process.env.MAILCHIMP_APIKEY);
+const listID = process.env.MAILCHIMP_LIST_ID;
 // const client = require("@mailchimp/mailchimp_marketing");
 // client.setConfig({
 //   apiKey: process.env.MAILCHIMP_APIKEY,
@@ -77,6 +80,23 @@ exports.registerUser = async (req, res, next) => {
     user.password = await bcrypt.hash(password, salt);
     user.profile = profile._id;
     user.account = account._id;
+
+    const newUser = {
+      email_address: email.toLowerCase(),
+      status: "active",
+      merge_fields: {
+        FNAME: firstName,
+        LNAME: lastName,
+      },
+    };
+    mailchimp
+      .post(`/lists/${listID}/membbers`, newUser)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     user.save((err) => {
       if (err) {

@@ -49,6 +49,8 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const [notifyText, setNotifyText] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitPayment = () => {
@@ -108,9 +110,11 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
 
   useEffect(() => {
     if (!!recipient) {
-      dispatch(getPath(user._id, recipient));
+      setNotifyText(true);
+      dispatch(getPath(user._id, recipient, setNotifyText));
       dispatch(getMaxLimit(recipient));
     } else {
+      setNotifyText(false);
       setAmount(0);
     }
   }, [recipient]);
@@ -170,12 +174,14 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                       label="CHOOSE THE PAYMENT RECEIVER:"
                       margin="normal"
                       size={'small'}
-                      error={errors.recipient}
+                      error={errors?.recipient ? errors.recipient : ''}
                       helperText={
-                        errors?.recipient || maxLimit > 0
+                        notifyText
+                          ? 'Please wait for a while getting path...'
+                          : maxLimit > 0
                           ? `You can send up to ${maxLimit}VH`
-                          : recipient
-                          ? 'You cannot send any value.'
+                          : errors?.recipient
+                          ? errors.recipient
                           : 'Please select the recipient'
                       }
                     />
@@ -219,7 +225,12 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
             </Dialog>
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" color="secondary" onClick={submitPayment} disabled={isSubmitting}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={submitPayment}
+              disabled={maxLimit > 0 ? (isSubmitting ? true : false) : true}
+            >
               Send Payment
             </Button>
             {maxLimit > 0 && (

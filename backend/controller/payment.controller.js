@@ -252,6 +252,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
   }
   console.log("hello");
   let paths = allSimplePaths(graph, sender, recipient, amount);
+  console.log(paths);
 
   // console.log(SimplePathsLengthN(graph, sender, recipient));
   // TODO sort for balancing routes
