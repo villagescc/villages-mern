@@ -34,11 +34,12 @@ const buildGraph = async (nodes = null) => {
 
   // layout manually
   if (nodes === null) {
-    graph.nodes().forEach((node, i) => {
+    for (let i = 0; i < graph.nodes().length; i++) {
+      const node = graph.nodes()[i];
       const angle = (i * 2 * Math.PI) / graph.order;
       graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
       graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-    });
+    }
   }
 
   let endorsements;
@@ -47,49 +48,50 @@ const buildGraph = async (nodes = null) => {
     endorsements = await Endorsement.find({
       $and: [{ endorserId: { $in: nodes } }, { recipientId: { $in: nodes } }],
     });
-  endorsements.forEach((endorsement) => {
+
+  for (let endorsement of endorsements) {
     graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, {
       limit: endorsement.weight,
     });
-  });
+  }
   const paylogs = await Paylog.find().populate("paymentId").exec();
-  paylogs
-    .filter((paylog) => {
-      if (nodes === null) return true;
-      else
-        return (
-          nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
-        );
-    })
-    .forEach((paylog) => {
-      if (paylog.paymentId && paylog.paymentId.status === "Completed") {
-        // increase limit for amount which you got paid
-        if (graph.hasEdge(paylog.recipient, paylog.payer))
-          graph.updateEdgeAttribute(
-            paylog.recipient,
-            paylog.payer,
-            "limit",
-            (limit) => (limit || 0) + paylog.amount
-          );
-        else
-          graph.mergeEdge(paylog.recipient, paylog.payer, {
-            limit: paylog.amount,
-          });
+  const filteredPaylogs = paylogs.filter((paylog) => {
+    if (nodes === null) return true;
+    else
+      return (
+        nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
+      );
+  });
 
-        // decrease limit for amount which you paid
-        if (graph.hasEdge(paylog.payer, paylog.recipient))
-          graph.updateEdgeAttribute(
-            paylog.payer,
-            paylog.recipient,
-            "limit",
-            (limit) => (limit || 0) - paylog.amount
-          );
-        else
-          graph.mergeEdge(paylog.payer, paylog.recipient, {
-            limit: -paylog.amount,
-          });
-      }
-    });
+  for (let paylog of filteredPaylogs) {
+    if (paylog.paymentId && paylog.paymentId.status === "Completed") {
+      // increase limit for amount which you got paid
+      if (graph.hasEdge(paylog.recipient, paylog.payer))
+        graph.updateEdgeAttribute(
+          paylog.recipient,
+          paylog.payer,
+          "limit",
+          (limit) => (limit || 0) + paylog.amount
+        );
+      else
+        graph.mergeEdge(paylog.recipient, paylog.payer, {
+          limit: paylog.amount,
+        });
+
+      // decrease limit for amount which you paid
+      if (graph.hasEdge(paylog.payer, paylog.recipient))
+        graph.updateEdgeAttribute(
+          paylog.payer,
+          paylog.recipient,
+          "limit",
+          (limit) => (limit || 0) - paylog.amount
+        );
+      else
+        graph.mergeEdge(paylog.payer, paylog.recipient, {
+          limit: -paylog.amount,
+        });
+    }
+  }
   return graph;
 };
 
@@ -251,7 +253,8 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
     };
   }
   console.log("hello");
-  let paths = allSimplePaths(graph, sender, recipient, amount);
+
+  let paths = allSimplePaths(graph, sender, recipient, { maxDepth: 3 });
   console.log(paths);
 
   // console.log(SimplePathsLengthN(graph, sender, recipient));
