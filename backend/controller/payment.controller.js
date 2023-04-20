@@ -105,6 +105,7 @@ exports.getGraph = async (req, res, next) => {
 };
 
 exports.getPath = async (req, res, next) => {
+  console.log(req.body);
   try {
     const { senderId, recipientId } = req.body;
     const result = await this._getMaxFlow(senderId, recipientId);
