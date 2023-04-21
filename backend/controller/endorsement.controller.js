@@ -95,6 +95,34 @@ exports.save = async (req, res, next) => {
   }
 };
 
+exports.delete = async (req, res, next) => {
+  let errors = {};
+  const { recipient } = req.body.recipient;
+  console.log(req.body);
+  const recipientUser = await User.findById(recipient);
+  if (!recipientUser) {
+    errors.recipient = "Recipient does not exist.";
+    return res.status(404).send(errors);
+  }
+  if (req.user._id === recipient) {
+    errors.recipient = "You can't send trust to yourself.";
+    return res.status(400).send(errors);
+  }
+
+  try {
+    let endorsement = await Endorsement.findOne({
+      recipientId: recipientUser._id,
+      endorserId: req.user._id,
+    });
+    endorsement.weight = 0;
+    endorsement.text = "";
+    await endorsement.save();
+    res.send(endorsement);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.search = async (req, res, next) => {
   const { keyword, page } = req.body;
   try {
@@ -215,7 +243,10 @@ exports.getFollowings = async (req, res, next) => {
 };
 
 exports._getFollowers = async (id) => {
-  const endorsers = await Endorsement.find({ recipientId: id }).exec();
+  const endorsers = await Endorsement.find({
+    recipientId: id,
+    weight: { $ne: 0 },
+  }).exec();
   const followers = await Profile.find({
     user: { $in: endorsers.map((endorser) => endorser.endorserId) },
   })
@@ -231,7 +262,10 @@ exports._getFollowers = async (id) => {
 };
 
 exports._getFollowings = async (id) => {
-  const endorsers = await Endorsement.find({ endorserId: id }).exec();
+  const endorsers = await Endorsement.find({
+    endorserId: id,
+    weight: { $ne: 0 },
+  }).exec();
   const followings = await Profile.find({
     user: { $in: endorsers.map((endorser) => endorser.recipientId) },
   })

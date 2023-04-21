@@ -15,7 +15,7 @@ import CreateModal from './CreateModal';
 import EndorsementCardSkeleton from 'ui-component/cards/Skeleton/EndorsementCard';
 
 import { useDispatch, useSelector } from 'store';
-import { searchEndorsements, getUsers, saveEndorsement } from 'store/slices/endorsement';
+import { searchEndorsements, getUsers, saveEndorsement, deleteEndorsement } from 'store/slices/endorsement';
 import { openSnackbar } from 'store/slices/snackbar';
 
 // assets
@@ -107,6 +107,10 @@ const Index = () => {
     dispatch(saveEndorsement(endorsement, successAction));
   };
 
+  const handleDeleteClick = (recipient, text, weight) => {
+    dispatch(deleteEndorsement(recipient, text, weight, successAction));
+  };
+
   const successAction = () => {
     dispatch(
       openSnackbar({
@@ -181,6 +185,13 @@ const Index = () => {
                           weight: item.send_weight
                         });
                         setOpenCreate(true);
+                      }}
+                      onDelete={() => {
+                        handleDeleteClick({
+                          recipient: item.user._id,
+                          text: '',
+                          weight: 0
+                        });
                       }}
                     />
                   </Grid>

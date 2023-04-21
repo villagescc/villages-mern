@@ -120,6 +120,12 @@ router.post(
   endorsementController.save
 );
 router.post(
+  "/endorsement/delete",
+  authMiddleware.auth,
+  // endorsementMiddleware.delete,
+  endorsementController.delete
+);
+router.post(
   "/endorsement/search",
   authMiddleware.auth,
   endorsementController.search

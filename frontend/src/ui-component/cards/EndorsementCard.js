@@ -12,6 +12,7 @@ import { gridSpacing } from 'store/constant';
 // assets
 // import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import DeleteTwoTOneIcon from '@mui/icons-material/DeleteTwoTone';
 import DefaultUserIcon from '../../assets/images/auth/default.png';
 import { SERVER_URL } from 'config';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ import { Link } from 'react-router-dom';
 
 // ==============================|| USER CONTACT CARD ||============================== //
 
-const EndorsementCard = ({ endorsement, onActive }) => {
+const EndorsementCard = ({ endorsement, onActive, onDelete }) => {
   const theme = useTheme();
   const { user, send_weight, send_text, receive_weight, receive_text } = endorsement;
 
@@ -73,9 +74,18 @@ const EndorsementCard = ({ endorsement, onActive }) => {
           <Typography variant="h6">{receive_text ? receive_text : 'No description'}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="outlined" sx={{ width: '100%' }} startIcon={<EditTwoToneIcon />} onClick={onActive}>
-            Edit
-          </Button>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Button variant="outlined" sx={{ width: '100%' }} startIcon={<EditTwoToneIcon />} onClick={onActive}>
+                Edit
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Button variant="outlined" sx={{ width: '100%' }} startIcon={<DeleteTwoTOneIcon />} onClick={onDelete}>
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Card>
