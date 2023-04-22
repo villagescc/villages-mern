@@ -87,6 +87,7 @@ const Posting = () => {
   const [tags, setTags] = React.useState([]);
   const [previewImage, setPreviewImage] = React.useState(null);
   const [showFilter, setShowFilter] = React.useState(false);
+  const [count, setCount] = React.useState(0);
 
   const postingState = useSelector((state) => state.posting);
 
@@ -112,7 +113,7 @@ const Posting = () => {
     setPosts(postingState.posts);
     setTotal(postingState.total);
     setErrors(postingState.error);
-  }, [postingState]);
+  }, [postingState, count]);
 
   useEffect(() => {
     setLoading(true);
@@ -120,7 +121,7 @@ const Posting = () => {
     dispatch(getCategories());
     dispatch(getSubCategories());
     dispatch(filterPost(filterData));
-  }, [filterData]);
+  }, [filterData, count]);
 
   const handleSearch = (event) => {
     const newString = event?.target.value;
@@ -216,7 +217,7 @@ const Posting = () => {
       data.append('tags', tag.text);
     });
     dispatch(
-      submitPost(data, () => {
+      submitPost(data, setCount(), () => {
         setOpenCreate(false);
         dispatch(filterData);
       })

@@ -108,7 +108,7 @@ const Index = () => {
   };
 
   const handleDeleteClick = (recipient, text, weight) => {
-    dispatch(deleteEndorsement(recipient, text, weight, successAction));
+    dispatch(deleteEndorsement(recipient, text, weight, successAction, setOpenCreate));
   };
 
   const successAction = () => {

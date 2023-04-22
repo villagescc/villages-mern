@@ -37,6 +37,7 @@ exports.save = async (req, res, next) => {
     } else {
       endorsement.weight = weight;
       endorsement.text = text;
+      endorsement.deleted = false;
       endorsement.referred = referred;
       await endorsement.save();
       notifyText = `${req.user.username} updated trust limit as ${weight}(V.H.).`;
@@ -70,7 +71,7 @@ exports.save = async (req, res, next) => {
           data: `<h1>You has been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
                 <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
                 <p>${notifyText}</p>
-                <a href=https://villages.io/auth/ripple/trust> Click here</a>
+                <a href=https://villages.io/ripple/trust> Click here</a>
                 <br>`,
         }
       )
@@ -98,7 +99,7 @@ exports.save = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   let errors = {};
   const { recipient } = req.body.recipient;
-  console.log(req.body);
+  console.log(recipient);
   const recipientUser = await User.findById(recipient);
   if (!recipientUser) {
     errors.recipient = "Recipient does not exist.";
@@ -116,6 +117,7 @@ exports.delete = async (req, res, next) => {
     });
     endorsement.weight = 0;
     endorsement.text = "";
+    endorsement.deleted = true;
     await endorsement.save();
     res.send(endorsement);
   } catch (err) {
@@ -126,7 +128,7 @@ exports.delete = async (req, res, next) => {
 exports.search = async (req, res, next) => {
   const { keyword, page } = req.body;
   try {
-    let query = { $and: [] };
+    let query = { $and: [{ deleted: { $ne: true } }] };
     query.$and.push({
       $or: [{ endorserId: req.user._id }, { recipientId: req.user._id }],
     });
@@ -245,8 +247,9 @@ exports.getFollowings = async (req, res, next) => {
 exports._getFollowers = async (id) => {
   const endorsers = await Endorsement.find({
     recipientId: id,
-    weight: { $ne: 0 },
+    weight: { $ne: Number(0) },
   }).exec();
+  console.log(endorsers.length);
   const followers = await Profile.find({
     user: { $in: endorsers.map((endorser) => endorser.endorserId) },
   })
@@ -264,7 +267,7 @@ exports._getFollowers = async (id) => {
 exports._getFollowings = async (id) => {
   const endorsers = await Endorsement.find({
     endorserId: id,
-    weight: { $ne: 0 },
+    weight: { $ne: Number(0) },
   }).exec();
   const followings = await Profile.find({
     user: { $in: endorsers.map((endorser) => endorser.recipientId) },

@@ -16,7 +16,7 @@ import { openSnackbar } from 'store/slices/snackbar';
 
 // ========================|| FIREBASE - FORGOT PASSWORD ||======================== //
 
-const AuthForgotPassword = ({ ...others }) => {
+const AuthForgotPassword = ({ setVerified, ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const dispatch = useDispatch();
@@ -51,6 +51,7 @@ const AuthForgotPassword = ({ ...others }) => {
                   close: false
                 })
               );
+              setVerified(true);
               //   setTimeout(() => {
               //     navigate('/reset-password', { replace: true });
               //   }, 1500);

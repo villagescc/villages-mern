@@ -19,6 +19,10 @@ const EndorsementSchema = new mongoose.Schema(
     referred: {
       type: String,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

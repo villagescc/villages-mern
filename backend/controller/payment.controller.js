@@ -11,107 +11,35 @@ const isEmpty = require("../validation/is-empty");
 
 const axios = require("axios");
 
-// const _getUser = async (id) => {
-//   const user = await User.findById(id).exec();
-//   if (user) {
-//     user.account = await Account.findOne({ user: user._id }).exec();
-//     user.profile = await Profile.findOne({ user: user._id }).exec();
-//   }
+const _getUser = async (id) => {
+  const user = await User.findById(id).exec();
+  if (user) {
+    user.account = await Account.findOne({ user: user._id }).exec();
+    user.profile = await Profile.findOne({ user: user._id }).exec();
+  }
 
-//   return user;
-// };
-
-// const buildGraph = async (nodes = null) => {
-//   const graph = await new Graph();
-//   const users = await User.find();
-//   for (let user of users) {
-//     const userData = await _getUser(user.id);
-//     if (nodes !== null && !nodes.includes(user.id)) continue;
-//     graph.addNode(user.id, {
-//       ...userData._doc,
-//     });
-//   }
-
-//   // layout manually
-//   if (nodes === null) {
-//     for (let i = 0; i < graph.nodes().length; i++) {
-//       const node = graph.nodes()[i];
-//       const angle = (i * 2 * Math.PI) / graph.order;
-//       graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
-//       graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-//     }
-//   }
-
-//   let endorsements;
-//   if (nodes === null) endorsements = await Endorsement.find();
-//   else
-//     endorsements = await Endorsement.find({
-//       $and: [{ endorserId: { $in: nodes } }, { recipientId: { $in: nodes } }],
-//     });
-
-//   for (let endorsement of endorsements) {
-//     graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, {
-//       limit: endorsement.weight,
-//     });
-//   }
-//   const paylogs = await Paylog.find().populate("paymentId").exec();
-//   const filteredPaylogs = paylogs.filter((paylog) => {
-//     if (nodes === null) return true;
-//     else
-//       return (
-//         nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
-//       );
-//   });
-
-//   for (let paylog of filteredPaylogs) {
-//     if (paylog.paymentId && paylog.paymentId.status === "Completed") {
-//       // increase limit for amount which you got paid
-//       if (graph.hasEdge(paylog.recipient, paylog.payer))
-//         graph.updateEdgeAttribute(
-//           paylog.recipient,
-//           paylog.payer,
-//           "limit",
-//           (limit) => (limit || 0) + paylog.amount
-//         );
-//       else
-//         graph.mergeEdge(paylog.recipient, paylog.payer, {
-//           limit: paylog.amount,
-//         });
-
-//       // decrease limit for amount which you paid
-//       if (graph.hasEdge(paylog.payer, paylog.recipient))
-//         graph.updateEdgeAttribute(
-//           paylog.payer,
-//           paylog.recipient,
-//           "limit",
-//           (limit) => (limit || 0) - paylog.amount
-//         );
-//       else
-//         graph.mergeEdge(paylog.payer, paylog.recipient, {
-//           limit: -paylog.amount,
-//         });
-//     }
-//   }
-//   return graph;
-// };
+  return user;
+};
 
 const buildGraph = async (nodes = null) => {
   const graph = await new Graph();
   const users = await User.find();
   for (let user of users) {
+    const userData = await _getUser(user.id);
     if (nodes !== null && !nodes.includes(user.id)) continue;
     graph.addNode(user.id, {
-      ...user._doc,
+      ...userData._doc,
     });
   }
 
   // layout manually
   if (nodes === null) {
-    graph.nodes().forEach((node, i) => {
+    for (let i = 0; i < graph.nodes().length; i++) {
+      const node = graph.nodes()[i];
       const angle = (i * 2 * Math.PI) / graph.order;
       graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
       graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-    });
+    }
   }
 
   let endorsements;
@@ -120,51 +48,123 @@ const buildGraph = async (nodes = null) => {
     endorsements = await Endorsement.find({
       $and: [{ endorserId: { $in: nodes } }, { recipientId: { $in: nodes } }],
     });
-  endorsements.forEach((endorsement) => {
+
+  for (let endorsement of endorsements) {
     graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, {
       limit: endorsement.weight,
     });
-  });
+  }
   const paylogs = await Paylog.find().populate("paymentId").exec();
-  paylogs
-    .filter((paylog) => {
-      if (nodes === null) return true;
-      else
-        return (
-          nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
-        );
-    })
-    .forEach((paylog) => {
-      if (paylog.paymentId && paylog.paymentId.status === "Completed") {
-        // increase limit for amount which you got paid
-        if (graph.hasEdge(paylog.recipient, paylog.payer))
-          graph.updateEdgeAttribute(
-            paylog.recipient,
-            paylog.payer,
-            "limit",
-            (limit) => (limit || 0) + paylog.amount
-          );
-        else
-          graph.mergeEdge(paylog.recipient, paylog.payer, {
-            limit: paylog.amount,
-          });
+  const filteredPaylogs = paylogs.filter((paylog) => {
+    if (nodes === null) return true;
+    else
+      return (
+        nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
+      );
+  });
 
-        // decrease limit for amount which you paid
-        if (graph.hasEdge(paylog.payer, paylog.recipient))
-          graph.updateEdgeAttribute(
-            paylog.payer,
-            paylog.recipient,
-            "limit",
-            (limit) => (limit || 0) - paylog.amount
-          );
-        else
-          graph.mergeEdge(paylog.payer, paylog.recipient, {
-            limit: -paylog.amount,
-          });
-      }
-    });
+  for (let paylog of filteredPaylogs) {
+    if (paylog.paymentId && paylog.paymentId.status === "Completed") {
+      // increase limit for amount which you got paid
+      if (graph.hasEdge(paylog.recipient, paylog.payer))
+        graph.updateEdgeAttribute(
+          paylog.recipient,
+          paylog.payer,
+          "limit",
+          (limit) => (limit || 0) + paylog.amount
+        );
+      else
+        graph.mergeEdge(paylog.recipient, paylog.payer, {
+          limit: paylog.amount,
+        });
+
+      // decrease limit for amount which you paid
+      if (graph.hasEdge(paylog.payer, paylog.recipient))
+        graph.updateEdgeAttribute(
+          paylog.payer,
+          paylog.recipient,
+          "limit",
+          (limit) => (limit || 0) - paylog.amount
+        );
+      else
+        graph.mergeEdge(paylog.payer, paylog.recipient, {
+          limit: -paylog.amount,
+        });
+    }
+  }
   return graph;
 };
+
+// const buildGraph = async (nodes = null) => {
+//   const graph = await new Graph();
+//   const users = await User.find();
+//   for (let user of users) {
+//     if (nodes !== null && !nodes.includes(user.id)) continue;
+//     graph.addNode(user.id, {
+//       ...user._doc,
+//     });
+//   }
+
+//   // layout manually
+//   if (nodes === null) {
+//     graph.nodes().forEach((node, i) => {
+//       const angle = (i * 2 * Math.PI) / graph.order;
+//       graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
+//       graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+//     });
+//   }
+
+//   let endorsements;
+//   if (nodes === null) endorsements = await Endorsement.find();
+//   else
+//     endorsements = await Endorsement.find({
+//       $and: [{ endorserId: { $in: nodes } }, { recipientId: { $in: nodes } }],
+//     });
+//   endorsements.forEach((endorsement) => {
+//     graph.mergeEdge(endorsement.recipientId, endorsement.endorserId, {
+//       limit: endorsement.weight,
+//     });
+//   });
+//   const paylogs = await Paylog.find().populate("paymentId").exec();
+//   paylogs
+//     .filter((paylog) => {
+//       if (nodes === null) return true;
+//       else
+//         return (
+//           nodes.includes(paylog.recipient) && nodes.includes(paylog.endorserId)
+//         );
+//     })
+//     .forEach((paylog) => {
+//       if (paylog.paymentId && paylog.paymentId.status === "Completed") {
+//         // increase limit for amount which you got paid
+//         if (graph.hasEdge(paylog.recipient, paylog.payer))
+//           graph.updateEdgeAttribute(
+//             paylog.recipient,
+//             paylog.payer,
+//             "limit",
+//             (limit) => (limit || 0) + paylog.amount
+//           );
+//         else
+//           graph.mergeEdge(paylog.recipient, paylog.payer, {
+//             limit: paylog.amount,
+//           });
+
+//         // decrease limit for amount which you paid
+//         if (graph.hasEdge(paylog.payer, paylog.recipient))
+//           graph.updateEdgeAttribute(
+//             paylog.payer,
+//             paylog.recipient,
+//             "limit",
+//             (limit) => (limit || 0) - paylog.amount
+//           );
+//         else
+//           graph.mergeEdge(paylog.payer, paylog.recipient, {
+//             limit: -paylog.amount,
+//           });
+//       }
+//     });
+//   return graph;
+// };
 
 exports.getGraph = async (req, res, next) => {
   try {
@@ -264,7 +264,7 @@ exports.pay = async (req, res, next) => {
               data: `<h1>You has been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
               <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
               <p>${notifyText}</p>
-              <a href=https://villages.io/auth/ripple/pay> Click here</a>
+              <a href=https://villages.io/ripple/pay> Click here</a>
               <br>`,
             }
           )

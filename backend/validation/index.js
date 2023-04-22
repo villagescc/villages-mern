@@ -213,22 +213,25 @@ exports.validateProfileSave = (data) => {
   data.lastName = !isEmpty(data.lastName) ? data.lastName : "";
   data.job = !isEmpty(data.job) ? data.job : "";
   data.placeId = !isEmpty(data.placeId) ? data.placeId : "";
+  data.zipCode = !isEmpty(data.zipCode) ? data.zipCode : "";
+  data.phoneNumber = !isEmpty(data.phoneNumber) ? data.phoneNumber : "";
+  data.website = !isEmpty(data.website) ? data.website : "";
 
   if (!validator.isLength(data.firstName, { min: 2, max: 30 })) {
     errors.firstName = "First name must be between 2 and 30 characters";
   }
 
-  if (validator.isEmpty(data.firstName)) {
-    errors.firstName = "First name field is required";
-  }
+  // if (validator.isEmpty(data.firstName)) {
+  //   errors.firstName = "First name field is required";
+  // }
 
-  if (!validator.isLength(data.lastName, { min: 2, max: 30 })) {
-    errors.lastName = "Last name must be between 2 and 30 characters";
-  }
+  // if (!validator.isLength(data.lastName, { min: 2, max: 30 })) {
+  //   errors.lastName = "Last name must be between 2 and 30 characters";
+  // }
 
-  if (validator.isEmpty(data.job)) {
-    errors.job = "Job field is required";
-  }
+  // if (validator.isEmpty(data.job)) {
+  //   errors.job = "Job field is required";
+  // }
 
   if (validator.isEmpty(data.placeId)) {
     errors.placeId = "Location field is required";

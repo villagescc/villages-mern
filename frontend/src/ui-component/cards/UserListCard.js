@@ -191,7 +191,7 @@ const UserListCard = (user, index) => {
               sx={{ minWidth: '33%', marginTop: 1 }}
               startIcon={<FavoriteIcon />}
               component={Link}
-              to={`/ripple/trust/${user?.user?._id}`}
+              to={`/ripple/trust/${user?.user?._id}/${user?.user?.username}`}
             >
               Trust
             </Button>
@@ -204,7 +204,7 @@ const UserListCard = (user, index) => {
               sx={{ minWidth: '33%', marginTop: 1 }}
               startIcon={<AccountBalanceWalletOutlined />}
               component={Link}
-              to={`/ripple/pay/${user?.user?._id}`}
+              to={`/ripple/pay/${user?.user?._id}/${user?.user?.username}`}
             >
               Pay
             </Button>
@@ -218,7 +218,7 @@ const UserListCard = (user, index) => {
               sx={{ minWidth: '33%', marginTop: 1 }}
               startIcon={<ChatIcon sx={{ marginLeft: `-1px`, marginRight: `-2px` }} />}
               component={Link}
-              to={`/personal/message/${user._id}`}
+              to={`/personal/message/${user?.user?._id}/${user?.user?.username}`}
             >
               Message
             </Button>

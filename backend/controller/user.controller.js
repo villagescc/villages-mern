@@ -125,14 +125,23 @@ exports.uploadAvatar = async (req, res, next) => {
 
 exports.saveProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, job, placeId, description } = req.body;
+    const {
+      firstName,
+      lastName,
+      job,
+      placeId,
+      description,
+      website,
+      zipCode,
+      phoneNumber,
+    } = req.body;
     let user = await User.findOneAndUpdate(
       { _id: req.user._id },
       { firstName, lastName }
     );
     await Profile.findOneAndUpdate(
       { _id: user.profile },
-      { job, description, placeId }
+      { job, description, placeId, website, zipCode, phoneNumber }
     );
     user = await getUserDetail(req.user._id);
     res.send({ success: true, user });

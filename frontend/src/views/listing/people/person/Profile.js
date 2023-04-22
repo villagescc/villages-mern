@@ -75,10 +75,10 @@ const Profile = ({ user }) => {
   const rows = [
     createData('First Name', ':', user?.firstName),
     createData('Last Name', ':', user?.lastName),
-    createData('Zip Code', ':', user?.website ? user.phone : ''),
-    createData('Phone', ':', user?.phone ? user.phone : ''),
+    createData('Zip Code', ':', user?.profile?.zipCode ? user.profile?.zipCode : ''),
+    createData('Phone', ':', user?.profile?.phoneNumber ? user.profile.phoneNumber : ''),
     // createData('Email', ':', user?.email),
-    createData('Website', ':', user?.website ? user.phone : '')
+    createData('Website', ':', user?.profile?.website ? user.profile.website : '')
   ];
   const [location, setLocation] = useState('');
   useEffect(() => {

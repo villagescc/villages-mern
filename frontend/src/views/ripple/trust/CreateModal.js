@@ -67,7 +67,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 onChange={(event, newValue) => {
                   setRecipient(users.find((user) => user._id === newValue._id) || null);
                   setEndorsement({ ...endorsement, recipient: newValue._id });
-                  navigation(`/ripple/trust/${newValue._id}`);
+                  // navigation(`/ripple/trust/${newValue._id}`);
                 }}
                 renderInput={(params) => (
                   <TextField

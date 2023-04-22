@@ -51,7 +51,7 @@ const LoadGraphWithByProp = () => {
         graph.addEdge(edge.source, edge.target, {
           type: `arrow`,
           animated: true,
-          label: edge.attributes.limit.toString()
+          label: edge.attributes.limit
         });
       });
       graph.forEachNode((node, attributes) => {

@@ -137,17 +137,33 @@
   "documentation": "Documentație",
   "roadmap": "Foaie de parcurs",
 
-  "title": "Multi Language",
-  "home": "Home",
-  "change": "Change Language",
-  "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiatnulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollitanim id est laborum.",
+  "title": "Limbi multiple",
+  "home": "Acasă",
+  "change": "Schimbați limba",
+  "message": "Mesaj",
 
   "account-settings": "Setările contului",
   "logout": "Deconectare",
 
-  "payments": "Payments",
-  "trust": "Trust",
-  "payment": "Payment",
+  "payments": "Plăți",
+  "trust": "Încredere",
+  "payment": "Plată",
 
-  "more-items": "Mai multe articole"
+  "more-items": "Mai multe articole",
+
+  "listing": "Listare",
+  "posting": "Postare",
+  "people": "oameni",
+
+  "map": "Hartă",
+
+  "personal": "Personal",
+  "notification": "Notificare",
+  "setting": "Setare",
+
+  "how": "Cum",
+  "motivation": "Motivația",
+  "privacy": "Confidențialitate",
+
+  "admin": "Admin"
 }

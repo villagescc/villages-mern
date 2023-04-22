@@ -57,6 +57,9 @@ const Profile = () => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = React.useState([]);
   const [tagSuggestion, setTagSuggestion] = React.useState([]);
+  const [zipCode, setZipCode] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [website, setWebsite] = useState('');
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -64,6 +67,9 @@ const Profile = () => {
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.profile?.job ? currentUser.profile.job : '');
+    setZipCode(currentUser.profile?.zipCode ? currentUser.profile.zipCode : '');
+    setPhoneNumber(currentUser.profile?.phoneNumber ? currentUser.profile.phoneNumber : '');
+    setWebsite(currentUser.profile?.website ? currentUser.profile.website : '');
     if (currentUser && currentUser.profile && currentUser.profile.placeId) {
       geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
         setLocation({
@@ -103,7 +109,7 @@ const Profile = () => {
   const handleSaveProfileClick = () => {
     var placeId = location.placeId;
     dispatch(
-      saveProfile({ firstName, lastName, job, placeId, description }, () => {
+      saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website }, () => {
         dispatch(
           openSnackbar({
             open: true,
@@ -234,6 +240,42 @@ const Profile = () => {
                 onChange={(e) => setJob(e.target.value)}
                 error={Boolean(errors?.job)}
                 helperText={errors?.job}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                name="zipCode"
+                fullWidth
+                label="Zip Code"
+                value={zipCode}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setZipCode(e.target.value)}
+                error={Boolean(errors?.zipCode)}
+                helperText={errors?.zipCode}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                name="phoneNumber"
+                fullWidth
+                label="Phone Number"
+                value={phoneNumber}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                error={Boolean(errors?.phoneNumber)}
+                helperText={errors?.phoneNumber}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="website"
+                fullWidth
+                label="Website"
+                value={website}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setWebsite(e.target.value)}
+                error={Boolean(errors?.website)}
+                helperText={errors?.website}
               />
             </Grid>
             <Grid item xs={12}>

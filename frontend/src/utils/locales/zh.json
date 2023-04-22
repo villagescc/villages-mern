@@ -140,7 +140,7 @@
   "title": "多语言",
   "home": "家",
   "change": "改变语言",
-  "message": "悲楚 坐镇，奉献自若，西里乌斯·杜伊乌斯莫德·临时工与劳动和多尔纳·马尼亚·阿利夸。 尽量不要抽烟，不要因抽烟而锻炼。 他希望在 受到指责，但是痛苦是在 足球比赛中没有产生任何逃脱的痛苦！。 不擅长于圣人的圣杯，只能在因犯罪而告终的罪魁祸首中胜诉。",
+  "message": "信息",
 
   "account-settings": "帳號設定",
   "logout": "登出",
@@ -149,5 +149,21 @@
   "trust": "相信",
   "payment": "支付",
 
-  "more-items": "更多項目"
+  "more-items": "更多項目",
+
+  "listing": "清单",
+  "posting": "发帖",
+  "people": "人们",
+
+  "map": "地图",
+
+  "personal": "个人的",
+  "notification": "通知",
+  "setting": "环境",
+
+  "how": "如何",
+  "motivation": "动机",
+  "privacy": "隐私",
+
+  "admin": "行政"
 }

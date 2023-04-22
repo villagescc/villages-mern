@@ -19,54 +19,66 @@ const Setting = Loadable(lazy(() => import('views/user/setting')));
 // ==============================|| PERSONAL ROUTING ||============================== //
 
 const PersonalRoute = {
-    path: '/',
-    element: (
-        <AuthGuard>
-            <MainLayout />
-        </AuthGuard>
-    ),
-    children: [
-        {
-            path: '/ripple/trust/:userId',
-            element: <Trust />
-        },
-        {
-            path: '/ripple/trust',
-            element: <Trust />
-        },
-        {
-            path: '/ripple/pay/:userId',
-            element: <Pay />
-        },
-        {
-            path: '/ripple/pay',
-            element: <Pay />
-        },
-        {
-            path: '/personal/notification',
-            element: <Notification />
-        },
-        {
-            path: '/personal/message',
-            element: <Message />
-        },
-        {
-            path: '/personal/message/:userId',
-            element: <Message />
-        },
-        {
-            path: '/personal/profile',
-            element: <ProfileView />
-        },
-        {
-            path: '/personal/profile/edit',
-            element: <ProfileEdit />
-        },
-        {
-            path: '/personal/setting',
-            element: <Setting />
-        }
-    ]
+  path: '/',
+  element: (
+    <AuthGuard>
+      <MainLayout />
+    </AuthGuard>
+  ),
+  children: [
+    {
+      path: '/ripple/trust/:userId',
+      element: <Trust />
+    },
+    {
+      path: '/ripple/trust',
+      element: <Trust />
+    },
+    {
+      path: '/ripple/trust/:userId/:username',
+      element: <Trust />
+    },
+    {
+      path: '/ripple/pay/:userId',
+      element: <Pay />
+    },
+    {
+      path: '/ripple/pay/:userId/:username',
+      element: <Pay />
+    },
+    {
+      path: '/ripple/pay',
+      element: <Pay />
+    },
+    {
+      path: '/personal/notification',
+      element: <Notification />
+    },
+    {
+      path: '/personal/message',
+      element: <Message />
+    },
+    {
+      path: '/personal/message/:userId',
+      element: <Message />
+    },
+    {
+      path: '/personal/message/:userId/:username',
+      element: <Message />
+    },
+    {
+      path: '/personal/profile',
+      element: <ProfileView />
+    },
+    {
+      path: '/personal/profile/edit',
+      element: <ProfileEdit />
+    },
+    {
+      path: '/personal/setting',
+      element: <Setting />
+    }
+  ]
 };
 
 export default PersonalRoute;

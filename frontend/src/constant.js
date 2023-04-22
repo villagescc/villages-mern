@@ -63,126 +63,145 @@ export const radius = [
   }
 ];
 
+// export const language = [
+//   {
+//     value: 'ar',
+//     label: 'العربية'
+//   },
+//   {
+//     value: 'bn',
+//     label: 'বাংলা'
+//   },
+//   {
+//     value: 'ch',
+//     label: '中文'
+//   },
+//   {
+//     value: 'de',
+//     label: 'German'
+//   },
+//   {
+//     value: 'en',
+//     label: 'English'
+//   },
+//   {
+//     value: 'es',
+//     label: 'Español'
+//   },
+//   {
+//     value: 'ar',
+//     label: 'العربية'
+//   },
+//   {
+//     value: 'bn',
+//     label: 'বাংলা'
+//   },
+//   {
+//     value: 'ch',
+//     label: '中文'
+//   },
+//   {
+//     value: 'de',
+//     label: 'German'
+//   },
+//   {
+//     value: 'en',
+//     label: 'English'
+//   },
+//   {
+//     value: 'es',
+//     label: 'Español'
+//   },
+//   {
+//     value: 'fa',
+//     label: 'پارسی'
+//   },
+//   {
+//     value: 'fr',
+//     label: '"Français"'
+//   },
+//   {
+//     value: 'gr',
+//     label: 'ελληνική'
+//   },
+//   {
+//     value: 'gu',
+//     label: "Avañe'ẽ"
+//   },
+//   {
+//     value: 'hi',
+//     label: 'हिंदुस्तानी'
+//   },
+//   {
+//     value: 'it',
+//     label: 'Italiano'
+//   },
+//   {
+//     value: 'ko',
+//     label: '한국어'
+//   },
+//   {
+//     value: 'ms',
+//     label: 'Melayu'
+//   },
+//   {
+//     value: 'nl',
+//     label: 'Nederlandse'
+//   },
+//   {
+//     value: 'pt',
+//     label: 'Português'
+//   },
+//   {
+//     value: 'ro',
+//     label: 'Română'
+//   },
+//   {
+//     value: 'ru',
+//     label: 'русский'
+//   },
+//   {
+//     value: 'sq',
+//     label: 'shqiptar'
+//   },
+//   {
+//     value: 'sr',
+//     label: 'Српско-хрватски'
+//   },
+//   {
+//     value: 'sv',
+//     label: 'Swedish'
+//   },
+//   {
+//     value: 'sw',
+//     label: 'Kiswahili'
+//   },
+//   {
+//     value: 'ta',
+//     label: 'தமிழ்'
+//   },
+//   {
+//     value: 'tr',
+//     label: 'Türk'
+//   }
+// ];
+
 export const language = [
   {
-    value: 'ar',
-    label: 'العربية'
-  },
-  {
-    value: 'bn',
-    label: 'বাংলা'
-  },
-  {
-    value: 'ch',
-    label: '中文'
-  },
-  {
-    value: 'de',
-    label: 'German'
-  },
-  {
     value: 'en',
-    label: 'English'
-  },
-  {
-    value: 'es',
-    label: 'Español'
-  },
-  {
-    value: 'ar',
-    label: 'العربية'
-  },
-  {
-    value: 'bn',
-    label: 'বাংলা'
-  },
-  {
-    value: 'ch',
-    label: '中文'
-  },
-  {
-    value: 'de',
-    label: 'German'
-  },
-  {
-    value: 'en',
-    label: 'English'
-  },
-  {
-    value: 'es',
-    label: 'Español'
-  },
-  {
-    value: 'fa',
-    label: 'پارسی'
+    label: 'English (UK)'
   },
   {
     value: 'fr',
-    label: '"Français"'
-  },
-  {
-    value: 'gr',
-    label: 'ελληνική'
-  },
-  {
-    value: 'gu',
-    label: "Avañe'ẽ"
-  },
-  {
-    value: 'hi',
-    label: 'हिंदुस्तानी'
-  },
-  {
-    value: 'it',
-    label: 'Italiano'
-  },
-  {
-    value: 'ko',
-    label: '한국어'
-  },
-  {
-    value: 'ms',
-    label: 'Melayu'
-  },
-  {
-    value: 'nl',
-    label: 'Nederlandse'
-  },
-  {
-    value: 'pt',
-    label: 'Português'
+    label: 'Français (French)'
   },
   {
     value: 'ro',
-    label: 'Română'
+    label: 'Română (Romanian)'
   },
   {
-    value: 'ru',
-    label: 'русский'
-  },
-  {
-    value: 'sq',
-    label: 'shqiptar'
-  },
-  {
-    value: 'sr',
-    label: 'Српско-хрватски'
-  },
-  {
-    value: 'sv',
-    label: 'Swedish'
-  },
-  {
-    value: 'sw',
-    label: 'Kiswahili'
-  },
-  {
-    value: 'ta',
-    label: 'தமிழ்'
-  },
-  {
-    value: 'tr',
-    label: 'Türk'
+    value: 'zh',
+    label: '中文 (Chinese)'
   }
 ];
 

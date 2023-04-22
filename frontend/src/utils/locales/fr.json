@@ -137,10 +137,10 @@
   "documentation": "Documentation",
   "roadmap": "Feuille de route",
 
-  "title": "Multi Limbaj",
-  "home": "Acasă",
-  "change": "Schimbați limba",
-  "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed tempor și vitality, astfel încât munca și tristețea, unele lucruri importante de făcut eiusmod. De-a lungul anilor, voi veni, care va scoate de la ea orice echipă din avantajul exercițiului, astfel încât să stimuleze eforturile dacă districtul școlar și longevitatea. Vrei să fii o durere în cupidatat cillum a fost criticat în plăcerea de a plăti Duis et dolore magna fugiatnulla. Excepteur cupidatat not excepteur they are blacks, they deserted the mollitanim that services ar trebui să fie, adică ei sunt de vină pentru necazurile tale.",
+  "title": "Titre",
+  "home": "Maison",
+  "change": "Changement",
+  "message": "Message",
 
   "account-settings": "Paramètres du compte",
   "logout": "Se déconnecter",
@@ -149,5 +149,21 @@
 
   "payments": "Paiements",
   "trust": "Confiance",
-  "payment": "paiement"
+  "payment": "Paiement",
+
+  "listing": "Référencement",
+  "posting": "Affectation",
+  "people": "Personnes",
+
+  "map": "Carte",
+
+  "personal": "Personnel",
+  "notification": "Notification",
+  "setting": "Paramètre",
+
+  "how": "Comment",
+  "motivation": "Motivation",
+  "privacy": "Confidentialité",
+
+  "admin": "Administrateur"
 }

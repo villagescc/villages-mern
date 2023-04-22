@@ -39,7 +39,7 @@ import { openSnackbar } from 'store/slices/snackbar';
 
 // ===========================|| AUTH - REGISTER ||=========================== //
 
-const AuthRegister = ({ ...others }) => {
+const AuthRegister = ({ setVerified, ...others }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const scriptedRef = useScriptRef();
@@ -113,6 +113,7 @@ const AuthRegister = ({ ...others }) => {
                   close: false
                 })
               );
+              setVerified(true);
               //   navigate('/login', { replace: true });
             }
           } catch (err) {

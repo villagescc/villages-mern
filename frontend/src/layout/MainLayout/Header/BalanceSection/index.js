@@ -5,6 +5,7 @@ import { Box, Typography } from '@mui/material';
 // assets
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 import useAuth from '../../../../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 // ==============================|| LOCALIZATION ||============================== //
 
@@ -22,6 +23,9 @@ const BalanceSection = () => {
         display: 'flex',
         alignItems: 'center'
       }}
+      component={Link}
+      to={`/ripple/pay/${user?._id}`}
+      style={{ textDecoration: 'none' }}
     >
       <AccountBalanceWalletOutlined color={'secondary'} sx={{ marginRight: 1 }} />
       <Typography variant={'h3'} sx={{ marginRight: 1 }} color={'secondary'}>

@@ -15,6 +15,7 @@ import { getSetting, saveSetting } from 'store/slices/user';
 import { language } from 'constant';
 
 import { openSnackbar } from 'store/slices/snackbar';
+import useConfig from '../../../hooks/useConfig';
 
 // assets
 
@@ -23,6 +24,8 @@ import { openSnackbar } from 'store/slices/snackbar';
 const Index = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+
+  const { onChangeLocale } = useConfig();
 
   const [errors, setErrors] = useState({});
 
@@ -67,6 +70,7 @@ const Index = () => {
 
   const onSaveSettings = () => {
     dispatch(saveSetting(data, successAction));
+    onChangeLocale(data.language);
   };
 
   return (

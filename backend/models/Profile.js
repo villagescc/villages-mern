@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ProfileSchema = new mongoose.Schema(
   {
@@ -12,32 +12,42 @@ const ProfileSchema = new mongoose.Schema(
       type: String,
     },
     placeId: {
-      type: String
+      type: String,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
+      ref: "user",
     },
     job: {
       type: String,
     },
     headerImage: {
-      type: String
+      type: String,
+    },
+    zipCode: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+    },
+    website: {
+      type: String,
     },
     tags: [
       {
         listType: {
-          type: String
+          type: String,
         },
         tag: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'tag'
-        }
-      }
+          ref: "tag",
+        },
+      },
     ],
   },
   {
-    timestamps: true
-  });
+    timestamps: true,
+  }
+);
 
-module.exports = Profile = mongoose.model('profile', ProfileSchema);
+module.exports = Profile = mongoose.model("profile", ProfileSchema);

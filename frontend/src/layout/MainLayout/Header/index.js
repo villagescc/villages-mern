@@ -7,7 +7,7 @@ import LAYOUT_CONST from 'constant';
 import useConfig from 'hooks/useConfig';
 import LogoSection from '../LogoSection';
 import SearchSection from './SearchSection';
-import MobileSection from './MobileSection';
+// import MobileSection from './MobileSection';
 import ProfileSection from './ProfileSection';
 // import LocalizationSection from './LocalizationSection';
 import BalanceSection from './BalanceSection';
@@ -97,9 +97,9 @@ const Header = () => {
       <ProfileSection />
 
       {/* mobile header */}
-      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+      {/* <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
         <MobileSection />
-      </Box>
+      </Box> */}
     </>
   );
 };

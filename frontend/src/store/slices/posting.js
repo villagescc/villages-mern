@@ -138,7 +138,7 @@ export function getPost(id) {
   };
 }
 
-export function submitPost(data, closeModal) {
+export function submitPost(data, closeModal, setCount) {
   return async () => {
     try {
       const response = await axios.postForm('/posting/upload', data, {
@@ -146,6 +146,7 @@ export function submitPost(data, closeModal) {
           'Content-Type': 'multipart/form-data'
         }
       });
+      setCount((prevCount) => prevCount + 1);
       closeModal();
     } catch (error) {
       dispatch(slice.actions.hasError(error));

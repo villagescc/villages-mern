@@ -93,17 +93,6 @@ exports.getById = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
-  let uploadFile = req.file;
-  const { filename: image } = req.file;
-  try {
-    await sharp(req.file.path)
-      .resize(200, 200)
-      .jpeg({ quality: 90 })
-      .toFile(path.resolve(req.file.destination, "resized", image));
-    fs.unlinkSync(req.file.path);
-  } catch (err) {
-    console.log(err);
-  }
   let tagId = [];
   let tags = Array.isArray(req.body.tags)
     ? req.body.tags
@@ -134,9 +123,36 @@ exports.createPost = async (req, res, next) => {
         description: req.body.description,
         tags: tagId,
       };
-      if (uploadFile) updateData.photo = `resized/${uploadFile.filename}`;
+      if (req.file) {
+        let uploadFile = req.file;
+        const { filename: image } = req.file;
+        try {
+          await sharp(req.file.path)
+            .resize(200, 200)
+            .jpeg({ quality: 90 })
+            .toFile(path.resolve(req.file.destination, "resized", image));
+          fs.unlinkSync(req.file.path);
+        } catch (err) {
+          console.log(err);
+        }
+        updateData.photo = `resized/${uploadFile.filename}`;
+      }
       listing = await Listing.findByIdAndUpdate(req.body.id, updateData);
     } else {
+      if (req.file) {
+        let uploadFile = req.file;
+        const { filename: image } = req.file;
+        try {
+          await sharp(req.file.path)
+            .resize(200, 200)
+            .jpeg({ quality: 90 })
+            .toFile(path.resolve(req.file.destination, "resized", image));
+          fs.unlinkSync(req.file.path);
+        } catch (err) {
+          console.log(err);
+        }
+        updateData.photo = `resized/${uploadFile.filename}`;
+      }
       const postData = {
         title: req.body.title,
         price: req.body.price,
