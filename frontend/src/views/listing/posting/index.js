@@ -218,8 +218,22 @@ const Posting = () => {
     });
     dispatch(
       submitPost(data, setCount(), () => {
+        successAction();
         setOpenCreate(false);
         dispatch(filterData);
+      })
+    );
+  };
+  const successAction = () => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: 'You have created new Post successfully',
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        },
+        close: false
       })
     );
   };

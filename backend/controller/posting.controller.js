@@ -139,6 +139,16 @@ exports.createPost = async (req, res, next) => {
       }
       listing = await Listing.findByIdAndUpdate(req.body.id, updateData);
     } else {
+      const postData = {
+        title: req.body.title,
+        price: req.body.price,
+        listing_type: req.body.type,
+        // photo: uploadFile ? `resized/${uploadFile.filename}` : null,
+        userId: req.user._id,
+        subcategoryId: req.body.subCategory,
+        description: req.body.description,
+        tags: tagId,
+      };
       if (req.file) {
         let uploadFile = req.file;
         const { filename: image } = req.file;
@@ -151,18 +161,8 @@ exports.createPost = async (req, res, next) => {
         } catch (err) {
           console.log(err);
         }
-        updateData.photo = `resized/${uploadFile.filename}`;
+        postData.photo = `resized/${uploadFile.filename}`;
       }
-      const postData = {
-        title: req.body.title,
-        price: req.body.price,
-        listing_type: req.body.type,
-        photo: uploadFile ? `resized/${uploadFile.filename}` : null,
-        userId: req.user._id,
-        subcategoryId: req.body.subCategory,
-        description: req.body.description,
-        tags: tagId,
-      };
       listing = await Listing.create(postData);
     }
     res.send(listing);

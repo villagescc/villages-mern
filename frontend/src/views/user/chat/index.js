@@ -86,7 +86,6 @@ const ChatMainPage = () => {
   const dispatch = useDispatch();
 
   const { userId } = useParams();
-  const [state, setState] = React.useState('Online');
 
   useEffect(() => {
     if (!!userId) {

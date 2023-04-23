@@ -68,14 +68,19 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     event.preventDefault();
   };
 
-  const successCallback = (position) => {
+  async function fetchData(position) {
     setLatitude(position.coords.latitude);
     setLongitude(position.coords.longitude);
-    geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
+
+    await geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
       .then((results) => {
         setPlaceId(results[results.length - 2].place_id);
       })
       .catch((error) => console.error(error));
+  }
+
+  const successCallback = (position) => {
+    fetchData(position);
   };
   const errorCallback = (error) => {
     console.log(error);
@@ -108,6 +113,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          console.log(token, placeId, latitude, longitude);
           try {
             await login(values.email, values.password, token, placeId, longitude, latitude).then(
               () => {},

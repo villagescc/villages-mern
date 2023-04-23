@@ -74,12 +74,11 @@ export function saveEndorsement(endorsement, successAction) {
   };
 }
 
-export function deleteEndorsement(recipient, text, weight, successAction, setOpenCreate) {
+export function deleteEndorsement(recipient, text, weight, setOpenCreate) {
   return async () => {
     try {
       const response = await axios.post('/endorsement/delete', { recipient, text, weight });
-      successAction();
-      setOpenCreate(true);
+      setOpenCreate(false);
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
