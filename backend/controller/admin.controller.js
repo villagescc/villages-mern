@@ -39,7 +39,7 @@ exports.uploadAvatar = async (req, res, next) => {
 
 exports.editUserData = async (req, res, next) => {
   console.log(req.body);
-  const { userId, email, username, job, description } = req.body;
+  const { userId, email, username, job, description, placeId } = req.body;
 
   try {
     await User.findOneAndUpdate(
@@ -54,6 +54,7 @@ exports.editUserData = async (req, res, next) => {
       {
         job,
         description,
+        placeId,
       }
     );
     res.send({ success: true });

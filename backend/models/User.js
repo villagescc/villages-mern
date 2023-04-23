@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema(
     token: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     verified: {
       type: Boolean,
@@ -65,6 +65,9 @@ const UserSchema = new mongoose.Schema(
     },
     longitude: {
       type: Number,
+    },
+    lastLogin: {
+      type: Date,
     },
   },
   {

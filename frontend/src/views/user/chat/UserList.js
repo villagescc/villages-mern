@@ -26,7 +26,6 @@ const UserList = ({ setUser }) => {
   useEffect(() => {
     setData(users);
   }, [users]);
-
   return (
     <List component="nav">
       {data.map((user, key) => (
@@ -40,7 +39,7 @@ const UserList = ({ setUser }) => {
             to={`/personal/message/${user?.user?._id}`}
           >
             <ListItemAvatar>
-              <UserAvatar user={{ online_status: user.state, avatar: user?.user?.profile?.avatar }} />
+              <UserAvatar user={{ online_status: user?.state, avatar: user?.user?.profile?.avatar, last_login: user?.user?.lastLogin }} />
             </ListItemAvatar>
             <ListItemText
               primary={

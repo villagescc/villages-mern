@@ -104,7 +104,9 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
               <Grid item xs={12}>
                 <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                   <Grid item>
-                    <UserAvatar user={{ online_status: status, avatar: user?.profile?.avatar, name: 'User 1' }} />
+                    <UserAvatar
+                      user={{ online_status: status, avatar: user?.profile?.avatar, name: 'User 1', last_login: user?.lastLogin }}
+                    />
                   </Grid>
                   <Grid item xs zeroMinWidth>
                     <Typography align="left" variant="h4">

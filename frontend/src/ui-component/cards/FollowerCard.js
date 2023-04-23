@@ -6,20 +6,17 @@ import { useTheme } from '@mui/material/styles';
 import { Avatar, Button, Card, Grid, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
 import { SERVER_URL } from 'config';
 // assets
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone';
+
 import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import DefaultUserIcon from '../../assets/images/auth/default.png';
 
 // ==============================|| SOCIAL PROFILE - FOLLOWER CARD ||============================== //
 
 const FollowerCard = (follower) => {
-  console.log(follower);
   const theme = useTheme();
   const avatarProfile = follower?.profile.avatar ? `${SERVER_URL}/upload/avatar/` + follower?.profile?.avatar : DefaultUserIcon;
 
@@ -63,55 +60,22 @@ const FollowerCard = (follower) => {
                 sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
               >
                 <PinDropTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-                {follower?.profile?.locationId}
+                {follower?.profile?.placeId}
               </Typography>
-            </Grid>
-            <Grid item>
-              <MoreHorizOutlinedIcon
-                fontSize="small"
-                sx={{
-                  color: theme.palette.primary[200],
-                  cursor: 'pointer'
-                }}
-                aria-controls="menu-followers-card"
-                aria-haspopup="true"
-                onClick={handleClick}
-              />
-              <Menu
-                id="menu-followers-card"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                variant="selectedMenu"
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
+              <Typography
+                variant="subtitle2"
+                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
               >
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <FavoriteTwoToneIcon fontSize="small" />
-                  </ListItemIcon>
-                  Favorites
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <GroupTwoToneIcon fontSize="small" />
-                  </ListItemIcon>
-                  Edit Friend List
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <DeleteTwoToneIcon fontSize="small" />
-                  </ListItemIcon>
-                  Removed
-                </MenuItem>
-              </Menu>
+                <FavoriteTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                {follower?.endorsement?.weight}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+              >
+                <DescriptionTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                {follower?.endorsement?.text}
+              </Typography>
             </Grid>
           </Grid>
         </Grid>

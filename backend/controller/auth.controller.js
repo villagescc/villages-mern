@@ -207,7 +207,8 @@ exports.login = (req, res, next) => {
                 { user: user._id },
                 { placeId: placeId }
               );
-
+            const lastLogin = Date.now();
+            await User.findByIdAndUpdate(user._id, { lastLogin });
             const payload = {
               user: {
                 _id: userData._id,
@@ -257,6 +258,7 @@ exports.login = (req, res, next) => {
             { user: user._id },
             { placeId: placeId }
           );
+        user.lastLogin = Date.now();
         user
           .save()
           .then(() => res.send({ success: true }))

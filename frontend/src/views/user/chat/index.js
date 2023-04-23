@@ -86,13 +86,15 @@ const ChatMainPage = () => {
   const dispatch = useDispatch();
 
   const { userId } = useParams();
+  const [state, setState] = React.useState('Online');
 
   useEffect(() => {
     if (!!userId) {
-      setOpenChatDrawer(true);
+      if (matchDownSM) setOpenChatDrawer(false);
+      else setOpenChatDrawer(true);
       dispatch(getUser(userId));
     }
-  }, [userId]);
+  }, [userId, matchDownSM]);
 
   const scrollRef = useRef();
 
@@ -276,7 +278,8 @@ const ChatMainPage = () => {
                             <Grid container spacing={0} alignItems="center">
                               <Grid item xs={12}>
                                 <Typography variant="h4" component="div">
-                                  {user?.user?.username} {user.state && <AvatarStatus status={user.state} />}
+                                  {user?.user?.username}
+                                  {/* {user.state && <AvatarStatus status={user.state} />} */}
                                 </Typography>
                               </Grid>
                               <Grid item xs={12}>

@@ -13,18 +13,32 @@ import {
   TextField,
   Typography,
   Autocomplete,
+  Box,
+  Grid,
   InputAdornment,
   Switch,
   FormControlLabel
 } from '@mui/material';
+import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
 
 const EditModal = ({ open, onClose, onSave, user, tempData, setTempData }) => {
   const theme = useTheme();
+  const [location, setLocation] = React.useState({});
+
   useEffect(() => {
+    if (user && user.profile && user.profile.placeId) {
+      geocodeByPlaceId(user.profile.placeId).then((results) =>
+        setLocation({
+          placeId: user.profile.placeId,
+          description: results[0].formatted_address
+        })
+      );
+    }
     setTempData({
       userId: user?._id,
       email: user?.email,
       username: user?.username,
+      placeId: user?.profile?.placeId,
       job: user?.profile?.job,
       description: user?.profile?.description
     });
@@ -96,6 +110,49 @@ const EditModal = ({ open, onClose, onSave, user, tempData, setTempData }) => {
                   setTempData({ ...tempData, username: event.target.value });
                 }}
               />
+              <Grid item xs={12}>
+                <PlacesAutocomplete
+                  value={location.description || ''}
+                  onChange={(address) => setLocation({ description: address, placeId: '' })}
+                >
+                  {({ getInputProps, suggestions }) => {
+                    return (
+                      <Autocomplete
+                        id="location"
+                        value={location}
+                        sx={{ width: '100%' }}
+                        options={suggestions.map((suggestion) => ({
+                          description: suggestion.description,
+                          placeId: suggestion.placeId
+                        }))}
+                        autoHighlight
+                        getOptionLabel={(option) => option.description || ''}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            {...props}
+                            onClick={() => {
+                              setLocation(option);
+                              setTempData({ ...tempData, placeId: option.placeId });
+                            }}
+                          >
+                            {option.description}
+                          </Box>
+                        )}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            {...getInputProps({
+                              placeholder: 'Search Places ...',
+                              className: 'location-search-input'
+                            })}
+                          />
+                        )}
+                      />
+                    );
+                  }}
+                </PlacesAutocomplete>
+              </Grid>
               <TextField
                 id="memo"
                 fullWidth

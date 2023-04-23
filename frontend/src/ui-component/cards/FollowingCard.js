@@ -3,153 +3,97 @@ import { useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Button, Card, Grid, IconButton, ListItemIcon, Menu, MenuItem, Typography, Tooltip } from '@mui/material';
-
-// project imports
-import { gridSpacing } from 'store/constant';
-
+import { Avatar, Button, Card, Grid, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
+import { SERVER_URL } from 'config';
 // assets
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+
+import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
 import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
-import VideoCallTwoToneIcon from '@mui/icons-material/VideoCallTwoTone';
-import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
 
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import DefaultUserIcon from '../../assets/images/auth/default.png';
-import { SERVER_URL } from 'config';
-const avatarImage = require.context('assets/images/profile', true);
 
-// ==============================|| SOCIAL PROFILE - FRIENDS CARD ||============================== //
+// ==============================|| SOCIAL PROFILE - following CARD ||============================== //
 
 const FollowingCard = (following) => {
-    const theme = useTheme();
+  const theme = useTheme();
+  const avatarProfile = following?.profile.avatar ? `${SERVER_URL}/upload/avatar/` + following?.profile?.avatar : DefaultUserIcon;
 
-    const avatarProfile = following?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + following?.profile?.avatar : DefaultUserIcon;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event?.currentTarget);
+  };
 
-    const btnSX = {
-        borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],
-        background: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.background.paper
-    };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleClick = (event) => {
-        setAnchorEl(event?.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    return (
-        <Card
-            sx={{
-                p: 2,
-                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
-                border: '1px solid',
-                borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[100],
-                '&:hover': {
-                    border: `1px solid${theme.palette.primary.main}`
-                }
-            }}
-        >
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Grid container spacing={gridSpacing}>
-                        <Grid item>
-                            <Avatar alt="User 1" src={avatarProfile} />
-                        </Grid>
-                        <Grid item xs zeroMinWidth>
-                            <Typography
-                                variant="h5"
-                                sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-                            >
-                                {following.username}
-                            </Typography>
-                            <Typography
-                                variant="subtitle2"
-                                sx={{ mt: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-                            >
-                                <PinDropTwoToneIcon fontSize="inherit" sx={{ mr: 0.5, fontSize: '0.875rem', verticalAlign: 'text-top' }} />
-                                {following?.profile?.locationId}
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <IconButton size="small" sx={{ mt: -0.75, mr: -0.75 }} onClick={handleClick}>
-                                <MoreHorizOutlinedIcon
-                                    fontSize="small"
-                                    aria-controls="menu-friend-card"
-                                    aria-haspopup="true"
-                                    color="primary"
-                                    sx={{ opacity: 0.6 }}
-                                />
-                            </IconButton>
-                            <Menu
-                                id="menu-friend-card"
-                                anchorEl={anchorEl}
-                                keepMounted
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                                variant="selectedMenu"
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right'
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right'
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <FavoriteTwoToneIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    Favorites
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <GroupTwoToneIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    Edit Friend List
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <DeleteTwoToneIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    Unfriend
-                                </MenuItem>
-                            </Menu>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <Grid container spacing={1}>
-                        <Grid item xs={6}>
-                            <Tooltip title="Video Call" placement="top">
-                                <Button variant="outlined" color="secondary" fullWidth sx={btnSX}>
-                                    <VideoCallTwoToneIcon fontSize="small" />
-                                </Button>
-                            </Tooltip>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Tooltip title="Message" placement="top">
-                                <Button variant="outlined" fullWidth sx={btnSX}>
-                                    <ChatBubbleTwoToneIcon fontSize="small" />
-                                </Button>
-                            </Tooltip>
-                        </Grid>
-                    </Grid>
-                </Grid>
+  return (
+    <Card
+      sx={{
+        padding: '16px',
+        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+        border: '1px solid',
+        borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[100],
+        '&:hover': {
+          border: `1px solid${theme.palette.primary.main}`
+        }
+      }}
+    >
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            <Grid item>
+              <Avatar alt="User 1" src={avatarProfile} />
             </Grid>
-        </Card>
-    );
+            <Grid item xs zeroMinWidth>
+              <Typography
+                variant="h5"
+                component="div"
+                sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+              >
+                {following.username}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+              >
+                <PinDropTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                {following?.profile?.placeId}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+              >
+                <FavoriteTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                {following?.endorsement?.weight}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
+              >
+                <DescriptionTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+                {following?.endorsement?.text}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Button variant="outlined" fullWidth startIcon={<PeopleAltTwoToneIcon />}>
+            following
+          </Button>
+        </Grid>
+      </Grid>
+    </Card>
+  );
 };
 
 FollowingCard.propTypes = {
-    avatar: PropTypes.string,
-    location: PropTypes.string,
-    name: PropTypes.string
+  avatar: PropTypes.string,
+  follow: PropTypes.number,
+  location: PropTypes.string,
+  name: PropTypes.string
 };
 
 export default FollowingCard;

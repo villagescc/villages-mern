@@ -261,7 +261,9 @@ const Profile = () => {
                           <TableRow>
                             <TableCell variant="head">Phone</TableCell>
                             <TableCell>:</TableCell>
-                            <TableCell>{user?.profile?.phone ? user?.profile?.phone : <Chip size="small" label="empty" />}</TableCell>
+                            <TableCell>
+                              {user?.profile?.phoneNumber ? user?.profile?.phoneNumber : <Chip size="small" label="empty" />}
+                            </TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell variant="head">Website</TableCell>
