@@ -49,7 +49,7 @@ Navigate to backend and frontend folder and fill the setting variables in .env f
 
 ## Hosting App on VPS Server
 
-https://github.com/villagescc/villages-mern/blob/dev/Installing%20villages.io%20on%20server.docx
+https://red-tiphany-81.tiiny.site/
 
 ## Running Server
 
