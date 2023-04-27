@@ -6,6 +6,7 @@ const Tag = require("../models/Tag");
 const isEmpty = require("../validation/is-empty");
 const sharp = require("sharp");
 const path = require("path");
+const { headingDistanceTo } = require("geolocation-utils");
 
 exports.searchPosts = async (req, res, next) => {
   const { filterData } = req.body;
@@ -22,6 +23,38 @@ exports.searchPosts = async (req, res, next) => {
     }
     if (!isEmpty(filterData.filterType)) {
       query.where("listing_type", filterData.filterType);
+    }
+    if (filterData.filterRadius != "") {
+      const radius = filterData.filterRadius * 1.609;
+
+      const userLocation = await User.findById(req.user._id).select(
+        "longitude latitude"
+      );
+
+      const centerLocation = {
+        lat: userLocation.latitude,
+        lon: userLocation.longitude,
+      };
+      const filterUsers = await User.find().select("longitude latitude");
+      const filterRadiusUsers = [];
+      for (var i = 0; i < filterUsers.length; i++) {
+        if (filterUsers[i].latitude && filterUsers[i].longitude) {
+          const filterLocation = {
+            lat: filterUsers[i].latitude,
+            lon: filterUsers[i].longitude,
+          };
+          const result = await headingDistanceTo(
+            centerLocation,
+            filterLocation
+          );
+          console.log(Number(result.distance));
+          if (result.distance < radius) {
+            filterRadiusUsers.push(filterUsers[i]._id);
+          }
+        }
+      }
+      console.log(filterRadiusUsers);
+      query.where("userId").in(filterRadiusUsers);
     }
     if (!isEmpty(filterData.keyword)) {
       query.or([

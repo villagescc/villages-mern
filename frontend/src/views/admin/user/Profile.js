@@ -44,7 +44,7 @@ import { SERVER_URL } from 'config';
 import { useSelector, dispatch } from 'store';
 import DefaultAvatar from 'assets/images/auth/default.png';
 
-import { geocodeByPlaceId } from 'react-places-autocomplete';
+import { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete';
 
 import EditModal from './EditModal';
 
@@ -90,6 +90,8 @@ const Profile = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [location, setLocation] = useState('');
+  const [lng, setLng] = useState('');
+  const [lat, setLat] = useState('');
 
   const [avatar, setAvatar] = useState('');
 
@@ -118,8 +120,19 @@ const Profile = () => {
     setOpenModal(true);
   };
 
-  const handleSave = () => {
-    dispatch(saveUserData(tempData, successAction));
+  const handleSave = async () => {
+    const placeId = tempData.placeId;
+    if (placeId != '')
+      try {
+        await geocodeByPlaceId(placeId)
+          .then((results) => getLatLng(results[0]))
+          .then(({ lat, lng }) => {
+            dispatch(saveUserData(tempData, lat, lng, successAction));
+          });
+      } catch (err) {
+        console.error(err);
+      }
+    else dispatch(saveUserData(tempData, lat, lng, successAction));
   };
 
   const successAction = () => {

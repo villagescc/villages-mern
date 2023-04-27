@@ -16,7 +16,7 @@ import {
   Divider
 } from '@mui/material';
 import { WithContext as ReactTags } from 'react-tag-input';
-import PlacesAutocomplete, { geocodeByPlaceId } from 'react-places-autocomplete';
+import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete';
 
 // project imports
 import useAuth from 'hooks/useAuth';
@@ -60,6 +60,8 @@ const Profile = () => {
   const [zipCode, setZipCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [website, setWebsite] = useState('');
+  const [lat, setLat] = useState('');
+  const [lng, setLng] = useState('');
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -106,24 +108,47 @@ const Profile = () => {
     };
   };
 
-  const handleSaveProfileClick = () => {
+  const handleSaveProfileClick = async () => {
     var placeId = location.placeId;
-    dispatch(
-      saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website }, () => {
-        dispatch(
-          openSnackbar({
-            open: true,
-            message: 'Profile is saved successfully.',
-            variant: 'alert',
-            alert: {
-              color: 'success'
-            },
-            close: false
-          })
-        );
-        dispatch(getUser(user._id));
-      })
-    );
+    try {
+      await geocodeByPlaceId(placeId)
+        .then((results) => getLatLng(results[0]))
+        .then(({ lat, lng }) => {
+          dispatch(
+            saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: 'Profile is saved successfully.',
+                  variant: 'alert',
+                  alert: {
+                    color: 'success'
+                  },
+                  close: false
+                })
+              );
+              dispatch(getUser(user._id));
+            })
+          );
+        });
+    } catch (err) {
+      dispatch(
+        saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Profile is saved successfully.',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: false
+            })
+          );
+          dispatch(getUser(user._id));
+        })
+      );
+    }
   };
 
   return (
@@ -274,8 +299,6 @@ const Profile = () => {
                 value={website}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setWebsite(e.target.value)}
-                error={Boolean(errors?.website)}
-                helperText={errors?.website}
               />
             </Grid>
             <Grid item xs={12}>
@@ -313,6 +336,8 @@ const Profile = () => {
                             placeholder: 'Search Places ...',
                             className: 'location-search-input'
                           })}
+                          error={Boolean(errors?.placeId)}
+                          helperText={errors?.placeId}
                         />
                       )}
                     />

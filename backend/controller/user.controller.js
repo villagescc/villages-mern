@@ -134,10 +134,12 @@ exports.saveProfile = async (req, res, next) => {
       website,
       zipCode,
       phoneNumber,
+      lat,
+      lng,
     } = req.body;
     let user = await User.findOneAndUpdate(
       { _id: req.user._id },
-      { firstName, lastName }
+      { firstName, lastName, latitude: Number(lat), longitude: Number(lng) }
     );
     await Profile.findOneAndUpdate(
       { _id: user.profile },

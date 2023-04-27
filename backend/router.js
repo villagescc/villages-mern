@@ -44,7 +44,7 @@ router.get(
 );
 
 // ######################### POSTING ROUTER #############################
-router.post("/posting/posts", postController.searchPosts);
+router.post("/posting/posts", authMiddleware.auth, postController.searchPosts);
 router.get("/posting/post/:id", postController.getById);
 router.post(
   "/posting/upload",
