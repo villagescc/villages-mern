@@ -184,3 +184,16 @@ exports.saveProfileSetting = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deactive = async (req, res, next) => {
+  try {
+    user = await User.findById(req.user._id);
+    if (user) {
+      user.isActive = false;
+      await user.save();
+    }
+    res.send({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};

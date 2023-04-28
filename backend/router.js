@@ -85,6 +85,7 @@ router.post(
   userMiddleware.changePassword,
   authController.changePassword
 );
+router.get("/users/deactive", authMiddleware.auth, userController.deactive);
 
 // ######################### Admin ROUTER #############################
 router.post(

@@ -116,10 +116,10 @@ const UserList = ({ users, loading }) => {
                     <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Avatar
                         alt={user?.username}
-                        src={user.profile.avatar ? `${SERVER_URL}/upload/avatar/` + user.profile.avatar : DefaultAvatar}
+                        src={user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.profile.avatar : DefaultAvatar}
                         sx={{ width: 70, height: 70 }}
                         component={Link}
-                        to={`/listing/person/${user._id}/${user.username}`}
+                        to={`/listing/person/${user?._id}/${user?.username}`}
                       />
                     </Grid>
                     <Grid item sm lg={8}>

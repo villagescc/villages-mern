@@ -257,11 +257,25 @@ export function changePassword(data, afterAction) {
   };
 }
 
-// admin
-export function saveUserData(userData, successAction) {
+export function deactive(afterAction) {
   return async () => {
     try {
-      const response = await axios.post('/admin/users/edit', userData);
+      const response = await axios.get(`/users/deactive`);
+      if (response.data?.success) {
+        afterAction();
+        dispatch(slice.actions.hasError({}));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// admin
+export function saveUserData(userData, lng, lat, successAction) {
+  return async () => {
+    try {
+      const response = await axios.post('/admin/users/edit', { userData, lng, lat });
       if (response.data?.success) {
         successAction();
         dispatch(slice.actions.editUserData(userData));
