@@ -44,6 +44,7 @@ Paste the following. In this configuration we are pointing the main domain path 
 sudo nano /etc/nginx/sites-available/villages.io.conf
 
 <img width="383" alt="image" src="https://user-images.githubusercontent.com/2475429/235824958-9f34525c-89bb-440c-9db1-d1daa3e2dc88.png">
+
 ### Enable your configuration by creating a symbolic link.
 Sudo ln –s /etc/nginx/sites-available/villages.io.conf /etc/nginx/sites-enabled/villages.io.conf
 
