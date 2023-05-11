@@ -43,7 +43,65 @@ sudo rm /etc/nginx/sites-enabled/default
 Paste the following. In this configuration we are pointing the main domain path to the build output directory of React.js application and the /api path for the Express.js application.
 sudo nano /etc/nginx/sites-available/villages.io.conf
 
-<img width="383" alt="image" src="https://user-images.githubusercontent.com/2475429/235824958-9f34525c-89bb-440c-9db1-d1daa3e2dc88.png">
+```
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name villages.io;
+
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/villages.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/villages.io/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/villages.io/chain.pem;
+
+    # security
+    include nginxconfig.io/security.conf;
+
+    # Logging
+    access_log /var/log/nginx/access.log combined buffer=512k flush=1m;
+    error_log /var/log/nginx/error.log warn;
+
+    # reverse proxy
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        include nginxconfig.io/proxy.conf;
+    }
+
+    # additional config
+    include nginxconfig.io/general.conf;
+}
+
+# subdomains redirect
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name *.villages.io;
+
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/villages.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/villages.io/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/villages.io/chain.pem;
+
+    location / {
+        return 301 https://villages.io$request_uri;
+    }
+}
+
+# HTTP redirect
+server {
+    listen 80;
+    listen [::]:80;
+    server_name villages.io;
+
+    include nginxconfig.io/letsencrypt.conf;
+
+    location / {
+        return 301 https://villages.io$request_uri;
+    }
+}
+```
+
 
 ### Enable your configuration by creating a symbolic link.
 Sudo ln –s /etc/nginx/sites-available/villages.io.conf /etc/nginx/sites-enabled/villages.io.conf
