@@ -13,6 +13,6 @@ git reset --hard origin/release-branch
 
 cd frontend
 
-npm i
+npm i --legacy-peer-deps
 
 npm run build
