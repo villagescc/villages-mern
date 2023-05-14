@@ -16,15 +16,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16
-
+          node-version: 18
+        
       - name: Install dependencies (root)
         run: npm i --legacy-peer-deps
 
       - name: Run frontend build script
         run: |
           cd frontend
-          npm i --force
+          npm cache clean --force
+          npm i --force  
           npm run build
 
       - name: Upload to Ubuntu server
