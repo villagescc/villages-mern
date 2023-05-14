@@ -35,4 +35,4 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           source: ./frontend/build/
-          target: /home/mike/villages-mern
+          target: /home/mike/villages-mern-git
