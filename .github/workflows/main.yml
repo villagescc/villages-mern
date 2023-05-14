@@ -18,17 +18,14 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install dependencies
+      - name: Install dependencies (root)
         run: npm i --legacy-peer-deps
 
-      - name: Change directory to frontend
-        run: cd frontend
-
-      - name: Install frontend dependencies
-        run: npm i --legacy-peer-deps
-
-      - name: Build frontend code
-        run: npm run build
+      - name: Run frontend build script
+        run: |
+          cd frontend
+          npm i --legacy-peer-deps
+          npm run build
 
       - name: Upload to Ubuntu server
         uses: appleboy/scp-action@master
