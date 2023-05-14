@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "react-google-places-autocomplete": "^3.4.0"
+    "react-google-places-autocomplete": "^3.4.0",
+    "sharp": "^0.32.0"
   }
 }
