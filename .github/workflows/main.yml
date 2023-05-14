@@ -19,9 +19,15 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
-        run: npm i --force
+        run: npm i --legacy-peer-deps
 
-      - name: Build code
+      - name: Change directory to frontend
+        run: cd frontend
+
+      - name: Install frontend dependencies
+        run: npm i --legacy-peer-deps
+
+      - name: Build frontend code
         run: npm run build
 
       - name: Upload to Ubuntu server
@@ -31,5 +37,5 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: ./build/
+          source: ./frontend/build/
           target: /home/mike/villages-mern
