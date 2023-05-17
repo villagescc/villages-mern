@@ -46,7 +46,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: ./frontend/build/*
+          source: /frontend/build/*
           target: /home/mike/villages-mern-git
       
       - name: Upload Backend to Ubuntu server
@@ -56,7 +56,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: ./backend/*
+          source: /backend/*
           target: /home/mike/villages-mern-git/backend
           
       - name: Execute deploy.sh script
