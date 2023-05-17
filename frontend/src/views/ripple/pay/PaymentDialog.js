@@ -86,11 +86,11 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
       return new Date(b.createdAt) - new Date(a.createdAt);
     })) {
       let user = {
-        _id: transaction.recipient._id,
-        username: transaction.recipient.username,
-        firstName: transaction.recipient.firstName,
-        lastName: transaction.recipient.lastName,
-        profile: transaction.recipient.profile
+        _id: transaction.recipient?._id,
+        username: transaction.recipient?.username,
+        firstName: transaction.recipient?.firstName,
+        lastName: transaction.recipient?.lastName,
+        profile: transaction.recipient?.profile
       };
       if (!relatedUsers.find((userr) => userr._id === user._id)) {
         relatedUsers.push(user);

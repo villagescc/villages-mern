@@ -261,25 +261,29 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
                   )}
                 </TableCell>
                 <TableCell>
+                
                   <Typography
                     variant="body1"
                     component={Link}
-                    to={`/listing/person/${row?.payer?._id === user?._id ? row.recipient._id : row.payer._id}`}
+                    to={`/listing/person/${row?.payer?._id === user?._id ? row?.recipient?._id : row?.payer?._id}`}
                     style={{ textDecoration: 'none' }}
                   >
-                    {/* {row?.payer?._id === user?._id ? row.recipient.profile?.name + '(' + row.recipient.username + ')' : row.payer.username} */}
+                    
+                    {/* {row?.payer?._id === user?._id ? row?.recipient?.profile?.name + '(' + row?.recipient?.username + ')' : row?.payer?.username} */}
                     {row?.payer?._id === user?._id
-                      ? row.recipient.profile?.name
-                        ? row.recipient.profile?.name + '(' + row.recipient.username + ')'
-                        : row.recipient.firstName || row.recipient.lastName
-                        ? row.recipient.firstName + ' ' + row.recipient.lastName + '(' + row.recipient.username + ')'
-                        : row.recipient.username
-                      : row.payer.profile?.name
-                      ? row.payer.profile?.name + '(' + row.payer.username + ')'
-                      : row.payer.firstName || row.payer.lastName
-                      ? row.payer.firstName + ' ' + row.payer.lastName + '(' + row.payer.username + ')'
-                      : row.payer.username}
+                      ? row?.recipient?.profile?.name
+                        ? row?.recipient?.profile?.name + '(' + row?.recipient?.username + ')'
+                        : row?.recipient?.firstName || row?.recipient?.lastName
+                        ? row?.recipient?.firstName + ' ' + row?.recipient?.lastName + '(' + row?.recipient?.username + ')'
+                        : row?.recipient?.username
+                      : row?.payer?.profile?.name
+                      ? row?.payer?.profile?.name + '(' + row?.payer?.username + ')'
+                      : row?.payer?.firstName || row?.payer?.lastName
+                      ? row?.payer?.firstName + ' ' + row?.payer?.lastName + '(' + row?.payer?.username + ')'
+                      : row?.payer?.username}
                   </Typography>
+                 
+             
                 </TableCell>
                 <TableCell>{row.memo.length > 50 ? row.memo.slice(0, 50) + '...' : row.memo}</TableCell>
                 <TableCell align="right">
