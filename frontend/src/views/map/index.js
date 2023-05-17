@@ -11,8 +11,9 @@ import { SERVER_URL } from 'config';
 const Index = () => {
   const dispatch = useDispatch();
   const { user } = useAuth();
-  console.log(typeof user.latitude);
+  console.log(user.latitude);
   console.log(user.longitude);
+
   return (
     <div style={{ height: '80vh', width: '100%' }}>
       <GoogleMap
@@ -21,23 +22,20 @@ const Index = () => {
           libraries: ['places']
         }}
         yesIWantToUseGoogleMapApiInternals
-        center={[user?.latitude, user?.longitude]}
+        center={[user?.latitude < 90 ? user?.latitude : 180 - user?.latitude, user?.longitude < 180 ? user?.longitude : 360 - user?.longitude]}
         zoom={9}
         defaultZoom={10}
       >
-        {/*{*/}
-        {/*  users.map((user, index) => (*/}
         <Avatar
-          lat={user?.latitude}
-          lng={user?.longitude}
+          lat={user?.latitude < 90 ? user?.latitude : 180 - user?.latitude}
+          lng={user?.longitude < 180 ? user?.longitude : 360 - user?.longitude}
           alt={user?.username}
           src={user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.profile.avatar : DefaultAvatar}
           tooltip={user?.username}
           component={Link}
           to={'/personal/profile'}
         />
-        {/*  ))*/}
-        {/*}*/}
+
       </GoogleMap>
     </div>
   );

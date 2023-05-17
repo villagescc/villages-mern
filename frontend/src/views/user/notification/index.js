@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme, styled } from '@mui/material/styles';
 
 // material-ui
@@ -16,10 +16,10 @@ import {
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import {SERVER_URL} from "config";
-import {io} from "socket.io-client";
-import {useDispatch, useSelector} from "store";
-import {getNotifications, setReadAll, deleteAll} from "store/slices/notification";
+import { SERVER_URL } from "config";
+import { io } from "socket.io-client";
+import { useDispatch, useSelector } from "store";
+import { getNotifications, setReadAll, deleteAll } from "store/slices/notification";
 // material-ui
 
 // project imports
@@ -27,10 +27,10 @@ import Avatar from 'ui-component/extended/Avatar';
 import { gridSpacing } from 'store/constant';
 
 // assets
-import {openSnackbar} from "store/slices/snackbar";
+import { openSnackbar } from "store/slices/snackbar";
 import ReactTimeAgo from "react-time-ago";
 import DefaultUserIcon from "assets/images/auth/default.png";
-import {openDialog} from "store/slices/dialog";
+import { openDialog } from "store/slices/dialog";
 import Empty from "ui-component/Empty";
 
 // assets
@@ -99,7 +99,7 @@ const Index = () => {
   }, [notificationState])
 
   useEffect(() => {
-    if(socket) {
+    if (socket) {
       socket.on('newNotification', (notification) => {
         dispatch(
           openSnackbar({
@@ -164,21 +164,21 @@ const Index = () => {
             >
               {
                 [...notifications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((notification, key) => (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} key={notification._id}>
                     <Grid container spacing={2}>
                       <Grid item>
                         <Grid container spacing={2} alignItems="center">
                           <Grid item sx={{ minWidth: 100 }}>
                             <Typography align="right" variant="caption">
-                              <ReactTimeAgo date={new Date(notification.createdAt)} locale="en-US"/>
+                              <ReactTimeAgo date={new Date(notification.createdAt)} locale="en-US" />
                             </Typography>
                             <Grid item>
-                              <Chip size={'small'} label={notification.notificationType} sx={notification.notificationType==='TRUST' ? chipSuccessSX : chipWarningSX} />
+                              <Chip size={'small'} label={notification.notificationType} sx={notification.notificationType === 'TRUST' ? chipSuccessSX : chipWarningSX} />
                             </Grid>
                           </Grid>
                           <Grid item>
                             <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
-                              <Avatar size={'md'} alt={notification.notifierId.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
+                              <Avatar size={'md'} alt={notification.notifierId?.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
                             </Badge>
                           </Grid>
                         </Grid>
@@ -187,7 +187,7 @@ const Index = () => {
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
                             <Typography component="div" align="left" variant="subtitle1">
-                              {notification.notifierId.username}
+                              {notification.notifierId?.username}
                             </Typography>
                             <Typography component="div" align="left" variant="subtitle2">
                               {notification?.memo}
