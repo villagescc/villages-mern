@@ -125,10 +125,10 @@ const connectDB = async () => {
             };
             if (
               profiles &&
-              profiles.find((profile) => profile?.user_id === user_id)
+              profiles.find((profile) => profile.user_id === user_id)
             ) {
               let oldProfile = profiles.find(
-                (profile) => profile?.user_id === user_id
+                (profile) => profile.user_id === user_id
               );
               profileData = {
                 ...profileData,
@@ -141,17 +141,17 @@ const connectDB = async () => {
               };
               if (
                 nodes &&
-                nodes.find((node) => node?.alias === oldProfile.id)
+                nodes.find((node) => node.alias === oldProfile.id)
               ) {
                 let oldNode = nodes.find(
-                  (node) => node?.alias === oldProfile.id
+                  (node) => node.alias === oldProfile.id
                 );
                 if (
                   accounts &&
-                  accounts.find((account) => account?.id === oldNode.id)
+                  accounts.find((account) => account.id === oldNode.id)
                 ) {
                   let oldAccount = accounts.find(
-                    (account) => account?.id === oldNode.id
+                    (account) => account.id === oldNode.id
                   );
                   accountData.balance = oldAccount.balance;
                 }
@@ -174,10 +174,10 @@ const connectDB = async () => {
             await user.save();
             if (
               profiles &&
-              profiles.find((profile) => profile?.user_id === user_id)
+              profiles.find((profile) => profile.user_id === user_id)
             ) {
               profile_to_user_ids[
-                profiles.find((profile) => profile?.user_id === user_id).id
+                profiles.find((profile) => profile.user_id === user_id).id
               ] = user._id;
             }
           } catch (err) {
