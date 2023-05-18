@@ -23,7 +23,7 @@
         "@mui/x-data-grid": "^5.17.0",
         "@mui/x-date-pickers": "^5.0.0",
         "@mui/x-date-pickers-pro": "^5.0.15",
-        "@react-sigma/core": "^3.1.0",
+        "@react-sigma/core": "^3.4.0",
         "@react-sigma/layout-forceatlas2": "^3.1.0",
         "@react-sigma/layout-random": "^3.2.0",
         "@reduxjs/toolkit": "^1.8.5",
