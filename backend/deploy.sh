@@ -3,7 +3,9 @@
 # Change to the project directory
 cd /home/mike/villages-mern-git/backend
 
-npm i --legacy-peer-deps
+rm -R node_modules
+nvm use 14.15.3
+npm i
 
 pm2 stop index
 pm2 delete index 2>/dev/null || true
