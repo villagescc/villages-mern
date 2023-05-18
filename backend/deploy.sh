@@ -4,6 +4,7 @@
 cd /home/mike/villages-mern-git/backend
 
 rm -R node_modules
+source ~/.nvm/nvm.sh
 nvm use 14.15.3
 npm i
 
