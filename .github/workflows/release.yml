@@ -1,4 +1,4 @@
-name: Deploy to Ubuntu Server
+name: Release App to Prod
 
 on:
   push:
