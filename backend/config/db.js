@@ -14,7 +14,7 @@ const db =
   ":" +
   password +
   "@cluster0.hu14qc2.mongodb.net/villages";
-
+moongose.set('strictQuery', false);
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
 const Tag = require("../models/Tag");
@@ -41,6 +41,7 @@ const connectDB = async () => {
   try {
     try {
       await moongose.connect(db);
+      console.log("DB Connected");
     } catch (err) {
       console.log("mongo connect error:", err);
     }
