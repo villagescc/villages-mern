@@ -116,6 +116,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
     } else {
       setNotifyText(false);
       setAmount(0);
+      setMaxLimit(0)
     }
   }, [recipient]);
 
@@ -133,15 +134,16 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
       return option.firstName || option.lastName
         ? `${option.firstName} ${option.lastName} (${option.username})`
         : option.profile?.name
-        ? `${option?.profile?.name} (${option.username})`
-        : `${option.username}`;
+          ? `${option?.profile?.name} (${option.username})`
+          : `${option.username}`;
     },
     filterOptions: (options, { inputValue }) => {
       return options.filter((item) => {
-        return item.username.toLowerCase().includes(inputValue?.toLowerCase());
+        return item.username?.toLowerCase().includes(inputValue?.toLowerCase());
       });
     }
   };
+
 
   return (
     <Dialog
@@ -164,25 +166,25 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                 <Autocomplete
                   {...defaultProps}
                   id="recipient"
-                  value={users.find((user) => user._id === recipient) || null}
+                  value={recipient?.length ? users.find((user) => user._id === recipient) : null}
                   onChange={(event, newValue) => {
                     setRecipient(newValue?._id);
                   }}
                   renderInput={(params) => (
-                    <TextField
+                    < TextField
                       {...params}
                       label="CHOOSE THE PAYMENT RECEIVER:"
                       margin="normal"
                       size={'small'}
-                      error={errors?.recipient ? errors.recipient : ''}
+                      error={errors?.recipient ? errors.recipient : false}
                       helperText={
                         notifyText
                           ? 'Please wait for a while getting path...'
                           : maxLimit > 0
-                          ? `You can send up to ${maxLimit}VH`
-                          : errors?.recipient
-                          ? errors.recipient
-                          : 'Please select the recipient'
+                            ? `You can send up to ${maxLimit}VH`
+                            : errors?.recipient
+                              ? errors.recipient
+                              : 'Please select the recipient'
                       }
                     />
                   )}
@@ -196,10 +198,15 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                     id="amount"
                     type="number"
                     value={amount}
+                    onKeyDown={(event) => {
+                      if (event.keyCode === 69 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187 || event.keyCode === 189) {
+                        event.preventDefault()
+                      }
+                    }}
                     onChange={(e) => setAmount(e.target.value)}
                     error={errors.amount}
                     helperText={errors?.amount}
-                    InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment> }}
+                    InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment>, inputProps: { min: 0 } }}
                   />
                   <MuiTooltip
                     placement="right"

@@ -11,8 +11,7 @@ import { SERVER_URL } from 'config';
 const Index = () => {
   const dispatch = useDispatch();
   const { user } = useAuth();
-  console.log(user.latitude);
-  console.log(user.longitude);
+
 
   return (
     <div style={{ height: '80vh', width: '100%' }}>

@@ -94,15 +94,15 @@ const NotificationList = ({ notifications }) => {
                 <ListItem alignItems="center" style={{ minWidth: 300 }}>
                   <ListItemAvatar>
                     <Badge color="error" overlap="circular" badgeContent=" " variant="dot" invisible={notification.status !== 'NEW'}>
-                      <Avatar alt={notification.notifierId.username} src={notification.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
+                      <Avatar alt={notification?.notifierId?.username} src={notification?.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
                     </Badge>
                   </ListItemAvatar>
-                  <ListItemText primary={notification.notifierId.username} />
+                  <ListItemText primary={notification?.notifierId?.username} />
                   <ListItemSecondaryAction>
                     <Grid container justifyContent="flex-end">
                       <Grid item xs={12}>
                         <Typography variant="caption" display="block" gutterBottom>
-                          <ReactTimeAgo date={new Date(notification.createdAt)} locale="en-US"/>
+                          <ReactTimeAgo date={new Date(notification?.createdAt)} locale="en-US" />
                         </Typography>
                       </Grid>
                     </Grid>
@@ -124,7 +124,7 @@ const NotificationList = ({ notifications }) => {
                         )
                       }
                       <Grid item>
-                        <Chip label={notification.notificationType} sx={notification.notificationType==='TRUST' ? chipSuccessSX : chipWarningSX} />
+                        <Chip label={notification?.notificationType} sx={notification?.notificationType === 'TRUST' ? chipSuccessSX : chipWarningSX} />
                       </Grid>
                     </Grid>
                   </Grid>

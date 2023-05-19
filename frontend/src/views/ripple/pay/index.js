@@ -115,7 +115,7 @@ const Index = () => {
       <TabPanel value={value} index={1}>
         <Path />
       </TabPanel>
-      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId} setCount={setCount} />
+      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId ?? ''} setCount={setCount} />
     </MainCard>
   );
 };
