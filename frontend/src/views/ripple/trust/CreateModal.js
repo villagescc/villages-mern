@@ -29,8 +29,8 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
       return option.firstName || option.lastName
         ? `${option.firstName} ${option.lastName} (${option.username})`
         : option.profile?.name
-        ? `${option?.profile?.name} (${option.username})`
-        : `${option.username}`;
+          ? `${option?.profile?.name} (${option.username})`
+          : `${option.username}`;
     },
     filterOptions: (options, { inputValue }) => {
       return options.filter((item) => {
@@ -85,7 +85,12 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 size={'small'}
                 id="weight"
                 type="number"
-                InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment> }}
+                onKeyDown={(event) => {
+                  if (event.keyCode === 69 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187 || event.keyCode === 189) {
+                    event.preventDefault()
+                  }
+                }}
+                InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment>, inputProps: { min: 0 } }}
                 onChange={(event) => {
                   setEndorsement({ ...endorsement, weight: event.target.value });
                 }}

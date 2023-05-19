@@ -31,11 +31,11 @@ import NotificationList from './NotificationList';
 
 // assets
 import { IconBell } from '@tabler/icons';
-import {SERVER_URL} from "config";
-import {io} from "socket.io-client";
+import { SERVER_URL } from "config";
+import { io } from "socket.io-client";
 import { useDispatch, useSelector } from 'store';
-import {getNotifications, setReadAll} from 'store/slices/notification';
-import {openSnackbar} from "store/slices/snackbar";
+import { getNotifications, setReadAll } from 'store/slices/notification';
+import { openSnackbar } from "store/slices/snackbar";
 
 // notification status options
 const types = [
@@ -99,7 +99,7 @@ const NotificationSection = () => {
   }, [notificationState])
 
   useEffect(() => {
-    if(socket) {
+    if (socket) {
       socket.on('newNotification', (notification) => {
         dispatch(
           openSnackbar({
@@ -207,7 +207,7 @@ const NotificationSection = () => {
                           <Grid item>
                             <Stack direction="row" spacing={2}>
                               <Typography variant="subtitle1">
-                                { types.find(item => item.value == type)?.label }
+                                {types.find(item => item.value == type)?.label}
                               </Typography>
                             </Stack>
                           </Grid>
@@ -271,7 +271,7 @@ const NotificationSection = () => {
                     {
                       notifications.length > 0 && (
                         <CardActions sx={{ p: 1.25, justifyContent: 'center' }}>
-                          <Button component={Link} size="small" disableElevation to={'/personal/notification'}>
+                          <Button component={Link} size="small" disableElevation to={'/personal/notification'} onClick={handleToggle}>
                             View All
                           </Button>
                         </CardActions>

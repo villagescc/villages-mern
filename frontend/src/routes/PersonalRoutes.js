@@ -16,6 +16,8 @@ const ProfileView = Loadable(lazy(() => import('views/user/profile')));
 const ProfileEdit = Loadable(lazy(() => import('views/user/profile/edit')));
 const Setting = Loadable(lazy(() => import('views/user/setting')));
 
+// map routing
+const Map = Loadable(lazy(() => import('views/map')));
 // ==============================|| PERSONAL ROUTING ||============================== //
 
 const PersonalRoute = {
@@ -77,6 +79,10 @@ const PersonalRoute = {
     {
       path: '/personal/setting',
       element: <Setting />
+    },
+    {
+      path: '/map',
+      element: <Map />
     }
   ]
 };

@@ -64,7 +64,7 @@ const CardMediaPurple = styled('img')({
 
 // ==============================|| ERROR PAGE ||============================== //
 
-const Error = () => {
+const Error = ({ path }) => {
     const theme = useTheme();
 
     return (
@@ -88,7 +88,7 @@ const Error = () => {
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12}>
                                     <Typography variant="h1" component="div">
-                                        Something is wrong
+                                        Page Not Found
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -98,7 +98,7 @@ const Error = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <AnimateButton>
-                                        <Button variant="contained" size="large" component={Link} to={DASHBOARD_PATH}>
+                                        <Button variant="contained" size="large" component={Link} to={path}>
                                             <HomeTwoToneIcon sx={{ fontSize: '1.3rem', mr: 0.75 }} /> Home
                                         </Button>
                                     </AnimateButton>

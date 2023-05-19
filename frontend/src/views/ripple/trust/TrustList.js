@@ -51,7 +51,6 @@ const Index = () => {
 
   // get all users details
   const endorsementState = useSelector((state) => state.endorsement);
-
   useEffect(() => {
     setEndorsements(endorsementState.endorsements);
     setUsers(endorsementState.users);
@@ -59,6 +58,10 @@ const Index = () => {
     setTotal(endorsementState.total);
     setErrors(endorsementState.errors);
   }, [endorsementState]);
+
+  useEffect(() => {
+    setErrors({})
+  }, [openCreate])
 
   useEffect(() => {
     dispatch(searchEndorsements());

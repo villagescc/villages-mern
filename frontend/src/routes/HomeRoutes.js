@@ -14,13 +14,12 @@ const PostingDetail = Loadable(lazy(() => import('views/listing/posting/PostingD
 const People = Loadable(lazy(() => import('views/listing/people')));
 const Person = Loadable(lazy(() => import('views/listing/people/person')));
 
-// map routing
-const Map = Loadable(lazy(() => import('views/map')));
 
 // documentation routing
 const Help = Loadable(lazy(() => import('views/documentation/help')));
 const Motivation = Loadable(lazy(() => import('views/documentation/motivation')));
 const Privacy = Loadable(lazy(() => import('views/documentation/privacy')));
+
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -55,10 +54,6 @@ const HomeRoutes = {
     {
       path: '/listing/person/:id',
       element: <Person />
-    },
-    {
-      path: '/map',
-      element: <Map />
     },
     {
       path: '/documentation/help',
