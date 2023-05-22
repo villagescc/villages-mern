@@ -63,28 +63,52 @@ exports.searchPosts = async (req, res, next) => {
       ]);
     }
     const total = await Listing.find(query).countDocuments();
-    if (filterData.page * 12 - 12 > total) filterData.page = 1;
-    query.skip(filterData.page * 12 - 12).limit(12);
-    const lists = await query
-      .populate({
-        path: "subcategoryId",
-        model: "subcategory",
-        populate: {
-          path: "categoryId",
-          model: "category",
-        },
-      })
-      .populate({
-        path: "userId",
-        model: "user",
-        populate: {
-          path: "profile",
-          model: "profile",
-        },
-      })
-      .populate("tags")
-      .exec();
-    res.send({ total, posts: lists });
+    if (!!!filterData.page) {
+      const lists = await query
+        .populate({
+          path: "subcategoryId",
+          model: "subcategory",
+          populate: {
+            path: "categoryId",
+            model: "category",
+          },
+        })
+        .populate({
+          path: "userId",
+          model: "user",
+          populate: {
+            path: "profile",
+            model: "profile",
+          },
+        })
+        .populate("tags")
+        .exec();
+      res.send({ total, posts: lists });
+    }
+    else {
+      if (filterData.page * 12 - 12 > total) filterData.page = 1;
+      query.skip(filterData.page * 12 - 12).limit(12);
+      const lists = await query
+        .populate({
+          path: "subcategoryId",
+          model: "subcategory",
+          populate: {
+            path: "categoryId",
+            model: "category",
+          },
+        })
+        .populate({
+          path: "userId",
+          model: "user",
+          populate: {
+            path: "profile",
+            model: "profile",
+          },
+        })
+        .populate("tags")
+        .exec();
+      res.send({ total, posts: lists });
+    }
   } catch (err) {
     console.log("filter error:", err);
     next(err);
@@ -130,8 +154,8 @@ exports.createPost = async (req, res, next) => {
   let tags = Array.isArray(req.body.tags)
     ? req.body.tags
     : req.body.tags
-    ? [req.body.tags]
-    : null;
+      ? [req.body.tags]
+      : null;
   let listing;
   try {
     if (tags && tags.length > 0) {
