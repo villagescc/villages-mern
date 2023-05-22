@@ -220,11 +220,13 @@ const Index = () => {
                   src={post?.userId?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.userId?.profile?.avatar : DefaultAvatar}
                   tooltip={
                     <Card sx={{ display: 'flex' }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', maxWidth: '50%' }}>
                         <CardContent sx={{ flex: '1 0 auto', padding: '0px' }}>
-                          <Typography component="div" variant="h5">
-                            {post?.title}
-                          </Typography>
+                          <div>
+                            <Typography variant="h5" component={Link} to={`/listing/post/${post?._id}`}>
+                              {post?.title}
+                            </Typography>
+                          </div>
                           <Typography variant="subtitle1" color="text.secondary" component="span">
                             {post?.description}
                           </Typography>
@@ -251,7 +253,8 @@ const Index = () => {
                       </Box>
                       <CardMedia
                         component="img"
-                        sx={{ width: 120 }}
+                        sx={{ maxWidth: '50%' }}
+                        xs={6}
                         image={post?.photo ? `${SERVER_URL}/upload/posting/` + post.photo : DefaultPostingIcon}
                         alt="Live from space album cover"
                       />
