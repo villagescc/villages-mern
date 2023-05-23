@@ -99,11 +99,22 @@ const axios = require("axios");
 
 const buildGraph = async (nodes = null) => {
   const graph = await new Graph();
-  const users = await User.find();
+  // const users = await User.find();
+  // for (let user of users) {
+  //   if (nodes !== null && !nodes.includes(user.id)) continue;
+  //   graph.addNode(user.id, {
+  //     ...user._doc,
+  //   });
+  // }
+  const users = await User.aggregate([{ $lookup: { from: 'profiles', localField: 'profile', foreignField: "_id", as: "profile" } }, {
+    $addFields: {
+      profile: { $arrayElemAt: ["$profile", 0] }
+    }
+  },])
   for (let user of users) {
-    if (nodes !== null && !nodes.includes(user.id)) continue;
-    graph.addNode(user.id, {
-      ...user._doc,
+    if (nodes !== null && !nodes.includes(user._id.toString())) continue;
+    graph.addNode(user._id, {
+      ...user,
     });
   }
 
@@ -344,11 +355,11 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
     for (let i = 0; i < path.length - 1; i++) {
       let limit =
         (graph.hasEdge(path[i], path[i + 1]) &&
-        graph.getEdgeAttribute(path[i], path[i + 1], "limit")
+          graph.getEdgeAttribute(path[i], path[i + 1], "limit")
           ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "limit"))
           : 0) -
         (graph.hasEdge(path[i], path[i + 1]) &&
-        graph.getEdgeAttribute(path[i], path[i + 1], "tempPay")
+          graph.getEdgeAttribute(path[i], path[i + 1], "tempPay")
           ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "tempPay"))
           : 0);
       if (i === 0) min = limit;
@@ -364,7 +375,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
     for (let i = 0; i < path.length - 1; i++) {
       let tempPayAmount =
         (graph.hasEdge(path[i], path[i + 1]) &&
-        graph.getEdgeAttribute(path[i], path[i + 1], "tempPay")
+          graph.getEdgeAttribute(path[i], path[i + 1], "tempPay")
           ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "tempPay"))
           : 0) + min;
       if (tempPayAmount > 0)
