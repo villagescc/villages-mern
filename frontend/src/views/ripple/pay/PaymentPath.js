@@ -27,21 +27,19 @@ const LoadGraph = ({ paylogs }) => {
                         size: 20,
                         label: paylog.payer.username,
                         type: 'image',
-                        image: paylog.payer.profile.avatar ? `${SERVER_URL}/upload/avatar/` + paylog.payer.profile.avatar : DefaultUserIcon
+                        image: paylog?.payer?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + paylog?.payer?.profile?.avatar : DefaultUserIcon
                     });
                 }
                 if (!graph.hasNode(paylog.recipient.username)) {
                     graph.addNode(paylog.recipient.username, {
                         ...paylog.recipient,
                         size: 20,
-                        label: paylog.recipient.username,
+                        label: paylog.recipient?.username,
                         type: 'image',
-                        image: paylog.recipient.profile.avatar
-                            ? `${SERVER_URL}/upload/avatar/` + paylog.recipient.profile.avatar
-                            : DefaultUserIcon
+                        image: paylog.recipient?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + paylog.recipient?.profile?.avatar : DefaultUserIcon
                     });
                 }
-                graph.addEdgeWithKey(paylog._id, paylog.payer.username, paylog.recipient.username, {
+                graph.addEdgeWithKey(paylog._id, paylog?.payer?.username, paylog?.recipient?.username, {
                     label: paylog.amount,
                     color: theme.palette.secondary.main,
                     size: 5
