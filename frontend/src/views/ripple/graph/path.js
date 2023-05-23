@@ -88,7 +88,7 @@ import getNodeProgramImage from 'sigma/rendering/webgl/programs/node.image';
 import { SigmaContainer, ControlsContainer, ZoomControl, FullScreenControl, SearchControl, useLoadGraph } from '@react-sigma/core';
 import { LayoutForceAtlas2Control } from '@react-sigma/layout-forceatlas2';
 import random from 'graphology-layout/random';
-
+import { getGraph } from 'store/slices/graph';
 import DefaultUserIcon from '../../../assets/images/auth/default.png';
 import { SERVER_URL } from 'config';
 
@@ -102,6 +102,10 @@ const LoadGraphWithByProp = () => {
   useEffect(() => {
     setGraphData(graphState.graph);
   }, [graphState]);
+
+  useEffect(() => {
+    dispatch(getGraph());
+  }, []);
 
   const [graphData, setGraphData] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);

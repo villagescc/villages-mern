@@ -116,7 +116,6 @@ const Index = () => {
       }
     }
   });
-  console.log(posts);
   return (
     <div>
       <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
@@ -209,12 +208,12 @@ const Index = () => {
         >
 
           {posts.length &&
-            posts.map(post => {
+            posts.map((post, index) => {
               if (post?.userId?.latitude && post?.userId?.longitude) {
                 // console.log(post.userId?.latitude, post.userId?.longitude, post?.userId?.profile?.name);
                 return <AvatarIcon
-                  lat={post?.userId?.latitude}
-                  lng={post?.userId?.longitude}
+                  lat={post?.userId?.latitude + index * 0.001}
+                  lng={post?.userId?.longitude + index * 0.001}
                   alt={post?.postname}
                   key={post?._id}
                   src={post?.userId?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.userId?.profile?.avatar : DefaultAvatar}
@@ -227,7 +226,7 @@ const Index = () => {
                               {post?.title}
                             </Typography>
                           </div>
-                          <Typography variant="subtitle1" color="text.secondary" component="span">
+                          <Typography variant="subtitle1" color="text.secondary" component="span" style={{ display: '-webkit-box', '-webkit-line-clamp': '5', overflow: 'hidden', '-webkit-box-orient': 'vertical' }}>
                             {post?.description}
                           </Typography>
                         </CardContent>
