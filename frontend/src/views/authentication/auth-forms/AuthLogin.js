@@ -38,8 +38,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { activeID } from 'store/slices/menu';
 
-import { messaging, getToken, onMessage } from 'firebaseConfig';
-
+import { messaging, getToken, onMessage, hasFirebaseMessagingSupport } from 'firebaseConfig';
 // import { geocodeByPlaceId } from 'react-places-autocomplete';
 import { geocodeByLatLng } from 'react-google-places-autocomplete';
 import { result } from 'lodash';
@@ -86,24 +85,27 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     console.log(error);
   };
   useEffect(() => {
-    Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
-          .then((currentToken) => {
-            if (currentToken) {
-              setToken(currentToken);
-            } else {
-              console.log('No registration token available. Request permission to generate one.');
-            }
-          })
-          .catch((err) => {
-            console.log('An error occurred while retrieving token. ', err);
-          });
-      }
-      else {
-        console.log('Notification permission Rejected.');
-      }
-    })
+    if (hasFirebaseMessagingSupport) {
+      // console.log(hasFirebaseMessagingSupport, "<== hasFirebaseMessagingSupport")
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
+            .then((currentToken) => {
+              if (currentToken) {
+                setToken(currentToken);
+              } else {
+                console.log('No registration token available. Request permission to generate one.');
+              }
+            })
+            .catch((err) => {
+              console.log('An error occurred while retrieving token. ', err);
+            });
+        }
+        else {
+          console.log('Notification permission Rejected.');
+        }
+      })
+    }
     navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   }, []);
 

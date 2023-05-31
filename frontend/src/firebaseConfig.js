@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,12 +17,22 @@ const firebaseConfig = {
     measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const messaging = getMessaging(app);
-onMessage(messaging, (payload) => {
-    console.log('received message', payload);
-});
+let hasFirebaseMessagingSupport
+let analytics
+let messaging
+(async () => {
+    hasFirebaseMessagingSupport = await isSupported()
+    if (hasFirebaseMessagingSupport) {
+        // Initialize Firebase
+        console.log(hasFirebaseMessagingSupport, "<== Is supported")
+        const app = initializeApp(firebaseConfig);
+        analytics = getAnalytics(app);
+        messaging = getMessaging(app);
+        onMessage(messaging, (payload) => {
+            console.log('received message', payload);
+        });
+    }
+})();
 
-export { messaging, getToken, onMessage };
+
+export { messaging, getToken, onMessage, hasFirebaseMessagingSupport };

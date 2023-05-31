@@ -27,7 +27,7 @@ import { useParams } from 'react-router-dom';
 import Empty from 'ui-component/Empty';
 import { getUserList } from '../../../store/slices/user';
 
-import { messaging, onMessage } from 'firebaseConfig';
+import { messaging, onMessage, hasFirebaseMessagingSupport } from 'firebaseConfig';
 
 const Index = () => {
   const theme = useTheme();
@@ -130,19 +130,23 @@ const Index = () => {
     setOpenCreate(false);
   };
 
-  onMessage(messaging, (payload) => {
-    dispatch(
-      openSnackbar({
-        open: true,
-        message: payload.notification.body,
-        variant: 'alert',
-        alert: {
-          color: 'success'
-        },
-        close: false
-      })
-    );
-  });
+  // console.log(hasFirebaseMessagingSupport, "<== Is supported")
+  if (hasFirebaseMessagingSupport) {
+    // console.log(hasFirebaseMessagingSupport, "<== Is supported True")
+    onMessage(messaging, (payload) => {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: payload.notification.body,
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: false
+        })
+      );
+    });
+  }
 
   return (
     <>

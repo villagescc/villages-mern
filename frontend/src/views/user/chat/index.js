@@ -21,7 +21,7 @@ import {
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Picker, { SKIN_TONE_MEDIUM_DARK } from 'emoji-picker-react';
-import { messaging, getToken, onMessage } from 'firebaseConfig';
+import { messaging, getToken, onMessage, hasFirebaseMessagingSupport } from 'firebaseConfig';
 
 // project imports
 import UserDetails from './UserDetails';
@@ -103,15 +103,19 @@ const ChatMainPage = () => {
     }
   });
 
-  onMessage(messaging, (payload) => {
-    const newData = [...data];
-    newData.push({
-      sender: payload.data.senderid,
-      text: payload.notification.body,
-      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+  // console.log(hasFirebaseMessagingSupport, "<== Is supported")
+  if (hasFirebaseMessagingSupport) {
+    // console.log(hasFirebaseMessagingSupport, "<== Is supported True")
+    onMessage(messaging, (payload) => {
+      const newData = [...data];
+      newData.push({
+        sender: payload.data.senderid,
+        text: payload.notification.body,
+        updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+      });
+      setData(newData);
     });
-    setData(newData);
-  });
+  }
 
   const { user: authUser } = useAuth();
 
