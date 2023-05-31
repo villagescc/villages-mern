@@ -86,17 +86,24 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     console.log(error);
   };
   useEffect(() => {
-    getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
-      .then((currentToken) => {
-        if (currentToken) {
-          setToken(currentToken);
-        } else {
-          console.log('No registration token available. Request permission to generate one.');
-        }
-      })
-      .catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-      });
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY })
+          .then((currentToken) => {
+            if (currentToken) {
+              setToken(currentToken);
+            } else {
+              console.log('No registration token available. Request permission to generate one.');
+            }
+          })
+          .catch((err) => {
+            console.log('An error occurred while retrieving token. ', err);
+          });
+      }
+      else {
+        console.log('Notification permission Rejected.');
+      }
+    })
     navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   }, []);
 
@@ -116,7 +123,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
           console.log(token, placeId, latitude, longitude);
           try {
             await login(values.email, values.password, token, placeId, longitude, latitude).then(
-              () => {},
+              () => { },
               (err) => {
                 setStatus({ success: false });
                 setErrors(err);
