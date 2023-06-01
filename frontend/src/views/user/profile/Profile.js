@@ -13,7 +13,11 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import { WithContext as ReactTags } from 'react-tag-input';
 import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete';
@@ -32,6 +36,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'store';
 import { getUser, saveProfile, uploadAvatar } from 'store/slices/user';
 import { openSnackbar } from 'store/slices/snackbar';
+import { geocodeByLatLng } from 'react-google-places-autocomplete';
+import { useNavigate } from 'react-router-dom';
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
 const KeyCodes = {
@@ -47,8 +53,49 @@ const Profile = () => {
     dispatch(getUser(user?._id));
   }, [user]);
 
-  const { user: currentUser, error } = useSelector((state) => state.user);
+  const [open, setOpen] = useState(false);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  async function fetchData(position) {
+    await geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
+      .then((results) => {
+        // console.log(results)
+        // console.log(results[results.length - 2].place_id, "Place id");
+        if (results?.length && results[results.length - 2].place_id) {
+          geocodeByPlaceId(results[results.length - 2].place_id).then((geodata) => {
+            console.log(geodata)
+            setLocation({
+              placeId: results[results.length - 2].place_id,
+              description: geodata[0].formatted_address
+            })
+          }
+          );
+        }
+      })
+      .catch((error) => console.error(error));
+  }
+
+  const successCallback = (position) => {
+    fetchData(position);
+  };
+  const errorCallback = (error) => {
+    console.log(error);
+    handleClickOpen()
+  };
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+  }, [])
+
+  const { user: currentUser, error } = useSelector((state) => state.user);
+  const navigate = useNavigate()
   const [avatar, setAvatar] = useState(DefaultAvatar);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -72,14 +119,14 @@ const Profile = () => {
     setZipCode(currentUser.profile?.zipCode ? currentUser.profile.zipCode : '');
     setPhoneNumber(currentUser.profile?.phoneNumber ? currentUser.profile.phoneNumber : '');
     setWebsite(currentUser.profile?.website ? currentUser.profile.website : '');
-    if (currentUser && currentUser.profile && currentUser.profile.placeId) {
-      geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
-        setLocation({
-          placeId: currentUser.profile.placeId,
-          description: results[0].formatted_address
-        })
-      );
-    }
+    // if (currentUser && currentUser.profile && currentUser.profile.placeId) {
+    //   geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
+    //     setLocation({
+    //       placeId: currentUser.profile.placeId,
+    //       description: results[0].formatted_address
+    //     })
+    //   );
+    // }
     setDescription(currentUser.profile?.description ? currentUser.profile.description : '');
   }, [currentUser]);
 
@@ -110,44 +157,51 @@ const Profile = () => {
 
   const handleSaveProfileClick = async () => {
     var placeId = location.placeId;
-    try {
-      await geocodeByPlaceId(placeId)
-        .then((results) => getLatLng(results[0]))
-        .then(({ lat, lng }) => {
-          dispatch(
-            saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
-              dispatch(
-                openSnackbar({
-                  open: true,
-                  message: 'Profile is saved successfully.',
-                  variant: 'alert',
-                  alert: {
-                    color: 'success'
-                  },
-                  close: false
-                })
-              );
-              dispatch(getUser(user._id));
-            })
-          );
-        });
-    } catch (err) {
-      dispatch(
-        saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
-          dispatch(
-            openSnackbar({
-              open: true,
-              message: 'Profile is saved successfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              },
-              close: false
-            })
-          );
-          dispatch(getUser(user._id));
-        })
-      );
+    if (location.placeId) {
+      try {
+        await geocodeByPlaceId(placeId)
+          .then((results) => getLatLng(results[0]))
+          .then(({ lat, lng }) => {
+            dispatch(
+              saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
+                dispatch(
+                  openSnackbar({
+                    open: true,
+                    message: 'Profile is saved successfully.',
+                    variant: 'alert',
+                    alert: {
+                      color: 'success'
+                    },
+                    close: false
+                  })
+                );
+                dispatch(getUser(user._id));
+
+                navigate('/listing/people', { replace: true })
+              })
+            );
+          });
+      } catch (err) {
+        dispatch(
+          saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Profile is saved successfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                close: false
+              })
+            );
+            dispatch(getUser(user._id));
+          })
+        );
+      }
+    }
+    else {
+      handleClickOpen()
     }
   };
 
@@ -384,6 +438,27 @@ const Profile = () => {
           </Grid>
         </SubCard>
       </Grid>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Please Allow location service"}
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography gutterBottom>
+            Let "Villages.io" determine your location to find people near you and display your post to nearby people.
+          </Typography>
+          <Typography gutterBottom>
+            Open Setting and allow Location permission to "Villages.io"
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };

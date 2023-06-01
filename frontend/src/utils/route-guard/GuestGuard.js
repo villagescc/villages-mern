@@ -14,12 +14,11 @@ import { DASHBOARD_PATH } from 'config';
  */
 
 const GuestGuard = ({ children }) => {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, isFirstTimeLogin } = useAuth();
     const navigate = useNavigate();
-
     useEffect(() => {
         if (isLoggedIn) {
-            navigate(DASHBOARD_PATH, { replace: true });
+            navigate(isFirstTimeLogin ? '/personal/profile' : DASHBOARD_PATH, { replace: true });
         }
     }, [isLoggedIn, navigate]);
 

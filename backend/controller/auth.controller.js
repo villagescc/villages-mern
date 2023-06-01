@@ -221,7 +221,7 @@ exports.login = (req, res, next) => {
                 profile: userData.profile,
                 account: userData.account,
                 deviceToken: userData.deviceToken,
-                latitude: userData.latitute,
+                latitude: userData.latitude,
                 longitude: userData.longitude,
               },
             };
@@ -235,7 +235,7 @@ exports.login = (req, res, next) => {
                   console.log("jwt sign error", err);
                   next(err);
                 }
-                return res.json({ serviceToken, user: userData });
+                return res.json({ serviceToken, user: userData, isFirstTimeLogin: userData?.lastLogin ? false : true });
               }
             );
           })
@@ -250,7 +250,7 @@ exports.login = (req, res, next) => {
         user.token = token;
         if (deviceToken !== "") user.deviceToken = deviceToken;
         if (latitude !== "" && longitude !== "") {
-          user.latitute = latitude;
+          user.latitude = latitude;
           user.longitude = longitude;
         }
         if (placeId !== "")

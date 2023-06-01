@@ -20,13 +20,14 @@ const accountReducer = (state = initialState, action) => {
             };
         }
         case LOGIN: {
-            const { user } = action.payload;
+            const { user, isFirstTimeLogin } = action.payload;
 
             return {
                 ...state,
                 isLoggedIn: true,
                 isInitialized: true,
-                user
+                user,
+                isFirstTimeLogin
             };
         }
         case LOGOUT: {
@@ -34,6 +35,7 @@ const accountReducer = (state = initialState, action) => {
                 ...state,
                 isInitialized: true,
                 isLoggedIn: false,
+                isFirstTimeLogin: false,
                 user: null
             };
         }

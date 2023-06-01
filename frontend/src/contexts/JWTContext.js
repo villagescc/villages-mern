@@ -51,7 +51,7 @@ export const JWTProvider = ({ children }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.account);
 
-  const init = async () => {
+  const init = async (data) => {
     try {
       const serviceToken = window.localStorage.getItem('serviceToken');
       if (serviceToken && verifyToken(serviceToken)) {
@@ -62,7 +62,8 @@ export const JWTProvider = ({ children }) => {
           type: LOGIN,
           payload: {
             isLoggedIn: true,
-            user
+            user,
+            isFirstTimeLogin: data
           }
         });
       } else {
@@ -84,7 +85,7 @@ export const JWTProvider = ({ children }) => {
 
   const login = async (email, password, deviceToken, placeId, latitude, longitude) => {
     const response = await axios.post('/auth/login', { email, password, deviceToken, placeId, latitude, longitude });
-    const { serviceToken, user } = response.data;
+    const { serviceToken, user, isFirstTimeLogin } = response.data;
     setSession(serviceToken);
     // dispatch({
     //   type: LOGIN,
@@ -93,7 +94,7 @@ export const JWTProvider = ({ children }) => {
     //     user
     //   }
     // });
-    init();
+    init(isFirstTimeLogin);
   };
 
   const register = async (email, password, password2, firstName, lastName, username) => {
@@ -129,7 +130,7 @@ export const JWTProvider = ({ children }) => {
     const response = await axios.post(`auth/reset-password/${id}/${token}`, { password });
     return response.data;
   };
-  const updateProfile = () => {};
+  const updateProfile = () => { };
 
   if (state.isInitialized !== undefined && !state.isInitialized) {
     return <Loader />;

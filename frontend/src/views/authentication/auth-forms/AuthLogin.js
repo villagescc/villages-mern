@@ -67,23 +67,23 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     event.preventDefault();
   };
 
-  async function fetchData(position) {
-    setLatitude(position.coords.latitude);
-    setLongitude(position.coords.longitude);
+  // async function fetchData(position) {
+  //   setLatitude(position.coords.latitude);
+  //   setLongitude(position.coords.longitude);
 
-    await geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
-      .then((results) => {
-        setPlaceId(results[results.length - 2].place_id);
-      })
-      .catch((error) => console.error(error));
-  }
+  //   await geocodeByLatLng({ lat: position?.coords?.latitude, lng: position?.coords?.longitude })
+  //     .then((results) => {
+  //       setPlaceId(results[results.length - 2].place_id);
+  //     })
+  //     .catch((error) => console.error(error));
+  // }
 
-  const successCallback = (position) => {
-    fetchData(position);
-  };
-  const errorCallback = (error) => {
-    console.log(error);
-  };
+  // const successCallback = (position) => {
+  //   fetchData(position);
+  // };
+  // const errorCallback = (error) => {
+  //   console.log(error);
+  // };
   useEffect(() => {
     if (hasFirebaseMessagingSupport) {
       // console.log(hasFirebaseMessagingSupport, "<== hasFirebaseMessagingSupport")
@@ -106,7 +106,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
         }
       })
     }
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    // navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   }, []);
 
   return (
