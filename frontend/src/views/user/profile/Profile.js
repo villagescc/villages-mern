@@ -142,16 +142,75 @@ const Profile = () => {
     setTags([...tags, newTag]);
   };
 
+  const resizeFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const image = new Image();
+        image.src = event.target.result;
+
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+
+          let width = 200;
+          let height = 200;
+
+          // Set canvas dimensions
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw image onto canvas
+          context.drawImage(image, 0, 0, width, height);
+
+          // Convert canvas content back to Blob
+          canvas.toBlob((blob) => {
+            const resizedFile = new File([blob], file.name, { type: file.type });
+            setAvatar(resizedFile)
+            resolve(resizedFile);
+          }, file.type);
+        };
+
+        image.onerror = (error) => {
+          reject(error);
+        };
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      // Read the file as a data URL
+      reader.readAsDataURL(file);
+    });
+  };
+
+
+  const uploadFile = (file) => {
+    // Perform the file upload to the server here
+    // var sizeInMB = (file.size / (1024 * 1024));
+    // console.log(sizeInMB + 'MB');
+
+    const data = new FormData();
+    data.append('file', file);
+    dispatch(uploadAvatar(data, init));
+  };
+
   const handleFileChange = ({ target }) => {
     const fileReader = new FileReader();
 
     fileReader.readAsDataURL(target.files[0]);
-    fileReader.onload = (e) => {
-      setAvatar(e.target.result);
 
-      const data = new FormData();
-      data.append('file', target.files[0]);
-      dispatch(uploadAvatar(data, init));
+    fileReader.onload = (e) => {
+      resizeFile(target.files[0])
+        .then((resizedFile) => {
+          // Upload the resized file to the server
+          uploadFile(resizedFile);
+        })
+        .catch((error) => {
+          console.error('Error resizing file:', error);
+        });
     };
   };
 
