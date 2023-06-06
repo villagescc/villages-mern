@@ -142,7 +142,20 @@ const Profile = () => {
     setTags([...tags, newTag]);
   };
 
-  const resizeFile = (file) => {
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    compressFile(file)
+      .then((compressedFile) => {
+        // Upload the compressed file to the server
+        uploadFile(compressedFile);
+      })
+      .catch((error) => {
+        console.error('Error compressing file:', error);
+      });
+  };
+
+  const compressFile = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
@@ -154,22 +167,23 @@ const Profile = () => {
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
 
-          let width = 200;
-          let height = 200;
+          // Set canvas dimensions to match the image size
+          canvas.width = image.width;
+          canvas.height = image.height;
 
-          // Set canvas dimensions
-          canvas.width = width;
-          canvas.height = height;
+          // Draw the image on the canvas
+          context.drawImage(image, 0, 0);
 
-          // Draw image onto canvas
-          context.drawImage(image, 0, 0, width, height);
+          // Convert the canvas content back to a data URL
+          const compressedDataUrl = canvas.toDataURL(file.type, 0.1); // Adjust the quality as needed
 
-          // Convert canvas content back to Blob
-          canvas.toBlob((blob) => {
-            const resizedFile = new File([blob], file.name, { type: file.type });
-            setAvatar(resizedFile)
-            resolve(resizedFile);
-          }, file.type);
+          // Convert the data URL to a Blob object
+          const compressedBlob = dataURLtoBlob(compressedDataUrl);
+
+          // Create a new File object with the compressed Blob
+          const compressedFile = new File([compressedBlob], file.name, { type: file.type });
+
+          resolve(compressedFile);
         };
 
         image.onerror = (error) => {
@@ -186,32 +200,29 @@ const Profile = () => {
     });
   };
 
+  const dataURLtoBlob = (dataURL) => {
+    const parts = dataURL.split(';base64,');
+    const contentType = parts[0].split(':')[1];
+    const byteString = atob(parts[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([arrayBuffer], { type: contentType });
+  };
 
   const uploadFile = (file) => {
     // Perform the file upload to the server here
     // var sizeInMB = (file.size / (1024 * 1024));
     // console.log(sizeInMB + 'MB');
 
-    const data = new FormData();
-    data.append('file', file);
-    dispatch(uploadAvatar(data, init));
-  };
-
-  const handleFileChange = ({ target }) => {
-    const fileReader = new FileReader();
-
-    fileReader.readAsDataURL(target.files[0]);
-
-    fileReader.onload = (e) => {
-      resizeFile(target.files[0])
-        .then((resizedFile) => {
-          // Upload the resized file to the server
-          uploadFile(resizedFile);
-        })
-        .catch((error) => {
-          console.error('Error resizing file:', error);
-        });
-    };
+    setAvatar(file)
+    const formData = new FormData();
+    formData.append('file', file);
+    dispatch(uploadAvatar(formData, init));
   };
 
   const handleSaveProfileClick = async () => {
