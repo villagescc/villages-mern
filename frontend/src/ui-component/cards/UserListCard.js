@@ -44,7 +44,8 @@ const UserListCard = (user, index) => {
               src={user.user.profile.avatar ? `${SERVER_URL}/upload/avatar/` + user.user.profile.avatar : DefaultAvatar}
               sx={{ width: 70, height: 70 }}
               component={Link}
-              to={`/listing/person/${user.user._id}/${user.user.username}`}
+              // to={`/listing/person/${user.user._id}/${user.user.username}`}
+              to={`/${user.user.username}`}
             />
           </Grid>
           <Grid item sm lg={8}>
@@ -54,7 +55,8 @@ const UserListCard = (user, index) => {
                   align="left"
                   variant="subtitle1"
                   component={Link}
-                  to={`/listing/person/${user.user._id}/${user.user.username}`}
+                  // to={`/listing/person/${user.user._id}/${user.user.username}`}
+                  to={`/${user.user.username}`}
                   style={{ textDecoration: 'none' }}
                 >
                   {user?.user?.username}
@@ -191,7 +193,7 @@ const UserListCard = (user, index) => {
               sx={{ minWidth: '33%', marginTop: 1 }}
               startIcon={<FavoriteIcon />}
               component={Link}
-              to={`/ripple/trust/${user?.user?._id}/${user?.user?.username}`}
+              to={`/trust/${user?.user?._id}/${user?.user?.username}`}
             >
               Trust
             </Button>
@@ -204,7 +206,7 @@ const UserListCard = (user, index) => {
               sx={{ minWidth: '33%', marginTop: 1 }}
               startIcon={<AccountBalanceWalletOutlined />}
               component={Link}
-              to={`/ripple/pay/${user?.user?._id}/${user?.user?.username}`}
+              to={`/pay/${user?.user?._id}/${user?.user?.username}`}
             >
               Pay
             </Button>

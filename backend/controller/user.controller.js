@@ -51,7 +51,62 @@ exports.getById = async (req, res, next) => {
     next(err);
   }
 };
+exports.getByUserName = async (req, res, next) => {
+  try {
+    const user = await getUserDetailByUserName(req.params.username);
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+};
 
+const getUserDetailByUserName = async (username) => {
+  const start = Date.now();
+  // let userInfo = {};
+  const [user] = await User.find({ username }).exec();
+  const profile = await Profile.findOne({ user: user._id });
+  const account = await Account.findOne({ user: user._id });
+  // TODO update fields name in model
+  const postings = await Listing.find({ userId: user._id });
+  const logs = await Log.find({ user: user._id });
+  const payments = await Payment.find({
+    $or: [
+      {
+        payer: user._id,
+      },
+      {
+        recipient: user._id,
+      },
+    ],
+    status: "Completed",
+  })
+    .populate({
+      path: "recipient",
+      model: "user",
+      populate: { path: "profile", model: "profile" },
+    })
+    .populate({
+      path: "payer",
+      model: "user",
+      populate: { path: "profile", model: "profile" },
+    })
+    .exec();
+
+  const userInfo = {
+    ...user._doc,
+    account,
+    profile,
+    postings,
+    followers: await _getFollowers(user._id),
+    followings: await _getFollowings(user._id),
+    logs,
+    payments,
+  };
+
+  const span = Date.now() - start;
+  console.log(`fetched ${user._id} - ${span}`);
+  return userInfo;
+};
 const getUserDetail = async (id) => {
   const start = Date.now();
   // let userInfo = {};

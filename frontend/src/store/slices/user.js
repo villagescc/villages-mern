@@ -149,6 +149,17 @@ export function getUser(id) {
     }
   };
 }
+export function getUserByUserName(username) {
+  return async () => {
+    try {
+      const response = await axios.get(`/users/username/${username}`);
+      dispatch(slice.actions.getUserSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
 
 export function getSetting() {
   return async () => {

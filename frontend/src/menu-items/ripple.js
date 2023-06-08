@@ -22,7 +22,7 @@ const ripple = {
       id: 'pay',
       title: <FormattedMessage id="payment" />,
       type: 'item',
-      url: '/ripple/pay',
+      url: '/pay',
       icon: icons.IconWallet,
       breadcrumbs: false
     },
@@ -30,7 +30,7 @@ const ripple = {
       id: 'trust',
       title: <FormattedMessage id="trust" />,
       type: 'item',
-      url: '/ripple/trust',
+      url: '/trust',
       icon: icons.IconHeart,
       breadcrumbs: false
     }

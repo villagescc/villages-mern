@@ -95,7 +95,7 @@ const MessageWrapper = styled(Button)({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ id, avatar, title, post, author, description, own, ...other }) => {
+const PostingCard = ({ id, avatar, title, post, author, description, own, userData, ...other }) => {
   const theme = useTheme();
   const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
   const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
@@ -114,7 +114,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>
             <Grid container spacing={gridSpacing}>
-              <Grid item xs={12} component={Link} to={`/listing/post/${id}`} style={{ textDecoration: 'none' }}>
+              <Grid item xs={12} component={Link} to={`/${userData?.username}/${title}`} style={{ textDecoration: 'none' }}>
                 <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
               </Grid>
             </Grid>
@@ -122,7 +122,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
           <Grid item xs={12} alignItems="center">
             <Grid container spacing={1}>
               <Grid item xs={12} sx={{ height: 50 }}>
-                <Typography variant="h4" component={Link} to={`/listing/post/${id}`}>
+                <Typography variant="h4" component={Link} to={`/${userData?.username}/${title}`}>
                   {title.length > 30 ? title.substring(0, 30) + '...' : title}
                 </Typography>
               </Grid>
@@ -148,12 +148,12 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, ...oth
             ) : (
               <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
-                  <TrustWrapper fullWidth component={Link} to={`/ripple/trust/${author}`}>
+                  <TrustWrapper fullWidth component={Link} to={`/trust/${author}`}>
                     <FavoriteIcon />
                   </TrustWrapper>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <PaymentWrapper fullWidth component={Link} to={`/ripple/pay/${author}`}>
+                  <PaymentWrapper fullWidth component={Link} to={`/pay/${author}`}>
                     <AccountBalanceWalletOutlined />
                   </PaymentWrapper>
                 </Grid>

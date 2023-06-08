@@ -40,7 +40,7 @@ const HomeRoutes = {
       element: <Posting />
     },
     {
-      path: '/listing/post/:id',
+      path: '/:username/:title',
       element: <PostingDetail />
     },
     {
@@ -48,7 +48,7 @@ const HomeRoutes = {
       element: <People />
     },
     {
-      path: '/listing/person/:id/:username',
+      path: '/:username',
       element: <Person />
     },
     {

@@ -46,6 +46,7 @@ router.get(
 // ######################### POSTING ROUTER #############################
 router.post("/posting/posts", authMiddleware.auth, postController.searchPosts);
 router.get("/posting/post/:id", postController.getById);
+router.get("/posting/post/:username/:title", postController.getByUsernameAndTitle);
 router.post(
   "/posting/upload",
   authMiddleware.auth,
@@ -62,6 +63,7 @@ router.get("/setting", authMiddleware.auth, settingController.getById);
 // ######################### USER ROUTER #############################
 router.post("/users/search", userController.search);
 router.get("/users/user/:id", userController.getById);
+router.get("/users/username/:username", userController.getByUserName);
 router.post(
   "/users/avatar",
   authMiddleware.auth,

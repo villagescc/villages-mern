@@ -116,6 +116,7 @@ const Index = () => {
       }
     }
   });
+
   return (
     <div>
       <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
@@ -222,7 +223,7 @@ const Index = () => {
                       <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', maxWidth: '50%' }}>
                         <CardContent sx={{ flex: '1 0 auto', padding: '0px' }}>
                           <div>
-                            <Typography variant="h5" component={Link} to={`/listing/post/${post?._id}`}>
+                            <Typography variant="h5" component={Link} to={`/${post?.userId?.username}/${post?.title}`}>
                               {post?.title}
                             </Typography>
                           </div>
@@ -233,12 +234,12 @@ const Index = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                           <Grid container>
                             <Grid item xs={4} style={{ padding: '2px' }}>
-                              <TrustWrapper component={Link} to={`/ripple/trust/${post?.userId?._id}`} >
+                              <TrustWrapper component={Link} to={`/trust/${post?.userId?._id}`} >
                                 <FavoriteIcon aria-label='icon-Like' />
                               </TrustWrapper>
                             </Grid>
                             <Grid item xs={4} style={{ padding: '2px' }} >
-                              <PaymentWrapper component={Link} to={`/ripple/pay/${post?.userId?._id}`} >
+                              <PaymentWrapper component={Link} to={`/pay/${post?.userId?._id}`} >
                                 <AccountBalanceWalletOutlined />
                               </PaymentWrapper>
                             </Grid>

@@ -148,6 +148,74 @@ exports.getById = async (req, res, next) => {
     next(error);
   }
 };
+exports.getByUsernameAndTitle = async (req, res, next) => {
+  try {
+    const { username, title } = req.params;
+    const post = await Listing.aggregate([
+      { $addFields: { "title": { $trim: { input: "$title" } } } },
+      { $match: { title: title } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userId"
+        }
+      },
+      {
+        $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $match: { "userId.username": username }
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "userId.profile",
+          foreignField: "_id",
+          as: "userId.profile"
+        }
+      },
+      {
+        $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $lookup: {
+          from: "subcategories",
+          localField: "subcategoryId",
+          foreignField: "_id",
+          as: "subcategoryId"
+        }
+      },
+      {
+        $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "subcategoryId.categoryId",
+          foreignField: "_id",
+          as: "subcategoryId.categoryId"
+        }
+      },
+      {
+        $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags"
+        }
+      }
+    ])
+      .exec();
+    res.send(post.find(x => x));
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.createPost = async (req, res, next) => {
   let tagId = [];

@@ -125,11 +125,11 @@ export function filterPost(filterData) {
   };
 }
 
-export function getPost(id) {
+export function getPost(username, title) {
   return async () => {
     dispatch(slice.actions.setLoading(true));
     try {
-      const response = await axios.get(`/posting/post/${id}`);
+      const response = await axios.get(`/posting/post/${username}/${title}`);
       dispatch(slice.actions.getPostSuccess(response.data));
       dispatch(slice.actions.setLoading(false));
     } catch (error) {

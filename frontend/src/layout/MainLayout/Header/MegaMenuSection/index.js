@@ -177,13 +177,13 @@ const MegaMenuSection = () => {
                                                                 </ListSubheader>
                                                             }
                                                         >
-                                                            <ListItemButton component={Link} to="/ripple/trust">
+                                                            <ListItemButton component={Link} to="/trust">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>
                                                                 <ListItemText primary="Trust" />
                                                             </ListItemButton>
-                                                            <ListItemButton component={Link} to="/ripple/pay">
+                                                            <ListItemButton component={Link} to="/pay">
                                                                 <ListItemIcon>
                                                                     <FiberManualRecordIcon sx={{ fontSize: '0.5rem' }} />
                                                                 </ListItemIcon>

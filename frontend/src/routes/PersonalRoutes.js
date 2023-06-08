@@ -29,27 +29,27 @@ const PersonalRoute = {
   ),
   children: [
     {
-      path: '/ripple/trust/:userId',
+      path: '/trust/:userId',
       element: <Trust />
     },
     {
-      path: '/ripple/trust',
+      path: '/trust',
       element: <Trust />
     },
     {
-      path: '/ripple/trust/:userId/:username',
+      path: '/trust/:userId/:username',
       element: <Trust />
     },
     {
-      path: '/ripple/pay/:userId',
+      path: '/pay/:userId',
       element: <Pay />
     },
     {
-      path: '/ripple/pay/:userId/:username',
+      path: '/pay/:userId/:username',
       element: <Pay />
     },
     {
-      path: '/ripple/pay',
+      path: '/pay',
       element: <Pay />
     },
     {

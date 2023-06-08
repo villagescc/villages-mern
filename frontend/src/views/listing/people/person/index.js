@@ -25,7 +25,7 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 import Cover from 'assets/images/profile/img-profile-bg1.jpg';
 import { useDispatch, useSelector } from 'store';
-import { getUser } from 'store/slices/user';
+import { getUserByUserName } from 'store/slices/user';
 import DefaultUserIcon from '../../../../assets/images/auth/default.png';
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 
@@ -84,7 +84,7 @@ const SocialProfile = () => {
   const dispatch = useDispatch();
 
   const { borderRadius } = useConfig();
-  const { id, tab } = useParams();
+  const { username, tab } = useParams();
   const { user } = useSelector((state) => state.user);
   const avatarImage = user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user?.profile.avatar : DefaultUserIcon;
 
@@ -110,7 +110,7 @@ const SocialProfile = () => {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(false);
-    dispatch(getUser(id));
+    dispatch(getUserByUserName(username));
   }, []);
 
   return (
@@ -204,14 +204,14 @@ const SocialProfile = () => {
                       </Button>
                     </Grid>
                     <Grid item>
-                      <Button component={Link} to={`/ripple/trust/${id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
+                      <Button component={Link} to={`/trust/${user?._id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
                         Trust
                       </Button>
                     </Grid>
                     <Grid item>
                       <Button
                         component={Link}
-                        to={`/ripple/pay/${id}`}
+                        to={`/pay/${user?._id}`}
                         color={'success'}
                         variant="outlined"
                         startIcon={<AccountBalanceWalletOutlined />}

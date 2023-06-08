@@ -29,7 +29,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { Link } from 'react-router-dom';
 
 const PostingDetail = () => {
-  const { id } = useParams();
+  const { username, title } = useParams();
   const { borderRadius } = useConfig();
   const theme = useTheme();
 
@@ -38,8 +38,8 @@ const PostingDetail = () => {
   const { post } = useSelector((state) => state.posting);
 
   useEffect(() => {
-    dispatch(getPost(id));
-  }, [id]);
+    dispatch(getPost(username, title));
+  }, [username, title]);
 
   useEffect(() => {
     if (post && post.userId && post.userId.profile && post.userId.profile.placeId) {
@@ -58,6 +58,7 @@ const PostingDetail = () => {
               component="img"
               image={post.photo ? `${SERVER_URL}/upload/posting/` + post.photo : DefaultPostingIcon}
               sx={{ borderRadius: `${borderRadius}px`, overflow: 'hidden' }}
+              alt={post.title}
             />
           </Grid>
           <Grid item xs={12} lg={6}>

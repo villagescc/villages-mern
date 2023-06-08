@@ -24,7 +24,7 @@ const BalanceSection = () => {
         alignItems: 'center'
       }}
       component={Link}
-      to={`/ripple/pay/${user?._id}`}
+      to={`/pay/${user?._id}`}
       style={{ textDecoration: 'none' }}
     >
       <AccountBalanceWalletOutlined color={'secondary'} sx={{ marginRight: 1 }} />

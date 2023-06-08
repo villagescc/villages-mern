@@ -277,7 +277,7 @@ exports.pay = async (req, res, next) => {
               data: `<h1>You has been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
               <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
               <p>${notifyText}</p>
-              <a href=https://villages.io/ripple/pay> Click here</a>
+              <a href=https://villages.io/pay> Click here</a>
               <br>`,
             }
           )

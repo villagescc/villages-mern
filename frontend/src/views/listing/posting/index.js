@@ -366,7 +366,7 @@ const Posting = () => {
             <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
               {posts.length > 0 ? (
                 posts.slice(0).map((post, index) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
                     <PostingCard
                       id={post._id}
                       avatar={post.userId?.profile?.avatar}
@@ -375,6 +375,7 @@ const Posting = () => {
                       description={post.description}
                       own={post.userId?._id === user?._id}
                       author={post.userId?._id}
+                      userData={post.userId}
                       onDelete={() => handleDeletePostClick(post)}
                       onEdit={() => handleEditPostClick(post)}
                     />
@@ -402,7 +403,7 @@ const Posting = () => {
             )}
           </CardContent>
         )}
-      </MainCard>
+      </MainCard >
       <Dialog fullWidth maxWidth={'md'} open={openCreate} onClose={() => setOpenCreate(false)} scroll={'body'}>
         {openCreate && (
           <>
