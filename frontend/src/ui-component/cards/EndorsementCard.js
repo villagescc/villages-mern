@@ -48,7 +48,7 @@ const EndorsementCard = ({ endorsement, onActive, onDelete }) => {
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
-            <Grid item xs zeroMinWidth component={Link} to={`/listing/person/${user?._id}`} style={{ textDecoration: 'none' }}>
+            <Grid item xs zeroMinWidth component={Link} to={`/${user?.username}`} style={{ textDecoration: 'none' }}>
               <Avatar alt={user?.username} size="lg" src={avatarImage} sx={{ width: 72, height: 72 }} />
             </Grid>
           </Grid>

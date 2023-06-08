@@ -248,42 +248,42 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
                         row?.recipient?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + row?.recipient?.profile?.avatar : DefaultAvatar
                       }
                       component={Link}
-                      to={`/listing/person/${row?.recipient?._id}`}
+                      to={`/${row?.recipient?.username}`}
                       style={{ textDecoration: 'none' }}
                     />
                   ) : (
                     <Avatar
                       src={row?.payer?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + row?.payer?.profile?.avatar : DefaultAvatar}
                       component={Link}
-                      to={`/listing/person/${row?.payer?._id}`}
+                      to={`/${row?.payer?.username}`}
                       style={{ textDecoration: 'none' }}
                     />
                   )}
                 </TableCell>
                 <TableCell>
-                
+
                   <Typography
                     variant="body1"
                     component={Link}
-                    to={`/listing/person/${row?.payer?._id === user?._id ? row?.recipient?._id : row?.payer?._id}`}
+                    to={`/${row?.payer?._id === user?._id ? row?.recipient?.username : row?.payer?.username}`}
                     style={{ textDecoration: 'none' }}
                   >
-                    
+
                     {/* {row?.payer?._id === user?._id ? row?.recipient?.profile?.name + '(' + row?.recipient?.username + ')' : row?.payer?.username} */}
                     {row?.payer?._id === user?._id
                       ? row?.recipient?.profile?.name
                         ? row?.recipient?.profile?.name + '(' + row?.recipient?.username + ')'
                         : row?.recipient?.firstName || row?.recipient?.lastName
-                        ? row?.recipient?.firstName + ' ' + row?.recipient?.lastName + '(' + row?.recipient?.username + ')'
-                        : row?.recipient?.username
+                          ? row?.recipient?.firstName + ' ' + row?.recipient?.lastName + '(' + row?.recipient?.username + ')'
+                          : row?.recipient?.username
                       : row?.payer?.profile?.name
-                      ? row?.payer?.profile?.name + '(' + row?.payer?.username + ')'
-                      : row?.payer?.firstName || row?.payer?.lastName
-                      ? row?.payer?.firstName + ' ' + row?.payer?.lastName + '(' + row?.payer?.username + ')'
-                      : row?.payer?.username}
+                        ? row?.payer?.profile?.name + '(' + row?.payer?.username + ')'
+                        : row?.payer?.firstName || row?.payer?.lastName
+                          ? row?.payer?.firstName + ' ' + row?.payer?.lastName + '(' + row?.payer?.username + ')'
+                          : row?.payer?.username}
                   </Typography>
-                 
-             
+
+
                 </TableCell>
                 <TableCell>{row.memo.length > 50 ? row.memo.slice(0, 50) + '...' : row.memo}</TableCell>
                 <TableCell align="right">

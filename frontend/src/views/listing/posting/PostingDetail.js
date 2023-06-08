@@ -146,7 +146,7 @@ const PostingDetail = () => {
                     src={post?.userId?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.userId?.profile?.avatar : DefaultAvatar}
                     tooltip={post?.userId?.username}
                     component={Link}
-                    to={`/listing/person/${post?.userId?._id}`}
+                    to={`/${post?.userId?.username}`}
                     style={{ textDecoration: 'none' }}
                   />
                   <Typography variant="h5" sx={{ marginLeft: 1 }}>

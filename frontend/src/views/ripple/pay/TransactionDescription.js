@@ -20,7 +20,7 @@ const TransactionDescription = ({ transaction }) => {
                   <Typography
                     variant="body1"
                     component={Link}
-                    to={`/listing/person/${transaction?.payer?._id}`}
+                    to={`/${transaction?.payer?.username}`}
                     style={{ textDecoration: 'none' }}
                   >
                     {transaction?.payer?.username}
@@ -35,7 +35,7 @@ const TransactionDescription = ({ transaction }) => {
                   <Typography
                     variant="body1"
                     component={Link}
-                    to={`/listing/person/${transaction?.recipient?._id}`}
+                    to={`/${transaction?.recipient?.username}`}
                     style={{ textDecoration: 'none' }}
                   >
                     {transaction?.recipient?.username}
