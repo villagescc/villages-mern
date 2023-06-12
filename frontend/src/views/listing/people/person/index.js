@@ -111,7 +111,7 @@ const SocialProfile = () => {
   useEffect(() => {
     setLoading(false);
     dispatch(getUserByUserName(username));
-  }, []);
+  }, [username]);
 
   return (
     <Grid container spacing={gridSpacing}>

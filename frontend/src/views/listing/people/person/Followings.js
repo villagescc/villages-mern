@@ -23,7 +23,7 @@ const Followings = ({ user }) => {
       <Empty />
     </Grid>
   );
-  if (user.followings.length) {
+  if (user?.followings?.length) {
     friendsResult = user.followings.map((following, index) => (
       <Grid key={index} item xs={12} sm={6} md={4} lg={3} xl={2}>
         <FollowingCard {...following} />
@@ -45,7 +45,7 @@ const Followings = ({ user }) => {
             <Typography variant="h3">
               Followings{' '}
               <Typography variant="h3" component="span" sx={{ color: theme.palette.grey[300], fontWeight: 500 }}>
-                ({user.followings.length})
+                ({user?.followings?.length})
               </Typography>
             </Typography>
           </Grid>

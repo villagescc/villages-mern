@@ -84,7 +84,7 @@ const Index = () => {
       }
       setOpenCreate(true);
     }
-  }, [userId, endorsements]);
+  }, [userId, endorsements, users]);
 
   useEffect(() => {
     if (socket) {

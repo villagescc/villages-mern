@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import { Avatar, Button, Card, Grid, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
 import { SERVER_URL } from 'config';
 // assets
@@ -13,6 +13,11 @@ import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import DefaultUserIcon from '../../assets/images/auth/default.png';
+import ChatIcon from '@mui/icons-material/Chat';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { geocodeByPlaceId } from 'react-places-autocomplete';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 // ==============================|| SOCIAL PROFILE - FOLLOWER CARD ||============================== //
 
@@ -29,9 +34,53 @@ const FollowerCard = (follower) => {
     setAnchorEl(null);
   };
 
+  // styles
+  const TrustWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(242,29,104,0.2)',
+    '& svg': {
+      color: '#f21d60'
+    },
+    '&:hover': {
+      background: '#f21d60',
+      '& svg': {
+        color: '#fff'
+      }
+    }
+  });
+
+  const PaymentWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(29, 161, 242, 0.2)',
+    '& svg': {
+      color: '#1DA1F2'
+    },
+    '&:hover': {
+      background: '#1DA1F2',
+      '& svg': {
+        color: '#fff'
+      }
+    }
+  });
+
+  const MessageWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(14, 118, 168, 0.12)',
+    '& svg': {
+      color: '#0E76A8'
+    },
+    '&:hover': {
+      background: '#0E76A8',
+      '& svg': {
+        color: '#fff'
+      }
+    }
+  });
+
   return (
     <Card
       sx={{
+        height: '100%',
         padding: '16px',
         background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
         border: '1px solid',
@@ -41,48 +90,55 @@ const FollowerCard = (follower) => {
         }
       }}
     >
-      <Grid container spacing={2}>
+      <Grid container sx={{ height: '100%', alignContent: "space-between" }}>
         <Grid item xs={12}>
-          <Grid container spacing={2}>
-            <Grid item>
-              <Avatar alt="User 1" src={avatarProfile} />
+          <Grid container sx={{ alignItems: 'center' }}>
+            <Grid item component={Link} to={`/${follower?.username}`}>
+              <Avatar alt="User 1" src={avatarProfile} sx={{ width: 50, height: 50 }} />
             </Grid>
-            <Grid item xs zeroMinWidth>
+            <Grid item xs zeroMinWidth sx={{ paddingLeft: '10px' }}>
               <Typography
                 variant="h5"
-                component="div"
+                component={Link} to={`/${follower?.username}`}
                 sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
               >
-                {follower.username}
+                {follower?.username}
               </Typography>
               <Typography
                 variant="subtitle2"
                 sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
               >
                 <PinDropTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-                {follower?.profile?.placeId}
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-              >
-                <FavoriteTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-                {follower?.endorsement?.weight}
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                sx={{ mt: 0.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
-              >
-                <DescriptionTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-                {follower?.endorsement?.text}
+                {follower?.profile?.placeId ? follower?.profile?.placeId : '-'}
               </Typography>
             </Grid>
           </Grid>
+          <Grid item xs={12} sx={{ padding: '5px' }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ mt: 0.25, display: 'block' }}
+            >
+              <DescriptionTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
+              {follower?.endorsement?.text ? follower?.endorsement?.text : '-'}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Button variant="outlined" fullWidth startIcon={<PeopleAltTwoToneIcon />}>
-            Followed
-          </Button>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <TrustWrapper fullWidth component={Link} to={`/trust/${follower?._id}`}>
+              <FavoriteIcon />
+            </TrustWrapper>
+          </Grid>
+          <Grid item xs={4}>
+            <PaymentWrapper fullWidth component={Link} to={`/pay/${follower?._id}`}>
+              <AccountBalanceWalletOutlined />
+            </PaymentWrapper>
+          </Grid>
+          <Grid item xs={4}>
+            <MessageWrapper fullWidth component={Link} to={`/personal/message/${follower?._id}`}>
+              <ChatIcon />
+            </MessageWrapper>
+          </Grid>
         </Grid>
       </Grid>
     </Card>

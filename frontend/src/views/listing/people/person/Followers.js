@@ -29,9 +29,9 @@ const Followers = ({ user }) => {
       <Empty />
     </Grid>
   );
-  if (user?.followers.length) {
+  if (user?.followers?.length) {
     followersResult = user.followers.map((follower, index) => (
-      <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+      <Grid key={index} item xs={12} sm={6} md={4} lg={3} >
         <FollowerCard {...follower} />
       </Grid>
     ));
@@ -45,7 +45,7 @@ const Followers = ({ user }) => {
             <Typography variant="h3">
               Trusted By{' '}
               <Typography variant="h3" component="span" sx={{ color: theme.palette.grey[300], fontWeight: 500 }}>
-                ({user.followers.length})
+                ({user?.followers?.length})
               </Typography>
             </Typography>
           </Grid>
