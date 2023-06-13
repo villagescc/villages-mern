@@ -14,11 +14,9 @@ import FormControlSelect from 'ui-component/extended/Form/FormControlSelect';
 import { listing_type, radius } from 'constant';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { filterPost, getCategories, getSubCategories, getTags } from 'store/slices/posting';
-import DefaultPostingIcon from '../../assets/images/posting/default.png';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ChatIcon from '@mui/icons-material/Chat';
-import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+import { filterMap } from 'store/slices/map';
 import { styled } from '@mui/material/styles';
+import MapPopover from './MapPopover';
 // import { getUsers } from '../../store/slices/map';
 
 const Index = () => {
@@ -33,6 +31,7 @@ const Index = () => {
     filterRadius: '',
     keyword: ''
   });
+  const mapState = useSelector((state) => state.map);
   const postingState = useSelector((state) => state.posting);
 
   const dispatch = useDispatch();
@@ -62,60 +61,37 @@ const Index = () => {
     dispatch(getTags());
     dispatch(getCategories());
     dispatch(getSubCategories());
-    dispatch(filterPost(filterData));
+    dispatch(filterMap(filterData));
   }, [filterData]);
 
 
   useEffect(() => {
     setCategories(postingState.categories);
-    setPosts(postingState.posts);
-  }, [postingState]);
+    handlePosts(mapState.posts)
+  }, [postingState, mapState]);
 
-  // Styles
-  const TrustWrapper = styled(Button)({
-    padding: 2,
-    minWidth: '100%',
-    background: 'rgba(242,29,104,0.2)',
-    '& svg': {
-      color: '#f21d60'
-    },
-    '&:hover': {
-      background: '#f21d60',
-      '& svg': {
-        color: '#fff'
-      }
-    }
-  });
 
-  const PaymentWrapper = styled(Button)({
-    padding: 2,
-    minWidth: '100%',
-    background: 'rgba(29, 161, 242, 0.2)',
-    '& svg': {
-      color: '#1DA1F2'
-    },
-    '&:hover': {
-      background: '#1DA1F2',
-      '& svg': {
-        color: '#fff'
-      }
-    }
-  });
+  const handlePosts = (data) => {
+    const mergedArray = [];
+    const uniqueNames = new Set();
 
-  const MessageWrapper = styled(Button)({
-    padding: 2,
-    minWidth: '100%',
-    background: 'rgba(14, 118, 168, 0.12)',
-    '& svg': {
-      color: '#0E76A8'
-    },
-    '&:hover': {
-      background: '#0E76A8',
-      '& svg': {
-        color: '#fff'
+    data.forEach(item => {
+      if (!uniqueNames.has(item.userId._id)) {
+        mergedArray.push({ "id": item.userId._id, "user": item.userId, "post": [item] });
+        uniqueNames.add(item.userId._id);
+      } else {
+        mergedArray.forEach(mergedItem => {
+          if (mergedItem.id === item.userId._id) {
+            mergedItem.post = mergedItem.post.concat(item);
+          }
+        });
       }
-    }
-  });
+    });
+    setPosts(mergedArray);
+  }
+
+
+  // console.log(posts, "posts")
 
   return (
     <div>
@@ -141,7 +117,7 @@ const Index = () => {
                     value: '',
                     label: 'All categories'
                   },
-                  ...categories.map((category) => ({
+                  ...categories?.map((category) => ({
                     value: category.title,
                     label: category.title
                   }))
@@ -207,68 +183,13 @@ const Index = () => {
           zoom={9}
           defaultZoom={10}
         >
-
-          {posts.length &&
+          {posts?.length &&
             posts.map((post, index) => {
-              if (post?.userId?.latitude && post?.userId?.longitude) {
-                // console.log(post.userId?.latitude, post.userId?.longitude, post?.userId?.profile?.name);
-                return <AvatarIcon
-                  lat={post?.userId?.latitude + index * 0.001}
-                  lng={post?.userId?.longitude + index * 0.001}
-                  alt={post?.postname}
-                  key={post?._id}
-                  src={post?.userId?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.userId?.profile?.avatar : DefaultAvatar}
-                  tooltip={
-                    <Card sx={{ display: 'flex' }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', maxWidth: '50%' }}>
-                        <CardContent sx={{ flex: '1 0 auto', padding: '0px' }}>
-                          <div>
-                            <Typography variant="h5" component={Link} to={`/${post?.userId?.username}/${post?.title}`}>
-                              {post?.title}
-                            </Typography>
-                          </div>
-                          <Typography variant="subtitle1" color="text.secondary" component="span" style={{ display: '-webkit-box', '-webkit-line-clamp': '5', overflow: 'hidden', '-webkit-box-orient': 'vertical' }}>
-                            {post?.description}
-                          </Typography>
-                        </CardContent>
-                        <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
-                          <Grid container>
-                            <Grid item xs={4} style={{ padding: '2px' }}>
-                              <TrustWrapper component={Link} to={`/trust/${post?.userId?._id}`} >
-                                <FavoriteIcon aria-label='icon-Like' />
-                              </TrustWrapper>
-                            </Grid>
-                            <Grid item xs={4} style={{ padding: '2px' }} >
-                              <PaymentWrapper component={Link} to={`/pay/${post?.userId?._id}`} >
-                                <AccountBalanceWalletOutlined />
-                              </PaymentWrapper>
-                            </Grid>
-                            <Grid item xs={4} style={{ padding: '2px' }} >
-                              <MessageWrapper component={Link} to={`/personal/message/${post?.userId?._id}`} >
-                                <ChatIcon />
-                              </MessageWrapper>
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      </Box>
-                      <CardMedia
-                        component="img"
-                        sx={{ maxWidth: '50%' }}
-                        xs={6}
-                        image={post?.photo ? `${SERVER_URL}/upload/posting/` + post.photo : DefaultPostingIcon}
-                        alt="Live from space album cover"
-                      />
-                    </Card>
-                  }
-                // component={Link}
-                // to={'/personal/profile'}
-                />
-
+              if (post?.user?.latitude && post?.user?.longitude) {
+                return <MapPopover key={post?._id} lat={post?.user?.latitude + index * 0.01} lng={post?.user?.longitude + index * 0.01} post={post} index={index} />
               }
             })
           }
-
-
         </GoogleMap>
       </div >
     </div >

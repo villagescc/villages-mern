@@ -10,6 +10,8 @@ import { dispatch } from '../index';
 const initialState = {
     users: [],
     errors: {},
+    posts: [],
+    total: 0,
     loading: false
 };
 
@@ -32,7 +34,14 @@ const slice = createSlice({
         // MODIFY LOADING
         setLoading(state, action) {
             state.loading = action.payload;
-        }
+        },
+
+        // GET POSTS
+        filterPostSuccess(state, action) {
+            state.posts = action.payload.posts;
+            state.total = action.payload.total;
+            state.loading = false;
+        },
     }
 });
 
@@ -45,6 +54,19 @@ export function getUsers() {
             const response = await axios.get('/map/users');
             dispatch(slice.actions.getUsersSuccess(response.data));
         } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function filterMap(filterData) {
+    return async () => {
+        dispatch(slice.actions.setLoading(true));
+        try {
+            const response = await axios.post('/map/posts', { filterData });
+            dispatch(slice.actions.filterPostSuccess(response.data));
+        } catch (error) {
+            console.log('error', error);
             dispatch(slice.actions.hasError(error));
         }
     };
