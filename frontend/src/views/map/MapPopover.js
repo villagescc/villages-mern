@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { SERVER_URL } from 'config';
 import DefaultAvatar from 'assets/images/auth/default.png';
 import MuiAvatar from '@mui/material/Avatar';
-import { useClick, useFloating, useInteractions, useDismiss, useHover } from '@floating-ui/react';
+import { useClick, useFloating, useInteractions, useDismiss } from '@floating-ui/react';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatIcon from '@mui/icons-material/Chat';
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
@@ -23,12 +23,10 @@ const MapPopover = ({ post, index }) => {
     });
 
     const click = useClick(context);
-    const hover = useHover(context);
     const dismiss = useDismiss(context);
 
     const { getReferenceProps, getFloatingProps } = useInteractions([
         click,
-        hover,
         dismiss
     ]);
 
@@ -89,7 +87,7 @@ const MapPopover = ({ post, index }) => {
 
     return (<div key={post?._id}>
         <div ref={refs.setReference} {...getReferenceProps()}>
-            <MuiAvatar src={post?.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.user?.profile?.avatar : DefaultAvatar} />
+            <MuiAvatar src={post?.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + post?.user?.profile?.avatar : DefaultAvatar} style={{ cursor: 'pointer' }} />
         </div>
         {isOpen && (
             <div
@@ -114,7 +112,7 @@ const MapPopover = ({ post, index }) => {
                                     <Box xs={6} sx={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
                                         <CardContent sx={{ flex: '1 0 auto', padding: '0px' }}>
                                             <div>
-                                                <Typography variant="h5" component={Link} to={`/${data?.userId?.username}/${post?.title}`}>
+                                                <Typography variant="h5" component={Link} to={`/${data?.userId?.username}/${data?.title}`}>
                                                     {data?.title}
                                                 </Typography>
                                             </div>

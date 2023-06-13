@@ -78,9 +78,11 @@ exports.mapPosts = async (req, res, next) => {
       .populate({
         path: "userId",
         model: "user",
+        select: ['profile', 'latitude', 'longitude', 'username', 'firstName', 'lastName'],
         populate: {
           path: "profile",
           model: "profile",
+          select: ['avatar', 'header_image', 'name', 'user', 'placeId'],
         },
       })
       .exec();
