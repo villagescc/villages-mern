@@ -41,7 +41,7 @@ const UserListCard = (user, index) => {
           <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Avatar
               alt={user?.user?.username}
-              src={user.user.profile.avatar ? `${SERVER_URL}/upload/avatar/` + user.user.profile.avatar : DefaultAvatar}
+              src={user.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.user?.profile?.avatar : DefaultAvatar}
               sx={{ width: 70, height: 70 }}
               component={Link}
               // to={`/listing/person/${user.user._id}/${user.user.username}`}
@@ -147,9 +147,9 @@ const UserListCard = (user, index) => {
               >
                 {user?.user?.followers?.map((each, index) => (
                   <Avatar
-                    alt={each.username}
+                    alt={each.profile?.user?.username}
                     src={each.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + each.profile?.avatar : DefaultAvatar}
-                    tooltip={each.username}
+                    tooltip={each.profile?.user?.username}
                     key={index}
                   />
                 ))}

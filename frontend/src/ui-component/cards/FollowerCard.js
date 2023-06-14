@@ -93,16 +93,16 @@ const FollowerCard = (follower) => {
       <Grid container sx={{ height: '100%', alignContent: "space-between" }}>
         <Grid item xs={12}>
           <Grid container sx={{ alignItems: 'center' }}>
-            <Grid item component={Link} to={`/${follower?.username}`}>
+            <Grid item component={Link} to={`/${follower?.profile?.user?.username}`}>
               <Avatar alt="User 1" src={avatarProfile} sx={{ width: 50, height: 50 }} />
             </Grid>
             <Grid item xs zeroMinWidth sx={{ paddingLeft: '10px' }}>
               <Typography
                 variant="h5"
-                component={Link} to={`/${follower?.username}`}
+                component={Link} to={`/${follower?.profile?.user?.username}`}
                 sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}
               >
-                {follower?.username}
+                {follower?.profile?.user?.username}
               </Typography>
               <Typography
                 variant="subtitle2"
@@ -119,23 +119,23 @@ const FollowerCard = (follower) => {
               sx={{ mt: 0.25, display: 'block' }}
             >
               <DescriptionTwoToneIcon sx={{ mr: '6px', fontSize: '16px', verticalAlign: 'text-top' }} />
-              {follower?.endorsement?.text ? follower?.endorsement?.text : '-'}
+              {follower?.text ? follower?.text : '-'}
             </Typography>
           </Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <TrustWrapper fullWidth component={Link} to={`/trust/${follower?._id}`}>
+            <TrustWrapper fullWidth component={Link} to={`/trust/${follower?.profile?.user?._id}`}>
               <FavoriteIcon />
             </TrustWrapper>
           </Grid>
           <Grid item xs={4}>
-            <PaymentWrapper fullWidth component={Link} to={`/pay/${follower?._id}`}>
+            <PaymentWrapper fullWidth component={Link} to={`/pay/${follower?.profile?.user?._id}`}>
               <AccountBalanceWalletOutlined />
             </PaymentWrapper>
           </Grid>
           <Grid item xs={4}>
-            <MessageWrapper fullWidth component={Link} to={`/personal/message/${follower?._id}`}>
+            <MessageWrapper fullWidth component={Link} to={`/personal/message/${follower?.profile?.user?._id}`}>
               <ChatIcon />
             </MessageWrapper>
           </Grid>

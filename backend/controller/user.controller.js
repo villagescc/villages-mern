@@ -20,6 +20,7 @@ exports.search = async (req, res, next) => {
   let query = {};
   try {
     if (keyword && keyword !== "") {
+      page = 1
       query = {
         $or: [
           { firstName: { $regex: keyword, $options: "i" } },
@@ -29,14 +30,14 @@ exports.search = async (req, res, next) => {
         ],
       };
     }
-    const users = await User.find(query).sort({ createdAt: -1 }).select("id");
+    const users = await User.find(query).sort({ createdAt: -1 }).select("username");
     let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
     let userData = [];
-    for (let i = 0; i < filteredUsers.length; i++) {
-      let userInfo = await getUserDetail(filteredUsers[i]["id"]);
-      userData.push(userInfo);
-    }
-    res.send({ total: users.length, users: userData });
+    // for (let i = 0; i < filteredUsers.length; i++) {
+    let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
+    userData.push(userInfo);
+    // }
+    res.send({ total: users.length, users: userInfo });
   } catch (err) {
     console.log("filter error:", err);
     next(err);
@@ -45,7 +46,7 @@ exports.search = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
   try {
-    const user = await getUserDetail(req.params.id);
+    const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
     next(err);
@@ -54,60 +55,324 @@ exports.getById = async (req, res, next) => {
 exports.getByUserName = async (req, res, next) => {
   try {
     const user = await getUserDetailByUserName(req.params.username);
-    res.send(user);
+    user?.length ? res.send(...user) : res.send({})
   } catch (err) {
     next(err);
   }
 };
 
-const getUserDetailByUserName = async (username) => {
-  const start = Date.now();
-  // let userInfo = {};
-  const [user] = await User.find({ username }).exec();
-  const profile = await Profile.findOne({ user: user._id });
-  const account = await Account.findOne({ user: user._id });
-  // TODO update fields name in model
-  const postings = await Listing.find({ userId: user._id });
-  const logs = await Log.find({ user: user._id });
-  const payments = await Payment.find({
-    $or: [
-      {
-        payer: user._id,
-      },
-      {
-        recipient: user._id,
-      },
-    ],
-    status: "Completed",
-  })
-    .populate({
-      path: "recipient",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
-    .populate({
-      path: "payer",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
-    .exec();
-
-  const userInfo = {
-    ...user._doc,
-    account,
-    profile,
-    postings,
-    followers: await _getFollowers(user._id),
-    followings: await _getFollowings(user._id),
-    logs,
-    payments,
-  };
-
-  const span = Date.now() - start;
-  console.log(`fetched ${user._id} - ${span}`);
-  return userInfo;
+const getUserDetail = async (username) => {
+  const user = await User.aggregate([
+    {
+      $match: { "username": { $in: username } }
+    },
+    {
+      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1 }
+    },
+    {
+      $lookup: {
+        from: "profiles",
+        foreignField: "_id",
+        localField: "profile",
+        as: "profile"
+      }
+    },
+    {
+      $addFields: {
+        profile: { $arrayElemAt: ["$profile", 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: "accounts",
+        foreignField: "_id",
+        localField: "account",
+        as: "account"
+      }
+    },
+    {
+      $addFields: {
+        account: { $arrayElemAt: ["$account", 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "recipientId",
+        localField: "_id",
+        as: "followers",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          },
+          {
+            $sort: { createdAt: -1 }
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              foreignField: "user",
+              localField: "endorserId",
+              as: "profile",
+              pipeline: [
+                {
+                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              profile: { $arrayElemAt: ["$profile", 0] }
+            }
+          },
+          {
+            $lookup: {
+              from: "users",
+              foreignField: "_id",
+              localField: "profile.user",
+              as: "profile.user",
+              pipeline: [
+                {
+                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+            }
+          },
+          {
+            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "endorserId",
+        localField: "_id",
+        as: "followings",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          },
+          {
+            $sort: { createdAt: -1 }
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              foreignField: "user",
+              localField: "recipientId",
+              as: "profile",
+              pipeline: [
+                {
+                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              profile: { $arrayElemAt: ["$profile", 0] }
+            }
+          },
+          {
+            $lookup: {
+              from: "users",
+              foreignField: "_id",
+              localField: "profile.user",
+              as: "profile.user",
+              pipeline: [
+                {
+                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1, isActive: 1, isSuperuser: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+            }
+          },
+          {
+            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+          }
+        ]
+      }
+    },
+    {
+      $sort: { createdAt: -1 }
+    }
+  ])
+  // const span = Date.now() - start;
+  // console.log(`fetched ${user._id} - ${span}`);
+  return user;
 };
-const getUserDetail = async (id) => {
+
+const getUserDetailByUserName = async (username) => {
+  const user = await User.aggregate([
+    {
+      $match: { username }
+    },
+    {
+      $project: { password: 0, token: 0, lastLogin: 0 }
+    },
+    {
+      $lookup: {
+        from: "profiles",
+        foreignField: "_id",
+        localField: "profile",
+        as: "profile"
+      }
+    },
+    {
+      $addFields: {
+        profile: { $arrayElemAt: ["$profile", 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: "accounts",
+        foreignField: "_id",
+        localField: "account",
+        as: "account"
+      }
+    },
+    {
+      $addFields: {
+        account: { $arrayElemAt: ["$account", 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "recipientId",
+        localField: "_id",
+        as: "followers",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          },
+          {
+            $sort: { createdAt: -1 }
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              foreignField: "user",
+              localField: "endorserId",
+              as: "profile",
+              pipeline: [
+                {
+                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              profile: { $arrayElemAt: ["$profile", 0] }
+            }
+          },
+          {
+            $lookup: {
+              from: "users",
+              foreignField: "_id",
+              localField: "profile.user",
+              as: "profile.user",
+              pipeline: [
+                {
+                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+            }
+          },
+          {
+            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "endorserId",
+        localField: "_id",
+        as: "followings",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          },
+          {
+            $sort: { createdAt: -1 }
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              foreignField: "user",
+              localField: "recipientId",
+              as: "profile"
+            }
+          },
+          {
+            $addFields: {
+              profile: { $arrayElemAt: ["$profile", 0] }
+            }
+          },
+          {
+            $lookup: {
+              from: "users",
+              foreignField: "_id",
+              localField: "profile.user",
+              as: "profile.user",
+            }
+          },
+          {
+            $addFields: {
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+            }
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'listings',
+        foreignField: "userId",
+        localField: "_id",
+        as: "postings",
+        pipeline: [
+          {
+            $lookup: {
+              from: 'users',
+              foreignField: "_id",
+              localField: "userId",
+              as: "user",
+            }
+          },
+          {
+            $addFields: {
+              "user": { $arrayElemAt: ["$user", 0] }
+            }
+          }
+        ]
+      }
+    }
+  ])
+  return user;
+};
+
+const getUserById = async (id) => {
   const start = Date.now();
   // let userInfo = {};
   const user = await User.findById(id).exec();
