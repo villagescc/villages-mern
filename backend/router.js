@@ -133,6 +133,7 @@ router.post(
   authMiddleware.auth,
   endorsementController.search
 );
+router.get("/endorsement/getEndrosmentbyId/:id", authMiddleware.auth, endorsementController.getEndrosmentbyId);
 router.get("/endorsement/followers/:id", endorsementController.getFollowers);
 router.get("/endorsement/followings/:id", endorsementController.getFollowings);
 

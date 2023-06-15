@@ -10,6 +10,7 @@ import { dispatch } from '../index';
 const initialState = {
   endorsements: [],
   users: [],
+  endorsementData: {},
   total: 0,
   errors: {},
   loading: false
@@ -30,6 +31,18 @@ const slice = createSlice({
       state.endorsements = action.payload.endorsements;
       state.total = action.payload.total;
       state.loading = false;
+      state.errors = {};
+    },
+
+    // GET ENDORSEMENTS BY ID
+    getEndorsementSuccess(state, action) {
+      state.endorsementData = action.payload;
+      state.errors = {};
+    },
+
+    // GET ENDORSEMENTS BY ID
+    clearEndrosement(state) {
+      state.endorsementData = {};
       state.errors = {};
     },
 
@@ -90,6 +103,29 @@ export function getUsers() {
     try {
       const response = await axios.get('/base/users/getRecipients');
       dispatch(slice.actions.getUsersSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// To get Endrosement data based on ID
+export function getEndorsementDetail(id) {
+  return async () => {
+    try {
+      const response = await axios.get(`/endorsement/getEndrosmentbyId/${id}`);
+      dispatch(slice.actions.getEndorsementSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// To clear state after Modal close
+export function removeEndrosement() {
+  return async () => {
+    try {
+      dispatch(slice.actions.clearEndrosement());
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

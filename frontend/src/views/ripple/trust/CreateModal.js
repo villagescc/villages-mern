@@ -64,9 +64,10 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                   // users.find(user => user.id === endorsement.recipient) || null
                   recipient
                 }
+
                 onChange={(event, newValue) => {
                   setRecipient(users.find((user) => user._id === newValue?._id) || null);
-                  setEndorsement({ ...endorsement, recipient: newValue?._id });
+                  !!newValue?._id ? setEndorsement({ ...endorsement, recipient: newValue?._id }) : setEndorsement({ weight: '', recipient: '', text: '' })
                   // navigation(`/ripple/trust/${newValue._id}`);
                 }}
                 renderInput={(params) => (
@@ -85,6 +86,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 size={'small'}
                 id="weight"
                 type="number"
+                InputLabelProps={{ shrink: Boolean(String(endorsement?.weight)?.length) ? true : false }}
                 onKeyDown={(event) => {
                   if (event.keyCode === 69 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187 || event.keyCode === 189) {
                     event.preventDefault()
@@ -94,7 +96,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 onChange={(event) => {
                   setEndorsement({ ...endorsement, weight: event.target.value });
                 }}
-                value={endorsement?.weight}
+                value={String(endorsement?.weight)?.length ? endorsement?.weight : ''}
                 error={errors.weight}
                 helperText={errors?.weight}
               />
@@ -104,7 +106,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 multiline
                 rows={3}
                 label="TESTIMONIAL:"
-                defaultValue={endorsement.text}
+                value={endorsement?.text ?? ''}
                 onChange={(event) => {
                   setEndorsement({ ...endorsement, text: event.target.value });
                 }}

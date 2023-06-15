@@ -15,7 +15,7 @@ import CreateModal from './CreateModal';
 import EndorsementCardSkeleton from 'ui-component/cards/Skeleton/EndorsementCard';
 
 import { useDispatch, useSelector } from 'store';
-import { searchEndorsements, getUsers, saveEndorsement, deleteEndorsement } from 'store/slices/endorsement';
+import { searchEndorsements, getUsers, saveEndorsement, deleteEndorsement, getEndorsementDetail, removeEndrosement } from 'store/slices/endorsement';
 import { openSnackbar } from 'store/slices/snackbar';
 
 // assets
@@ -57,6 +57,7 @@ const Index = () => {
     setLoading(endorsementState.loading);
     setTotal(endorsementState.total);
     setErrors(endorsementState.errors);
+    setEndrosementDetails()
   }, [endorsementState]);
 
   useEffect(() => {
@@ -69,22 +70,40 @@ const Index = () => {
     setSocket(io(SERVER_URL));
   }, []);
 
-  useEffect(() => {
-    if (!!userId) {
-      if (!!endorsements.find((endorsement) => endorsement.user._id === userId)) {
-        setEndorsement({
-          recipient: userId,
-          text: endorsements.find((endorsement) => endorsement.user._id === userId).send_text,
-          weight: endorsements.find((endorsement) => endorsement.user._id === userId).send_weight
-        });
-      } else {
-        setEndorsement({
-          recipient: userId
-        });
-      }
+
+  const setEndrosementDetails = () => {
+    if (endorsementState?.endorsementData?.recipientId) {
+      setEndorsement({
+        recipient: endorsementState?.endorsementData?.recipientId,
+        text: endorsementState?.endorsementData?.text,
+        weight: endorsementState?.endorsementData?.weight
+      });
       setOpenCreate(true);
     }
-  }, [userId, endorsements, users]);
+  }
+
+  const handleModalClose = () => {
+    dispatch(removeEndrosement())
+    setOpenCreate(false)
+    setEndorsement({ recipient: '', text: '', weight: '' })
+  }
+
+  useEffect(() => {
+    endorsement?.recipient && dispatch(getEndorsementDetail(endorsement?.recipient))
+    setEndorsement({
+      recipient: !!endorsement?.recipient ? endorsement?.recipient : '',
+      text: endorsement?.text ?? '',
+      weight: endorsement?.weight ?? ''
+    })
+  }, [endorsement?.recipient])
+
+  useEffect(() => {
+    userId && dispatch(getEndorsementDetail(userId))
+    endorsement?.recipient && dispatch(getEndorsementDetail(endorsement?.recipient))
+    setEndorsement({
+      recipient: userId ?? ''
+    })
+  }, [userId])
 
   useEffect(() => {
     if (socket) {
@@ -102,7 +121,7 @@ const Index = () => {
   };
 
   const handleNewClick = () => {
-    setEndorsement({});
+    setEndorsement({ recipient: '', text: '', weight: '' });
     setOpenCreate(true);
   };
 
@@ -126,8 +145,8 @@ const Index = () => {
         close: false
       })
     );
-    dispatch(searchEndorsements(keyword, page));
     setOpenCreate(false);
+    dispatch(searchEndorsements(keyword, page));
   };
 
   // console.log(hasFirebaseMessagingSupport, "<== Is supported")
@@ -188,8 +207,8 @@ const Index = () => {
                       onActive={() => {
                         setEndorsement({
                           recipient: item.user._id,
-                          text: item.send_text,
-                          weight: item.send_weight
+                          text: item.send_text ?? '',
+                          weight: item.send_weight ?? 0
                         });
                         setOpenCreate(true);
                       }}
@@ -227,7 +246,7 @@ const Index = () => {
       </Grid>
       <CreateModal
         open={openCreate}
-        onClose={() => setOpenCreate(false)}
+        onClose={() => handleModalClose()}
         onSave={handleSaveClick}
         users={users}
         endorsement={endorsement}

@@ -282,3 +282,15 @@ exports._getFollowings = async (id) => {
     ),
   }));
 };
+
+exports.getEndrosmentbyId = async (req, res, next) => {
+  const recipient = req.params?.id
+  const endorser = req.user?._id
+  try {
+    const data = await Endorsement.findOne({ recipientId: recipient, endorserId: endorser })
+    data ? res.send(data) : res.send({})
+  }
+  catch (err) {
+    next(err);
+  }
+}
