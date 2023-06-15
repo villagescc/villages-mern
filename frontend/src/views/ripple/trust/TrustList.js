@@ -70,11 +70,14 @@ const Index = () => {
     setSocket(io(SERVER_URL));
   }, []);
 
+  useEffect(() => {
+    setEndrosementDetails()
+  }, [endorsementState?.endorsementData])
 
   const setEndrosementDetails = () => {
-    if (endorsementState?.endorsementData?.recipientId) {
+    if (endorsementState?.endorsementData?.recipientId || endorsementState?.endorsementData?.msg) {
       setEndorsement({
-        recipient: endorsementState?.endorsementData?.recipientId,
+        recipient: endorsement?.recipient,
         text: endorsementState?.endorsementData?.text,
         weight: endorsementState?.endorsementData?.weight
       });

@@ -42,7 +42,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
   const [recipient, setRecipient] = React.useState({});
   useEffect(() => {
     setRecipient(users.find((user) => user._id === endorsement.recipient) || null);
-  }, [endorsement]);
+  }, [endorsement, users]);
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">

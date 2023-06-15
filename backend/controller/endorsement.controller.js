@@ -288,7 +288,7 @@ exports.getEndrosmentbyId = async (req, res, next) => {
   const endorser = req.user?._id
   try {
     const data = await Endorsement.findOne({ recipientId: recipient, endorserId: endorser })
-    data ? res.send(data) : res.send({})
+    data ? res.send(data) : res.send({ "msg": "No Data found" })
   }
   catch (err) {
     next(err);
