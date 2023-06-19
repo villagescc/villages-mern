@@ -87,11 +87,6 @@ const Error = ({ path }) => {
                         <ErrorWrapper>
                             <Grid container spacing={gridSpacing}>
                                 <Grid item xs={12}>
-                                    <Typography variant="h3" component="div">
-                                        We Can't Find {window.location.href} Page
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
                                     <Typography variant="h1" component="div">
                                         Page Not Found
                                     </Typography>
