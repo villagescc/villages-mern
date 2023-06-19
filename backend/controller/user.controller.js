@@ -47,7 +47,7 @@ exports.search = async (req, res, next) => {
 exports.getById = async (req, res, next) => {
   try {
     const user = await getUserById(req.params.id);
-    res.send(user);
+    user?.length ? res.send(...user) : res.send({})
   } catch (err) {
     next(err);
   }
@@ -373,51 +373,64 @@ const getUserDetailByUserName = async (username) => {
 };
 
 const getUserById = async (id) => {
-  const start = Date.now();
-  // let userInfo = {};
-  const user = await User.findById(id).exec();
-  const profile = await Profile.findOne({ user: id });
-  const account = await Account.findOne({ user: id });
-  // TODO update fields name in model
-  const postings = await Listing.find({ userId: id });
-  const logs = await Log.find({ user: id });
-  const payments = await Payment.find({
-    $or: [
-      {
-        payer: id,
-      },
-      {
-        recipient: id,
-      },
-    ],
-    status: "Completed",
-  })
-    .populate({
-      path: "recipient",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
-    .populate({
-      path: "payer",
-      model: "user",
-      populate: { path: "profile", model: "profile" },
-    })
-    .exec();
+  const user = User.aggregate([
+    {
+      $match: { $expr: { $eq: ['$_id', { $toObjectId: id }] } }
+    },
+    {
+      $lookup: {
+        from: "profiles",
+        foreignField: "_id",
+        localField: "profile",
+        as: "profile"
+      }
+    },
+    {
+      $addFields: { profile: { $arrayElemAt: ["$profile", 0] } }
+    },
+    {
+      $lookup: {
+        from: "accounts",
+        foreignField: "_id",
+        localField: "account",
+        as: "account"
+      }
+    },
+    {
+      $addFields: { account: { $arrayElemAt: ["$account", 0] } }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "recipientId",
+        localField: "_id",
+        as: "followers",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        foreignField: "endorserId",
+        localField: "_id",
+        as: "followings",
+        pipeline: [
+          {
+            $match: { weight: { $ne: Number(0) } }
+          }
+        ]
+      }
+    },
+    {
+      $project: { username: 1, firstName: 1, lastName: 1, email: 1, latitude: 1, longitude: 1, isSuperuser: 1, profile: 1, account: 1, followers: { $size: "$followers" }, followings: { $size: "$followings" } }
+    }
+  ])
 
-  const userInfo = {
-    ...user._doc,
-    account,
-    profile,
-    postings,
-    followers: await _getFollowers(id),
-    followings: await _getFollowings(id),
-    logs,
-    payments,
-  };
-
-  const span = Date.now() - start;
-  console.log(`fetched ${id} - ${span}`);
-  return userInfo;
+  return user
 };
 
 exports.uploadAvatar = async (req, res, next) => {
