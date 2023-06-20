@@ -16,7 +16,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../../assets/images/auth/default.png';
 import { SERVER_URL } from 'config';
 import { dispatch } from 'store';
-import { userActivate, deletUser } from 'store/slices/user';
+import { userActivate, deletUser, userVerification } from 'store/slices/user';
 import { openSnackbar } from 'store/slices/snackbar';
 import { geocodeByPlaceId } from 'react-places-autocomplete';
 
@@ -48,6 +48,9 @@ const UserList = ({ users, loading }) => {
 
   const handleUserActivate = (index) => {
     dispatch(userActivate(users[index], successAction));
+  };
+  const handleUserVerification = (id) => {
+    dispatch(userVerification(id, successAction));
   };
 
   const handleUserDelete = (index) => {
@@ -262,6 +265,22 @@ const UserList = ({ users, loading }) => {
                     </Grid>
                   </Grid>
                   <Grid item xs={12} container spacing={1}>
+                    {
+                      !!!user?.verified && <Grid item xs={4}>
+                        <Button
+                          variant="outlined"
+                          color='error'
+                          fullWidth
+                          size="small"
+                          sx={{ marginTop: 2 }}
+                          onClick={() => {
+                            handleUserVerification(user._id);
+                          }}
+                        >
+                          Verify
+                        </Button>
+                      </Grid>
+                    }
                     <Grid item xs={4}>
                       <Button
                         variant="outlined"

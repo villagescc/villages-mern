@@ -94,6 +94,18 @@ const slice = createSlice({
       state.error = null;
     },
 
+    // user Verified
+    userVerified(state, action) {
+      for (let index = 0; index < state.users.length; index++) {
+        if (state.users[index]._id === action.payload) {
+          state.users[index].verified = !state.users[index].verified;
+          break;
+        }
+      }
+      // state.user.isActive = !action.payload.isActive;
+      state.error = null;
+    },
+
     // delete user
     deleteUser(state, action) {
       for (let index = 0; index < state.users.length; index++) {
@@ -304,6 +316,19 @@ export function userActivate(user, successAction) {
       if (response.data?.success) {
         successAction();
         dispatch(slice.actions.userActivate(user));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+export function userVerification(id, successAction) {
+  return async () => {
+    try {
+      const response = await axios.post('/admin/users/verify', { "_id": id });
+      if (response.data?.success) {
+        successAction();
+        dispatch(slice.actions.userVerified(id));
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));

@@ -333,7 +333,7 @@ const Profile = () => {
               <Grid container spacing={0}>
                 <Grid item xs={6}>
                   <Typography align="center" variant="h3">
-                    {currentUser?.followers}
+                    {currentUser?.followers?.length}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
                     Trusted By
@@ -341,7 +341,7 @@ const Profile = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Typography align="center" variant="h3">
-                    {currentUser?.followings}
+                    {currentUser?.followings?.length}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
                     Trust Given

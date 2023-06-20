@@ -79,6 +79,19 @@ exports.userActivate = async (req, res, next) => {
     next(error);
   }
 };
+exports.userVerification = async (req, res, next) => {
+  const { _id } = req.body;
+
+  try {
+    await User.findByIdAndUpdate(_id, {
+      verified: true
+    });
+    res.send({ success: true });
+  } catch (error) {
+    console.log(err);
+    next(error);
+  }
+};
 
 exports.deleteUser = async (req, res, next) => {
   const { _id } = req.body;

@@ -67,7 +67,7 @@ const getUserDetail = async (username) => {
       $match: { "username": { $in: username } }
     },
     {
-      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1 }
+      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
     },
     {
       $lookup: {
@@ -426,7 +426,7 @@ const getUserById = async (id) => {
       }
     },
     {
-      $project: { username: 1, firstName: 1, lastName: 1, email: 1, latitude: 1, longitude: 1, isSuperuser: 1, profile: 1, account: 1, followers: { $size: "$followers" }, followings: { $size: "$followings" } }
+      $project: { username: 1, firstName: 1, lastName: 1, email: 1, latitude: 1, longitude: 1, isSuperuser: 1, profile: 1, account: 1, followers: 1, followings: 1 }
     }
   ])
 

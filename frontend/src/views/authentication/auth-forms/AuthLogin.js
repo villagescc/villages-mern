@@ -37,11 +37,13 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { activeID } from 'store/slices/menu';
-
+import { openSnackbar } from "store/slices/snackbar";
 import { messaging, getToken, onMessage, hasFirebaseMessagingSupport } from 'firebaseConfig';
 // import { geocodeByPlaceId } from 'react-places-autocomplete';
 import { geocodeByLatLng } from 'react-google-places-autocomplete';
 import { result } from 'lodash';
+import axios from 'axios';
+import { dispatch } from 'store';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -53,7 +55,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
 
-  const { login } = useAuth();
+  const { login, resendVerificationMail } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -66,6 +68,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
 
   // async function fetchData(position) {
   //   setLatitude(position.coords.latitude);
@@ -108,6 +111,24 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
     }
     // navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   }, []);
+
+  const handleEmailVerification = async (email) => {
+    await resendVerificationMail(email).then((result) => {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: result.message,
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: false
+        })
+      )
+    }).catch((err) => {
+      console.log(err)
+    });
+  }
 
   return (
     <>
@@ -215,7 +236,13 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 <FormHelperText error>{errors.submit}</FormHelperText>
               </Box>
             )}
-
+            {errors?.email === "Email is not verified" && !!!errors?.isEmailVerified && (<Box sx={{ mt: 2 }}>
+              <AnimateButton>
+                <Button disableElevation onClick={() => handleEmailVerification(values.email)} fullWidth size="large" variant="contained" color="secondary">
+                  Resend Verfication Email
+                </Button>
+              </AnimateButton>
+            </Box>)}
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">

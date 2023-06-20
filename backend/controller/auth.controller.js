@@ -156,6 +156,43 @@ exports.verifyToken = async (req, res, next) => {
     });
 };
 
+exports.resendVerificationMail = async (req, res, next) => {
+  const email = req.params?.email;
+  try {
+    const user = await User.findOne({
+      $or: [{ email: email.toLowerCase().trim() }, { username: email.toLowerCase().trim() }],
+    }).exec()
+    if (!user) {
+      return res.status(400).send({
+        email: "This email/username does not exist.",
+      });
+    }
+    axios
+      .post(
+        "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+        {
+          subject: "Please confirm your account",
+          dest: user.email,
+          data: `<h1>Email Confirmation</h1>
+              <h2>Hello ${user.firstName} ${user.lastName}</h2>
+              <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+              <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
+              <br>`,
+        }
+      )
+      .then(function (response) {
+        return res.status(200).send({ message: "Email sent successfully" });
+      })
+      .catch(function (error) {
+        return res.status(400).send({ message: "Error sending Email", error: error });
+      });
+
+  } catch (error) {
+    return res.status(400).send(error)
+  }
+
+}
+
 exports.login = (req, res, next) => {
   const { password, email, deviceToken, placeId, latitude, longitude } =
     req.body;
@@ -182,6 +219,7 @@ exports.login = (req, res, next) => {
             if (!user.verified) {
               return res.status(400).send({
                 email: "Email is not verified",
+                isEmailVerified: false
               });
             }
 

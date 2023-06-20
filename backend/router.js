@@ -29,6 +29,7 @@ router.post(
   authController.registerUser
 );
 router.get("/auth/verify/:id/:token", authController.verifyToken);
+router.get("/auth/resendEmail/:email", authController.resendVerificationMail);
 router.post("/auth/login", authMiddleware.login, authController.login);
 router.post("/auth/forgot-password", authController.forgotPassword);
 router.post("/auth/reset-password/:id/:token", authController.resetPassword);
@@ -107,6 +108,11 @@ router.post(
   "/admin/users/activate",
   authMiddleware.auth,
   adminController.userActivate
+);
+router.post(
+  "/admin/users/verify",
+  authMiddleware.auth,
+  adminController.userVerification
 );
 
 router.post(

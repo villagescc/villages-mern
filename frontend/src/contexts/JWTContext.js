@@ -111,6 +111,10 @@ export const JWTProvider = ({ children }) => {
     return response.data;
   };
 
+  const resendVerificationMail = async (email) => {
+    const response = await axios.get(`auth/resendEmail/${email}`);
+    return response.data;
+  };
   const verify = async (userid, token) => {
     const response = await axios.get(`auth/verify/${userid}/${token}`);
     return response.data;
@@ -137,7 +141,7 @@ export const JWTProvider = ({ children }) => {
   }
 
   return (
-    <JWTContext.Provider value={{ ...state, init, login, logout, register, resetPassword, forgotPassword, updateProfile, verify }}>
+    <JWTContext.Provider value={{ ...state, init, login, logout, register, resetPassword, forgotPassword, updateProfile, verify, resendVerificationMail }}>
       {children}
     </JWTContext.Provider>
   );
