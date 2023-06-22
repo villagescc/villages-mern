@@ -33,9 +33,9 @@ const Postings = ({ user }) => {
   );
   if (user?.postings?.length > 0) {
     postingsResult = user?.postings.map((item, index) => (
-      <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-        <PostingCard id={item?._id} avatar={user?.profile?.avatar} author={item?.user?._id} post={item.photo} title={item.title} description={item.description} userData={item?.user} />
-      </Grid>
+      <Grid Grid key={index} item xs={12} sm={6} md={4} lg={3} >
+        <PostingCard id={item?._id} avatar={user?.profile?.avatar} author={item?.user?._id} post={item.photo} title={item.title} description={item.description} userData={item?.user} isTrusted={item?.isTrusted} />
+      </Grid >
     ));
   }
 

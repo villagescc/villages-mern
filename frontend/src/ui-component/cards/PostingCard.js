@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Button, Card, CardContent, CardMedia, Chip, Grid, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, Chip, Grid, Typography, Badge } from '@mui/material';
 
 // project imports
 import Avatar from '../extended/Avatar';
@@ -93,9 +93,15 @@ const MessageWrapper = styled(Button)({
   }
 });
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    color: '#FF0000',
+  },
+}));
+
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ id, avatar, title, post, author, description, own, userData, ...other }) => {
+const PostingCard = ({ id, avatar, title, post, author, description, own, userData, isTrusted, ...other }) => {
   const theme = useTheme();
   const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
   const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
@@ -115,7 +121,15 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, userDa
           <Grid item xs={12}>
             <Grid container spacing={gridSpacing}>
               <Grid item xs={12} component={Link} to={`/${userData?.username}/${title}`} style={{ textDecoration: 'none' }}>
-                <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+                {
+                  isTrusted ? (<StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    badgeContent={<FavoriteIcon />}
+                  >
+                    <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+                  </StyledBadge>) : <Avatar alt={title} src={avatarImage} sx={{ width: 72, height: 72, m: '-50px auto 0' }} />
+                }
               </Grid>
             </Grid>
           </Grid>
@@ -123,11 +137,11 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, userDa
             <Grid container spacing={1}>
               <Grid item xs={12} sx={{ height: 50 }}>
                 <Typography variant="h4" component={Link} to={`/${userData?.username}/${title}`}>
-                  {title.length > 30 ? title.substring(0, 30) + '...' : title}
+                  {title?.length > 30 ? title.substring(0, 30) + '...' : title}
                 </Typography>
               </Grid>
               <Grid item xs={12} sx={{ height: 100 }}>
-                <Typography variant="body2">{description.length > 100 ? description.substring(0, 100) + '...' : description}</Typography>
+                <Typography variant="body2">{description?.length > 100 ? description.substring(0, 100) + '...' : description}</Typography>
               </Grid>
             </Grid>
           </Grid>

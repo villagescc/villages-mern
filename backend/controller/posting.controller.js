@@ -7,6 +7,8 @@ const isEmpty = require("../validation/is-empty");
 const sharp = require("sharp");
 const path = require("path");
 const { headingDistanceTo } = require("geolocation-utils");
+const Endorsement = require("../models/Endorsement");
+
 
 exports.searchPosts = async (req, res, next) => {
   const { filterData } = req.body;
@@ -107,7 +109,21 @@ exports.searchPosts = async (req, res, next) => {
         })
         .populate("tags")
         .exec();
-      res.send({ total, posts: lists });
+
+      const posts = await Promise.all(
+        lists.map(async (list) => {
+          const trustId = await Endorsement.aggregate([
+            { $match: { recipientId: list?.userId?._id } },
+          ]).exec();
+
+          return {
+            ...list.toObject(),
+            isTrusted: trustId.length > 0 ? true : false,
+          };
+        })
+      );
+
+      res.send({ total, posts: posts });
     }
   } catch (err) {
     console.log("filter error:", err);

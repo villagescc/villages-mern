@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { AvatarGroup, Button, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Chip } from '@mui/material';
+import { AvatarGroup, Button, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Chip, Badge } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 
 // project imports
 import Avatar from 'ui-component/extended/Avatar';
@@ -11,12 +14,12 @@ import UserListSkeleton from 'ui-component/cards/Skeleton/UserList';
 import { SERVER_URL } from 'config';
 
 import moment from 'moment';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../assets/images/auth/default.png';
 import { geocodeByPlaceId } from 'react-places-autocomplete';
-import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+
+
 
 const UserListCard = (user, index) => {
   const theme = useTheme();
@@ -34,19 +37,40 @@ const UserListCard = (user, index) => {
     }
     fetchData();
   }, [user]);
+
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      color: '#FF0000',
+    },
+  }));
   return (
     <TableRow key={index}>
       <TableCell>
         <Grid container spacing={2}>
           <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Avatar
-              alt={user?.user?.username}
-              src={user.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.user?.profile?.avatar : DefaultAvatar}
-              sx={{ width: 70, height: 70 }}
-              component={Link}
-              // to={`/listing/person/${user.user._id}/${user.user.username}`}
-              to={`/${user.user.username}`}
-            />
+            {
+              user?.user?.followers?.length ? (<StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={<FavoriteIcon />}
+              >
+                <Avatar
+                  alt={user?.user?.username}
+                  src={user.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.user?.profile?.avatar : DefaultAvatar}
+                  sx={{ width: 70, height: 70 }}
+                  component={Link}
+                  // to={`/listing/person/${user.user._id}/${user.user.username}`}
+                  to={`/${user.user.username}`}
+                />
+              </StyledBadge>) : (<Avatar
+                alt={user?.user?.username}
+                src={user.user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.user?.profile?.avatar : DefaultAvatar}
+                sx={{ width: 70, height: 70 }}
+                component={Link}
+                // to={`/listing/person/${user.user._id}/${user.user.username}`}
+                to={`/${user.user.username}`}
+              />)
+            }
           </Grid>
           <Grid item sm lg={8}>
             <Grid container spacing={1}>
