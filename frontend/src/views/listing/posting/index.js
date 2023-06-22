@@ -376,6 +376,7 @@ const Posting = () => {
                       own={post.userId?._id === user?._id}
                       author={post.userId?._id}
                       userData={post.userId}
+                      isTrusted={post?.isTrusted}
                       onDelete={() => handleDeletePostClick(post)}
                       onEdit={() => handleEditPostClick(post)}
                     />
