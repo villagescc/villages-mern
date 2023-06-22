@@ -65,7 +65,7 @@ exports.mapPosts = async (req, res, next) => {
         }
       }
       console.log(filterRadiusUsers);
-      query.where("userId").in();
+      query.where("userId").in(filterRadiusUsers);
     }
     if (!isEmpty(filterData.keyword)) {
       query.or([

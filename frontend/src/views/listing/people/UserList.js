@@ -17,6 +17,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../../assets/images/auth/default.png';
 import { geocodeByPlaceId } from 'react-places-autocomplete';
 import UserListCard from 'ui-component/cards/UserListCard';
+import Empty from 'ui-component/Empty';
 
 // ==============================|| USER LIST 2 ||============================== //
 
@@ -63,9 +64,7 @@ const UserList = ({ users, loading }) => {
               <UserListSkeleton />
               <UserListSkeleton />
             </>
-          ) : (
-            users?.map((user, index) => <UserListCard user={user} key={index} />)
-          )}
+          ) : users?.length ? users?.map((user, index) => <UserListCard user={user} key={index} />) : <Empty />}
         </TableBody>
       </Table>
     </TableContainer>

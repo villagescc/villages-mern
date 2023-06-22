@@ -220,7 +220,8 @@ router.get("/chat/state", authMiddleware.auth, chatController.getState);
 router.put("/chat/state", authMiddleware.auth, chatController.setState);
 
 // ######################### MAP ROUTER #############################
-router.get("/map/users", mapController.getUsers);
-router.post("/map/posts", mapController.mapPosts);
+router.get("/map/users", authMiddleware.auth, mapController.getUsers);
+router.post("/map/posts", authMiddleware.auth, mapController.mapPosts);
+
 
 module.exports = router;

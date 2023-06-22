@@ -92,7 +92,7 @@ import { getGraph } from 'store/slices/graph';
 import DefaultUserIcon from '../../../assets/images/auth/default.png';
 import { SERVER_URL } from 'config';
 
-const LoadGraphWithByProp = () => {
+const LoadGraphWithByProp = ({ graphFlag }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { borderRadius } = useConfig();
@@ -104,7 +104,7 @@ const LoadGraphWithByProp = () => {
   }, [graphState]);
 
   useEffect(() => {
-    dispatch(getGraph());
+    graphFlag && dispatch(getGraph());
   }, []);
 
   const [graphData, setGraphData] = useState(null);

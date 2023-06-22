@@ -137,11 +137,11 @@ export function getUsers() {
   };
 }
 
-export function getUserList(keyword = '', page = 1) {
+export function getUserList(keyword = '', page = 1, value = 'Suggested') {
   return async () => {
     dispatch(slice.actions.setLoading(true));
     try {
-      const response = await axios.post('/users/search', { keyword, page });
+      const response = await axios.post('/users/search', { keyword, page, value });
       dispatch(slice.actions.getUsersListSuccess(response.data));
       dispatch(slice.actions.setLoading(false));
     } catch (error) {

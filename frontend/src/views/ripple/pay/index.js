@@ -113,7 +113,7 @@ const Index = () => {
         <PaymentHistory handleCreateClick={handleCreateClick} count={count} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Path />
+        <Path graphFlag={true} />
       </TabPanel>
       <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId ?? ''} setCount={setCount} />
     </MainCard>

@@ -13,11 +13,19 @@ const Payment = require("../models/Payment");
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
+const { headingDistanceTo } = require("geolocation-utils");
+const Endorsement = require("../models/Endorsement");
+var mongoose = require('mongoose');
+const jwt = require("jsonwebtoken");
+
 
 exports.search = async (req, res, next) => {
-  let { keyword, page } = req.body;
+  const token = req.header("Authorization");
+  let { keyword, page, value } = req.body;
+
   if (!page) page = 1;
   let query = {};
+  let arr = []
   try {
     if (keyword && keyword !== "") {
       page = 1
@@ -30,14 +38,90 @@ exports.search = async (req, res, next) => {
         ],
       };
     }
-    const users = await User.find(query).sort({ createdAt: -1 }).select("username");
-    let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
-    let userData = [];
-    // for (let i = 0; i < filteredUsers.length; i++) {
-    let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
-    userData.push(userInfo);
-    // }
-    res.send({ total: users.length, users: userInfo });
+
+    // To find people without any Filter
+    if (value === "All") {
+      const users = await User.find(query).sort({ createdAt: -1 }).select("username");
+      let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
+      let userData = [];
+      let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
+      userData.push(userInfo);
+      res.send({ total: users.length, users: userInfo });
+    }
+    else {
+      const decoded = token && jwt.verify(token, process.env.jwtSecret);
+      const user = decoded?.user
+      if (user) {
+        const radius = 100000 * 1.609;
+        const userLocation = await User.findById(user?._id).select(
+          "longitude latitude"
+        );
+        const centerLocation = {
+          lat: userLocation.latitude,
+          lon: userLocation.longitude,
+        };
+        const filterRadiusUsers = [];
+        if (userLocation.latitude && userLocation.longitude) {
+          const span = Date.now()
+
+          const filterUsers = await User.find({}).select("longitude latitude");
+          for (var i = 0; i < filterUsers.length; i++) {
+            if (filterUsers[i].latitude && filterUsers[i].longitude) {
+              const filterLocation = {
+                lat: filterUsers[i].latitude,
+                lon: filterUsers[i].longitude,
+              };
+              const result = await headingDistanceTo(
+                centerLocation,
+                filterLocation
+              );
+              if (result.distance < radius) {
+                filterRadiusUsers.push(mongoose.Types.ObjectId(filterUsers[i]._id));
+              }
+            }
+          }
+          const span1 = Date.now() - span
+          console.log(`fetched- ${span1}`);
+        }
+
+        const receipent = await Endorsement.aggregate([
+          {
+            $match: { recipientId: { $in: [...filterRadiusUsers.map(x => x), user?._id] } }
+          },
+          {
+            $group: { _id: null, endorsers: { $push: { $toString: '$endorserId' } } }
+          }
+        ])
+        const endorser = await Endorsement.aggregate([
+          {
+            $match: { endorserId: { $in: filterRadiusUsers.map(x => x) } }
+          },
+          {
+            $group: { _id: null, receipents: { $push: { $toString: '$recipientId' } } }
+          }
+        ])
+        if (filterRadiusUsers.length) {
+          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString())])]
+        }
+        if (receipent.length) {
+          arr = [...new Set([...arr, ...receipent[0]?.endorsers])]
+        }
+        if (endorser.length) {
+          arr = [...new Set([...arr, ...endorser[0]?.receipents])]
+        }
+        if (filterRadiusUsers.length && receipent.length && endorser.length) {
+          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString()), ...receipent[0]?.endorsers, ...endorser[0]?.receipents])]
+        }
+      }
+      // const users = await User.find(...(arr.length !== 0 ? [{ "_id": { $in: arr }, ...query }] : [query])).sort({ createdAt: -1 }).select("username");
+      const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
+      console.log(users.length, "sadas")
+      let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
+      let userData = [];
+      let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
+      userData.push(userInfo);
+      res.send({ total: users.length, users: userInfo });
+    }
   } catch (err) {
     console.log("filter error:", err);
     next(err);
@@ -478,7 +562,7 @@ exports.saveProfile = async (req, res, next) => {
       { _id: user.profile },
       { job, description, placeId, website, zipCode, phoneNumber }
     );
-    user = await getUserDetail(req.user._id);
+    user = await getUserById(req.user._id);
     res.send({ success: true, user });
   } catch (err) {
     next(err);
