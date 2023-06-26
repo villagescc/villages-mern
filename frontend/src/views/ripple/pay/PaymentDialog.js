@@ -39,7 +39,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
 
   const [users, setUsers] = useState([]);
   const [recipient, setRecipient] = useState('');
-  const [maxLimit, setMaxLimit] = useState(0);
+  const [maxLimit, setMaxLimit] = useState(null);
   const [amount, setAmount] = useState(0);
   const [memo, setMemo] = useState('');
 
@@ -116,7 +116,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
     } else {
       setNotifyText(false);
       setAmount(0);
-      setMaxLimit(0)
+      setMaxLimit(null)
     }
   }, [recipient]);
 
@@ -149,7 +149,12 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
     <Dialog
       fullWidth
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false)
+        setRecipient('')
+        setAmount(0);
+        setErrors({})
+      }}
       scroll={'body'}
       aria-labelledby="draggable-dialog-title"
       PaperComponent={PaperComponent}
@@ -180,7 +185,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                       helperText={
                         notifyText
                           ? 'Please wait for a while getting path...'
-                          : maxLimit > 0
+                          : parseFloat(maxLimit) >= 0
                             ? `You can send up to ${maxLimit}VH`
                             : errors?.recipient
                               ? errors.recipient
@@ -203,7 +208,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                         event.preventDefault()
                       }
                     }}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => setAmount(Number(e.target.value))}
                     error={errors.amount}
                     helperText={errors?.amount}
                     InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment>, inputProps: { min: 0 } }}
