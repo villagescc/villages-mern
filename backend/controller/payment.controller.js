@@ -356,14 +356,14 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       let limit =
         (graph.hasEdge(path[i], path[i + 1]) &&
           graph.getEdgeAttribute(path[i], path[i + 1], "limit")
-          ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "limit"))
+          ? graph.getEdgeAttribute(path[i], path[i + 1], "limit") >= 0 ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "limit")) : 0
           : 0) -
         (graph.hasEdge(path[i], path[i + 1]) &&
           graph.getEdgeAttribute(path[i], path[i + 1], "tempPay")
           ? parseFloat(graph.getEdgeAttribute(path[i], path[i + 1], "tempPay"))
           : 0);
       if (i === 0) min = limit;
-      else min = min < limit ? min : limit;
+      else min = min !== 0 ? min < limit ? min : limit !== 0 ? limit : min : limit;
       // console.log(limit);
     }
 

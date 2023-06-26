@@ -13,7 +13,7 @@ const initialState = {
   total: 0,
   transactions: [],
   transaction: {},
-  maxLimit: 0,
+  maxLimit: null,
   errors: {},
   loading: false
 };
@@ -31,7 +31,7 @@ const slice = createSlice({
     getUsersSuccess(state, action) {
       state.users = action.payload;
       state.errors = {};
-      state.maxLimit = 0;
+      state.maxLimit = null;
     },
 
     // GET MAX LIMIT
