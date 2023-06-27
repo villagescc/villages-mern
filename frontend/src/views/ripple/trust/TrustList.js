@@ -47,7 +47,7 @@ const Index = () => {
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
-  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
 
   // get all users details
   const endorsementState = useSelector((state) => state.endorsement);
@@ -119,7 +119,8 @@ const Index = () => {
   const handleSearchType = (e) => {
     if (e.keyCode === 13) {
       setKeyword(e.target.value);
-      dispatch(searchEndorsements(e.target.value, page));
+      setPage(1)
+      dispatch(searchEndorsements(e.target.value, 1));
     }
   };
 
@@ -133,10 +134,26 @@ const Index = () => {
   };
 
   const handleDeleteClick = (recipient, text, weight) => {
-    dispatch(deleteEndorsement(recipient, text, weight, successAction));
+    dispatch(deleteEndorsement(recipient, text, weight, deleteAction));
   };
 
+  const deleteAction = () => {
+    handleModalClose()
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: 'You have deleted trust limit successfully',
+        variant: 'alert',
+        alert: {
+          color: 'warning'
+        },
+        close: false
+      })
+    );
+    dispatch(searchEndorsements(keyword, page));
+  };
   const successAction = () => {
+    handleModalClose()
     dispatch(
       openSnackbar({
         open: true,
@@ -148,7 +165,6 @@ const Index = () => {
         close: false
       })
     );
-    setOpenCreate(false);
     dispatch(searchEndorsements(keyword, page));
   };
 

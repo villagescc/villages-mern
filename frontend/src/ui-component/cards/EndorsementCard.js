@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
 
 const EndorsementCard = ({ endorsement, onActive, onDelete }) => {
   const theme = useTheme();
-  const { user, send_weight, send_text, receive_weight, receive_text } = endorsement;
+  const { user, send_weight, send_text, receive_weight, receive_text, isUserUsedCredit } = endorsement;
 
   const avatarImage = user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/` + user.profile.avatar : DefaultUserIcon;
   // console.log(user);
@@ -81,7 +81,7 @@ const EndorsementCard = ({ endorsement, onActive, onDelete }) => {
               </Button>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Button variant="outlined" sx={{ width: '100%' }} startIcon={<DeleteTwoTOneIcon />} onClick={onDelete}>
+              <Button variant="outlined" sx={{ width: '100%' }} startIcon={<DeleteTwoTOneIcon />} disabled={isUserUsedCredit} onClick={onDelete}>
                 Delete
               </Button>
             </Grid>

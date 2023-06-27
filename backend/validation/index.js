@@ -91,8 +91,11 @@ exports.validateEndorsementCreate = (data) => {
     errors.recipient = "Please choose recipient.";
   }
 
-  if (data.weight <= 0) {
-    errors.weight = "Please input weight.";
+  if (!data.weight.length) {
+    errors.weight = "Please input Credit limit.";
+  }
+  else if (parseFloat(data.weight) <= 0) {
+    errors.weight = "Credit Limit must be greater 0";
   }
 
   return {

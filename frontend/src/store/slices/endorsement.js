@@ -46,6 +46,12 @@ const slice = createSlice({
       state.errors = {};
     },
 
+    // TO EDIT ENDROSEMENT DATA
+    editEndrosementDetails(state, action) {
+      state.endorsementData = action.payload;
+      state.errors = {};
+    },
+
     // GET USERS
     getUsersSuccess(state, action) {
       state.users = action.payload;
@@ -87,11 +93,11 @@ export function saveEndorsement(endorsement, successAction) {
   };
 }
 
-export function deleteEndorsement(recipient, text, weight, setOpenCreate) {
+export function deleteEndorsement(recipient, text, weight, successAction) {
   return async () => {
     try {
       const response = await axios.post('/endorsement/delete', { recipient, text, weight });
-      setOpenCreate(false);
+      successAction();
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -126,6 +132,17 @@ export function removeEndrosement() {
   return async () => {
     try {
       dispatch(slice.actions.clearEndrosement());
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// To Update endrosement Data while edit
+export function editEndrosement(data) {
+  return async () => {
+    try {
+      dispatch(slice.actions.editEndrosementDetails(data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

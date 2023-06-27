@@ -4,6 +4,8 @@ const Notification = require("../models/Notification");
 const { _create: createNotification } = require("./notification.controller");
 
 const axios = require("axios");
+const Payment = require("../models/Payment");
+const { default: mongoose } = require("mongoose");
 
 exports.save = async (req, res, next) => {
   let errors = {};
@@ -35,12 +37,28 @@ exports.save = async (req, res, next) => {
       });
       notifyText = `${req.user.username} sent you ${weight}(V.H.) trust limit.`;
     } else {
-      endorsement.weight = weight;
-      endorsement.text = text;
-      endorsement.deleted = false;
-      endorsement.referred = referred;
-      await endorsement.save();
-      notifyText = `${req.user.username} updated trust limit as ${weight}(V.H.).`;
+      let payment_history = await Payment.aggregate([
+        {
+          $match:
+          {
+            recipient: mongoose.Types.ObjectId(req.user._id),
+            payer: mongoose.Types.ObjectId(recipientUser?._id),
+            status: "Completed",
+          },
+        },
+      ]).exec()
+
+      if (payment_history?.length && parseFloat(weight) < payment_history?.map(x => x?.amount).reduce((a, b) => a + b)) {
+        return res.status(400).json({ weight: `Credit limit cannot be lower then money already in circulation (${payment_history.map(x => x?.amount).reduce((a, b) => a + b)} VH)` });
+      }
+      else {
+        endorsement.weight = weight;
+        endorsement.text = text;
+        endorsement.deleted = false;
+        endorsement.referred = referred;
+        await endorsement.save();
+        notifyText = `${req.user.username} updated trust limit as ${weight}(V.H.).`;
+      }
     }
 
     axios
@@ -213,12 +231,31 @@ exports.search = async (req, res, next) => {
       }
     }
 
+    let endrsomentDetails = [...Object.values(endorsements_group)].slice(
+      (page - 1) * 12,
+      page * 12
+    )
+
+    endrsomentDetails = await Promise.all(endrsomentDetails?.map(async (x) => {
+      if (x?.send_weight) {
+        let payment_history = await Payment.aggregate([
+          {
+            $match:
+            {
+              recipient: mongoose.Types.ObjectId(req.user._id),
+              payer: x?.user?._id,
+              status: "Completed",
+            },
+          },
+        ]).exec()
+        return { ...x, "isUserUsedCredit": payment_history?.length ? true : false }
+      }
+      else return x
+    }))
+
     res.send({
       total: Object.keys(endorsements_group).length,
-      endorsements: [...Object.values(endorsements_group)].slice(
-        (page - 1) * 12,
-        page * 12
-      ),
+      endorsements: endrsomentDetails
     });
   } catch (err) {
     console.log("filter error:", err);

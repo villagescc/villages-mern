@@ -19,6 +19,9 @@ import {
   FormControlLabel
 } from '@mui/material';
 import { Receipt } from '@mui/icons-material';
+import { editEndrosement } from 'store/slices/endorsement';
+import { useSelector } from 'react-redux';
+import { dispatch } from 'store';
 
 const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement, errors }) => {
   const theme = useTheme();
@@ -43,6 +46,10 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
   useEffect(() => {
     setRecipient(users.find((user) => user._id === endorsement.recipient) || null);
   }, [endorsement, users]);
+
+  // get all users details
+  const endorsementState = useSelector((state) => state.endorsement);
+
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
@@ -95,6 +102,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment>, inputProps: { min: 0 } }}
                 onChange={(event) => {
                   setEndorsement({ ...endorsement, weight: event.target.value });
+                  endorsementState?.endorsementData?.hasOwnProperty('weight') && dispatch(editEndrosement({ ...endorsementState?.endorsementData, weight: event.target.value }))
                 }}
                 value={String(endorsement?.weight)?.length ? endorsement?.weight : ''}
                 error={errors.weight}
