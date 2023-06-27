@@ -85,13 +85,13 @@ exports.validateEndorsementCreate = (data) => {
   let errors = {};
 
   data.recipient = !isEmpty(data.recipient) ? data.recipient : "";
-  data.weight = !isEmpty(data.weight) ? data.weight : 0;
+  // data.weight = !isEmpty(data.weight) ? data.weight : 0;
 
   if (validator.isEmpty(data.recipient)) {
     errors.recipient = "Please choose recipient.";
   }
 
-  if (!data.weight.length) {
+  if (isEmpty(data.weight)) {
     errors.weight = "Please input Credit limit.";
   }
   else if (parseFloat(data.weight) <= 0) {
