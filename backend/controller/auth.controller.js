@@ -119,6 +119,7 @@ exports.registerUser = async (req, res, next) => {
               <h2>Hello ${firstName} ${lastName}</h2>
               <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
               <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
+              <div>https://villages.io/auth/verify/${user._id}/${token}</div>
               <br>`,
           }
         )
@@ -177,6 +178,7 @@ exports.resendVerificationMail = async (req, res, next) => {
               <h2>Hello ${user.firstName} ${user.lastName}</h2>
               <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
               <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
+             <div>https://villages.io/auth/verify/${user._id}/${user.token}</div>
               <br>`,
         }
       )
@@ -377,6 +379,7 @@ exports.forgotPassword = async (req, res, next) => {
                 <h2>Hello ${user.firstName} ${user.lastName}</h2>
                 <p>Please follow the link to reset your password</p>
                 <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
+                <div>https://villages.io/auth/forgot-password/${user._id}/${token}</div>
                 <br>`,
             }
           )
