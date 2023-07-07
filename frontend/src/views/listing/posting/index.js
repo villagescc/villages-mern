@@ -492,7 +492,7 @@ const Posting = () => {
                 />
                 <Button variant="contained" component="label" sx={{ width: 200 }}>
                   {previewImage ? 'Change Image' : 'Choose Image'}
-                  <input type="file" onChange={(e) => handleImageChange(e)} hidden accept='image/*' />
+                  <input type="file" onChange={(e) => handleImageChange(e)} hidden accept='image/*' capture="camera" />
                 </Button>
                 {previewImage && <img src={previewImage} style={{ width: 200, borderRadius: 10, marginTop: 10 }} />}
                 <ReactTags
