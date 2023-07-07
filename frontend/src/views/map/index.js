@@ -186,7 +186,7 @@ const Index = () => {
           {posts?.length &&
             posts.map((post, index) => {
               if (post?.user?.latitude && post?.user?.longitude) {
-                return <MapPopover key={post?._id} lat={post?.user?.latitude + index * 0.01} lng={post?.user?.longitude + index * 0.01} post={post} index={index} />
+                return <MapPopover key={post?._id} lat={post?.user?.latitude} lng={post?.user?.longitude} post={post} index={index} />
               }
             })
           }

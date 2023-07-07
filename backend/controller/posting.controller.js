@@ -269,7 +269,7 @@ exports.createPost = async (req, res, next) => {
         const { filename: image } = req.file;
         try {
           await sharp(req.file.path)
-            .resize(600, 200)
+            .resize(600, 300)
             .jpeg({ quality: 60 })
             .toFile(path.resolve(req.file.destination, "resized", image));
           fs.unlinkSync(req.file.path);
@@ -295,12 +295,12 @@ exports.createPost = async (req, res, next) => {
         const { filename: image } = req.file;
         try {
           await sharp(req.file.path)
-            .resize(200, 200)
+            .resize(600, 300)
             .jpeg({ quality: 90 })
             .toFile(path.resolve(req.file.destination, "resized", image));
           fs.unlinkSync(req.file.path);
         } catch (err) {
-          console.log(err);
+          console.log(err, "Error");
         }
         postData.photo = `resized/${uploadFile.filename}`;
       }

@@ -138,7 +138,7 @@ export function getPost(username, title) {
   };
 }
 
-export function submitPost(data, closeModal, setCount) {
+export function submitPost(data, setCount, successAction) {
   return async () => {
     try {
       const response = await axios.postForm('/posting/upload', data, {
@@ -147,7 +147,7 @@ export function submitPost(data, closeModal, setCount) {
         }
       });
       setCount((prevCount) => prevCount + 1);
-      closeModal();
+      successAction()
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

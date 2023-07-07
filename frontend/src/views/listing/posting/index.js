@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-
+import { LoadingButton } from '@mui/lab';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -140,12 +140,14 @@ const Posting = () => {
     let reader = new FileReader();
     let file = e.target.files[0];
 
-    reader.onloadend = () => {
-      setFile(file);
-      setPreviewImage(reader.result);
-    };
 
-    reader.readAsDataURL(file);
+    if (file) {
+      reader.onloadend = () => {
+        setFile(file);
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleCreatePostClick = () => {
@@ -217,7 +219,7 @@ const Posting = () => {
       data.append('tags', tag.text);
     });
     dispatch(
-      submitPost(data, setCount(), () => {
+      submitPost(data, setCount, () => {
         successAction();
         setOpenCreate(false);
         dispatch(filterData);
@@ -236,6 +238,7 @@ const Posting = () => {
         close: false
       })
     );
+
   };
 
   return (
@@ -451,7 +454,7 @@ const Posting = () => {
                 <TextField
                   fullWidth
                   type="number"
-                  label="Price"
+                  label="Price (Village Hours)"
                   size={'small'}
                   min={0}
                   sx={{ my: 1.5 }}
@@ -487,7 +490,7 @@ const Posting = () => {
                 />
                 <Button variant="contained" component="label" sx={{ width: 200 }}>
                   {previewImage ? 'Change Image' : 'Choose Image'}
-                  <input type="file" onChange={(e) => handleImageChange(e)} hidden />
+                  <input type="file" onChange={(e) => handleImageChange(e)} hidden accept='image/*' />
                 </Button>
                 {previewImage && <img src={previewImage} style={{ width: 200, borderRadius: 10, marginTop: 10 }} />}
                 <ReactTags
@@ -505,9 +508,9 @@ const Posting = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenCreate(false)}>Close</Button>
-              <Button onClick={handleSubmitPost} variant={'contained'}>
+              <LoadingButton onClick={handleSubmitPost} variant={'contained'} loading={loading}>
                 Submit
-              </Button>
+              </LoadingButton>
             </DialogActions>
           </>
         )}
