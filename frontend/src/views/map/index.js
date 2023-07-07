@@ -180,8 +180,8 @@ const Index = () => {
           }}
           yesIWantToUseGoogleMapApiInternals
           center={[user?.latitude < 90 ? user?.latitude : 180 - user?.latitude, user?.longitude < 180 ? user?.longitude : 360 - user?.longitude]}
-          zoom={9}
-          defaultZoom={10}
+          zoom={12}
+          defaultZoom={9}
         >
           {posts?.length &&
             posts.map((post, index) => {

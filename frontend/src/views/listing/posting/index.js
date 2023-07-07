@@ -206,6 +206,7 @@ const Posting = () => {
   };
 
   const handleSubmitPost = () => {
+    setLoading(true);
     const data = new FormData();
     data.append('id', id);
     data.append('file', file);
@@ -220,9 +221,10 @@ const Posting = () => {
     });
     dispatch(
       submitPost(data, setCount, () => {
-        successAction();
         setOpenCreate(false);
-        dispatch(filterData);
+        successAction();
+        dispatch(filterPost(filterData));
+        setLoading(false)
       })
     );
   };

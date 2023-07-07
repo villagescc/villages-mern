@@ -18,10 +18,20 @@ const ProfileSettingSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    receiveUser: {
+      type: Boolean,
+      default: true,
+    },
     language: {
       type: String,
     },
     feedRadius: {
+      type: Number,
+    },
+    old_id: {
+      type: Number,
+    },
+    old_profile_id: {
       type: Number,
     },
     // feedTrusted: {

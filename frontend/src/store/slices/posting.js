@@ -146,8 +146,8 @@ export function submitPost(data, setCount, successAction) {
           'Content-Type': 'multipart/form-data'
         }
       });
-      setCount((prevCount) => prevCount + 1);
       successAction()
+      setCount((prevCount) => prevCount + 1);
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
