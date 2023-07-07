@@ -269,8 +269,8 @@ exports.createPost = async (req, res, next) => {
         const { filename: image } = req.file;
         try {
           await sharp(req.file.path)
-            .resize(200, 200)
-            .jpeg({ quality: 90 })
+            .resize(600, 200)
+            .jpeg({ quality: 60 })
             .toFile(path.resolve(req.file.destination, "resized", image));
           fs.unlinkSync(req.file.path);
         } catch (err) {
