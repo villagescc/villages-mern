@@ -19,6 +19,7 @@ const listID = process.env.MAILCHIMP_LIST_ID;
 // });
 
 const axios = require("axios");
+const ProfileSetting = require("../models/ProfileSetting");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
@@ -155,6 +156,18 @@ exports.verifyToken = async (req, res, next) => {
       console.log("find user error");
       next(err);
     });
+
+  const result = new ProfileSetting(
+    {
+      "receiveNotifications": true,
+      "receiveUpdates": true,
+      "receiveUser": true,
+      "language": "en",
+      "feedRadius": 0,
+      "user": req.params.id
+    }
+  );
+  await result.save()
 };
 
 exports.resendVerificationMail = async (req, res, next) => {
