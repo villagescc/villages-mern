@@ -129,7 +129,7 @@ export function getPost(username, title) {
   return async () => {
     dispatch(slice.actions.setLoading(true));
     try {
-      const response = await axios.get(`/posting/post/${username}/${title}`);
+      const response = await axios.get(`/posting/post/${username}/${encodeURIComponent(title)}`);
       dispatch(slice.actions.getPostSuccess(response.data));
       dispatch(slice.actions.setLoading(false));
     } catch (error) {

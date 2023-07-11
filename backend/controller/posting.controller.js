@@ -169,7 +169,7 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
     const { username, title } = req.params;
     const post = await Listing.aggregate([
       { $addFields: { "title": { $trim: { input: "$title" } } } },
-      { $match: { title: title } },
+      { $match: { title: String(title).trim() } },
       {
         $lookup: {
           from: "users",

@@ -112,7 +112,7 @@ const MapPopover = ({ post, index }) => {
                                     <Box xs={6} sx={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
                                         <CardContent sx={{ flex: '1 0 auto', padding: '0px' }}>
                                             <div>
-                                                <Typography variant="h5" component={Link} to={`/${data?.userId?.username}/${data?.title}`}>
+                                                <Typography variant="h5" component={Link} to={`/${data?.userId?.username}/${encodeURIComponent(data?.title)}`}>
                                                     {data?.title}
                                                 </Typography>
                                             </div>

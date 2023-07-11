@@ -31,7 +31,7 @@ const Index = () => {
 
   const setting = useSelector((state) => state.user.setting);
 
-  const [data, setData] = useState({ email: '', notificationCheck: false, updateCheck: false, feedRadius: 0, language: 'en' });
+  const [data, setData] = useState({ email: '', notificationCheck: false, updateCheck: false, userCheck: false, feedRadius: 0, language: 'en' });
 
   useEffect(() => {
     dispatch(getSetting());
@@ -42,6 +42,7 @@ const Index = () => {
       email: setting?.email ? setting.email : '',
       notificationCheck: setting?.receiveNotifications ? setting.receiveNotifications : true,
       updateCheck: setting?.receiveUpdates ? setting.receiveUpdates : true,
+      userCheck: setting?.receiveUser ? setting.receiveUser : false,
       feedRadius: setting?.feedRadius ? setting.feedRadius : 0,
       language: setting?.language ? setting.language : 'en'
     });
@@ -113,6 +114,19 @@ const Index = () => {
                 />
               }
               label="RECEIVE UPDATES"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.userCheck}
+                  onChange={() => setData({ ...data, userCheck: !data.userCheck })}
+                  name="checked"
+                  color="primary"
+                />
+              }
+              label="RECEIVE USER SUGGESTIONS"
             />
           </Grid>
           <Grid item xs={12}>

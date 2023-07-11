@@ -120,7 +120,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, userDa
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>
             <Grid container spacing={gridSpacing}>
-              <Grid item xs={12} component={Link} to={`/${userData?.username}/${title}`} style={{ textDecoration: 'none' }}>
+              <Grid item xs={12} component={Link} to={`/${userData?.username}/${encodeURIComponent(title)}`} style={{ textDecoration: 'none' }}>
                 {
                   isTrusted ? (<StyledBadge
                     overlap="circular"
@@ -136,7 +136,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, userDa
           <Grid item xs={12} alignItems="center">
             <Grid container spacing={1}>
               <Grid item xs={12} sx={{ height: 50 }}>
-                <Typography variant="h4" component={Link} to={`/${userData?.username}/${title}`}>
+                <Typography variant="h4" component={Link} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
                   {title?.length > 30 ? title.substring(0, 30) + '...' : title}
                 </Typography>
               </Grid>
