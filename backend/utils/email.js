@@ -3,21 +3,20 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.HOST,
+      host: process.env.MAILJET_HOST,
       // service: process.env.SERVICE,
-      port: 587,
-      secure: true,
+      port: 465,
       auth: {
-        user: process.env.USER,
-        pass: process.env.PASS,
+        user: process.env.MJ_APIKEY_PUBLIC,
+        pass: process.env.MJ_APIKEY_PRIVATE,
       },
     });
 
     await transporter.sendMail({
-      from: process.env.USER,
+      from: 'info@villages.io',
       to: email,
       subject: subject,
-      text: text,
+      html: text,
     });
     console.log("email sent sucessfully");
   } catch (error) {

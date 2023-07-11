@@ -6,6 +6,8 @@ const path = require("path");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const router = require("./router");
+const cronJob = require("./cronJob")
+
 //connect database
 connectDB();
 //Initialise middleware
