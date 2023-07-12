@@ -137,7 +137,9 @@ const ProfileSection = () => {
             }
           },
           '& .MuiChip-label': {
-            lineHeight: 0
+            lineHeight: 0,
+            paddingLeft: 0,
+            paddingRight: 0
           }
         }}
         icon={
@@ -145,7 +147,7 @@ const ProfileSection = () => {
             src={user?.profile?.avatar ? `${SERVER_URL}/upload/avatar/${user?.profile?.avatar}` : '${SERVER_URL}/upload/avatar/default.png'}
             sx={{
               ...theme.typography.mediumAvatar,
-              margin: '8px 0 8px 8px !important',
+              margin: '8px 8px 8px 8px !important',
               cursor: 'pointer'
             }}
             ref={anchorRef}
@@ -154,7 +156,7 @@ const ProfileSection = () => {
             color="inherit"
           />
         }
-        label={<IconSettings stroke={1.5} size="24px" color={theme.palette.primary.main} />}
+        // label={<IconSettings stroke={1.5} size="24px" color={theme.palette.primary.main} />}
         variant="outlined"
         ref={anchorRef}
         aria-controls={open ? 'menu-list-grow' : undefined}

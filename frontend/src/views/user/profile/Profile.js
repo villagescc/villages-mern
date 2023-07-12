@@ -408,6 +408,7 @@ const Profile = () => {
                           {...props}
                           onClick={() => {
                             setLocation(option);
+                            document.activeElement.blur()
                           }}
                         >
                           {option.description}
@@ -420,6 +421,7 @@ const Profile = () => {
                             placeholder: 'Search Places ...',
                             className: 'location-search-input'
                           })}
+                          label='Location'
                           error={Boolean(errors?.placeId)}
                           helperText={errors?.placeId}
                         />
