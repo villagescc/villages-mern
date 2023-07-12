@@ -6,14 +6,14 @@ const ejs = require('ejs');
 const isEmpty = require("./validation/is-empty");
 const { headingDistanceTo } = require("geolocation-utils");
 const Listing = require("./models/Listing");
+const BulkEmail = require('./models/BulkEmail');
 
 // Set the EJS template file
 const templateFile = './template/template.ejs';
 
-let fetchedData = [];
-
 console.log("Log From Cron Job")
-cron.schedule('45 7 * * 2', async function () {
+// Update DB Update Every Monday
+cron.schedule('45 7 * * 1', async function () {
     console.log("Cron Job Run And Loop started")
     try {
         const recentUser = await User.aggregate([
@@ -68,7 +68,6 @@ cron.schedule('45 7 * * 2', async function () {
             }
 
         ]).exec()
-
 
         const recentPost = await Listing.aggregate([
             {
@@ -418,11 +417,13 @@ cron.schedule('45 7 * * 2', async function () {
 
         const emailSendWrapper = (email, cards, post) => {
             if (cards?.length || post.length) {
-                manuplatedData.push({ "email": email, "cards": cards, "post": post })
+                manuplatedData.push({ "email": email, "users": cards, "posts": post })
             }
         }
-
-        fetchedData = manuplatedData
+        await BulkEmail.deleteMany({})
+        await BulkEmail.insertMany(manuplatedData).then(res =>
+            console.log("Data Updated For email")
+        ).catch(err => console.log(err, "Error"))
 
     } catch (err) {
         console.log('====================================');
@@ -435,18 +436,17 @@ cron.schedule('45 7 * * 2', async function () {
 });
 
 // Monday
-cron.schedule('0 8 * * 1', () => {
-    let data = fetchedData.slice(0, 200)
-    console.log(data.length, "Monday")
+cron.schedule('0 8 * * 1', async () => {
+    const data = await BulkEmail.find({}).skip(0).limit(200)
+    console.log(data?.length, "Monday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -457,18 +457,17 @@ cron.schedule('0 8 * * 1', () => {
 });
 
 // Tuesday
-cron.schedule('0 8 * * 2', () => {
-    let data = fetchedData.slice(200, 400)
-    console.log(data.length, "Tuesday")
+cron.schedule('0 8 * * 2', async () => {
+    const data = await BulkEmail.find({}).skip(200).limit(200)
+    console.log(data?.length, "Tuesday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -478,18 +477,17 @@ cron.schedule('0 8 * * 2', () => {
 });
 
 // Wednesday
-cron.schedule('0 8 * * 3', () => {
-    let data = fetchedData.slice(400, 600)
-    console.log(data.length, "Wednesday")
+cron.schedule('0 8 * * 3', async () => {
+    const data = await BulkEmail.find({}).skip(400).limit(200)
+    console.log(data?.length, "Wednesday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -499,18 +497,17 @@ cron.schedule('0 8 * * 3', () => {
 });
 
 // Thursday
-cron.schedule('0 8 * * 4', () => {
-    let data = fetchedData.slice(600, 800)
-    console.log(data.length, "Thursday")
+cron.schedule('0 8 * * 4', async () => {
+    const data = await BulkEmail.find({}).skip(600).limit(200)
+    console.log(data?.length, "Thursday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -520,18 +517,17 @@ cron.schedule('0 8 * * 4', () => {
 });
 
 // Friday
-cron.schedule('0 8 * * 5', () => {
-    let data = fetchedData.slice(800, 1000)
-    console.log(data.length, "Friday")
+cron.schedule('0 8 * * 5', async () => {
+    const data = await BulkEmail.find({}).skip(800).limit(200)
+    console.log(data?.length, "Friday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -541,18 +537,17 @@ cron.schedule('0 8 * * 5', () => {
 });
 
 // Saturday
-cron.schedule('0 8 * * 6', () => {
-    let data = fetchedData.slice(1000, 1200)
-    console.log(data.length, "Saturday")
+cron.schedule('0 8 * * 6', async () => {
+    const data = await BulkEmail.find({}).skip(1000).limit(200)
+    console.log(data?.length, "Saturday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
@@ -562,18 +557,17 @@ cron.schedule('0 8 * * 6', () => {
 });
 
 // Sunday
-cron.schedule('0 8 * * 7', () => {
-    let data = fetchedData.slice(1200, 1400)
-    console.log(data.length, "Sunday")
+cron.schedule('0 8 * * 7', async () => {
+    const data = await BulkEmail.find({}).skip(1200).limit(200)
+    console.log(data?.length, "Sunday")
     data?.map(x => {
-        let cards = x?.cards
-        let post = x?.post
+        let cards = x?.users
+        let post = x?.posts
         ejs.renderFile(templateFile, { cards, post }, async (error, renderedTemplate) => {
             if (error) {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-
                 await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
             }
         });
