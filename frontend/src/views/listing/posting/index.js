@@ -378,6 +378,7 @@ const Posting = () => {
                       post={post.photo}
                       title={post.title}
                       description={post.description}
+                      listingType={post.listing_type}
                       own={post.userId?._id === user?._id}
                       author={post.userId?._id}
                       userData={post.userId}

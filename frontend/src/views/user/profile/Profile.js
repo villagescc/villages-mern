@@ -76,7 +76,7 @@ const Profile = () => {
     setFirstName(currentUser.firstName ? currentUser.firstName : '');
     setLastName(currentUser.lastName ? currentUser.lastName : '');
     setJob(currentUser.profile?.job ? currentUser.profile.job : '');
-    setZipCode(currentUser.profile?.zipCode ? currentUser.profile.zipCode : '');
+    // setZipCode(currentUser.profile?.zipCode ? currentUser.profile.zipCode : '');
     setPhoneNumber(currentUser.profile?.phoneNumber ? currentUser.profile.phoneNumber : '');
     setWebsite(currentUser.profile?.website ? currentUser.profile.website : '');
     if (currentUser && currentUser.profile && currentUser.profile.placeId) {
@@ -334,7 +334,7 @@ const Profile = () => {
                 helperText={errors?.lastName}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 name="job"
                 fullWidth
@@ -346,7 +346,7 @@ const Profile = () => {
                 helperText={errors?.job}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <TextField
                 name="zipCode"
                 fullWidth
@@ -357,7 +357,7 @@ const Profile = () => {
                 error={Boolean(errors?.zipCode)}
                 helperText={errors?.zipCode}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} md={6}>
               <TextField
                 name="phoneNumber"
@@ -439,7 +439,7 @@ const Profile = () => {
                 rows={3}
                 value={description}
                 InputLabelProps={{ shrink: true }}
-                placeholder={'Description'}
+                placeholder={'Bio'}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>

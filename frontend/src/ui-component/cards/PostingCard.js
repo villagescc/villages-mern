@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Button, Card, CardContent, CardMedia, Chip, Grid, Typography, Badge } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, Grid, Typography, Badge } from '@mui/material';
 
 // project imports
 import Avatar from '../extended/Avatar';
@@ -21,6 +21,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 // import useAuth from '../../hooks/useAuth';
 import { SERVER_URL } from 'config';
+import Chip from 'ui-component/extended/Chip';
 
 // styles
 const DeleteWrapper = styled(Button)({
@@ -101,7 +102,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ id, avatar, title, post, author, description, own, userData, isTrusted, ...other }) => {
+const PostingCard = ({ id, avatar, title, post, author, description, listingType, own, userData, isTrusted, ...other }) => {
   const theme = useTheme();
   const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
   const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
@@ -112,9 +113,16 @@ const PostingCard = ({ id, avatar, title, post, author, description, own, userDa
         background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
         border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
         borderColor: theme.palette.grey[100],
-        textAlign: 'center'
+        textAlign: 'center',
+        position: 'relative'
       }}
     >
+      <Chip
+        size="small"
+        label={listingType}
+        chipcolor={'warning'}
+        sx={{ borderRadius: '0px 4px 4px 0px', textTransform: 'capitalize', position: 'absolute', left: 0, top: "12px" }}
+      />
       <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
       <CardContent sx={{ p: 2, pb: '16px !important' }}>
         <Grid container spacing={gridSpacing}>
