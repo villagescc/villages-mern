@@ -468,7 +468,7 @@ cron.schedule('0 8 * * 2', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
