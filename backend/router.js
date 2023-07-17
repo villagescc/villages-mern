@@ -238,6 +238,7 @@ router.get('/root.xml', async (req, res, next) => {
 router.get('/people.xml', async (req, res, next) => {
   const allRoutes = await User.find({})
   const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
+  root.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
   allRoutes.map(e => {
     const url = root.ele('url');
     url.ele('loc', `https://villages.io/${e.username}`);
@@ -253,6 +254,7 @@ router.get('/people.xml', async (req, res, next) => {
 router.get('/post.xml', async (req, res, next) => {
   const allRoutes = await Listing.find({}).populate('userId')
   const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
+  root.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
   allRoutes.map(e => {
     const url = root.ele('url');
     url.ele('loc', `https://villages.io/${e.userId.username}/${encodeURIComponent(e.title)}`);
