@@ -189,6 +189,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 id="outlined-adornment-password-login"
                 type={showPassword ? 'text' : 'password'}
                 value={values.password}
+                style={{ fontSize: '16px' }}
                 name="password"
                 onBlur={handleBlur}
                 onChange={handleChange}
