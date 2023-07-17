@@ -231,6 +231,10 @@ router.get('/sitemap.xml', async (req, res, next) => {
   res.sendFile(path.join(path.join(__dirname), 'sitemap.xml'))
 })
 
+router.get('/root.xml', async (req, res, next) => {
+  res.sendFile(path.join(path.join(__dirname), 'root.xml'))
+})
+
 router.get('/people.xml', async (req, res, next) => {
   const allRoutes = await User.find({})
   const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });

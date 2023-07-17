@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from 'store';
 import { getUserByUserName } from 'store/slices/user';
 import DefaultUserIcon from '../../../../assets/images/auth/default.png';
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
+import { Helmet } from 'react-helmet';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -114,169 +115,184 @@ const SocialProfile = () => {
   }, [username]);
 
   return (
-    <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
-        <MainCard
-          contentSX={{
-            p: 1.5,
-            paddingBottom: '0px !important',
-            [theme.breakpoints.down('lg')]: {
-              textAlign: 'center'
-            }
-          }}
-        >
-          {isLoading ? (
-            <ImagePlaceholder
-              sx={{
-                borderRadius: `${borderRadius}px`,
-                overflow: 'hidden',
-                mb: 3,
-                height: { xs: 85, sm: 150, md: 260 }
-              }}
-            />
-          ) : (
-            <CardMedia component="img" image={Cover} sx={{ borderRadius: `${borderRadius}px`, overflow: 'hidden', mb: 3 }} />
-          )}
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12} md={3}>
-              {isLoading ? (
-                <ImagePlaceholder
-                  sx={{
-                    margin: '-70px 0 0 auto',
-                    borderRadius: '16px',
-                    [theme.breakpoints.down('lg')]: {
-                      margin: '-70px auto 0'
-                    },
-                    [theme.breakpoints.down('md')]: {
-                      margin: '-60px auto 0'
-                    },
-                    width: { xs: 72, sm: 100, md: 140 },
-                    height: { xs: 72, sm: 100, md: 140 }
-                  }}
-                />
-              ) : (
-                <Avatar
-                  alt="User 1"
-                  src={avatarImage}
-                  sx={{
-                    margin: '-70px 0 0 auto',
-                    borderRadius: '16px',
-                    [theme.breakpoints.down('lg')]: {
-                      margin: '-70px auto 0'
-                    },
-                    [theme.breakpoints.down('md')]: {
-                      margin: '-60px auto 0'
-                    },
-                    width: { xs: 72, sm: 100, md: 140 },
-                    height: { xs: 72, sm: 100, md: 140 }
-                  }}
-                />
-              )}
-            </Grid>
-            <Grid item xs={12} md={9}>
-              <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="h5">
-                    {user?.firstName} {user?.lastName}
-                  </Typography>
-                  <Typography variant="subtitle2">{user?.profile?.job || <Chip label="No job" />}</Typography>
-                </Grid>
-                <Grid item xs={12} md={8}>
-                  <Grid
-                    container
-                    spacing={1}
+    <>
+      <Helmet>
+        <title> {`${user?.firstName} ${user?.lastName}`}</title>
+        <meta name="description" content={user?.profile?.job ?? ''} />
+        <meta property="og:title" content={`${user?.firstName} ${user?.lastName}`} />
+        <meta property="og:description" content={user?.profile?.job ?? ''} />
+        <meta property="og:image" content={avatarImage} />
+        <meta property="twitter:title" content={`${user?.firstName} ${user?.lastName}`} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <link rel='canonical' href={window.location.href} />
+        <meta property="twitter:description" content={user?.profile?.job ?? ''} />
+        <meta property="twitter:image" content={avatarImage} />
+      </Helmet>
+      <Grid container spacing={gridSpacing}>
+        <Grid item xs={12}>
+          <MainCard
+            contentSX={{
+              p: 1.5,
+              paddingBottom: '0px !important',
+              [theme.breakpoints.down('lg')]: {
+                textAlign: 'center'
+              }
+            }}
+          >
+            {isLoading ? (
+              <ImagePlaceholder
+                sx={{
+                  borderRadius: `${borderRadius}px`,
+                  overflow: 'hidden',
+                  mb: 3,
+                  height: { xs: 85, sm: 150, md: 260 }
+                }}
+              />
+            ) : (
+              <CardMedia component="img" image={Cover} sx={{ borderRadius: `${borderRadius}px`, overflow: 'hidden', mb: 3 }} />
+            )}
+            <Grid container spacing={gridSpacing}>
+              <Grid item xs={12} md={3}>
+                {isLoading ? (
+                  <ImagePlaceholder
                     sx={{
-                      justifyContent: 'flex-end',
+                      margin: '-70px 0 0 auto',
+                      borderRadius: '16px',
                       [theme.breakpoints.down('lg')]: {
-                        justifyContent: 'center'
-                      }
+                        margin: '-70px auto 0'
+                      },
+                      [theme.breakpoints.down('md')]: {
+                        margin: '-60px auto 0'
+                      },
+                      width: { xs: 72, sm: 100, md: 140 },
+                      height: { xs: 72, sm: 100, md: 140 }
                     }}
-                  >
-                    <Grid item>
-                      <Button
-                        variant="contained"
-                        color={'secondary'}
-                        startIcon={<ChatIcon />}
-                        component={Link}
-                        to={`/personal/message/${user?._id}`}
-                      >
-                        Message
-                      </Button>
-                    </Grid>
-                    <Grid item>
-                      <Button component={Link} to={`/trust/${user?._id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
-                        Trust
-                      </Button>
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        component={Link}
-                        to={`/pay/${user?._id}`}
-                        color={'success'}
-                        variant="outlined"
-                        startIcon={<AccountBalanceWalletOutlined />}
-                      >
-                        Pay
-                      </Button>
+                  />
+                ) : (
+                  <Avatar
+                    alt="User 1"
+                    src={avatarImage}
+                    sx={{
+                      margin: '-70px 0 0 auto',
+                      borderRadius: '16px',
+                      [theme.breakpoints.down('lg')]: {
+                        margin: '-70px auto 0'
+                      },
+                      [theme.breakpoints.down('md')]: {
+                        margin: '-60px auto 0'
+                      },
+                      width: { xs: 72, sm: 100, md: 140 },
+                      height: { xs: 72, sm: 100, md: 140 }
+                    }}
+                  />
+                )}
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <Grid container spacing={gridSpacing}>
+                  <Grid item xs={12} md={4}>
+                    <Typography variant="h5">
+                      {user?.firstName} {user?.lastName}
+                    </Typography>
+                    <Typography variant="subtitle2">{user?.profile?.job || <Chip label="No job" />}</Typography>
+                  </Grid>
+                  <Grid item xs={12} md={8}>
+                    <Grid
+                      container
+                      spacing={1}
+                      sx={{
+                        justifyContent: 'flex-end',
+                        [theme.breakpoints.down('lg')]: {
+                          justifyContent: 'center'
+                        }
+                      }}
+                    >
+                      <Grid item>
+                        <Button
+                          variant="contained"
+                          color={'secondary'}
+                          startIcon={<ChatIcon />}
+                          component={Link}
+                          to={`/personal/message/${user?._id}`}
+                        >
+                          Message
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button component={Link} to={`/trust/${user?._id}`} variant="contained" color={'error'} startIcon={<FavoriteIcon />}>
+                          Trust
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          component={Link}
+                          to={`/pay/${user?._id}`}
+                          color={'success'}
+                          variant="outlined"
+                          startIcon={<AccountBalanceWalletOutlined />}
+                        >
+                          Pay
+                        </Button>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid container justifyContent="flex-end">
-                <Tabs
-                  value={value}
-                  variant="scrollable"
-                  onChange={handleChange}
-                  sx={{
-                    marginTop: 2.5,
-                    '& .MuiTabs-flexContainer': {
-                      border: 'none'
-                    },
-                    '& a': {
-                      minHeight: 'auto',
-                      minWidth: 10,
-                      py: 1.5,
-                      px: 1,
-                      mr: 2.25,
-                      color: 'grey.700',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    },
-                    '& a.Mui-selected': {
-                      color: 'primary.main'
-                    },
-                    '& a > svg': {
-                      marginBottom: '4px !important',
-                      mr: 1.25
-                    }
-                  }}
-                >
-                  {tabOptions.map((option, index) => (
-                    <Tab key={index} component={Link} to={'#'} icon={option.icon} label={option.label} {...a11yProps(index)} />
-                  ))}
-                </Tabs>
+                <Grid container justifyContent="flex-end">
+                  <Tabs
+                    value={value}
+                    variant="scrollable"
+                    onChange={handleChange}
+                    sx={{
+                      marginTop: 2.5,
+                      '& .MuiTabs-flexContainer': {
+                        border: 'none'
+                      },
+                      '& a': {
+                        minHeight: 'auto',
+                        minWidth: 10,
+                        py: 1.5,
+                        px: 1,
+                        mr: 2.25,
+                        color: 'grey.700',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      },
+                      '& a.Mui-selected': {
+                        color: 'primary.main'
+                      },
+                      '& a > svg': {
+                        marginBottom: '4px !important',
+                        mr: 1.25
+                      }
+                    }}
+                  >
+                    {tabOptions.map((option, index) => (
+                      <Tab key={index} component={Link} to={'#'} icon={option.icon} label={option.label} {...a11yProps(index)} />
+                    ))}
+                  </Tabs>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </MainCard>
+          </MainCard>
+        </Grid>
+        <Grid item xs={12}>
+          <TabPanel value={value} index={0}>
+            <Profile user={user} />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <Followers user={user} />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <Followings user={user} />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <Postings user={user} />
+          </TabPanel>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <TabPanel value={value} index={0}>
-          <Profile user={user} />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <Followers user={user} />
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <Followings user={user} />
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          <Postings user={user} />
-        </TabPanel>
-      </Grid>
-    </Grid>
+    </>
   );
 };
 

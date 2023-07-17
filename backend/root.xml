@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<!--	created with https://www.mysitemapgenerator.com	-->
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+	<loc>https://villages.io/</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.6</priority>
+</url>
+<url>
+	<loc>https://villages.io/home</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://villages.io/listing/posts</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://villages.io/listing/people</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://villages.io/documentation/help</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://villages.io/documentation/motivation</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://villages.io/documentation/privacy</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://villages.io/login</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://villages.io/accounts/sign_in/log_in</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.6</priority>
+</url>
+<url>
+	<loc>https://villages.io/register</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://villages.io/auth/forgot-password</loc>
+	<lastmod>2023-07-12T13:25:00+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+</urlset>
