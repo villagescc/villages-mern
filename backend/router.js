@@ -1,4 +1,7 @@
 const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const builder = require("xmlbuilder")
 const router = express.Router();
 const authMiddleware = require("./middleware/auth.middleware");
 const postMiddleware = require("./middleware/posting.middleware");
@@ -223,5 +226,39 @@ router.put("/chat/state", authMiddleware.auth, chatController.setState);
 router.get("/map/users", authMiddleware.auth, mapController.getUsers);
 router.post("/map/posts", authMiddleware.auth, mapController.mapPosts);
 
+// ######################### SEO Sitemap ROUTER #############################
+router.get('/sitemap.xml', async (req, res, next) => {
+  res.sendFile(path.join(path.join(__dirname), 'sitemap.xml'))
+})
+
+router.get('/people.xml', async (req, res, next) => {
+  const allRoutes = await User.find({})
+  const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
+  allRoutes.map(e => {
+    const url = root.ele('url');
+    url.ele('loc', `https://villages.io/${e.username}`);
+    url.ele('lastmod', new Date(e.updatedAt).toISOString());
+    url.ele('changefreq', 'daily');
+    url.ele('priority', '0.8');
+  })
+  const sitemapXml = root.end({ pretty: true });
+  fs.writeFileSync('./people.xml', sitemapXml, 'utf8')
+  res.sendFile(path.join(path.join(__dirname), 'people.xml'))
+})
+
+router.get('/post.xml', async (req, res, next) => {
+  const allRoutes = await Listing.find({}).populate('userId')
+  const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
+  allRoutes.map(e => {
+    const url = root.ele('url');
+    url.ele('loc', `https://villages.io/${e.userId.username}/${encodeURIComponent(e.title)}`);
+    url.ele('lastmod', new Date(e.updatedAt).toISOString());
+    url.ele('changefreq', 'daily');
+    url.ele('priority', '0.8');
+  })
+  const sitemapXml = root.end({ pretty: true });
+  fs.writeFileSync('./post.xml', sitemapXml, 'utf8')
+  res.sendFile(path.join(path.join(__dirname), 'post.xml'))
+})
 
 module.exports = router;
