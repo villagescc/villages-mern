@@ -193,7 +193,12 @@ const AuthRegister = ({ setVerified, ...others }) => {
                 value={values.username}
                 name="username"
                 onBlur={handleBlur}
-                onChange={handleChange}
+                onChange={(e) => {
+                  if (/^[a-z0-9_.]+$/.test(e.target.value || null)) {
+                    handleChange(e)
+                  }
+                  return false
+                }}
                 inputProps={{}}
               />
               {touched.username && errors.username && (
