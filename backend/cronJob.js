@@ -273,7 +273,7 @@ cron.schedule('45 7 * * 1', async function () {
         const newFilteredUser = []
         for (var i = 0; i < recentUser.length; i++) {
             for (j = 0; j < profileSettingUser.length; j++) {
-                if (profileSettingUser[j].feedRadius === 0) {
+                if (recentUser[i].followers?.filter(id => profileSettingUser[j].followings.includes(id))?.length) {
                     if (newFilteredUser.some(data => data['userEmail'] === profileSettingUser[j]?.user?.email)) {
                         let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingUser[j]?.user?.email)
                         if (!newFilteredUser[index].newUser.filter(x => x?._id === recentUser[i]?._id)?.length) {
@@ -293,27 +293,12 @@ cron.schedule('45 7 * * 1', async function () {
                         lat: typeof (recentUser[i]?.latitude) == 'number' ? recentUser[i]?.latitude : 0,
                         lon: typeof (recentUser[i]?.longitude) == 'number' ? recentUser[i]?.longitude : 0,
                     };
-                    // console.log(profileSettingUser[j].user._id)
                     const result = await headingDistanceTo(
                         centerLocation,
                         filterLocation
                     );
-                    // console.log(profileSettingUser[j].feedRadius ?? 0, "Feed Radius");
-                    if (result.distance <= profileSettingUser[j].feedRadius) {
-                        if (newFilteredUser.some(data => data['userEmail'] === profileSettingUser[j]?.user?.email)) {
-                            let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingUser[j]?.user?.email)
-                            if (!newFilteredUser[index].newUser.filter(x => x?._id === recentUser[i]?._id)?.length) {
-                                newFilteredUser[index].newUser.push(recentUser[i])
-                            }
-                        }
-                        else {
-                            newFilteredUser.push({ userEmail: profileSettingUser[j]?.user?.email, userId: profileSettingUser[j].user, newUser: [recentUser[i]], newPost: [] })
-                        }
-                    }
-                    else {
-                        // console.log(recentUser[i].followers?.filter(id => profileSettingUser[j].followings.includes(id))?.length, "length")
-                        if (recentUser[i].followers?.filter(id => profileSettingUser[j].followings.includes(id))?.length) {
-
+                    if (filterLocation.lat !== 0 && filterLocation.lon !== 0) {
+                        if (profileSettingUser[j].feedRadius === 0) {
                             if (newFilteredUser.some(data => data['userEmail'] === profileSettingUser[j]?.user?.email)) {
                                 let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingUser[j]?.user?.email)
                                 if (!newFilteredUser[index].newUser.filter(x => x?._id === recentUser[i]?._id)?.length) {
@@ -323,7 +308,19 @@ cron.schedule('45 7 * * 1', async function () {
                             else {
                                 newFilteredUser.push({ userEmail: profileSettingUser[j]?.user?.email, userId: profileSettingUser[j].user, newUser: [recentUser[i]], newPost: [] })
                             }
-
+                        }
+                        else {
+                            if (result.distance <= profileSettingUser[j].feedRadius) {
+                                if (newFilteredUser.some(data => data['userEmail'] === profileSettingUser[j]?.user?.email)) {
+                                    let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingUser[j]?.user?.email)
+                                    if (!newFilteredUser[index].newUser.filter(x => x?._id === recentUser[i]?._id)?.length) {
+                                        newFilteredUser[index].newUser.push(recentUser[i])
+                                    }
+                                }
+                                else {
+                                    newFilteredUser.push({ userEmail: profileSettingUser[j]?.user?.email, userId: profileSettingUser[j].user, newUser: [recentUser[i]], newPost: [] })
+                                }
+                            }
                         }
                     }
                 }
@@ -331,7 +328,7 @@ cron.schedule('45 7 * * 1', async function () {
         }
         for (var i = 0; i < recentPost.length; i++) {
             for (j = 0; j < profileSettingPost.length; j++) {
-                if (profileSettingPost[j].feedRadius === 0) {
+                if (recentPost[i].followers?.filter(id => profileSettingPost[j].followings.includes(id))?.length) {
                     if (newFilteredUser.some(data => data['userEmail'] === profileSettingPost[j]?.user?.email)) {
                         let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingPost[j]?.user?.email)
                         if (!newFilteredUser[index].newPost.filter(x => x?._id === recentPost[i]?._id)?.length) {
@@ -356,22 +353,9 @@ cron.schedule('45 7 * * 1', async function () {
                         centerLocation,
                         filterLocation
                     );
-                    // console.log(profileSettingPost[j].feedRadius ?? 0, "Feed Radius");
-                    if (result.distance <= profileSettingPost[j].feedRadius) {
-                        if (newFilteredUser.some(data => data['userEmail'] === profileSettingPost[j]?.user?.email)) {
-                            let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingPost[j]?.user?.email)
-                            if (!newFilteredUser[index].newPost.filter(x => x?._id === recentPost[i]?._id)?.length) {
-                                newFilteredUser[index].newPost.push(recentPost[i])
-                            }
-                        }
-                        else {
-                            newFilteredUser.push({ userEmail: profileSettingPost[j]?.user?.email, userId: profileSettingPost[j].user, newUser: [], newPost: [recentPost[i]] })
-                        }
-                    }
-                    else {
-                        // console.log(recentPost[i].followers?.filter(id => profileSettingPost[j].followings.includes(id))?.length, "length")
-                        if (recentPost[i].followers?.filter(id => profileSettingPost[j].followings.includes(id))?.length) {
 
+                    if (filterLocation.lat !== 0 && filterLocation.lon !== 0) {
+                        if (profileSettingPost[j].feedRadius === 0) {
                             if (newFilteredUser.some(data => data['userEmail'] === profileSettingPost[j]?.user?.email)) {
                                 let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingPost[j]?.user?.email)
                                 if (!newFilteredUser[index].newPost.filter(x => x?._id === recentPost[i]?._id)?.length) {
@@ -380,6 +364,19 @@ cron.schedule('45 7 * * 1', async function () {
                             }
                             else {
                                 newFilteredUser.push({ userEmail: profileSettingPost[j]?.user?.email, userId: profileSettingPost[j].user, newUser: [], newPost: [recentPost[i]] })
+                            }
+                        }
+                        else {
+                            if (result.distance <= profileSettingPost[j].feedRadius) {
+                                if (newFilteredUser.some(data => data['userEmail'] === profileSettingPost[j]?.user?.email)) {
+                                    let index = newFilteredUser.findIndex(x => x.userEmail === profileSettingPost[j]?.user?.email)
+                                    if (!newFilteredUser[index].newPost.filter(x => x?._id === recentPost[i]?._id)?.length) {
+                                        newFilteredUser[index].newPost.push(recentPost[i])
+                                    }
+                                }
+                                else {
+                                    newFilteredUser.push({ userEmail: profileSettingPost[j]?.user?.email, userId: profileSettingPost[j].user, newUser: [], newPost: [recentPost[i]] })
+                                }
                             }
                         }
                     }
@@ -406,7 +403,7 @@ cron.schedule('45 7 * * 1', async function () {
             const postCard = (user) => {
                 user?.map(x => {
                     post.push({
-                        title: `${x?.title?.length ? x.title?.trim() : ''}`, avatar: !isEmpty(x.photo) ? `https://villages.io/upload/posting/` + x.photo : "https://villages.io/static/media/default.a63cc45ca4f1a7dc983f.png", description: x?.description ? x?.description : "No description Available", urlLink: 'https://villages.io/' + x.user.username + '/' + x.title
+                        title: `${x?.title?.length ? x.title?.trim() : ''}`, listingType: x?.listing_type, avatar: !isEmpty(x.photo) ? `https://villages.io/upload/posting/` + x.photo : "https://villages.io/static/media/default.a63cc45ca4f1a7dc983f.png", description: x?.description ? x?.description : "No description Available", urlLink: 'https://villages.io/' + x.user.username + '/' + x.title
                     },)
                 })
             }
@@ -447,7 +444,7 @@ cron.schedule('0 8 * * 1', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -488,7 +485,7 @@ cron.schedule('0 8 * * 3', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -508,7 +505,7 @@ cron.schedule('0 8 * * 4', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -528,7 +525,7 @@ cron.schedule('0 8 * * 5', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -548,7 +545,7 @@ cron.schedule('0 8 * * 6', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -568,7 +565,7 @@ cron.schedule('0 8 * * 7', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Weekly Digest', renderedTemplate)
+                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
