@@ -124,6 +124,12 @@ router.post(
   adminController.deleteUser
 );
 
+router.post(
+  "/admin/users/search",
+  authMiddleware.auth,
+  adminController.search
+);
+
 // ######################### Trust ROUTER #############################
 router.post(
   "/endorsement/save",

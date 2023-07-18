@@ -309,6 +309,20 @@ export function saveUserData(userData, lng, lat, successAction) {
   };
 }
 
+export function searchUserData(keyword = '', page = 1) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.post('admin/users/search', { keyword, page });
+      dispatch(slice.actions.getUsersListSuccess(response.data));
+      dispatch(slice.actions.setLoading(false));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
+    }
+  };
+}
+
 export function userActivate(user, successAction) {
   return async () => {
     try {

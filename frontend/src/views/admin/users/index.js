@@ -11,7 +11,7 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import { IconSearch } from '@tabler/icons';
-import { getUserList } from 'store/slices/user';
+import { searchUserData } from 'store/slices/user';
 import { useDispatch, useSelector } from 'store';
 import useAuth from 'hooks/useAuth';
 
@@ -36,7 +36,7 @@ const Index = () => {
   }, [userState]);
 
   React.useEffect(() => {
-    dispatch(getUserList());
+    dispatch(searchUserData());
   }, []);
 
   const handleSearch = (event) => {
@@ -46,7 +46,7 @@ const Index = () => {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      dispatch(getUserList(keyword, page));
+      dispatch(searchUserData(keyword, page));
     }
   };
 
@@ -84,7 +84,7 @@ const Index = () => {
               page={page}
               onChange={(e, p) => {
                 setPage(p);
-                dispatch(getUserList(keyword, p));
+                dispatch(searchUserData(keyword, p));
               }}
               color="secondary"
             />
