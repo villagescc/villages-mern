@@ -84,20 +84,19 @@ exports.registerUser = async (req, res, next) => {
 
     const newUser = {
       email_address: email.toLowerCase(),
-      status: "active",
+      status: "subscribed",
       merge_fields: {
         FNAME: firstName,
         LNAME: lastName,
       },
     };
-    mailchimp
-      .post(`/lists/${listID}/membbers`, newUser)
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+    // TO add contacts in mailchimp
+    try {
+      await mailchimp.post(`/lists/${listID}/members`, newUser)
+    } catch (error) {
+      console.log(error);
+    }
 
     user.save((err) => {
       if (err) {
