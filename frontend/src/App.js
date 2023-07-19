@@ -13,6 +13,7 @@ import ThemeCustomization from 'themes';
 // import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
 // import { AWSCognitoProvider as AuthProvider } from 'contexts/AWSCognitoContext';
 import { JWTProvider as AuthProvider } from 'contexts/JWTContext';
+import { Helmet } from 'react-helmet';
 // import { Auth0Provider as AuthProvider } from 'contexts/Auth0Context';
 
 // ==============================|| APP ||============================== //
@@ -24,6 +25,11 @@ const App = () => (
                 <NavigationScroll>
                     <AuthProvider>
                         <>
+                            <Helmet>
+                                <title>Villages.io</title>
+                                <meta name="description" content="Local Exchange Trading with A Network You Trust" />
+                                <meta name="keywords" content="Web of Trust, villages, credit line, interledger, routing payment" />
+                            </Helmet>
                             <Routes />
                             <Snackbar />
                             <DragDialog />

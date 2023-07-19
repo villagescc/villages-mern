@@ -117,8 +117,9 @@ const SocialProfile = () => {
   return (
     <>
       <Helmet>
-        <title> {`${user?.firstName} ${user?.lastName}`}</title>
-        <meta name="description" content={user?.profile?.job ?? ''} />
+        <title> {user?.firstName || user?.lastName ? `${user?.firstName ?? ""} ${user?.lastName ?? ""}` : "Villages.io"} </title>
+        {/* <title> {`${user?.firstName ?? ""} ${user?.lastName ?? ""}` ?? "Villages.io"}</title> */}
+        <meta name="description" content={user?.profile?.job ?? 'Local Exchange Trading with A Network You Trust'} />
         <meta property="og:title" content={`${user?.firstName} ${user?.lastName}`} />
         <meta property="og:description" content={user?.profile?.job ?? ''} />
         <meta property="og:image" content={avatarImage} />

@@ -53,7 +53,7 @@ const PostingDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{post.title}</title>
+        <title>{post.title ?? "Villages.io"}</title>
         <meta name="description" content={post.description} />
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.description} />
