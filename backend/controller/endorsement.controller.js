@@ -66,7 +66,7 @@ exports.save = async (req, res, next) => {
         "https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast",
         {
           receiverFcm: recipientUser.deviceToken,
-          message: notifyText,
+          message: `${notifyText}\nTestimonial: ${text}`,
           type: "trust",
           senderid: "",
           sender: "",
@@ -89,6 +89,7 @@ exports.save = async (req, res, next) => {
           data: `<h1>You has been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
                 <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
                 <p>${notifyText}</p>
+                <p>Testimonial: ${text}</p>
                 <a href=https://villages.io/trust> Click here</a>
                 <br>`,
         }
