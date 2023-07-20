@@ -150,7 +150,16 @@ const UserListCard = (user, index) => {
                               <Chip label="No location" />
                             )}
                           </Typography> */}
-            <Typography variant="h6">{user?.user?.profile?.placeId ? <Chip label={location} /> : <Chip label="No location" />}</Typography>
+            <Typography variant="h6">{user?.user?.profile?.placeId ? <Chip label={location} sx={{
+              '.css-1dybbl5-MuiChip-label': {
+                whiteSpace: 'break-spaces',
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                "-webkit-line-clamp": "1",
+                "-webkit-box-orient": "vertical"
+              }
+            }} /> : <Chip label="No location" />}</Typography>
           </Grid>
         </Grid>
       </TableCell>

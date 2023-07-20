@@ -25,7 +25,7 @@ const UserList = ({ users, loading }) => {
   const theme = useTheme();
 
   return (
-    <TableContainer>
+    <TableContainer sx={{ overflowX: "initial" }}>
       <Table
         sx={{
           '& td': {

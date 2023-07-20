@@ -122,13 +122,12 @@ const Profile = ({ user }) => {
               <ListItemIcon>
                 <PinDropTwoToneIcon sx={{ fontSize: '1.3rem' }} />
               </ListItemIcon>
-              <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} />
-              <ListItemSecondaryAction>
-                <Typography variant="subtitle2" align="right">
-                  {/*TODO convert to place description */}
-                  {user?.profile?.placeId ? location : <Chip label="No location" />}
-                </Typography>
-              </ListItemSecondaryAction>
+              <ListItemText primary={<Typography variant="subtitle1">Location</Typography>} secondary={<Typography variant="subtitle2" align="left">
+                {/*TODO convert to place description */}
+                {user?.profile?.placeId ? location : <Chip label="No location" />}
+              </Typography>} />
+              {/* <ListItemSecondaryAction> */}
+              {/* </ListItemSecondaryAction> */}
             </ListItemButton>
           </List>
           <CardContent>
