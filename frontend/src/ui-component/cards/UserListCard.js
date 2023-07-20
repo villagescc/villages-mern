@@ -151,7 +151,7 @@ const UserListCard = (user, index) => {
                             )}
                           </Typography> */}
             <Typography variant="h6">{user?.user?.profile?.placeId ? <Chip label={location} sx={{
-              '.css-1dybbl5-MuiChip-label': {
+              '.MuiChip-label': {
                 whiteSpace: 'break-spaces',
                 overflow: "hidden",
                 textOverflow: "ellipsis",
