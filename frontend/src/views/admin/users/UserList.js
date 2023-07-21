@@ -72,7 +72,7 @@ const UserList = ({ users, loading }) => {
   };
 
   return (
-    <TableContainer>
+    <TableContainer sx={{ overflowX: "initial" }}>
       <Table
         sx={{
           '& td': {
@@ -206,7 +206,16 @@ const UserList = ({ users, loading }) => {
                             )}
                           </Typography> */}
                       <Typography variant="h6">
-                        {user?.profile?.placeId ? <Chip label={location[index]} /> : <Chip label="No location" />}
+                        {user?.profile?.placeId ? <Chip label={location[index]} sx={{
+                          '.MuiChip-label': {
+                            whiteSpace: 'break-spaces',
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            "-webkit-line-clamp": "1",
+                            "-webkit-box-orient": "vertical"
+                          }
+                        }} /> : <Chip label="No location" />}
                       </Typography>
                     </Grid>
                   </Grid>
