@@ -41,7 +41,7 @@ exports.search = async (req, res, next) => {
 
     // To find people without any Filter
     if (value === "All") {
-      const users = await User.find(query).sort({ createdAt: -1 }).select("username");
+      const users = await User.find({ ...query, verified: true }).sort({ createdAt: -1 }).select("username");
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userData = [];
       let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
@@ -75,47 +75,59 @@ exports.search = async (req, res, next) => {
                 centerLocation,
                 filterLocation
               );
-              if (result.distance < radius) {
+              if (result.distance < radius && filterUsers[i]._id !== user?._id) {
                 filterRadiusUsers.push(mongoose.Types.ObjectId(filterUsers[i]._id));
               }
             }
           }
-          const span1 = Date.now() - span
-          console.log(`fetched- ${span1}`);
+          // const span1 = Date.now() - span
+          // console.log(`fetched- ${span1}`);
         }
 
-        const receipent = await Endorsement.aggregate([
+        //  To find user Id whom user is following
+        const endorserStg1 = await Endorsement.aggregate([
           {
-            $match: { recipientId: { $in: [...filterRadiusUsers.map(x => x), user?._id] } }
-          },
-          {
-            $group: { _id: null, endorsers: { $push: { $toString: '$endorserId' } } }
-          }
-        ])
-        const endorser = await Endorsement.aggregate([
-          {
-            $match: { endorserId: { $in: filterRadiusUsers.map(x => x) } }
+            $match: { endorserId: mongoose.Types.ObjectId(user?._id) }
           },
           {
             $group: { _id: null, receipents: { $push: { $toString: '$recipientId' } } }
           }
         ])
+        // Array of Id which contains Following user id
+        let endroserData1 = endorserStg1[0]?.receipents ?? []
+
+        //  To find user Id of which user following is following (Web of Trust)
+        // A => Following B => B Following C
+
+        const endorserStg2 = await Endorsement.aggregate([
+          {
+            $match: { endorserId: { $in: endroserData1.map(x => mongoose.Types.ObjectId(x)) } }
+          },
+          {
+            $group: { _id: null, receipents: { $push: { $toString: '$recipientId' } } }
+          }
+        ])
+
+        //  Array contain user id of web of trust
+        //  Data of C will get in endroserData2 variable
+        let endroserData2 = endorserStg2[0]?.receipents ?? []
+
         if (filterRadiusUsers.length) {
           arr = [...new Set([...filterRadiusUsers.map(x => x?.toString())])]
         }
-        if (receipent.length) {
-          arr = [...new Set([...arr, ...receipent[0]?.endorsers])]
+        if (endorserStg2.length) {
+          arr = [...new Set([...arr, ...endroserData2])]
         }
-        if (endorser.length) {
-          arr = [...new Set([...arr, ...endorser[0]?.receipents])]
+        if (filterRadiusUsers.length && endorserStg2.length) {
+          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString()), ...endroserData2])]
         }
-        if (filterRadiusUsers.length && receipent.length && endorser.length) {
-          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString()), ...receipent[0]?.endorsers, ...endorser[0]?.receipents])]
-        }
+
+        arr = arr.filter(x => !endroserData1.includes(x));
+        arr = arr.filter(x => x !== user?._id)
       }
       // const users = await User.find(...(arr.length !== 0 ? [{ "_id": { $in: arr }, ...query }] : [query])).sort({ createdAt: -1 }).select("username");
       const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
-      console.log(users.length, "sadas")
+      // console.log(users.length, "sadas")
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userData = [];
       let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
@@ -571,7 +583,7 @@ exports.saveProfile = async (req, res, next) => {
 
 exports.saveProfileSetting = async (req, res, next) => {
   try {
-    const { email, notificationCheck, updateCheck, language, feedRadius } =
+    const { email, notificationCheck, updateCheck, userCheck, language, feedRadius } =
       req.body;
 
     let user = await User.findOne({ _id: req.user._id });
@@ -579,6 +591,7 @@ exports.saveProfileSetting = async (req, res, next) => {
     if (profileSetting) {
       profileSetting.receiveNotifications = notificationCheck;
       profileSetting.receiveUpdates = updateCheck;
+      profileSetting.receiveUser = userCheck;
       profileSetting.feedRadius = feedRadius;
       profileSetting.language = language;
       profileSetting.user = req.user._id;
@@ -587,6 +600,7 @@ exports.saveProfileSetting = async (req, res, next) => {
       await ProfileSetting.create({
         receiveNotifications: notificationCheck,
         receiveUpdates: updateCheck,
+        receiveUser: userCheck,
         feedRadius: feedRadius,
         language: language,
         user: req.user._id,
