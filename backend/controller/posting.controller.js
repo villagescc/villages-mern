@@ -49,13 +49,13 @@ exports.searchPosts = async (req, res, next) => {
             centerLocation,
             filterLocation
           );
-          console.log(Number(result.distance));
+          // console.log(Number(result.distance));
           if (result.distance < radius) {
             filterRadiusUsers.push(filterUsers[i]._id);
           }
         }
       }
-      console.log(filterRadiusUsers);
+      // console.log(filterRadiusUsers);
       query.where("userId").in(filterRadiusUsers);
     }
     if (!isEmpty(filterData.keyword)) {

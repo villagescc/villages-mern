@@ -189,7 +189,7 @@ exports.getGraph = async (req, res, next) => {
 };
 
 exports.getPath = async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const { senderId, recipientId } = req.body;
     const result = await this._getMaxFlow(senderId, recipientId);
@@ -282,7 +282,7 @@ exports.pay = async (req, res, next) => {
             }
           )
           .then(function (response) {
-            console.log(response);
+            // console.log(response);
           })
           .catch(function (error) {
             console.log(error);
@@ -298,7 +298,7 @@ exports.pay = async (req, res, next) => {
         await Paylog.deleteMany({ paymentId: payment._id });
         payment.status = "Failed";
         await payment.save();
-        console.log("add paylog error:", error);
+        // console.log("add paylog error:", error);
         next(error);
       }
     } else {
@@ -317,9 +317,7 @@ exports.pay = async (req, res, next) => {
 };
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
-  console.log("get max flow");
   const graph = await buildGraph();
-  console.log("Grath : " + graph);
   if (!graph.hasNode(recipient)) {
     console.log("error");
     return {
@@ -339,10 +337,10 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
       },
     };
   }
-  console.log("hello");
+
 
   let paths = allSimplePaths(graph, sender, recipient, { maxDepth: 2 });
-  console.log(paths);
+  // console.log(paths);
 
   // console.log(SimplePathsLengthN(graph, sender, recipient));
   // TODO sort for balancing routes
