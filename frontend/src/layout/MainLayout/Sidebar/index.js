@@ -44,17 +44,17 @@ const Sidebar = () => {
 
     const drawer = useMemo(
         () => (
-            <PerfectScrollbar
-                component="div"
-                style={{
-                    height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-                    paddingLeft: drawerOpen ? '16px' : 0,
-                    paddingRight: drawerOpen ? '16px' : 0,
-                    marginTop: drawerOpen ? 0 : '20px'
-                }}
-            >
-                <MenuList lastItem={null} />
-            </PerfectScrollbar>
+            // <PerfectScrollbar
+            //     component="div"
+            //     style={{
+            //         height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
+            //         paddingLeft: drawerOpen ? '16px' : 0,
+            //         paddingRight: drawerOpen ? '16px' : 0,
+            //         marginTop: drawerOpen ? 0 : '20px'
+            //     }}
+            // >
+            // </PerfectScrollbar>
+            <MenuList lastItem={null} />
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [matchUpMd, drawerOpen, drawerType]
@@ -72,6 +72,7 @@ const Sidebar = () => {
                         '& .MuiDrawer-paper': {
                             mt: matchDownMd ? 0 : 11,
                             zIndex: 1099,
+                            padding: '0 16px',
                             width: drawerWidth,
                             background: theme.palette.background.default,
                             color: theme.palette.text.primary,
