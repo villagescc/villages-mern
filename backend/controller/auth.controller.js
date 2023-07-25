@@ -241,6 +241,7 @@ exports.resendVerificationMail = async (req, res, next) => {
 exports.login = (req, res, next) => {
   const { password, email, deviceToken, placeId, latitude, longitude } =
     req.body;
+  const { 'user-agent': userAgent } = req.headers
   User.findOne({
     $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
   })
@@ -312,7 +313,7 @@ exports.login = (req, res, next) => {
             jwt.sign(
               payload,
               process.env.jwtSecret,
-              { expiresIn: 3600 * 24 },
+              { expiresIn: userAgent === 'webview' ? "5 years" : 3600 * 24 },
               (err, serviceToken) => {
                 if (err) {
                   console.log("jwt sign error", err);
