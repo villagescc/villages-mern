@@ -29,11 +29,13 @@ import { gridSpacing } from 'store/constant';
 // assets
 import PinDropTwoToneIcon from '@mui/icons-material/PinDropTwoTone';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonTwoTone from '@mui/icons-material/PersonTwoTone';
 
 import React, { useState, useEffect } from 'react';
 
 import { geocodeByPlaceId } from 'react-places-autocomplete';
+import moment from 'moment';
 
 // progress
 function LinearProgressWithLabel({ value, ...others }) {
@@ -128,6 +130,18 @@ const Profile = ({ user }) => {
               </Typography>} />
               {/* <ListItemSecondaryAction> */}
               {/* </ListItemSecondaryAction> */}
+            </ListItemButton>
+            <Divider />
+            <ListItemButton>
+              <ListItemIcon>
+                <AccessTimeIcon sx={{ fontSize: '1.3rem' }} />
+              </ListItemIcon>
+              <ListItemText primary={<Typography variant="subtitle1">Recently active</Typography>} />
+              <ListItemSecondaryAction>
+                <Typography variant="subtitle2" align="right">
+                  {moment(user?.profile?.recentlyActive).format('YYYY-MM-DD')}
+                </Typography>
+              </ListItemSecondaryAction>
             </ListItemButton>
           </List>
           <CardContent>

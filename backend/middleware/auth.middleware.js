@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 
 const { validateRegisterInput, validateLoginInput } = require("../validation");
 const Log = require("../models/Log");
+const Profile = require("../models/Profile");
+const { default: mongoose } = require("mongoose");
 
 exports.register = (req, res, next) => {
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -38,7 +40,11 @@ exports.auth = async (req, res, next) => {
       user: req.user._id,
       log: req.route.path,
     });
-
+    try {
+      await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, { $set: { recentlyActive: new Date() } });
+    } catch (error) {
+      console.log(error);
+    }
     next();
   } catch (err) {
     console.log(err);

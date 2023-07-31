@@ -28,6 +28,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import moment from 'moment';
 
 const PostingDetail = () => {
   const { username, title } = useParams();
@@ -191,6 +192,16 @@ const PostingDetail = () => {
                         // post?.userId?.profile?.placeId
                         <Chip label="No location" size="small" chipcolor={'warning'} />
                       )}
+                    </Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack direction={'row'} alignItems={'center'}>
+                    <Typography variant="h5" sx={{ marginLeft: 1 }}>
+                      Recently active
+                    </Typography>
+                    <Typography variant="caption" sx={{ marginLeft: 1 }}>
+                      {moment(post?.userId?.profile?.recentlyActive).format('YYYY-MM-DD')}
                     </Typography>
                   </Stack>
                 </Grid>

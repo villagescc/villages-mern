@@ -44,6 +44,10 @@ const ProfileSchema = new mongoose.Schema(
         },
       },
     ],
+    recentlyActive: {
+      type: Date,
+      default: new Date()
+    }
   },
   {
     timestamps: true,

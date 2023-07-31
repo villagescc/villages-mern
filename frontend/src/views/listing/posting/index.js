@@ -374,6 +374,7 @@ const Posting = () => {
                   <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
                     <PostingCard
                       id={post._id}
+                      recentlyActive={post.userId.profile.recentlyActive}
                       avatar={post.userId?.profile?.avatar}
                       post={post.photo}
                       title={post.title}

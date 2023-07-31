@@ -165,6 +165,10 @@ const UserListCard = (user, index) => {
       </TableCell>
       <TableCell>
         <Grid item xs={12} container spacing={1}>
+          <Grid item xs={12}>
+            <Typography variant="caption">Recently active</Typography>
+            <Typography variant="h6">{moment(user.user?.profile?.recentlyActive).format('YYYY-MM-DD')}</Typography>
+          </Grid>
           <Grid item xs={6}>
             <Typography variant="caption">Trusted By</Typography>
             <Grid container>

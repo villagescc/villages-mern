@@ -22,6 +22,7 @@ import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 // import useAuth from '../../hooks/useAuth';
 import { SERVER_URL } from 'config';
 import Chip from 'ui-component/extended/Chip';
+import moment from 'moment';
 
 // styles
 const DeleteWrapper = styled(Button)({
@@ -102,7 +103,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 // ==============================|| USER PROFILE CARD ||============================== //
 
-const PostingCard = ({ id, avatar, title, post, author, description, listingType, own, userData, isTrusted, ...other }) => {
+const PostingCard = ({ id, avatar, title, post, author, description, listingType, own, userData, recentlyActive, isTrusted, ...other }) => {
   const theme = useTheme();
   const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
   const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
@@ -150,6 +151,15 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
               </Grid>
               <Grid item xs={12} sx={{ height: 100 }}>
                 <Typography variant="body2">{description?.length > 100 ? description.substring(0, 100) + '...' : description}</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} alignItems="center">
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <Typography variant="h5">
+                  Recently active: {moment(recentlyActive).format('YYYY-MM-DD')}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
