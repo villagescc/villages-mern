@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 
 // material-ui
 import { Avatar, Badge } from '@mui/material';
@@ -13,7 +13,7 @@ import { SERVER_URL } from 'config';
 
 const UserAvatar = ({ user }) => {
   const now = Date.now();
-  const loginDate = new Date(user.last_login);
+  const loginDate = new Date(user.recentlyActive);
   const activePeriod = now - loginDate;
   if (user.online_status === 'Online') {
     if (activePeriod < 60 * 60 * 24 * 1000) {
@@ -40,4 +40,4 @@ UserAvatar.propTypes = {
   user: PropTypes.object
 };
 
-export default UserAvatar;
+export default memo(UserAvatar);

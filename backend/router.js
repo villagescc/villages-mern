@@ -23,6 +23,7 @@ const paymentController = require("./controller/payment.controller");
 const mapController = require("./controller/map.controller");
 const notificationController = require("./controller/notification.controller");
 const chatController = require("./controller/chat.controller");
+const socketController = require("./controller/socket.controller");
 
 // ######################### AUTH ROUTER #############################
 router.get("/auth", authMiddleware.auth, authController.getUser);
@@ -231,6 +232,10 @@ router.put("/chat/state", authMiddleware.auth, chatController.setState);
 // ######################### MAP ROUTER #############################
 router.get("/map/users", authMiddleware.auth, mapController.getUsers);
 router.post("/map/posts", authMiddleware.auth, mapController.mapPosts);
+
+// ######################### SEO Sitemap ROUTER #############################
+router.post('/userConnected', authMiddleware.auth, socketController.createSocketUser)
+// router.post('/userDisconnected', authMiddleware.auth, socketController.removeSocketUser)
 
 // ######################### SEO Sitemap ROUTER #############################
 router.get('/sitemap.xml', async (req, res, next) => {

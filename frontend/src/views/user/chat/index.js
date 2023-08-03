@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback, memo } from 'react';
 import { useParams } from 'react-router-dom';
 
 // material-ui
@@ -52,8 +52,9 @@ import { getUsers } from 'store/slices/user';
 import { SERVER_URL } from 'config';
 
 import DefaultUserIcon from 'assets/images/auth/default.png';
-import axios from 'axios';
+import axios from 'utils/axios';
 import moment from 'moment';
+import { io } from 'socket.io-client';
 
 // drawer content element
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -81,6 +82,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 const ChatMainPage = () => {
   const theme = useTheme();
+  const messageRef = useRef(null)
   const matchDownSM = useMediaQuery(theme.breakpoints.down('lg'));
 
   const dispatch = useDispatch();
@@ -138,11 +140,12 @@ const ChatMainPage = () => {
 
   // const [token, setToken] = useState('');
   const [user, setUser] = useState({});
+  const [socket, setSocket] = useState(null)
   const [data, setData] = React.useState([]);
   const chatState = useSelector((state) => state.chat);
 
   useEffect(() => {
-    setUser(chatState.user);
+    setUser(chatState.user[0] ?? {});
   }, [chatState.user]);
 
   useEffect(() => {
@@ -172,21 +175,67 @@ const ChatMainPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+
+
+  // Handle Socket
+
+  useEffect(() => {
+    let socketIO = io(SERVER_URL, { reconnection: false })
+    setSocket(socketIO)
+    return () => {
+      // console.log(socket, 'disconnect');
+      socket?.disconnect();
+    }
+  }, [])
+
+  useEffect(() => {
+    if (socket?.id) {
+      let socketId = socket?.id
+      window.addEventListener('beforeunload', () => {
+        socket.disconnect();
+      });
+      // console.log(socket.id, 'chat');
+      // socket.emit('new user connected', { id: socket.id, userId: authUser._id });
+      // console.log(socket?.id, 'connected');
+      axios.post('/userConnected', { id: socket.id, userId: authUser._id })
+      socket.on('newChat', (chat) => {
+        // dispatch(getState());
+        // console.log(chat, 'chat from socket');
+        setData((prevState) => [...prevState, {
+          sender: chat.sender,
+          recipient: chat.recipient,
+          text: chat.text
+        }]);
+      })
+      socket.on('disconnect', (e) => {
+        // axios.post('/userDisconnected', { id: socketId, userId: authUser._id })
+        // console.log(socketId, 'disconnected');
+      })
+      // socket.emit('identification', { userId: authUser?._id });
+      // socket.on('private', function (msg) {
+      //   // alert(msg);
+      //   console.log(msg, 'msg');
+      // });
+    }
+  }, [socket?.id])
+
+
   // handle new message form
   const [message, setMessage] = useState('');
   const handleOnSend = () => {
     const d = new Date();
-    setMessage('');
+    // setMessage('');
     const newMessage = {
       sender: authUser._id,
       recipient: user?.user?._id,
-      text: message
+      text: messageRef.current.value
     };
     setData((prevState) => [...prevState, newMessage]);
     dispatch(insertChat(newMessage));
+    messageRef.current.value = ''
     axios.post('https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast', {
       receiverFcm: user?.user?.deviceToken,
-      message: message,
+      message: newMessage.text,
       type: 'chat',
       senderid: authUser._id,
       sender: authUser.username,
@@ -201,7 +250,7 @@ const ChatMainPage = () => {
               <p>New message arrived from ${authUser?.firstName} ${authUser?.lastName}(${authUser.username}) like below:</p>
               <br>
               <div style="border: 2px solid #dedede; background-color:#f1f1f1; border-radius: 20px; padding 10px; margin: 10px 0; width:60%">
-                <p>${message}</p>
+                <p>${newMessage.text}</p>
                 <span style="float:right; color:#999">${moment().format('YYYY-MM-DD HH:mm:ss')}</span>
               </div>
               <br>
@@ -213,7 +262,7 @@ const ChatMainPage = () => {
       })
       .catch(function (error) {
         console.log(error);
-      });
+      })
   };
 
   const handleEnter = (event) => {
@@ -225,7 +274,8 @@ const ChatMainPage = () => {
 
   // handle emoji
   const onEmojiClick = (event, emojiObject) => {
-    setMessage(message + emojiObject.emoji);
+    // setMessage(message + emojiObject.emoji);
+    messageRef.current.value = messageRef.current.value + emojiObject.emoji
   };
 
   const [anchorElEmoji, setAnchorElEmoji] = React.useState(); /** No single type can cater for all elements */
@@ -239,14 +289,45 @@ const ChatMainPage = () => {
     setAnchorElEmoji(null);
   };
 
+  const renderChatHistory = useCallback(() => {
+    return (
+      <ChartHistory
+        theme={theme}
+        handleUserDetails={handleUserChange}
+        handleDrawerOpen={handleDrawerOpen}
+        user={user}
+        data={data}
+      />
+    )
+  }, [theme, user, data])
+
+  const chatDrawer = useCallback(() => {
+    return (
+      <ChatDrawer openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} setUser={setUser} />
+    )
+  }, [openChatDrawer, setUser])
+
+
+  const emptyChatCard = useCallback(() => {
+    return (
+      <ChatEmptyCard openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} />
+    )
+  }, [openChatDrawer, setUser])
+
+  const userDetails = useCallback(() => {
+    return (
+      <UserDetails user={user} />)
+  }, [user])
+
+
   return (
     <Box sx={{ display: 'flex' }}>
-      <ChatDrawer openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} setUser={setUser} />
+      {chatDrawer()}
       {isEmpty(user) ? (
         <Main theme={theme} open={openChatDrawer}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
-              <ChatEmptyCard openChatDrawer={openChatDrawer} handleDrawerOpen={handleDrawerOpen} />
+              {emptyChatCard()}
             </Grid>
           </Grid>
         </Main>
@@ -256,7 +337,7 @@ const ChatMainPage = () => {
             <Grid item xs zeroMinWidth sx={{ display: emailDetails ? { xs: 'none', sm: 'flex' } : 'flex' }}>
               <MainCard
                 sx={{
-                  bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : 'grey.50'
+                  bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : 'grey.50',
                 }}
               >
                 <Grid container spacing={gridSpacing}>
@@ -304,13 +385,7 @@ const ChatMainPage = () => {
                   </Grid>
                   <PerfectScrollbar style={{ width: '100%', height: 'calc(100vh - 440px)', overflowX: 'hidden', minHeight: 525 }}>
                     <CardContent>
-                      <ChartHistory
-                        theme={theme}
-                        handleUserDetails={handleUserChange}
-                        handleDrawerOpen={handleDrawerOpen}
-                        user={user}
-                        data={data}
-                      />
+                      {renderChatHistory()}
                       <span ref={scrollRef} />
                     </CardContent>
                   </PerfectScrollbar>
@@ -348,10 +423,17 @@ const ChatMainPage = () => {
                       <Grid item xs zeroMinWidth>
                         <TextField
                           fullWidth
+                          inputRef={messageRef}
                           label="Type a Message"
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          onKeyPress={handleEnter}
+                          // value={message}
+                          // onChange={(e) => {
+                          //   setMessage(e.target.value)
+                          // }}
+                          onKeyPress={(e) => {
+                            if (messageRef.current.value.trim().length !== 0) {
+                              handleEnter(e)
+                            }
+                          }}
                         />
                       </Grid>
                       <Grid item>
@@ -360,7 +442,11 @@ const ChatMainPage = () => {
                         </IconButton>
                       </Grid>
                       <Grid item>
-                        <IconButton color="primary" onClick={handleOnSend} size="large">
+                        <IconButton color="primary" onClick={(e) => {
+                          if (messageRef.current.value.trim().length !== 0) {
+                            handleOnSend(e)
+                          }
+                        }} size="large">
                           <SendTwoToneIcon />
                         </IconButton>
                       </Grid>
@@ -376,7 +462,7 @@ const ChatMainPage = () => {
                     <HighlightOffTwoToneIcon />
                   </IconButton>
                 </Box>
-                <UserDetails user={user} />
+                {userDetails()}
               </Grid>
             )}
           </Grid>
@@ -386,4 +472,4 @@ const ChatMainPage = () => {
   );
 };
 
-export default ChatMainPage;
+export default memo(ChatMainPage);

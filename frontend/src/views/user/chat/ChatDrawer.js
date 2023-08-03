@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -105,7 +105,7 @@ const ChatDrawer = ({ handleDrawerOpen, openChatDrawer, setUser }) => {
                 <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                   <Grid item>
                     <UserAvatar
-                      user={{ online_status: status, avatar: user?.profile?.avatar, name: 'User 1', last_login: user?.lastLogin }}
+                      user={{ online_status: status, avatar: user?.profile?.avatar, name: 'User 1', recentlyActive: user?.profile?.recentlyActive }}
                     />
                   </Grid>
                   <Grid item xs zeroMinWidth>
@@ -186,4 +186,4 @@ ChatDrawer.propTypes = {
   setUser: PropTypes.func
 };
 
-export default ChatDrawer;
+export default memo(ChatDrawer);

@@ -1,6 +1,8 @@
 const Chat = require("../models/Chat");
 const ChatState = require("../models/ChatState");
+const SocketRoom = require("../models/SocketRoom");
 const User = require("../models/User");
+
 
 exports.getUsers = async (req, res, next) => {
   try {
@@ -8,20 +10,25 @@ exports.getUsers = async (req, res, next) => {
     const chats = await Chat.find({
       $or: [{ sender: req.user._id }, { recipient: req.user._id }],
     });
-    const usersIdArray = [
+    let usersIdArray = [
       ...chats.map((chat) => chat.sender),
       ...chats.map((chat) => chat.recipient),
     ].filter((value, index, self) => {
       return (
-        self.map((item) => item.toString()).indexOf(value.toString()) ===
-          index && value.toString() !== req.user._id.toString()
+        self?.map((item) => item?.toString()).indexOf(value?.toString()) ===
+        index && value?.toString() !== req.user._id.toString()
       );
     });
-    for (each of usersIdArray) {
-      let result = await _getUserById(each);
-      if (result.success) users.push(result.user);
-    }
-    res.send({ users });
+    usersIdArray = usersIdArray.filter(id => id)
+    // for (each of usersIdArray) {
+    //   let result = await _getUserById(each);
+    //   if (result.success) users.push(result.user);
+    // }
+    let result = await _getUserById(usersIdArray);
+    if (result.success) users.push(result.user);
+    // temp1.filter((elem,index)=>temp1.findIndex(obj=>obj.user?._id==elem.user?._id)==index).filter(x=>x.user)
+    res.send({ users: users?.[0]?.filter((elem, index) => users?.[0]?.findIndex(obj => obj?.user?._id == elem?.user?._id) == index)?.filter(x => x?.user) });
+    // res.send({ users: users[0]});
   } catch (error) {
     next(error);
   }
@@ -30,7 +37,7 @@ exports.getUsers = async (req, res, next) => {
 exports.searchUsers = async (req, res, next) => {
   try {
     let users = [];
-    const usersIdArray = await User.find({
+    let usersIdArray = await User.find({
       $or: [
         { username: { $regex: req.body.keyword, $options: "i" } },
         { email: { $regex: req.body.keyword, $options: "i" } },
@@ -38,11 +45,20 @@ exports.searchUsers = async (req, res, next) => {
         { lastName: { $regex: req.body.keyword, $options: "i" } },
       ],
     }).select("_id");
-    for (each of usersIdArray) {
-      let result = await _getUserById(each);
-      if (result.success) users.push(result.user);
-    }
-    res.send({ users });
+    // for (each of usersIdArray) {
+    //   let result = await _getUserById(each);
+    //   if (result.success) users.push(result.user);
+    // }
+    usersIdArray = usersIdArray.filter(id => id)
+    // for (each of usersIdArray) {
+    //   let result = await _getUserById(each);
+    //   if (result.success) users.push(result.user);
+    // }
+    let result = await _getUserById(usersIdArray);
+    if (result.success) users.push(result.user);
+    // temp1.filter((elem,index)=>temp1.findIndex(obj=>obj.user?._id==elem.user?._id)==index).filter(x=>x.user)
+    res.send({ users: users[0].filter((elem, index) => users[0].findIndex(obj => obj.user?._id == elem.user?._id) == index).filter(x => x.user) });
+    // res.send({ users });
   } catch (error) {
     next(error);
   }
@@ -59,7 +75,7 @@ exports.getUserById = async (req, res, next) => {
 
 const _getUserById = async (id) => {
   try {
-    let user = await ChatState.findOne({ user: id })
+    let user = await ChatState.find({ user: { $in: id } })
       .populate({
         path: "user",
         model: "user",
@@ -108,6 +124,42 @@ exports.createChat = async (req, res, next) => {
       recipient: req.body.recipient,
       text: req.body.text,
     });
+    const socketUser = await SocketRoom.findOne({ user: req.body.recipient })
+    console.log(socketUser?.socket_id)
+    // socketUser?.socket_id?.forEach((id) => {
+    //   global.io.to(id).emit("newChat", chat);
+    // })
+    global.io.in(socketUser?.socket_id).emit("newChat", chat);
+    // global.io.on('connection', function (socket) {
+    //   global.io.to(socket.id).emit('private', `your secret code is ${socket.id}`);
+    // });
+
+    // global.io.on('identification', (data) => {
+    //   const userId = data.userId;
+    //   // Store the mapping of userId to socket.id
+    //   // You can use an object, a Map, or a database to store this information
+    //   // Example:
+    //   // socketIdToUserIdMap[socket.id] = userId;
+    // });
+
+    // global.io.on('connection', (socket) => {
+    //   socket.on('identification', (data) => {
+    //     // const userId = data.userId;
+    //     global.io.to(data.userId).emit('private', `your secret code is ${socket.id}`);
+    //     // Store the mapping of userId to socket.id
+    //     // You can use an object, a Map, or a database to store this information
+    //     // Example:
+    //     // socketIdToUserIdMap[socket.id] = userId;
+    //   });
+
+    //   // Handle disconnection and clean up the mapping
+    //   socket.on('disconnect', () => {
+    //     const userId = socketIdToUserIdMap[socket.id];
+    //     // Perform any necessary cleanup related to the user's disconnection
+    //     // Example:
+    //     // delete socketIdToUserIdMap[socket.id];
+    //   });
+    // });
     res.send({ chat });
   } catch (error) {
     next(error);

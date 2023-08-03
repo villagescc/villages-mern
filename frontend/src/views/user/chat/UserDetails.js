@@ -20,6 +20,7 @@ import images3 from 'assets/images/pages/img-catalog3.png';
 import { SERVER_URL } from 'config';
 
 import DefaultUserIcon from 'assets/images/auth/default.png';
+import { memo } from 'react';
 
 // ==============================|| USER PROFILE / DETAILS ||============================== //
 
@@ -116,4 +117,4 @@ UserDetails.propTypes = {
   user: PropTypes.object
 };
 
-export default UserDetails;
+export default memo(UserDetails);

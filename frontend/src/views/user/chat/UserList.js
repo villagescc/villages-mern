@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, memo } from 'react';
 
 // material-ui
 import { Chip, Divider, Grid, List, ListItemButton, ListItemAvatar, ListItemText, Typography } from '@mui/material';
@@ -39,7 +39,7 @@ const UserList = ({ setUser }) => {
             to={`/personal/message/${user?.user?._id}`}
           >
             <ListItemAvatar>
-              <UserAvatar user={{ online_status: user?.state, avatar: user?.user?.profile?.avatar, last_login: user?.user?.lastLogin }} />
+              <UserAvatar user={{ online_status: user?.state, avatar: user?.user?.profile?.avatar, recentlyActive: user?.user?.profile?.recentlyActive }} />
             </ListItemAvatar>
             <ListItemText
               primary={
@@ -97,4 +97,4 @@ UserList.propTypes = {
   setUser: PropTypes.func
 };
 
-export default UserList;
+export default memo(UserList);

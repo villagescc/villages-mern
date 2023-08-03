@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { memo } from 'react';
 
 // material-ui
 import { Card, CardContent, Grid, Typography } from '@mui/material';
 
 // project imports
 import { gridSpacing } from 'store/constant';
+import moment from 'moment';
 
 // ==============================|| CHAT MESSAGE HISTORY ||============================== //
 
@@ -35,7 +36,7 @@ const ChartHistory = ({ data, theme, user }) => (
                         </Grid>
                         <Grid item xs={12}>
                           <Typography align="right" variant="subtitle2" color={theme.palette.mode === 'dark' ? 'dark.900' : ''}>
-                            {history.updatedAt}
+                            {moment(history.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -62,7 +63,7 @@ const ChartHistory = ({ data, theme, user }) => (
                         </Grid>
                         <Grid item xs={12}>
                           <Typography align="right" variant="subtitle2">
-                            {history.updatedAt}
+                            {moment(history.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -84,4 +85,4 @@ ChartHistory.propTypes = {
   user: PropTypes.object
 };
 
-export default ChartHistory;
+export default memo(ChartHistory);
