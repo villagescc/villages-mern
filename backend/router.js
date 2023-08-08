@@ -235,7 +235,7 @@ router.post("/map/posts", authMiddleware.auth, mapController.mapPosts);
 
 // ######################### SEO Sitemap ROUTER #############################
 router.post('/userConnected', authMiddleware.auth, socketController.createSocketUser)
-// router.post('/userDisconnected', authMiddleware.auth, socketController.removeSocketUser)
+router.post('/userDisconnected', socketController.removeSocketUser)
 
 // ######################### SEO Sitemap ROUTER #############################
 router.get('/sitemap.xml', async (req, res, next) => {

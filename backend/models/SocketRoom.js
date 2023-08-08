@@ -6,8 +6,8 @@ const SocketRoomSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId
         },
         socket_id: {
-            type: String,
-            default: ""
+            type: [String],
+            default: null
         }
     },
     {

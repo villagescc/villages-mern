@@ -84,7 +84,7 @@ const ChatMainPage = () => {
   const theme = useTheme();
   const messageRef = useRef(null)
   const matchDownSM = useMediaQuery(theme.breakpoints.down('lg'));
-
+  const SocketRef = useRef(null)
   const dispatch = useDispatch();
 
   const { userId } = useParams();
@@ -115,7 +115,7 @@ const ChatMainPage = () => {
         text: payload.notification.body,
         updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
       });
-      setData(newData);
+      // setData(newData);
     });
   }
 
@@ -179,57 +179,74 @@ const ChatMainPage = () => {
 
   // Handle Socket
 
-  useEffect(() => {
-    let socketIO = io(SERVER_URL, { reconnection: false })
-    setSocket(socketIO)
-    return () => {
-      // console.log(socket, 'disconnect');
-      socket?.disconnect();
-    }
-  }, [])
+  // useEffect(() => {
+  //   let socketIO = io(SERVER_URL, { reconnection: false })
+  //   console.log(SERVER_URL, 'SERVER_URL');
+  //   setSocket(socketIO)
+  //   SocketRef.current = socketIO
+  //   return () => {
+  //     console.log("Socket Disconnet", 'disconnect');
+  //     SocketRef.current?.disconnect();
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    if (socket?.id) {
-      let socketId = socket?.id
-      window.addEventListener('beforeunload', () => {
-        socket.disconnect();
-      });
-      // console.log(socket.id, 'chat');
-      // socket.emit('new user connected', { id: socket.id, userId: authUser._id });
-      // console.log(socket?.id, 'connected');
-      axios.post('/userConnected', { id: socket.id, userId: authUser._id })
-      socket.on('newChat', (chat) => {
-        // dispatch(getState());
-        // console.log(chat, 'chat from socket');
-        setData((prevState) => [...prevState, {
-          sender: chat.sender,
-          recipient: chat.recipient,
-          text: chat.text
-        }]);
-      })
-      socket.on('disconnect', (e) => {
-        // axios.post('/userDisconnected', { id: socketId, userId: authUser._id })
-        // console.log(socketId, 'disconnected');
-      })
-      // socket.emit('identification', { userId: authUser?._id });
-      // socket.on('private', function (msg) {
-      //   // alert(msg);
-      //   console.log(msg, 'msg');
-      // });
-    }
-  }, [socket?.id])
+  // setInterval(() => {
+  //   console.log(SocketRef.current?.id, "id")
+  // }, 3000);
+
+  // useEffect(() => {
+  //   if (SocketRef.current?.id) {
+  //     let socketId = SocketRef.current?.id
+  //     window.addEventListener('beforeunload', () => {
+  //       SocketRef.current.disconnect();
+  //     });
+  //     setInterval(() => {
+  //       // console.log(socket.id, 'chatId');
+  //     }, 1000);
+  //     // socket.emit('new user connected', { id: socket.id, userId: authUser._id });
+  //     // console.log(socket?.id, 'connected');
+  //     axios.post('/userConnected', { id: SocketRef.current.id, userId: authUser._id })
+  //     // socket.on("connection", s => {
+  //     //   s.join("some room");
+  //     // });
+  //     SocketRef.current.emit('join', 'roomname');
+  //     SocketRef.current.on('newChat', (chat) => {
+  //       // dispatch(getState());
+  //       console.log(chat, 'chat from socket');
+  //       setData((prevState) => [...prevState, {
+  //         sender: chat.sender,
+  //         recipient: chat.recipient,
+  //         text: chat.text
+  //       }]);
+  //     })
+  //     SocketRef.current.on('disconnect', (e) => {
+  //       axios.post('/userDisconnected', { id: socketId, userId: authUser._id })
+  //       // console.log(socketId, 'disconnected');
+  //     })
+  //     SocketRef.current.on('connectToRoom', function (data) {
+  //       console.log(data);
+  //     });
+  //     // socket.emit('identification', { userId: authUser?._id });
+  //     // socket.on('private', function (msg) {
+  //     //   // alert(msg);
+  //     //   console.log(msg, 'msg');
+  //     // });
+  //   }
+  // }, [SocketRef?.current?.id])
 
 
   // handle new message form
-  const [message, setMessage] = useState('');
+  // const [message, setMessage] = useState('');
   const handleOnSend = () => {
     const d = new Date();
     // setMessage('');
     const newMessage = {
       sender: authUser._id,
       recipient: user?.user?._id,
-      text: messageRef.current.value
+      text: messageRef.current.value,
+      senderSocketId: SocketRef.current?.id
     };
+    SocketRef.current.emit('newChat', newMessage)
     setData((prevState) => [...prevState, newMessage]);
     dispatch(insertChat(newMessage));
     messageRef.current.value = ''
@@ -292,14 +309,16 @@ const ChatMainPage = () => {
   const renderChatHistory = useCallback(() => {
     return (
       <ChartHistory
+        setData={setData}
         theme={theme}
+        SocketRef={SocketRef}
         handleUserDetails={handleUserChange}
         handleDrawerOpen={handleDrawerOpen}
         user={user}
         data={data}
       />
     )
-  }, [theme, user, data])
+  }, [theme, user, data, SocketRef])
 
   const chatDrawer = useCallback(() => {
     return (
@@ -436,11 +455,11 @@ const ChatMainPage = () => {
                           }}
                         />
                       </Grid>
-                      <Grid item>
+                      {/* <Grid item>
                         <IconButton size="large">
                           <AttachmentTwoToneIcon />
                         </IconButton>
-                      </Grid>
+                      </Grid> */}
                       <Grid item>
                         <IconButton color="primary" onClick={(e) => {
                           if (messageRef.current.value.trim().length !== 0) {

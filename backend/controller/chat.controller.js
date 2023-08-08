@@ -124,42 +124,45 @@ exports.createChat = async (req, res, next) => {
       recipient: req.body.recipient,
       text: req.body.text,
     });
-    const socketUser = await SocketRoom.findOne({ user: req.body.recipient })
-    console.log(socketUser?.socket_id)
-    // socketUser?.socket_id?.forEach((id) => {
+    const senderUser = await SocketRoom.findOne({ user: req.body.sender }).select("socket_id")
+    const receiverUser = await SocketRoom.findOne({ user: req.body.recipient }).select("socket_id")
+    // console.log(senderUser, "sender")
+    // console.log(receiverUser, "receiver")
+    let sendersID = senderUser.socket_id?.filter(x => x !== req.body.senderSocketId)
+    let receiverId = receiverUser ? receiverUser.socket_id : []
+    // console.log(sendersID, "senderID")
+    let newIds = [...receiverId, ...sendersID]
+    // console.log(newIds, "New IDS")
+    // newIds?.forEach((id) => {
+    //   console.log(id, "ID 123")
     //   global.io.to(id).emit("newChat", chat);
     // })
-    global.io.in(socketUser?.socket_id).emit("newChat", chat);
-    // global.io.on('connection', function (socket) {
-    //   global.io.to(socket.id).emit('private', `your secret code is ${socket.id}`);
-    // });
 
-    // global.io.on('identification', (data) => {
-    //   const userId = data.userId;
-    //   // Store the mapping of userId to socket.id
-    //   // You can use an object, a Map, or a database to store this information
-    //   // Example:
-    //   // socketIdToUserIdMap[socket.id] = userId;
-    // });
-
+    await Promise.all(
+      newIds.map((item) => {
+        // console.log(item)
+        global.io.to(item).emit("newChat", chat);
+      })
+    )
     // global.io.on('connection', (socket) => {
-    //   socket.on('identification', (data) => {
-    //     // const userId = data.userId;
-    //     global.io.to(data.userId).emit('private', `your secret code is ${socket.id}`);
-    //     // Store the mapping of userId to socket.id
-    //     // You can use an object, a Map, or a database to store this information
-    //     // Example:
-    //     // socketIdToUserIdMap[socket.id] = userId;
-    //   });
-
-    //   // Handle disconnection and clean up the mapping
-    //   socket.on('disconnect', () => {
-    //     const userId = socketIdToUserIdMap[socket.id];
-    //     // Perform any necessary cleanup related to the user's disconnection
-    //     // Example:
-    //     // delete socketIdToUserIdMap[socket.id];
-    //   });
+    //   socket.broadcast.in(socketUser?.socket_id).emit("newChat", chat);
+    // })
+    // global.io.on("connection", function (socket) {
+    //   socket.to("some room").emit("some event");
     // });
+    // global.io.on('connection', (socket) => {
+    //   socket.on('joinroom', function (data) {
+    //     socket.join(data)
+    //   })
+    // })
+    var roomno = 1;
+    // global.io.on('newChat', (data) => {
+    // global.io.in('roomname').emit('newChat', {
+    //   sender: req.body.sender,
+    //   recipient: req.body.recipient,
+    //   text: req.body.text,
+    // });
+    // })
     res.send({ chat });
   } catch (error) {
     next(error);
