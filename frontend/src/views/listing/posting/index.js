@@ -246,126 +246,165 @@ const Posting = () => {
   return (
     <>
       <MainCard
+        sx={{
+          ".MuiCardHeader-action": {
+            display: "flex",
+            flex: "unset"
+          }
+        }}
         title="Posting List"
         content={false}
         secondary={
-          isLoggedIn ? (
-            // <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
-            //   Create
-            // </Button>
-            <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
-              <Grid item>
-                <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
-                  New
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color={'secondary'}
-                  startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                  onClick={() => setShowFilter(!showFilter)}
-                >
-                  Filter
-                </Button>
-              </Grid>
+          <>
+            <Grid sx={{ justifyContent: { sm: "right", xs: 'left' } }} container alignItems={'center'} spacing={1}>
+              {isLoggedIn ? (
+                // <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
+                //   Create
+                // </Button>
+                <>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        )
+                      }}
+                      fullWidth
+                      onChange={handleSearch}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Search Post"
+                      value={keyword}
+                      size="small"
+                    />
+                  </Grid>
+                  <Grid item >
+                    <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
+                      New
+                    </Button>
+                  </Grid>
+                  <Grid item >
+                    <Button
+                      variant="contained"
+                      color={'secondary'}
+                      startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                      onClick={() => setShowFilter(!showFilter)}
+                    >
+                      Filter
+                    </Button>
+                  </Grid>
+                </>
+              ) : (
+                // <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
+                <>
+                  <Grid item xs={12} sm={9}>
+                    <TextField
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        )
+                      }}
+                      fullWidth
+                      onChange={handleSearch}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Search Post"
+                      value={keyword}
+                      size="small"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <Button
+                      variant="contained"
+                      color={'secondary'}
+                      startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                      onClick={() => setShowFilter(!showFilter)}
+                    >
+                      Filter
+                    </Button>
+                    {/* </Grid> */}
+                  </Grid>
+                </>
+              )
+              }
             </Grid>
-          ) : (
-            <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color={'secondary'}
-                  startIcon={showFilter ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                  onClick={() => setShowFilter(!showFilter)}
-                >
-                  Filter
-                </Button>
-              </Grid>
-            </Grid>
-          )
+          </>
+
         }
       >
         {loading ? (
           <PostingListSkeleton />
         ) : (
           <CardContent>
-            {showFilter && (
-              <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect
-                    currencies={[
-                      {
-                        value: '',
-                        label: 'All categories'
-                      },
-                      ...categories.map((category) => ({
-                        value: category.title,
-                        label: category.title
-                      }))
-                    ]}
-                    currency={filterData.filterCategory}
-                    onChange={(e) => {
-                      setFilterData({ ...filterData, filterCategory: e.target.value });
-                    }}
-                    captionLabel="Posting"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect
-                    currencies={listing_type.filter((type) => ({
-                      value: type.value,
-                      label: type.value
-                    }))}
-                    currency={filterData.filterType}
-                    onChange={(e) => {
-                      setFilterData({ ...filterData, filterType: e.target.value });
-                    }}
-                    captionLabel="Post type"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <FormControlSelect
-                    currencies={radius}
-                    currency={filterData.filterRadius}
-                    onChange={(e) => {
-                      setFilterData({ ...filterData, filterRadius: e.target.value });
-                    }}
-                    captionLabel="Search area"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon fontSize="small" />
-                        </InputAdornment>
-                      )
-                    }}
-                    fullWidth
-                    onChange={handleSearch}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Search Post"
-                    value={keyword}
-                    size="small"
-                  />
-                </Grid>
-              </Grid>
-            )}
-
             {posts.length > 0 && (
-              <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
-                <Pagination
-                  count={Math.ceil(total / 12)}
-                  defaultPage={Number(pageId)}
-                  page={filterData.page}
-                  onChange={(e, p) => {
-                    navigate(`/listing/posts/page/${p}`);
-                    setFilterData({ ...filterData, page: p });
-                  }}
-                  color="secondary"
-                />
+              <Grid container spacing={2} mt={0} justifyContent="end" alignItems="center" sx={{ my: 1 }}>
+                {/* <Grid container justifyContent="flex-end" alignItems="center" spacing={2}> */}
+                {showFilter && (
+                  <>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <FormControlSelect
+                        currencies={[
+                          {
+                            value: '',
+                            label: 'All categories'
+                          },
+                          ...categories.map((category) => ({
+                            value: category.title,
+                            label: category.title
+                          }))
+                        ]}
+                        currency={filterData.filterCategory}
+                        onChange={(e) => {
+                          setFilterData({ ...filterData, filterCategory: e.target.value });
+                        }}
+                        captionLabel="Posting"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <FormControlSelect
+                        currencies={listing_type.filter((type) => ({
+                          value: type.value,
+                          label: type.value
+                        }))}
+                        currency={filterData.filterType}
+                        onChange={(e) => {
+                          setFilterData({ ...filterData, filterType: e.target.value });
+                        }}
+                        captionLabel="Post type"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <FormControlSelect
+                        currencies={radius}
+                        currency={filterData.filterRadius}
+                        onChange={(e) => {
+                          setFilterData({ ...filterData, filterRadius: e.target.value });
+                        }}
+                        captionLabel="Search area"
+                      />
+                    </Grid>
+                  </>
+                )}
+                <Grid item xs={12} sm={6} lg={3}>
+                  <Pagination
+                    sx={{
+                      ".MuiPagination-ul": {
+                        justifyContent: "flex-end"
+                      }
+                    }}
+                    count={Math.ceil(total / 12)}
+                    defaultPage={Number(pageId)}
+                    page={filterData.page}
+                    onChange={(e, p) => {
+                      navigate(`/listing/posts/page/${p}`);
+                      setFilterData({ ...filterData, page: p });
+                    }}
+                    color="secondary"
+                  />
+                  {/* </Grid> */}
+                </Grid>
               </Grid>
             )}
             <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>

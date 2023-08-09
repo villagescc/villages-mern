@@ -31,7 +31,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  useMediaQuery
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
@@ -62,6 +63,7 @@ import TransactionDetail from './TransactionDetail';
 // ===========================|| DASHBOARD ANALYTICS - TOTAL REVENUE CARD ||=========================== //
 
 const PaymentHistory = ({ handleCreateClick, count }) => {
+  const screenSize = useMediaQuery('(min-width:600px)');
   const successSX = { color: 'success.dark' };
   const errorSX = { color: 'error.main' };
 
@@ -110,10 +112,33 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
 
   return (
     <>
-      <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
+      <Grid container sx={{ justifyContent: { sm: "right", xs: 'center' } }} alignItems={'center'} spacing={1}>
+        <Grid item xs={12} sm={5} md={4} lg={3}>
+          <OutlinedInput
+            sx={{
+              ".MuiOutlinedInput-input": {
+                padding: "9px"
+              }
+            }}
+            id="input-search-card-style1"
+            placeholder="Search Keyword"
+            fullWidth
+            startAdornment={
+              <InputAdornment position="start">
+                <IconSearch stroke={1.5} size="16px" />
+              </InputAdornment>
+            }
+            onKeyPress={(event) => {
+              if (event.key === 'Enter') {
+                setKeyword(event.target.value);
+              }
+            }}
+          />
+
+        </Grid>
         <Grid item>
           <Button variant="contained" size={'normal'} startIcon={<AddCircleOutlineOutlinedIcon />} onClick={handleCreateClick}>
-            Create Payment
+            {screenSize ? "Create" : ""} Payment
           </Button>
         </Grid>
         <Grid item>
@@ -197,27 +222,6 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
                   <MenuItem value="Pending">Pending</MenuItem>
                   <MenuItem value="Failed">Failed</MenuItem>
                 </Select>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} lg={2}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={9} lg={12}>
-                <OutlinedInput
-                  id="input-search-card-style1"
-                  placeholder="Search Keyword"
-                  fullWidth
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <IconSearch stroke={1.5} size="16px" />
-                    </InputAdornment>
-                  }
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                      setKeyword(event.target.value);
-                    }
-                  }}
-                />
               </Grid>
             </Grid>
           </Grid>
