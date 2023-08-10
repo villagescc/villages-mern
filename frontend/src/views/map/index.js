@@ -96,6 +96,23 @@ const Index = () => {
   return (
     <div>
       <Grid container justifyContent="right" alignItems={'center'} spacing={1}>
+        {!showFilter && <Grid item xs={12} sm={3}>
+          <TextField
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              )
+            }}
+            fullWidth
+            onChange={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder="Search Post"
+            value={keyword}
+            size="small"
+          />
+        </Grid>}
         <Grid item>
           <Button
             variant="contained"

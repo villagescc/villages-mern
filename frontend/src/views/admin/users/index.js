@@ -14,6 +14,7 @@ import { IconSearch } from '@tabler/icons';
 import { searchUserData } from 'store/slices/user';
 import { useDispatch, useSelector } from 'store';
 import useAuth from 'hooks/useAuth';
+import Empty from 'ui-component/Empty';
 
 const Index = () => {
   const theme = useTheme();
@@ -91,6 +92,10 @@ const Index = () => {
           </Grid>
         </Grid>
       </Grid>
+      {(users.length == 0 && !loading) &&
+        <Grid item xs={12}>
+          <Empty />
+        </Grid>}
     </MainCard>
   );
 };

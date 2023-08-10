@@ -116,8 +116,9 @@ exports.search = async (req, res, next) => {
       page = 1
       query = {
         $or: [
-          { firstName: { $regex: keyword, $options: "i" } },
-          { lastName: { $regex: keyword, $options: "i" } },
+          // { firstName: { $regex: keyword, $options: "i" } },
+          // { lastName: { $regex: keyword, $options: "i" } },
+          { fullName: { $regex: keyword, $options: "i" } },
           { email: { $regex: keyword, $options: "i" } },
           { username: { $regex: keyword, $options: "i" } },
         ],
@@ -125,7 +126,29 @@ exports.search = async (req, res, next) => {
     }
 
     // To find people without any Filter
-    const users = await User.find(query).sort({ createdAt: -1 }).select("username");
+    // const users = await User.find(query).sort({ createdAt: -1 }).select("username");
+    const users = await User.aggregate([
+      {
+        $addFields: {
+          fullName: { $concat: ['$firstName', " ", "$lastName"] }
+        }
+      },
+      {
+        $match: {
+          ...query,
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
+        $project: {
+          username: 1
+        }
+      }
+    ])
     let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
     let userData = [];
     let userInfo = await getUserDetail(filteredUsers.map(x => x.username));

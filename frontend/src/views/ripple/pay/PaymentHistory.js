@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
@@ -70,6 +70,7 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
   const { transactions, transaction, total } = useSelector((state) => state.payment);
   const { user } = useAuth();
 
+  const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('All'); // "Completed", "Pending", "Failed"
   const [keyword, setKeyword] = useState('');
@@ -113,13 +114,15 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
   return (
     <>
       <Grid container sx={{ justifyContent: { sm: "right", xs: 'center' } }} alignItems={'center'} spacing={1}>
-        <Grid item xs={12} sm={5} md={4} lg={3}>
+        {!showFilter && <Grid item xs={12} sm={5} md={4} lg={3}>
           <OutlinedInput
             sx={{
               ".MuiOutlinedInput-input": {
                 padding: "9px"
               }
             }}
+            value={searchValue}
+            onChange={e => setSearchValue(e.target.value)}
             id="input-search-card-style1"
             placeholder="Search Keyword"
             fullWidth
@@ -135,7 +138,7 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
             }}
           />
 
-        </Grid>
+        </Grid>}
         <Grid item>
           <Button variant="contained" size={'normal'} startIcon={<AddCircleOutlineOutlinedIcon />} onClick={handleCreateClick}>
             {screenSize ? "Create" : ""} Payment
@@ -154,76 +157,83 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
         </Grid>
       </Grid>
       {showFilter && (
-        <Grid container padding={2} spacing={2} alignItems="center">
-          <Grid item xs={12} lg={3}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={9} lg={10}>
-                <Select
-                  id="paymentType"
-                  name="paymentType"
-                  fullWidth
-                  value={paymentType}
-                  onChange={(e) => setPaymentType(e.target.value)}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                >
-                  <MenuItem value="All">All Payment</MenuItem>
-                  <MenuItem value="Withdraw">Withdraw</MenuItem>
-                  <MenuItem value="Deposit">Deposit</MenuItem>
-                </Select>
-              </Grid>
-            </Grid>
+        <Grid container py={2} spacing={2} alignItems="center">
+          <Grid item xs={12} sm={6} lg={3}>
+            <Select
+              id="paymentType"
+              name="paymentType"
+              fullWidth
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
+              displayEmpty
+              inputProps={{ 'aria-label': 'Without label' }}
+            >
+              <MenuItem value="All">All Payment</MenuItem>
+              <MenuItem value="Withdraw">Withdraw</MenuItem>
+              <MenuItem value="Deposit">Deposit</MenuItem>
+            </Select>
           </Grid>
-          <Grid item xs={12} lg={4}>
-            <Grid container spacing={2} alignItems="center">
-              {/* <Grid item xs={12} sm={3} lg={4}>
+          <Grid item xs={12} sm={6} lg={3}>
+            {/* <Grid item xs={12} sm={3} lg={4}>
                 <InputLabel horizontal sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                   Duration :
                 </InputLabel>
               </Grid> */}
-              <Grid item xs={12} sm={9} lg={10}>
-                <LocalizationProvider dateAdapter={AdapterDayjs} localeText={{ start: 'From', end: 'To' }}>
-                  <DateRangePicker
-                    value={period}
-                    onChange={(newValue) => {
-                      setPeriod(newValue);
-                    }}
-                    renderInput={(startProps, endProps) => (
-                      <React.Fragment>
-                        <TextField {...startProps} />
-                        <Box sx={{ mx: 2 }}> to </Box>
-                        <TextField {...endProps} />
-                      </React.Fragment>
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
+            <LocalizationProvider dateAdapter={AdapterDayjs} localeText={{ start: 'From', end: 'To' }}>
+              <DateRangePicker
+                value={period}
+                onChange={(newValue) => {
+                  setPeriod(newValue);
+                }}
+                renderInput={(startProps, endProps) => (
+                  <React.Fragment>
+                    <TextField {...startProps} sx={{ width: "100%" }} />
+                    <Box sx={{ mx: 2 }}> to </Box>
+                    <TextField {...endProps} sx={{ width: "100%" }} />
+                  </React.Fragment>
+                )}
+              />
+            </LocalizationProvider>
           </Grid>
-          <Grid item xs={12} lg={3}>
-            <Grid container spacing={2} alignItems="center">
-              {/* <Grid item xs={12} sm={3} lg={4}>
+          <Grid item xs={12} sm={6} lg={3}>
+            {/* <Grid item xs={12} sm={3} lg={4}>
                 <InputLabel horizontal sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                   Status :
                 </InputLabel>
               </Grid> */}
-              <Grid item xs={12} sm={9} lg={10}>
-                <Select
-                  id="status"
-                  name="status"
-                  fullWidth
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                >
-                  <MenuItem value="All">All Status</MenuItem>
-                  <MenuItem value="Completed">Completed</MenuItem>
-                  <MenuItem value="Pending">Pending</MenuItem>
-                  <MenuItem value="Failed">Failed</MenuItem>
-                </Select>
-              </Grid>
-            </Grid>
+            <Select
+              id="status"
+              name="status"
+              fullWidth
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              displayEmpty
+              inputProps={{ 'aria-label': 'Without label' }}
+            >
+              <MenuItem value="All">All Status</MenuItem>
+              <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Failed">Failed</MenuItem>
+            </Select>
+          </Grid>
+          <Grid item xs={12} sm={6} lg={3}>
+            <OutlinedInput
+              id="input-search-card-style1"
+              placeholder="Search Keyword"
+              value={searchValue}
+              onChange={e => setSearchValue(e.target.value)}
+              fullWidth
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconSearch stroke={1.5} size="16px" />
+                </InputAdornment>
+              }
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  setKeyword(event.target.value);
+                }
+              }}
+            />
           </Grid>
         </Grid>
       )}

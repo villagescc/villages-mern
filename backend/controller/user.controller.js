@@ -31,8 +31,9 @@ exports.search = async (req, res, next) => {
       page = 1
       query = {
         $or: [
-          { firstName: { $regex: keyword, $options: "i" } },
-          { lastName: { $regex: keyword, $options: "i" } },
+          // { firstName: { $regex: keyword, $options: "i" } },
+          // { lastName: { $regex: keyword, $options: "i" } },
+          { fullName: { $regex: keyword, $options: "i" } },
           { email: { $regex: keyword, $options: "i" } },
           { username: { $regex: keyword, $options: "i" } },
         ],
@@ -41,7 +42,30 @@ exports.search = async (req, res, next) => {
 
     // To find people without any Filter
     if (value === "All") {
-      const users = await User.find({ ...query, verified: true }).sort({ createdAt: -1 }).select("username");
+      const users = await User.aggregate([
+        {
+          $addFields: {
+            fullName: { $concat: ['$firstName', " ", "$lastName"] }
+          }
+        },
+        {
+          $match: {
+            ...query,
+            verified: true
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        },
+        {
+          $project: {
+            username: 1
+          }
+        }
+      ])
+      // const users = await User.find({ ...query, verified: true }).sort({ createdAt: -1 }).select("username");
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userData = [];
       let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
@@ -126,8 +150,30 @@ exports.search = async (req, res, next) => {
         arr = arr.filter(x => x !== user?._id)
       }
       // const users = await User.find(...(arr.length !== 0 ? [{ "_id": { $in: arr }, ...query }] : [query])).sort({ createdAt: -1 }).select("username");
-      const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
-      // console.log(users.length, "sadas")
+      // const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
+      const users = await User.aggregate([
+        {
+          $addFields: {
+            fullName: { $concat: ['$firstName', " ", "$lastName"] }
+          }
+        },
+        {
+          $match: {
+            ...query,
+            _id: { $in: arr.map(e => mongoose.Types.ObjectId(e)) }
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        },
+        {
+          $project: {
+            username: 1
+          }
+        }
+      ])
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userData = [];
       let userInfo = await getUserDetail(filteredUsers.map(x => x.username));
