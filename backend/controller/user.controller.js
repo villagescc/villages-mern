@@ -33,6 +33,7 @@ exports.search = async (req, res, next) => {
         $or: [
           // { firstName: { $regex: keyword, $options: "i" } },
           // { lastName: { $regex: keyword, $options: "i" } },
+          { 'profile.description': { $regex: keyword, $options: "i" } },
           { fullName: { $regex: keyword, $options: "i" } },
           { email: { $regex: keyword, $options: "i" } },
           { username: { $regex: keyword, $options: "i" } },
@@ -43,6 +44,20 @@ exports.search = async (req, res, next) => {
     // To find people without any Filter
     if (value === "All") {
       const users = await User.aggregate([
+        {
+          $lookup: {
+            from: 'profiles',
+            localField: 'profile',
+            foreignField: "_id",
+            as: 'profile'
+          }
+        },
+        {
+          $addFields: {
+            profile: { $arrayElemAt: ['$profile', 0] },
+            fullName: { $concat: ['$firstName', " ", '$lastName'] }
+          }
+        },
         {
           $addFields: {
             fullName: { $concat: ['$firstName', " ", "$lastName"] }
@@ -152,6 +167,20 @@ exports.search = async (req, res, next) => {
       // const users = await User.find(...(arr.length !== 0 ? [{ "_id": { $in: arr }, ...query }] : [query])).sort({ createdAt: -1 }).select("username");
       // const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
       const users = await User.aggregate([
+        {
+          $lookup: {
+            from: 'profiles',
+            localField: 'profile',
+            foreignField: "_id",
+            as: 'profile'
+          }
+        },
+        {
+          $addFields: {
+            profile: { $arrayElemAt: ['$profile', 0] },
+            fullName: { $concat: ['$firstName', " ", '$lastName'] }
+          }
+        },
         {
           $addFields: {
             fullName: { $concat: ['$firstName', " ", "$lastName"] }

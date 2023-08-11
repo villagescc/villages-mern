@@ -10,6 +10,7 @@ const Paylog = require("../models/Paylog");
 const isEmpty = require("../validation/is-empty");
 
 const axios = require("axios");
+const { default: mongoose } = require("mongoose");
 
 // const _getUser = async (id) => {
 //   const user = await User.findById(id).exec();
@@ -407,6 +408,7 @@ exports._getMaxFlow = async (sender, recipient, amount = null) => {
 
 exports.searchTransactions = async (req, res, next) => {
   const { page, keyword, status, address, paymentType, period } = req.body;
+  const pipeline = [{ $sort: { createdAt: -1 } }]
   try {
     // const total = await Payment.find({
     //   $or: [{ payer: req.user._id }, { recipient: req.user._id }],
@@ -432,22 +434,28 @@ exports.searchTransactions = async (req, res, next) => {
         });
       }
       if (subquery.length > 0) {
-        query.and(subquery);
+        // query.and(subquery);
+        pipeline.push({ $match: { $and: subquery } })
       }
     }
     if (paymentType === "All") {
-      query.or([{ payer: req.user._id }, { recipient: req.user._id }]);
+      // query.or([{ payer: req.user._id }, { recipient: req.user._id }]);
+      pipeline.push({ $match: { $or: [{ payer: mongoose.Types.ObjectId(req.user._id) }, { recipient: mongoose.Types.ObjectId(req.user._id) }] } })
     } else {
       if (paymentType === "Withdraw") {
-        query.where("payer", req.user._id);
+        // query.where("payer", req.user._id);
+        pipeline.push({ $match: { payer: mongoose.Types.ObjectId(req.user._id) } })
         if (!isEmpty(address)) {
-          query.where("recipient", address);
+          pipeline.push({ $match: { recipient: address } })
+          // query.where("recipient", address);
         }
       }
       if (paymentType === "Deposit") {
-        query.where("recipient", req.user._id);
+        pipeline.push({ $match: { recipient: mongoose.Types.ObjectId(req.user._id) } })
+        // query.where("recipient", req.user._id);
         if (!isEmpty(address)) {
-          query.where("payer", address);
+          pipeline.push({ $match: { payer: address } })
+          // query.where("payer", address);
         }
       }
     }
@@ -457,33 +465,116 @@ exports.searchTransactions = async (req, res, next) => {
     //     { description: { $regex: keyword, $options: "i" } },
     //   ]);
     // }
-    if (keyword !== "") {
-      query.and([{ memo: { $regex: keyword, $options: "i" } }]);
-    }
     if (status !== "All") {
-      query.where({ status: status });
+      pipeline.push({ $match: { status: status } })
+      // query.where({ status: status });
     }
-    const total = await Payment.find(query).countDocuments();
+    // pipeline.push()
     // console.log(query);
-    query.skip(page * 10 - 10).limit(10);
-    const transactions = await query
-      .populate({
-        path: "recipient",
-        model: "user",
-        populate: {
-          path: "profile",
-          model: "profile",
-        },
+    pipeline.push(
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'recipient',
+          foreignField: "_id",
+          as: 'recipient',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'profiles',
+                localField: 'profile',
+                foreignField: "_id",
+                as: 'profile'
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ['$profile', 0] },
+                fullName: { $concat: ['$firstName', " ", '$lastName'] }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          recipient: { $arrayElemAt: ['$recipient', 0] }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'payer',
+          foreignField: "_id",
+          as: 'payer',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'profiles',
+                localField: 'profile',
+                foreignField: "_id",
+                as: 'profile'
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ['$profile', 0] },
+                fullName: { $concat: ['$firstName', " ", '$lastName'] }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          payer: { $arrayElemAt: ['$payer', 0] }
+        }
+      }
+    )
+    if (keyword !== "") {
+      pipeline.push({
+        $match: {
+          $or: [
+            { memo: { $regex: keyword, $options: "i" } },
+            { 'payer.email': { $regex: keyword, $options: "i" } },
+            { 'recipient.email': { $regex: keyword, $options: "i" } },
+            { 'payer.fullName': { $regex: keyword, $options: "i" } },
+            { 'recipient.fullName': { $regex: keyword, $options: "i" } },
+            { 'payer.username': { $regex: keyword, $options: "i" } },
+            { 'recipient.username': { $regex: keyword, $options: "i" } },
+            { 'payer.profile.phoneNumber': { $regex: keyword, $options: "i" } },
+            { 'payer.profile.description': { $regex: keyword, $options: "i" } },
+            { 'recipient.profile.phoneNumber': { $regex: keyword, $options: "i" } },
+            { 'recipient.profile.description': { $regex: keyword, $options: "i" } },
+          ]
+        }
       })
-      .populate({
-        path: "payer",
-        model: "user",
-        populate: {
-          path: "profile",
-          model: "profile",
-        },
-      })
-      .exec();
+      // query.and([{ memo: { $regex: keyword, $options: "i" } }]);
+      // query.or([{ 'status': { $regex: keyword, $options: "i" } }])
+    }
+    // query.skip(page * 10 - 10).limit(10);
+    const total = (await Payment.aggregate(pipeline)).length
+    pipeline.push({ $skip: page * 10 - 10 }, { $limit: 10 })
+    const transactions = await Payment.aggregate(pipeline);
+
+    // const transactions = await query
+    //   .populate({
+    //     path: "recipient",
+    //     model: "user",
+    //     populate: {
+    //       path: "profile",
+    //       model: "profile",
+    //     },
+    //   })
+    //   .populate({
+    //     path: "payer",
+    //     model: "user",
+    //     populate: {
+    //       path: "profile",
+    //       model: "profile",
+    //     },
+    //   })
+    //     .exec();
     res.send({ total, transactions });
   } catch (error) {
     console.log(error);

@@ -147,40 +147,159 @@ exports.delete = async (req, res, next) => {
 exports.search = async (req, res, next) => {
   const { keyword, page } = req.body;
   try {
+    const pipeline = [{ $match: { $and: [{ deleted: { $ne: true } }] } }]
     let query = { $and: [{ deleted: { $ne: true } }] };
-    query.$and.push({
-      $or: [{ endorserId: req.user._id }, { recipientId: req.user._id }],
-    });
+    // query.$and.push({
+    //   $or: [{ endorserId: req.user._id }, { recipientId: req.user._id }],
+    // });
+    pipeline.push({
+      $match: {
+        $or: [
+          { endorserId: mongoose.Types.ObjectId(req.user._id) },
+          { recipientId: mongoose.Types.ObjectId(req.user._id) }
+        ]
+      }
+    })
     if (keyword && keyword !== "") {
-      const users = await User.find({
-        $or: [
-          { firstName: { $regex: keyword, $options: "i" } },
-          { lastName: { $regex: keyword, $options: "i" } },
-          { email: { $regex: keyword, $options: "i" } },
-          { username: { $regex: keyword, $options: "i" } },
-        ],
-      });
-      query.$and.push({
-        $or: [
-          { recipientId: { $in: users.map((user) => user._id) } },
-          { endorserId: { $in: users.map((user) => user._id) } },
-          { text: { $regex: keyword, $options: "i" } },
-        ],
-      });
+      // const users = await User.find({
+      //   $or: [
+      //     { firstName: { $regex: keyword, $options: "i" } },
+      //     { lastName: { $regex: keyword, $options: "i" } },
+      //     { email: { $regex: keyword, $options: "i" } },
+      //     { username: { $regex: keyword, $options: "i" } },
+      //   ],
+      // });
+      const users = await User.aggregate([
+        {
+          $lookup: {
+            from: 'profiles',
+            localField: 'profile',
+            foreignField: "_id",
+            as: 'profile'
+          }
+        },
+        {
+          $addFields: {
+            profile: { $arrayElemAt: ['$profile', 0] },
+            fullName: { $concat: ['$firstName', " ", '$lastName'] }
+          }
+        },
+        // {
+        //   $addFields: {
+        //     fullName: { $concat: ['$firstName', ' ', '$lastName'] }
+        //   }
+        // },
+        {
+          $match: {
+            $or: [
+              // { fullName: { $regex: keyword, $options: "i" } },
+              { "profile.name": { $regex: keyword, $options: "i" } },
+              { "profile.description": { $regex: keyword, $options: "i" } },
+              { "profile.phoneNumber": { $regex: keyword, $options: "i" } },
+              // { lastName: { $regex: keyword, $options: "i" } },
+              { email: { $regex: keyword, $options: "i" } },
+              { username: { $regex: keyword, $options: "i" } },
+            ],
+          }
+        }
+      ])
+      // query.$and.push({
+      //   $or: [
+      //     { recipientId: { $in: users.map((user) => user._id) } },
+      //     { endorserId: { $in: users.map((user) => user._id) } },
+      //     { text: { $regex: keyword, $options: "i" } },
+      //   ],
+      // });
+      pipeline.push({
+        $match: {
+          $or: [
+            { recipientId: { $in: users.map((user) => user._id) } },
+            { endorserId: { $in: users.map((user) => user._id) } },
+            { text: { $regex: keyword, $options: "i" } },
+          ],
+        }
+      })
     }
-    const endorsements = await Endorsement.find(query)
-      .sort({ createdAt: -1 })
-      .populate({
-        path: "recipientId",
-        model: "user",
-        populate: { path: "profile", model: "profile" },
-      })
-      .populate({
-        path: "endorserId",
-        model: "user",
-        populate: { path: "profile", model: "profile" },
-      })
-      .exec();
+
+    pipeline.push(
+      {
+        $sort: { createdAt: - 1 }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'recipientId',
+          foreignField: "_id",
+          as: 'recipientUser',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'profiles',
+                localField: 'profile',
+                foreignField: "_id",
+                as: 'profile'
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ['$profile', 0] },
+                fullName: { $concat: ['$firstName', " ", '$lastName'] }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'endorserId',
+          foreignField: "_id",
+          as: 'endorserUser',
+          pipeline: [
+            {
+              $lookup: {
+                from: 'profiles',
+                localField: 'profile',
+                foreignField: "_id",
+                as: 'profile'
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ['$profile', 0] },
+                fullName: { $concat: ['$firstName', " ", '$lastName'] }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          recipientUser: { $arrayElemAt: ['$recipientUser', 0] }
+        }
+      },
+      {
+        $addFields: {
+          endorserUser: { $arrayElemAt: ['$endorserUser', 0] }
+        }
+      }
+    )
+
+    const endorsements = await Endorsement.aggregate(pipeline)
+
+    // const endorsements = await Endorsement.find(query)
+    //   .sort({ createdAt: -1 })
+    //   .populate({
+    //     path: "recipientId",
+    //     model: "user",
+    //     populate: { path: "profile", model: "profile" },
+    //   })
+    //   .populate({
+    //     path: "endorserId",
+    //     model: "user",
+    //     populate: { path: "profile", model: "profile" },
+    //   })
+    //   .exec();
 
     let endorsements_group = {};
     for (let i = 0; i < endorsements.length; i++) {
@@ -205,7 +324,7 @@ exports.search = async (req, res, next) => {
             endorsements_group[endorsements[i].recipientId._id] = {
               send_weight: endorsements[i].weight,
               send_text: endorsements[i].text,
-              user: endorsements[i].recipientId,
+              user: endorsements[i].recipientUser,
             };
           }
         } else if (
@@ -225,7 +344,7 @@ exports.search = async (req, res, next) => {
             endorsements_group[endorsements[i].endorserId._id] = {
               receive_weight: endorsements[i].weight,
               receive_text: endorsements[i].text,
-              user: endorsements[i].endorserId,
+              user: endorsements[i].endorserUser,
             };
           }
         }
@@ -244,7 +363,7 @@ exports.search = async (req, res, next) => {
             $match:
             {
               recipient: mongoose.Types.ObjectId(req.user._id),
-              payer: x?.user?._id,
+              payer: mongoose.Types.ObjectId(x?.user?._id),
               status: "Completed",
             },
           },
