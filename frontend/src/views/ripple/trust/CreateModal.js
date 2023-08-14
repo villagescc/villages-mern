@@ -37,7 +37,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
     },
     filterOptions: (options, { inputValue }) => {
       return options.filter((item) => {
-        return item.username.toLowerCase().includes(inputValue?.toLowerCase());
+        return item.username?.toLowerCase().includes(inputValue?.toLowerCase()) || `${item?.firstName} ${item?.lastName}`.toLowerCase().includes(inputValue?.toLowerCase());
       });
     }
   };
