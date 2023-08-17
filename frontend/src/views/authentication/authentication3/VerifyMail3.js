@@ -62,6 +62,9 @@ const VerifyMail = () => {
           successAction();
           setTimeout(() => {
             navigate('/login', { replace: true });
+            const anchorTag = document.createElement('a')
+            anchorTag.href = 'villages://villages.io/personal/setting'
+            anchorTag.click()
           }, 1500);
         },
         (err) => {

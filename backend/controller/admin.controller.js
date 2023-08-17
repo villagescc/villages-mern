@@ -118,6 +118,7 @@ exports.search = async (req, res, next) => {
         $or: [
           // { firstName: { $regex: keyword, $options: "i" } },
           // { lastName: { $regex: keyword, $options: "i" } },
+          { 'profile.description': { $regex: keyword, $options: "i" } },
           { fullName: { $regex: keyword, $options: "i" } },
           { email: { $regex: keyword, $options: "i" } },
           { username: { $regex: keyword, $options: "i" } },
@@ -128,6 +129,19 @@ exports.search = async (req, res, next) => {
     // To find people without any Filter
     // const users = await User.find(query).sort({ createdAt: -1 }).select("username");
     const users = await User.aggregate([
+      {
+        $lookup: {
+          from: 'profiles',
+          localField: 'profile',
+          foreignField: "_id",
+          as: 'profile'
+        }
+      },
+      {
+        $addFields: {
+          profile: { $arrayElemAt: ['$profile', 0] },
+        }
+      },
       {
         $addFields: {
           fullName: { $concat: ['$firstName', " ", "$lastName"] }

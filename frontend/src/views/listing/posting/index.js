@@ -256,7 +256,7 @@ const Posting = () => {
         content={false}
         secondary={
           <>
-            <Grid sx={{ justifyContent: { sm: "right", xs: 'left' } }} container alignItems={'center'} spacing={1}>
+            <Grid sx={{ justifyContent: { xs: 'left' } }} container alignItems={'center'} spacing={1}>
               {isLoggedIn ? (
                 // <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
                 //   Create
