@@ -10,6 +10,7 @@ import { dispatch } from '../index';
 const initialState = {
   error: null,
   loading: false,
+  isPostsLoading: false,
   tags: [],
   categories: [],
   subCategories: [],
@@ -30,6 +31,11 @@ const slice = createSlice({
     // SET LOADING
     setLoading(state, action) {
       state.loading = action.payload;
+    },
+
+    // SET LOADING FOR POSTS
+    setIsPostsLoading(state, action) {
+      state.isPostsLoading = action.payload;
     },
 
     // GET TAGS
@@ -114,13 +120,15 @@ export function getSubCategories(categoryId = 'all') {
 
 export function filterPost(filterData) {
   return async () => {
-    dispatch(slice.actions.setLoading(true));
+    dispatch(slice.actions.setIsPostsLoading(true));
     try {
       const response = await axios.post('/posting/posts', { filterData });
       dispatch(slice.actions.filterPostSuccess(response.data));
     } catch (error) {
       console.log('error', error);
       dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setIsPostsLoading(false));
     }
   };
 }

@@ -7,13 +7,17 @@ import {
   Box,
   Button,
   CardContent,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
   InputAdornment,
+  ListItemText,
+  MenuItem,
   Pagination,
+  Select,
   TextField
 } from '@mui/material';
 
@@ -52,10 +56,11 @@ const Posting = () => {
   if (!pageId) pageId = 1;
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useAuth();
-
+  // const networkFilterRef = useRef(null)
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const [keyword, setKeyword] = React.useState('');
+  // const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
   const [posts, setPosts] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [categories, setCategories] = React.useState([]);
@@ -71,8 +76,20 @@ const Posting = () => {
     filterType: '',
     filterRadius: '',
     keyword: '',
+    network: [],
     page: pageId ? Number(pageId) : 1
   });
+
+  const trustNetwork = [
+    {
+      value: "TrustsMe",
+      label: "Trusts me"
+    },
+    {
+      value: "TrustedByMe",
+      label: "Trusted"
+    }
+  ]
 
   // POST MODAL FORM
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -334,15 +351,15 @@ const Posting = () => {
 
         }
       >
-        {loading ? (
+        {postingState.isPostsLoading ? (
           <PostingListSkeleton />
         ) : (
           <CardContent>
-            <Grid container spacing={2} mt={0} justifyContent="end" alignItems="center" sx={{ my: 1 }}>
+            <Grid container spacing={2} mt={0} justifyContent={showFilter ? "space-between" : "end"} alignItems="center" sx={{ my: 1 }}>
               {/* <Grid container justifyContent="flex-end" alignItems="center" spacing={2}> */}
               {showFilter && (
                 <>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} >
                     <FormControlSelect
                       currencies={[
                         {
@@ -361,7 +378,7 @@ const Posting = () => {
                       captionLabel="Posting"
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} >
                     <FormControlSelect
                       currencies={listing_type.filter((type) => ({
                         value: type.value,
@@ -374,7 +391,7 @@ const Posting = () => {
                       captionLabel="Post type"
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} >
                     <FormControlSelect
                       currencies={radius}
                       currency={filterData.filterRadius}
@@ -384,7 +401,7 @@ const Posting = () => {
                       captionLabel="Search area"
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item xs={12} sm={6} md={4} lg={3} >
                     <TextField
                       InputProps={{
                         startAdornment: (
@@ -401,9 +418,66 @@ const Posting = () => {
                       size="small"
                     />
                   </Grid>
+                  <Grid item xs={12} sm={6} md={4} lg={3} >
+                    {/* <TextField
+                      sx={{ marginTop: { xs: "14px", sm: "0" } }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        )
+                      }}
+                      fullWidth
+                      onChange={handleSearch}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Search Post"
+                      value={keyword}
+                      size="small"
+                    /> */}
+                    <Select
+                      // open={isDropdownOpen}
+                      fullWidth
+                      // onClose={() => setIsDropdownOpen(false)}
+                      disabled={loading}
+                      id="standard-select-currency"
+                      multiple
+                      // onOpen={() => setIsDropdownOpen(true)}
+                      displayEmpty
+                      value={filterData.network}
+                      renderValue={(selected) => {
+                        let x = selected.map(s => {
+                          return trustNetwork.find(e => e.value == s)?.label
+                        }).join(', ')
+                        return x.trim().length == 0 ? "None" : x
+                      }}
+                      onChange={(e) => {
+                        setFilterData({ ...filterData, network: e.target.value })
+                        // clearTimeout(networkFilterRef.current)
+                        // networkFilterRef.current = setTimeout(() => {
+                        // setIsDropdownOpen(false)
+                        // dispatch(getUserList(keyword, page, value, e.target.value));
+                        // }, 1000);
+                      }}
+                      sx={{
+                        "& .MuiSelect-select": { padding: "10px 32px 10px 14px" },
+                        marginTop: { sm: "0", xs: "10px" }
+                      }}
+                    >
+                      {trustNetwork.map((option) => (
+                        // <MenuItem key={option.value} value={option.value} >
+                        //     {option.label}
+                        // </MenuItem>
+                        <MenuItem key={option.value} value={option.value} >
+                          <Checkbox checked={filterData.network.indexOf(option.value) > -1} />
+                          <ListItemText primary={option.label} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
                 </>
               )}
-              {posts.length > 0 && <Grid item xs={12} sm={6} lg={4}>
+              {posts.length > 0 && <Grid item xs={12} sm={6} md={4}>
                 <Pagination
                   sx={{
                     ".MuiPagination-ul": {

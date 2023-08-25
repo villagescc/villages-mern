@@ -137,11 +137,11 @@ export function getUsers() {
   };
 }
 
-export function getUserList(keyword = '', page = 1, value = 'Suggested') {
+export function getUserList(keyword = '', page = 1, value = 'Suggested', network = []) {
   return async () => {
     dispatch(slice.actions.setLoading(true));
     try {
-      const response = await axios.post('/users/search', { keyword, page, value });
+      const response = await axios.post('/users/search', { keyword, page, value, network });
       dispatch(slice.actions.getUsersListSuccess(response.data));
       dispatch(slice.actions.setLoading(false));
     } catch (error) {

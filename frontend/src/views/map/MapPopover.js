@@ -92,7 +92,7 @@ const MapPopover = ({ post, index }) => {
         {isOpen && (
             <div
                 ref={refs.setFloating}
-                style={floatingStyles}
+                style={{ ...floatingStyles, zIndex: 99999 }}
                 {...getFloatingProps()}
             >
                 <Card sx={{ display: 'flex', flexDirection: 'column', width: '250px' }}>

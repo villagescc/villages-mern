@@ -9,7 +9,7 @@ import useAuth from 'hooks/useAuth';
 import { Link, useParams } from 'react-router-dom';
 import { SERVER_URL } from 'config';
 import { getUserList } from 'store/slices/user';
-import { Box, Button, Card, CardContent, CardMedia, Grid, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia, Checkbox, Grid, InputAdornment, ListItemText, MenuItem, Select, TextField, Typography } from '@mui/material';
 import FormControlSelect from 'ui-component/extended/Form/FormControlSelect';
 import { listing_type, radius } from 'constant';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -29,8 +29,22 @@ const Index = () => {
     filterCategory: '',
     filterType: '',
     filterRadius: '',
+    network: [],
     keyword: ''
   });
+
+
+  const trustNetwork = [
+    {
+      value: "TrustsMe",
+      label: "Trusts me"
+    },
+    {
+      value: "TrustedByMe",
+      label: "Trusted"
+    }
+  ]
+
   const mapState = useSelector((state) => state.map);
   const postingState = useSelector((state) => state.posting);
 
@@ -127,7 +141,7 @@ const Index = () => {
       <CardContent>
         {showFilter && (
           <Grid container justifyContent="space-between" alignItems="center" spacing={2}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} >
               <FormControlSelect
                 currencies={[
                   {
@@ -146,7 +160,7 @@ const Index = () => {
                 captionLabel="Posting"
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} >
               <FormControlSelect
                 currencies={listing_type.filter((type) => ({
                   value: type.value,
@@ -159,7 +173,7 @@ const Index = () => {
                 captionLabel="Post type"
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} >
               <FormControlSelect
                 currencies={radius}
                 currency={filterData.filterRadius}
@@ -169,7 +183,7 @@ const Index = () => {
                 captionLabel="Search area"
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3} >
               <TextField
                 InputProps={{
                   startAdornment: (
@@ -186,6 +200,46 @@ const Index = () => {
                 size="small"
               />
             </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3} >
+              <Select
+                // open={isDropdownOpen}
+                fullWidth
+                // onClose={() => setIsDropdownOpen(false)}
+                id="standard-select-currency"
+                multiple
+                // onOpen={() => setIsDropdownOpen(true)}
+                displayEmpty
+                value={filterData.network}
+                renderValue={(selected) => {
+                  let x = selected.map(s => {
+                    return trustNetwork.find(e => e.value == s)?.label
+                  }).join(', ')
+                  return x.trim().length == 0 ? "None" : x
+                }}
+                onChange={(e) => {
+                  setFilterData({ ...filterData, network: e.target.value })
+                  // clearTimeout(networkFilterRef.current)
+                  // networkFilterRef.current = setTimeout(() => {
+                  // setIsDropdownOpen(false)
+                  // dispatch(getUserList(keyword, page, value, e.target.value));
+                  // }, 1000);
+                }}
+                sx={{
+                  "& .MuiSelect-select": { padding: "10px 32px 10px 14px" },
+                  marginTop: { sm: "0", xs: "10px" }
+                }}
+              >
+                {trustNetwork.map((option) => (
+                  // <MenuItem key={option.value} value={option.value} >
+                  //     {option.label}
+                  // </MenuItem>
+                  <MenuItem key={option.value} value={option.value} >
+                    <Checkbox checked={filterData.network.indexOf(option.value) > -1} />
+                    <ListItemText primary={option.label} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
           </Grid>
         )}
       </CardContent>
@@ -196,7 +250,7 @@ const Index = () => {
             libraries: ['places']
           }}
           yesIWantToUseGoogleMapApiInternals
-          center={[user?.latitude < 90 ? user?.latitude : 180 - user?.latitude, user?.longitude < 180 ? user?.longitude : 360 - user?.longitude]}
+          center={[!isNaN(user?.latitude < 90 ? user?.latitude : 180 - user?.latitude) ? user?.latitude < 90 ? user?.latitude : 180 - user?.latitude : 19.4070173, !isNaN(user?.longitude < 180 ? user?.longitude : 360 - user?.longitude) ? user?.longitude < 180 ? user?.longitude : 360 - user?.longitude : -154.9231281]}
           zoom={12}
           defaultZoom={9}
         >
