@@ -85,12 +85,20 @@ const _getUserById = async (id) => {
         },
       })
       .exec();
-    if (!user) {
+    if (user?.length == 0) {
       user = await User.findById(id).populate("profile");
-      await ChatState.create({
-        user: user._id,
-        lastSeen: [],
-      });
+      if (user) {
+        await ChatState.create({
+          user: user._id,
+          lastSeen: [],
+        });
+      }
+      else {
+        return {
+          success: true,
+          user: []
+        }
+      }
     }
     return {
       success: true,
