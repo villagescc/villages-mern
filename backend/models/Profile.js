@@ -47,6 +47,10 @@ const ProfileSchema = new mongoose.Schema(
     recentlyActive: {
       type: Date,
       default: new Date()
+    },
+    recentActivitiesOn: {
+      type: [Date],
+      default: [Date]
     }
   },
   {

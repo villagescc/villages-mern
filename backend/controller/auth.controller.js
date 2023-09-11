@@ -26,6 +26,7 @@ const listID = process.env.MAILCHIMP_LIST_ID;
 
 const axios = require("axios");
 const ProfileSetting = require("../models/ProfileSetting");
+const { default: mongoose } = require("mongoose");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
@@ -39,6 +40,14 @@ const _getUser = async (id) => {
 
 exports.getUser = async (req, res, next) => {
   try {
+    await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, {
+      $push: {
+        recentActivitiesOn: {
+          $each: [new Date()],
+          $slice: -30,
+        }
+      }
+    });
     const user = await _getUser(req.user._id);
     res.send(user);
   } catch (err) {

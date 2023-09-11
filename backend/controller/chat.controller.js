@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Chat = require("../models/Chat");
 const ChatState = require("../models/ChatState");
 const SocketRoom = require("../models/SocketRoom");
@@ -20,15 +21,207 @@ exports.getUsers = async (req, res, next) => {
       );
     });
     usersIdArray = usersIdArray.filter(id => id)
+    usersIdArray = usersIdArray.map(id => id)
     // for (each of usersIdArray) {
     //   let result = await _getUserById(each);
     //   if (result.success) users.push(result.user);
     // }
-    let result = await _getUserById(usersIdArray);
-    if (result.success) users.push(result.user);
+    // let result = await _getUserById(usersIdArray);
+    let result = async () => {
+      try {
+        let user = await ChatState.aggregate([
+          ...(usersIdArray.length !== undefined ? [{ $match: { user: { $in: usersIdArray } } }] : []),
+          {
+            $lookup: {
+              from: "chats",
+              localField: "user",
+              foreignField: "sender",
+              as: "sender",
+              pipeline: [
+                {
+                  $match: {
+                    $or: [{ sender: mongoose.Types.ObjectId(req.user._id) }, { recipient: mongoose.Types.ObjectId(req.user._id) }],
+                  }
+                },
+                {
+                  $addFields: {
+                    createdAt: {
+                      $toLong: {
+                        $subtract: [
+                          "$createdAt",
+                          new Date("1970-01-01T00:00:00Z"),
+                        ],
+                      },
+                    },
+                  },
+                },
+                {
+                  $sort: {
+                    createdAt: -1,
+                  },
+                }
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: "chats",
+              localField: "user",
+              foreignField: "recipient",
+              as: "recepient",
+              pipeline: [
+                {
+                  $match: {
+                    $or: [{ sender: mongoose.Types.ObjectId(req.user._id) }, { recipient: mongoose.Types.ObjectId(req.user._id) }],
+                  }
+                },
+                {
+                  $addFields: {
+                    createdAt: {
+                      $toLong: {
+                        $subtract: [
+                          "$createdAt",
+                          new Date("1970-01-01T00:00:00Z"),
+                        ],
+                      },
+                    },
+                  },
+                },
+                {
+                  $sort: {
+                    createdAt: -1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              recepient: {
+                $first: "$recepient",
+              },
+              sender: {
+                $first: "$sender",
+              },
+            },
+          },
+          {
+            $addFields: {
+              latestMessageOn: {
+                $cond: {
+                  if: {
+                    $gt: [
+                      "$sender.createdAt",
+                      "$recepient.createdAt",
+                    ],
+                  },
+                  then: "$sender.createdAt",
+                  else: "$recepient.createdAt",
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              latestMessage: {
+                $cond: {
+                  if: {
+                    $gt: [
+                      "$sender.createdAt",
+                      "$recepient.createdAt",
+                    ],
+                  },
+                  then: "$sender.text",
+                  else: "$recepient.text",
+                },
+              },
+            }
+          },
+          {
+            $unset:
+              ["sender", "recepient"],
+          },
+          // {
+          //   $addFields: {
+          //     latestMessageOn: {
+          //       $toLong: {
+          //         $subtract: [
+          //           "$createdAt",
+          //           new Date("1970-01-01T00:00:00Z"),
+          //         ],
+          //       },
+          //     }
+          //   }
+          // },
+          {
+            $sort:
+            {
+              latestMessageOn: -1,
+            },
+          },
+          {
+            $lookup:
+            {
+              from: "users",
+              localField: "user",
+              foreignField: "_id",
+              as: "user",
+              pipeline: [
+                {
+                  $lookup: {
+                    from: "profiles",
+                    localField: "profile",
+                    foreignField: "_id",
+                    as: "profile",
+                  },
+                },
+                {
+                  $addFields: {
+                    profile: {
+                      $first: "$profile",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              user: {
+                $first: "$user",
+              },
+            },
+          },
+        ])
+        if (user?.length == 0) {
+          user = await User.findById(usersIdArray).populate("profile");
+          if (user) {
+            await ChatState.create({
+              user: user._id,
+              lastSeen: [],
+            });
+          }
+          else {
+            return {
+              success: true,
+              user: []
+            }
+          }
+        }
+        return {
+          success: true,
+          user,
+        };
+      } catch (error) {
+        return { success: false, error };
+      }
+    }
+    const resp = await result()
+    if (resp.success) users.push(resp.user);
+    let data = users?.[0]?.filter((elem, index) => users?.[0]?.findIndex(obj => obj?.user?._id?.toString() == elem?.user?._id?.toString()) == index).filter(x => x.user)
     // temp1.filter((elem,index)=>temp1.findIndex(obj=>obj.user?._id==elem.user?._id)==index).filter(x=>x.user)
-    res.send({ users: users?.[0]?.filter((elem, index) => users?.[0]?.findIndex(obj => obj?.user?._id == elem?.user?._id) == index)?.filter(x => x?.user) });
-    // res.send({ users: users[0]});
+    res.send({ users: data });
+    // res.send({ users: users });
   } catch (error) {
     next(error);
   }
@@ -50,12 +243,152 @@ exports.searchUsers = async (req, res, next) => {
     //   if (result.success) users.push(result.user);
     // }
     usersIdArray = usersIdArray.filter(id => id)
+    usersIdArray = usersIdArray.map(id => mongoose.Types.ObjectId(id))
     // for (each of usersIdArray) {
     //   let result = await _getUserById(each);
     //   if (result.success) users.push(result.user);
     // }
-    let result = await _getUserById(usersIdArray);
-    if (result.success) users.push(result.user);
+    // let result = await _getUserById(usersIdArray);
+    let result = async () => {
+      try {
+        // let user = await ChatState.find({ user: { $in: id } })
+        //   .populate({
+        //     path: "user",
+        //     model: "user",
+        //     populate: {
+        //       path: "profile",
+        //       model: "profile",
+        //     },
+        //   })
+        //   .exec();
+        let user = await ChatState.aggregate([
+          ...(usersIdArray.length !== undefined ? [{ $match: { user: { $in: usersIdArray } } }] : []),
+          {
+            $lookup: {
+              from: "chats",
+              localField: "user",
+              foreignField: "sender",
+              as: "sender",
+              pipeline: [
+                {
+                  $sort: {
+                    createdAt: -1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: "chats",
+              localField: "user",
+              foreignField: "recipient",
+              as: "recepient",
+              pipeline: [
+                {
+                  $sort: {
+                    createdAt: -1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              recepient: {
+                $first: "$recepient",
+              },
+              sender: {
+                $first: "$sender",
+              },
+            },
+          },
+          {
+            $addFields:
+            {
+              latestMessageOn: {
+                $cond: {
+                  if: {
+                    $gt: [
+                      "$sender.createdAt",
+                      "$recipient.createdAt",
+                    ],
+                  },
+                  then: "$sender.createdAt",
+                  else: "$recipient.createdAt",
+                },
+              },
+            },
+          },
+          {
+            $unset:
+              ["sender", "recepient"],
+          },
+          {
+            $sort:
+            {
+              latestMessageOn: -1,
+            },
+          },
+          {
+            $lookup:
+            {
+              from: "users",
+              localField: "user",
+              foreignField: "_id",
+              as: "user",
+              pipeline: [
+                {
+                  $lookup: {
+                    from: "profiles",
+                    localField: "profile",
+                    foreignField: "_id",
+                    as: "profile",
+                  },
+                },
+                {
+                  $addFields: {
+                    profile: {
+                      $first: "$profile",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              user: {
+                $first: "$user",
+              },
+            },
+          },
+        ])
+        if (user?.length == 0) {
+          user = await User.findById(usersIdArray).populate("profile");
+          if (user) {
+            await ChatState.create({
+              user: user._id,
+              lastSeen: [],
+            });
+          }
+          else {
+            return {
+              success: true,
+              user: []
+            }
+          }
+        }
+        return {
+          success: true,
+          user,
+        };
+      } catch (error) {
+        return { success: false, error };
+      }
+    }
+    const resp = await result()
+    if (resp.success) users.push(resp.user);
     // temp1.filter((elem,index)=>temp1.findIndex(obj=>obj.user?._id==elem.user?._id)==index).filter(x=>x.user)
     res.send({ users: users[0].filter((elem, index) => users[0].findIndex(obj => obj.user?._id == elem.user?._id) == index).filter(x => x.user) });
     // res.send({ users });
