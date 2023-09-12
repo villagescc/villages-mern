@@ -131,6 +131,36 @@ router.post(
   adminController.search
 );
 
+router.post(
+  "/admin/users/getMostConnectedUsers",
+  authMiddleware.auth,
+  adminController.getMostConnectedUsers
+);
+
+router.post(
+  "/admin/users/getMostActiveUsers",
+  authMiddleware.auth,
+  adminController.getMostActiveUsers
+);
+
+// router.post(
+//   "/admin/users/getVillageHours",
+//   authMiddleware.auth,
+//   adminController.getVillagesHours
+// );
+
+router.post(
+  "/admin/users/getAnalytics",
+  authMiddleware.auth,
+  adminController.getAnalytics
+);
+
+router.post(
+  "/admin/users/getRecentPayments",
+  authMiddleware.auth,
+  adminController.getRecentPayments
+);
+
 // ######################### Trust ROUTER #############################
 router.post(
   "/endorsement/save",

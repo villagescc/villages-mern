@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
+import CountUp from 'react-countup';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Card, CardContent, Grid, Typography, useMediaQuery } from '@mui/material';
+import { Card, CardContent, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material';
 
 // =============================|| REVENUE CARD ||============================= //
 
-const RevenueCard = ({ primary, secondary, content, iconPrimary, color }) => {
+const RevenueCard = ({ primary, secondary, content, iconPrimary, color, loading, decimal }) => {
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -14,16 +15,21 @@ const RevenueCard = ({ primary, secondary, content, iconPrimary, color }) => {
     const primaryIcon = iconPrimary ? <IconPrimary fontSize="large" /> : null;
 
     return (
-        <Card sx={{ background: color, position: 'relative', color: '#fff' }}>
-            <CardContent>
+        <Card sx={{ background: color, position: 'relative', color: '#fff', height: "100%" }}>
+            <CardContent sx={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row-reverse",
+                justifyContent: "center",
+            }}>
                 <Typography
                     variant="body2"
                     sx={{
-                        position: 'absolute',
-                        right: 13,
-                        top: 14,
+                        // position: 'absolute',
+                        // right: 13,
+                        // top: 14,
                         color: '#fff',
-                        '&> svg': { width: 100, height: 100, opacity: '0.5' },
+                        '&> svg': { width: 50, height: 50, opacity: '0.5' },
                         [theme.breakpoints.down('sm')]: {
                             top: 13,
                             '&> svg': { width: 80, height: 80 }
@@ -40,7 +46,8 @@ const RevenueCard = ({ primary, secondary, content, iconPrimary, color }) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h3" color="inherit">
-                            {secondary}
+                            {/* {secondary} */}
+                            {loading ? <Skeleton variant="rectangular" width={'70%'} height={25} style={{ background: "rgb(255 255 255 / 10%)" }} /> : <CountUp end={secondary} decimals={decimal ?? 0} />}
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -56,6 +63,7 @@ const RevenueCard = ({ primary, secondary, content, iconPrimary, color }) => {
 
 RevenueCard.propTypes = {
     primary: PropTypes.string,
+    decimal: PropTypes.number,
     secondary: PropTypes.string,
     content: PropTypes.string,
     iconPrimary: PropTypes.object,

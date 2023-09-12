@@ -65,6 +65,7 @@
         "react-app-rewired": "^2.2.1",
         "react-beautiful-dnd": "^13.1.1",
         "react-copy-to-clipboard": "^5.1.0",
+        "react-countup": "^6.4.2",
         "react-currency-format": "^1.1.0",
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",

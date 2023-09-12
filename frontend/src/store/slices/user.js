@@ -9,12 +9,22 @@ import { dispatch } from '../index';
 
 const initialState = {
   error: null,
+  recentUsers: [],
+  mostActiveUsers: [],
+  mostConnectedUsers: [],
+  analytics: null,
+  isUsersLoading: false,
+  isAnalyticsLoading: false,
+  isRecentPaymentLoading: false,
+  // creditLinesIssued: null,
+  // villagesHours: null,
   total: 0,
   users: [],
   user: {},
   setting: {},
   followers: [],
   followings: [],
+  recentPayments: [],
   postings: [],
   loading: false
 };
@@ -115,7 +125,63 @@ const slice = createSlice({
         }
       }
       state.error = null;
-    }
+    },
+
+    // get recent users
+    setRecentUsers(state, action) {
+      state.recentUsers = action.payload
+      state.error = null
+    },
+
+    // set most active users
+    setMostActiveUsers(state, action) {
+      state.mostActiveUsers = action.payload
+      state.error = null
+    },
+
+    // set most active users
+    setMostConnectedUsers(state, action) {
+      state.mostConnectedUsers = action.payload
+      state.error = null
+    },
+
+    // set village hours
+    // setVillagesHours(state, action) {
+    //   state.villagesHours = action.payload
+    //   state.error = null
+    // },
+
+    // set credit lines issued
+    // setCreditLinesIssued(state, action) {
+    //   state.creditLinesIssued = action.payload
+    //   state.error = null
+    // }
+
+    // set analytics
+    setAnalytics(state, action) {
+      state.analytics = action.payload
+      state.error = null
+    },
+
+    // set loading state for analytics 
+    setIsAnalyticsLoading(state, action) {
+      state.isAnalyticsLoading = action.payload
+    },
+
+    // set loading state for new users 
+    setIsUserLoading(state, action) {
+      state.isUsersLoading = action.payload
+    },
+
+    // set loading state for recent payments
+    setIsRecentPaymentLoading(state, action) {
+      state.isRecentPaymentLoading = action.payload
+    },
+
+    // set recent payments
+    setRecentPayments(state, action) {
+      state.recentPayments = action.payload
+    },
   }
 });
 
@@ -360,6 +426,94 @@ export function deletUser(user, successAction) {
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// Admin analytics 
+
+export function getMostConnectedUsers(dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setIsUserLoading(true));
+    try {
+      const response = await axios.post('admin/users/getMostConnectedUsers', { dateRange, viewport });
+      dispatch(slice.actions.setMostConnectedUsers(response.data.users));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setIsUserLoading(false));
+    }
+  };
+}
+
+export function getMostActiveUsers(dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    // dispatch(slice.actions.setIsAnalyticsLoading(true));
+    try {
+      const response = await axios.post('admin/users/getMostActiveUsers', { dateRange, viewport });
+      dispatch(slice.actions.setMostActiveUsers(response.data.users));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setLoading(false));
+      // dispatch(slice.actions.setIsUserLoading(false));
+    }
+  };
+}
+
+// export function getVillageHours() {
+//   return async () => {
+//     dispatch(slice.actions.setLoading(true));
+//     try {
+//       const response = await axios.post('admin/users/getVillageHours');
+//       dispatch(slice.actions.setVillagesHours(response.data.villageHours));
+//       dispatch(slice.actions.setLoading(false));
+//     } catch (error) {
+//       dispatch(slice.actions.hasError(error));
+//       dispatch(slice.actions.setLoading(false));
+//     }
+//   };
+// }
+
+// export function getCreditLinesIssued() {
+//   return async () => {
+//     dispatch(slice.actions.setLoading(true));
+//     try {
+//       const response = await axios.post('admin/users/getVillageHours');
+//       dispatch(slice.actions.setCreditLinesIssued(response.data.creditLinesIssued));
+//       dispatch(slice.actions.setLoading(false));
+//     } catch (error) {
+//       dispatch(slice.actions.hasError(error));
+//       dispatch(slice.actions.setLoading(false));
+//     }
+//   };
+// }
+
+export function getAnalytics(dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setIsAnalyticsLoading(true));
+    try {
+      const response = await axios.post('admin/users/getAnalytics', { dateRange, viewport });
+      dispatch(slice.actions.setAnalytics(response.data.analytics));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setIsAnalyticsLoading(false));
+    }
+  };
+}
+
+export function getRecentPayments(page = 0, dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setIsRecentPaymentLoading(true));
+    try {
+      const response = await axios.post('admin/users/getRecentPayments', { page, dateRange, viewport });
+      dispatch(slice.actions.setRecentPayments(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setIsRecentPaymentLoading(false));
     }
   };
 }
