@@ -50,7 +50,7 @@ const ProfileSchema = new mongoose.Schema(
     },
     recentActivitiesOn: {
       type: [Date],
-      default: [Date]
+      default: [new Date().toISOString()]
     }
   },
   {

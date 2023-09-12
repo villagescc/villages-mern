@@ -40,14 +40,20 @@ const _getUser = async (id) => {
 
 exports.getUser = async (req, res, next) => {
   try {
-    await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, {
-      $push: {
-        recentActivitiesOn: {
-          $each: [new Date()],
-          $slice: -30,
+    try {
+      await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, {
+        $push: {
+          recentActivitiesOn: {
+            $each: [new Date().toISOString()],
+            $slice: -30,
+          }
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.log("find user error", err);
+      // next(err);
+      res.status(500).send({ message: err });
+    }
     const user = await _getUser(req.user._id);
     res.send(user);
   } catch (err) {
