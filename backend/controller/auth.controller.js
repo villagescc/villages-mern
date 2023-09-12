@@ -43,10 +43,7 @@ exports.getUser = async (req, res, next) => {
     try {
       await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, {
         $push: {
-          recentActivitiesOn: {
-            $each: [new Date().toISOString()],
-            $slice: -30,
-          }
+          recentActivitiesOn: new Date().toISOString()
         }
       });
     } catch (err) {
