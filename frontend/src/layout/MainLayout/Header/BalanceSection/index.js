@@ -29,7 +29,7 @@ const BalanceSection = () => {
     >
       <AccountBalanceWalletOutlined color={'secondary'} sx={{ marginRight: 1 }} />
       <Typography variant={'h3'} sx={{ marginRight: 1 }} color={'secondary'}>
-        {user?.account?.balance}
+        {Number(Number(user?.account?.balance).toFixed(2)).toString()}
       </Typography>
       <Typography variant={'h3'}>V.H.</Typography>
     </Box>
