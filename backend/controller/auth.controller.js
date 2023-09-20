@@ -41,7 +41,7 @@ const _getUser = async (id) => {
 exports.getUser = async (req, res, next) => {
   try {
     try {
-      await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id) }, {
+      await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id), isSuperuser: false }, {
         $push: {
           recentActivitiesOn: new Date().toISOString()
         }

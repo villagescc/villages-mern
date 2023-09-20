@@ -12,6 +12,8 @@ const initialState = {
   recentUsers: [],
   mostActiveUsers: [],
   mostConnectedUsers: [],
+  transactionHistory: [],
+  trustHistory: [],
   analytics: null,
   isUsersLoading: false,
   isAnalyticsLoading: false,
@@ -182,6 +184,17 @@ const slice = createSlice({
     setRecentPayments(state, action) {
       state.recentPayments = action.payload
     },
+
+    // set transaction history
+    setTransactionHistory(state, action) {
+      state.transactionHistory = action.payload
+    },
+
+
+    // set trust history
+    setTrustHistory(state, action) {
+      state.trustHistory = action.payload
+    }
   }
 });
 
@@ -514,6 +527,34 @@ export function getRecentPayments(page = 0, dateRange, viewport) {
       dispatch(slice.actions.hasError(error));
     } finally {
       dispatch(slice.actions.setIsRecentPaymentLoading(false));
+    }
+  };
+}
+
+export function getPaymentHistory(page = 0, dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.post('admin/users/getPaymentHistory', { page, dateRange, viewport });
+      dispatch(slice.actions.setTransactionHistory(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setLoading(false));
+    }
+  };
+}
+
+export function getTrustHistory(page = 0, dateRange, viewport) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.post('admin/users/getTrustHistory', { page, dateRange, viewport });
+      dispatch(slice.actions.setTrustHistory(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setLoading(false));
     }
   };
 }

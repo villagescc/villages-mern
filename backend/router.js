@@ -143,6 +143,58 @@ router.post(
   adminController.getMostActiveUsers
 );
 
+// admin transaction history
+
+router.post(
+  "/admin/users/getPaymentHistory",
+  authMiddleware.auth,
+  adminController.getPaymentHistory
+);
+
+router.post(
+  "/admin/users/export/transactionHistory",
+  authMiddleware.auth,
+  adminController.transactionHistory
+);
+
+router.post(
+  "/admin/users/edit/transactionHistory",
+  authMiddleware.auth,
+  adminController.editTransactionHistory
+);
+
+router.post(
+  "/admin/users/delete/transactionHistory",
+  authMiddleware.auth,
+  adminController.deleteTransactionHistory
+);
+
+// admin trust history
+
+router.post(
+  "/admin/users/getTrustHistory",
+  authMiddleware.auth,
+  adminController.getTrustHistory
+);
+
+router.post(
+  "/admin/users/export/trustHistory",
+  authMiddleware.auth,
+  adminController.trustHistory
+);
+
+router.post(
+  "/admin/users/edit/trustHistory",
+  authMiddleware.auth,
+  adminController.editTrustHistory
+);
+
+router.post(
+  "/admin/users/delete/trustHistory",
+  authMiddleware.auth,
+  adminController.deleteTrustHistory
+);
+
 // router.post(
 //   "/admin/users/getVillageHours",
 //   authMiddleware.auth,
