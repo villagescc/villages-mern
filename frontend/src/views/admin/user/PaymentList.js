@@ -45,7 +45,7 @@ const PaymentList = ({ title, payments }) => (
                             <TableRow hover key={index}>
                                 <TableCell sx={{ pl: 3 }}>
                                     <Typography align="left" component="div" variant="subtitle1">
-                                        {row.createdAt}
+                                        {new Date(row.createdAt).toLocaleDateString()}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>

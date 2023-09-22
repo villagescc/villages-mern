@@ -46,15 +46,15 @@ const EndorsementList = ({ title, followings }) => {
                                 </Grid>
                                 <Grid item xs zeroMinWidth>
                                     <Typography align="left" component="div" variant="subtitle1">
-                                        {following?.username}
+                                        {following?.profile?.user?.username}
                                     </Typography>
                                     <Typography align="left" component="div" variant="subtitle2">
-                                        {following?.endorsement?.text ? following?.endorsement?.text?.slice(0, 100) + '...' : ''}
+                                        {following?.text ? following?.text?.slice(0, 100) + '...' : ''}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography align="left" variant="h5">
-                                        {following?.endorsement?.weight} {'VH'}
+                                        {following?.weight} {'V.H.'}
                                     </Typography>
                                 </Grid>
                             </Grid>

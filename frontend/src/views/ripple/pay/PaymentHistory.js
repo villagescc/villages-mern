@@ -85,18 +85,18 @@ const PaymentHistory = ({ handleCreateClick, count }) => {
     setOpenDetail(true);
   };
 
-  useEffect(() => {
-    dispatch(
-      getTransactions({
-        page,
-        keyword,
-        status,
-        address,
-        paymentType,
-        period
-      })
-    );
-  }, []);
+  // useEffect(() => {
+  //   dispatch(
+  //     getTransactions({
+  //       page,
+  //       keyword,
+  //       status,
+  //       address,
+  //       paymentType,
+  //       period
+  //     })
+  //   );
+  // }, []);
 
   useEffect(() => {
     dispatch(

@@ -23,7 +23,7 @@ import { IconSearch } from '@tabler/icons';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import { SERVER_URL } from 'config';
 import useAuth from 'hooks/useAuth';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Empty from 'ui-component/Empty';
 import { getUserList } from '../../../store/slices/user';
 
@@ -41,9 +41,11 @@ const Index = () => {
   const [total, setTotal] = useState(0);
   const [endorsements, setEndorsements] = useState([]);
   const [users, setUsers] = useState([]);
+  const [username, setUsername] = useState(null)
   const [endorsement, setEndorsement] = useState({
     text: 'Trust him'
   });
+  const [urlSearchParams, setURLSearchParams] = useSearchParams();
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -63,6 +65,11 @@ const Index = () => {
   useEffect(() => {
     setErrors({})
   }, [openCreate])
+
+
+  useEffect(() => {
+    setUsername(urlSearchParams.get("recipient") || null)
+  }, [urlSearchParams])
 
   useEffect(() => {
     dispatch(searchEndorsements());
@@ -88,6 +95,7 @@ const Index = () => {
   const handleModalClose = () => {
     dispatch(removeEndrosement())
     setOpenCreate(false)
+    setUsername(null)
     setEndorsement({ recipient: '', text: '', weight: '' })
   }
 
@@ -186,6 +194,19 @@ const Index = () => {
     });
   }
 
+
+  useEffect(() => {
+    // console.log(urlSearchParams.get("recipient"), urlSearchParams.get("amount"), urlSearchParams.get("comment"));
+    // console.log(recipient, amount, comment);
+    if (urlSearchParams.get("recipient") && urlSearchParams.get("amount") && urlSearchParams.get("comment")) {
+      setOpenCreate(true)
+      // setAmount(urlSearchParams.get("amount"))
+      setEndorsement({ text: urlSearchParams.get("comment"), weight: urlSearchParams.get("amount") })
+      // setEndorsement({ ...endorsement, weight: urlSearchParams.get("amount") })
+    }
+  }, [urlSearchParams])
+
+
   return (
     <>
       <Grid container spacing={gridSpacing}>
@@ -268,7 +289,10 @@ const Index = () => {
         onClose={() => handleModalClose()}
         onSave={handleSaveClick}
         users={users}
+        username={username}
+        setUsername={setUsername}
         endorsement={endorsement}
+        loading={loading}
         setEndorsement={setEndorsement}
         errors={errors}
       />

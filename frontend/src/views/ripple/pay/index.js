@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useTheme } from '@mui/material/styles';
 import { Box, Tab, Tabs, Typography, styled } from '@mui/material';
@@ -85,6 +85,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) =
 
 const Index = () => {
   const { userId } = useParams();
+  const [urlSearchParams, setURLSearchParams] = useSearchParams();
 
   useEffect(() => {
     if (!!userId) setShowModal(true);
@@ -92,16 +93,34 @@ const Index = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [count, setCount] = useState(0);
+  const [username, setUsername] = useState(null)
 
   const handleCreateClick = () => {
     setShowModal(true);
+    setAmount(0)
+    setMemo('')
+    setUsername(null)
   };
 
   const theme = useTheme();
+  const [memo, setMemo] = useState('');
+  const [amount, setAmount] = useState(0);
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    // console.log(urlSearchParams.get("recipient"), urlSearchParams.get("amount"), urlSearchParams.get("comment"));
+    // console.log(recipient, amount, comment);
+    if (urlSearchParams.get("recipient") && urlSearchParams.get("amount") && urlSearchParams.get("comment")) {
+      setShowModal(true)
+      setUsername(urlSearchParams.get("recipient"))
+      setAmount(urlSearchParams.get("amount"))
+      setMemo(urlSearchParams.get("comment"))
+    }
+  }, [urlSearchParams])
+
 
   return (
     <MainCard title="Payment History">
@@ -115,7 +134,7 @@ const Index = () => {
       <TabPanel value={value} index={1}>
         <Path graphFlag={true} />
       </TabPanel>
-      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId ?? ''} setCount={setCount} />
+      <PaymentDialog open={showModal} setOpen={setShowModal} recipientId={userId ?? ''} setCount={setCount} amount={amount} setAmount={setAmount} memo={memo} setMemo={setMemo} username={username} setUsername={setUsername} />
     </MainCard>
   );
 };

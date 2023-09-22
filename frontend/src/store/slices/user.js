@@ -388,6 +388,20 @@ export function saveUserData(userData, lng, lat, successAction) {
   };
 }
 
+export function getUserByID(_id) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.get(`admin/user/${_id}`);
+      dispatch(slice.actions.getUserSuccess(response.data.user));
+      dispatch(slice.actions.setLoading(false));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
+    }
+  };
+}
+
 export function searchUserData(keyword = '', page = 1) {
   return async () => {
     dispatch(slice.actions.setLoading(true));

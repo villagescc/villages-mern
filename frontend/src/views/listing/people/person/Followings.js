@@ -43,7 +43,7 @@ const Followings = ({ user }) => {
         <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
           <Grid item>
             <Typography variant="h3">
-              Followings{' '}
+              Trust Given {' '}
               <Typography variant="h3" component="span" sx={{ color: theme.palette.grey[300], fontWeight: 500 }}>
                 ({user?.followings?.length})
               </Typography>
