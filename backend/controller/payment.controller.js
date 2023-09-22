@@ -275,7 +275,7 @@ exports.pay = async (req, res, next) => {
             {
               subject: "Notification from Villages.io",
               dest: receiveUser?.email,
-              data: `<h1>You has been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+              data: `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
               <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
               <p>${notifyText}</p>
               <a href=https://villages.io/pay> Click here</a>

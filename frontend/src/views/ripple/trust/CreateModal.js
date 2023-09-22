@@ -23,7 +23,7 @@ import { editEndrosement } from 'store/slices/endorsement';
 import { useSelector } from 'react-redux';
 import { dispatch } from 'store';
 
-const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement, errors }) => {
+const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement, errors, username, setUsername, loading }) => {
   const theme = useTheme();
   const navigation = useNavigate();
   const defaultProps = {
@@ -44,8 +44,13 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
 
   const [recipient, setRecipient] = React.useState({});
   useEffect(() => {
-    setRecipient(users.find((user) => user._id === endorsement.recipient) || null);
-  }, [endorsement, users]);
+    if (username) {
+      setRecipient(users.find((user) => user.username === username) || null);
+    }
+    else {
+      setRecipient(users.find((user) => user._id === endorsement.recipient) || null);
+    }
+  }, [endorsement, users, username]);
 
   // get all users details
   const endorsementState = useSelector((state) => state.endorsement);
@@ -73,6 +78,7 @@ const CreateModal = ({ open, onClose, onSave, endorsement, users, setEndorsement
                 }
 
                 onChange={(event, newValue) => {
+                  setUsername(null)
                   setRecipient(users.find((user) => user._id === newValue?._id) || null);
                   !!newValue?._id ? setEndorsement({ ...endorsement, recipient: newValue?._id }) : setEndorsement({ weight: '', recipient: '', text: '' })
                   // navigation(`/ripple/trust/${newValue._id}`);

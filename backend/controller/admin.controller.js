@@ -1884,3 +1884,179 @@ exports.deleteTrustHistory = async (req, res, next) => {
     return res.send({ success: false, message: 'Something went wrong', error: error?.message ?? "" })
   }
 }
+
+exports.getUserByID = async (req, res, next) => {
+  try {
+    const user = await User.aggregate([
+      {
+        $match: { $expr: { $eq: ['$_id', { $toObjectId: req.params?.id }] } }
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          foreignField: "_id",
+          localField: "profile",
+          as: "profile"
+        }
+      },
+      {
+        $addFields: { profile: { $arrayElemAt: ["$profile", 0] } }
+      },
+      {
+        $lookup: {
+          from: "accounts",
+          foreignField: "_id",
+          localField: "account",
+          as: "account"
+        }
+      },
+      {
+        $addFields: { account: { $arrayElemAt: ["$account", 0] } }
+      },
+      {
+        $lookup: {
+          from: "endorsements",
+          foreignField: "endorserId",
+          localField: "_id",
+          as: "followings",
+          pipeline: [
+            {
+              $match: { weight: { $ne: Number(0) } }
+            },
+            {
+              $sort: { createdAt: -1 }
+            },
+            {
+              $lookup: {
+                from: "profiles",
+                foreignField: "user",
+                localField: "recipientId",
+                as: "profile",
+                pipeline: [
+                  {
+                    $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+                  }
+                ]
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ["$profile", 0] }
+              }
+            },
+            {
+              $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "profile.user",
+                as: "profile.user",
+                pipeline: [
+                  {
+                    $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1, isActive: 1, isSuperuser: 1 }
+                  }
+                ]
+              }
+            },
+            {
+              $addFields: {
+                "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+              }
+            },
+            {
+              $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+            }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: "endorsements",
+          foreignField: "recipientId",
+          localField: "_id",
+          as: "followers",
+          pipeline: [
+            {
+              $match: { weight: { $ne: Number(0) } }
+            },
+            {
+              $sort: { createdAt: -1 }
+            },
+            {
+              $lookup: {
+                from: "profiles",
+                foreignField: "user",
+                localField: "endorserId",
+                as: "profile",
+                pipeline: [
+                  {
+                    $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+                  }
+                ]
+              }
+            },
+            {
+              $addFields: {
+                profile: { $arrayElemAt: ["$profile", 0] }
+              }
+            },
+            {
+              $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "profile.user",
+                as: "profile.user",
+                pipeline: [
+                  {
+                    $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1, isActive: 1, isSuperuser: 1 }
+                  }
+                ]
+              }
+            },
+            {
+              $addFields: {
+                "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+              }
+            },
+            {
+              $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+            }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: "listings",
+          foreignField: "userId",
+          localField: "_id",
+          as: "posts"
+        }
+      },
+      {
+        $lookup: {
+          from: "payments",
+          let: { userId: "$_id" },
+          // let: { payerId: "$payer", recipientId: "$recipient" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $or: [
+                    { $eq: ["$payer", "$$userId"] },
+                    { $eq: ["$recipient", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "payments"
+        }
+      },
+      {
+        $project: { username: 1, firstName: 1, lastName: 1, email: 1, latitude: 1, longitude: 1, isSuperuser: 1, profile: 1, account: 1, followers: 1, followings: 1, createdAt: 1, posts: 1, payments: 1 }
+      }
+    ])
+    return res.send({ success: true, message: 'User get successfully', user: user?.length ? user[0] : {} })
+  } catch (error) {
+    return res.send({ success: false, message: 'Something went wrong', error: error?.message ?? "" })
+  }
+}

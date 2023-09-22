@@ -35,7 +35,7 @@ exports.save = async (req, res, next) => {
         text,
         referred,
       });
-      notifyText = `${req.user.username} sent you ${weight}(V.H.) trust limit.`;
+      notifyText = `${req.user.username} gave you ${weight}(V.H.) trust limit.`;
     } else {
       let payment_history = await Payment.aggregate([
         {
@@ -86,7 +86,7 @@ exports.save = async (req, res, next) => {
         {
           subject: "Notification from Villages.io",
           dest: recipientUser.email,
-          data: `<h1>You has been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
+          data: `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
                 <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
                 <p>${notifyText}</p>
                 <p>Testimonial: ${text}</p>

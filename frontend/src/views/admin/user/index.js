@@ -15,7 +15,7 @@ import MainCard from 'ui-component/cards/MainCard';
 // store
 import { gridSpacing } from 'store/constant';
 import { dispatch } from 'store';
-import { getUser } from 'store/slices/user';
+import { getUserByID } from 'store/slices/user';
 
 // assets
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
@@ -72,7 +72,7 @@ const Index = () => {
     };
 
     useEffect(() => {
-        dispatch(getUser(userId));
+        dispatch(getUserByID(userId));
     }, []);
 
     return (

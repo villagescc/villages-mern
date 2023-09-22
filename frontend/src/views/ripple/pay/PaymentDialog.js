@@ -32,7 +32,7 @@ import Graph from '../graph/path';
 import PaperComponent from 'ui-component/extended/PaperComponent';
 
 // ==============================|| Layouts ||============================== //
-function PaymentDialog({ open, setOpen, recipientId, setCount }) {
+function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount, memo, setMemo, username, setUsername }) {
   const dispatch = useDispatch();
   const paymentState = useSelector((state) => state.payment);
   const { user, init } = useAuth();
@@ -40,8 +40,6 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
   const [users, setUsers] = useState([]);
   const [recipient, setRecipient] = useState('');
   const [maxLimit, setMaxLimit] = useState(null);
-  const [amount, setAmount] = useState(0);
-  const [memo, setMemo] = useState('');
 
   const [paylogs, setPaylogs] = useState([]);
   const [showGraph, setShowGraph] = useState(false);
@@ -128,6 +126,15 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
     dispatch(getUsers());
   }, []);
 
+  useEffect(() => {
+    // console.log(users.find(x => x.username == username)?._id, 'allUsers');
+    if (users.length !== 0 && username) {
+      setRecipient(users.find(x => x.username == username)?._id);
+    }
+  }, [users, username])
+
+
+
   const defaultProps = {
     options: users,
     getOptionLabel: (option) => {
@@ -143,7 +150,6 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
       });
     }
   };
-
 
   return (
     <Dialog
@@ -171,8 +177,10 @@ function PaymentDialog({ open, setOpen, recipientId, setCount }) {
                 <Autocomplete
                   {...defaultProps}
                   id="recipient"
+                  disabled={loading}
                   value={recipient?.length ? users.find((user) => user._id === recipient) : null}
                   onChange={(event, newValue) => {
+                    setUsername(null)
                     setRecipient(newValue?._id);
                   }}
                   renderInput={(params) => (

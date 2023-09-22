@@ -209,7 +209,7 @@ const Profile = () => {
               <Grid container spacing={0}>
                 <Grid item xs={4}>
                   <Typography align="center" variant="h3">
-                    {user?.postings?.length ? user?.postings?.length : 0}
+                    {user?.posts?.length ? user?.posts?.length : 0}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
                     Postings
@@ -228,7 +228,7 @@ const Profile = () => {
                     {user?.followings?.length ? user?.followings?.length : 0}
                   </Typography>
                   <Typography align="center" variant="subtitle2">
-                    Truste Given
+                    Trust Given
                   </Typography>
                 </Grid>
               </Grid>
@@ -305,17 +305,18 @@ const Profile = () => {
                           <TableRow>
                             <TableCell variant="head">Signed Up</TableCell>
                             <TableCell>:</TableCell>
-                            <TableCell>{user?.createdAt}</TableCell>
+                            <TableCell>{new Date(user?.createdAt).toLocaleDateString()}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell variant="head">Recent use time</TableCell>
                             <TableCell>:</TableCell>
                             <TableCell>
-                              {user.logs?.length > 0 ? (
+                              {/* {user.logs?.length > 0 ? (
                                 user.logs?.reduce((a, b) => (a.createdAt > b.createdAt ? a : b))?.createdAt
                               ) : (
                                 <Chip size="small" label="empty" />
-                              )}
+                              )} */}
+                              {new Date(user?.profile?.recentlyActive).toLocaleDateString()}
                             </TableCell>
                           </TableRow>
                         </TableBody>

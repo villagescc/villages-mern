@@ -102,6 +102,8 @@ router.post(
   adminController.uploadAvatar
 );
 
+router.get("/admin/user/:id", authMiddleware.auth, adminController.getUserByID);
+
 router.post(
   "/admin/users/edit",
   authMiddleware.auth,
