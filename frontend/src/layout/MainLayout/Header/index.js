@@ -20,6 +20,7 @@ import { openDrawer } from 'store/slices/menu';
 // assets
 import { IconMenu2 } from '@tabler/icons';
 import useAuth from '../../../hooks/useAuth';
+import ScanQRCode from './ScanQRcode';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -90,6 +91,7 @@ const Header = () => {
       {/* notification & profile */}
       {isLoggedIn && (
         <>
+          <ScanQRCode />
           <NotificationSection />
           <BalanceSection />
         </>

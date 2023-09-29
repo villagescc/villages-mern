@@ -57,6 +57,7 @@
         "jwt-decode": "^3.1.2",
         "lodash": "^4.17.21",
         "material-ui-popup-state": "^4.0.1",
+        "modern-react-qr-reader": "^1.0.12",
         "moment": "^2.29.4",
         "process": "^0.11.10",
         "prop-types": "^15.8.1",
