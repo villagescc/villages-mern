@@ -13,7 +13,8 @@ import {
   DialogContent,
   IconButton,
   DialogActions,
-  Paper
+  Paper,
+  useMediaQuery
 } from '@mui/material';
 import MuiTooltip from '@mui/material/Tooltip';
 import Help from '@mui/icons-material/Help';
@@ -38,6 +39,7 @@ import QrReader from 'modern-react-qr-reader';
 // ==============================|| Layouts ||============================== //
 function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount, memo, setMemo, username, setUsername }) {
   const dispatch = useDispatch();
+  const matchDownSM = useMediaQuery('(min-width:410px)');
   const paymentState = useSelector((state) => state.payment);
   const { user, init } = useAuth();
 
@@ -240,7 +242,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
                         }}
                         InputProps={{
                           ...params.InputProps,
-                          endAdornment: hasCam ? <Button sx={{ p: "5px 10px" }} variant='contained' aria-label="menu" onClick={(e) => {
+                          endAdornment: hasCam ? <Button sx={{ p: matchDownSM ? "5px 10px" : "5px 0px", minWidth: !matchDownSM ? '40px' : "64px" }} variant='contained' aria-label="menu" onClick={(e) => {
                             e.stopPropagation()
                             setIsScannerOpen(true)
                           }}>
@@ -251,7 +253,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
                               <path d="M16 4h2a2 2 0 0 1 2 2v1"></path>
                               <path d="M16 20h2a2 2 0 0 0 2 -2v-1"></path>
                               <path d="M5 12l14 0"></path>
-                            </svg>{" "}Scan
+                            </svg>{" "}{matchDownSM ? " Scan" : ""}
                           </Button> : null
                         }}
                         InputLabelProps={{ style: { transform: hasCam ? "translate(14px, 13px) scale(1)" : "translate(14px, 9px) scale(1)" } }}
