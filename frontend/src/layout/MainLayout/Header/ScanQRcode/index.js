@@ -46,8 +46,10 @@ const ScanQRCode = () => {
         async function name() {
             let bool = false
             let md = navigator.mediaDevices;
-            const permissions = await navigator.permissions.query({ name: "camera" })
-            // alert(JSON.stringify(permissions.state))
+            const res = await md.enumerateDevices()
+            bool = res.some(devices => devices.kind === 'videoinput')
+            // alert(JSON.stringify(res.map(d => d.kind)))
+            // const permissions = await navigator.permissions.query({ name: "camera" })
             if (!md || !md.enumerateDevices) bool = true
             // md.enumerateDevices().then(devices => {
             //   bool = true
@@ -58,9 +60,9 @@ const ScanQRCode = () => {
                 const res = await md.enumerateDevices()
                 bool = res.some(devices => devices.kind === 'videoinput')
                 // const devices = res.map(devices => devices.deviceId)
-                if (permissions.state === 'denied') {
-                    bool = false
-                }
+                // if (permissions.state === 'denied') {
+                //     bool = false
+                // }
                 // alert(devices)
             } catch (error) {
                 bool = false
