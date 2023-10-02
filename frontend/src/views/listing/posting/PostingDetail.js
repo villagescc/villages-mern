@@ -29,9 +29,11 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
+import useAuth from 'hooks/useAuth';
 
 const PostingDetail = () => {
   const { username, title } = useParams();
+  const { isLoggedIn } = useAuth()
   const { borderRadius } = useConfig();
   const theme = useTheme();
 
@@ -133,7 +135,12 @@ const PostingDetail = () => {
                 <Grid item xs={12}>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="h2" color="primary">
-                      {post.price}V.H.
+                      {`${post.price ?? 0} V.H.`}
+                      {/* {post.price}V.H. */}
+                    </Typography>
+                    <Typography variant="h4" color="body2">
+                      {`${(isLoggedIn && ((post?.account?.balance ?? 0) > 0 && (post?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${post.trustedBalance ?? 0} V.H.)` : ''}`}
+                      {/* {post.price}V.H. */}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -211,7 +218,7 @@ const PostingDetail = () => {
                       Balance
                     </Typography>
                     <Typography variant="h4" sx={{ marginLeft: 1 }}>
-                      {post?.userId?.account?.balance} V.H.
+                      {post?.account?.balance} V.H.
                     </Typography>
                   </Stack>
                 </Grid>

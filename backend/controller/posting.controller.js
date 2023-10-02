@@ -527,6 +527,8 @@ exports.getById = async (req, res, next) => {
   }
 };
 exports.getByUsernameAndTitle = async (req, res, next) => {
+  const token = req.header("Authorization");
+  const decoded = token && jwt.verify(token, process.env.jwtSecret);
   try {
     const { username, title } = req.params;
     const post = await Listing.aggregate([
@@ -541,7 +543,73 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
         }
       },
       {
+        $lookup: {
+          from: "accounts",
+          foreignField: "_id",
+          localField: "userId.account",
+          as: "account",
+        },
+      },
+      {
+        $addFields: {
+          account: {
+            $arrayElemAt: ["$account", 0],
+          },
+        },
+      },
+      {
         $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $lookup: {
+          from: "endorsements",
+          let: {
+            userid: "$userId._id"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: [
+                        "$recipientId",
+                        "$$userid",
+                      ],
+                    },
+                    {
+                      $eq: [
+                        "$endorserId",
+                        mongoose.Types.ObjectId(decoded?.user?._id)
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "endorser",
+        },
+      },
+      {
+        $addFields: {
+          trustedBalance: {
+            $cond: [
+              {
+                $eq: [
+                  {
+                    $size: "$endorser",
+                  },
+                  0,
+                ],
+              },
+              0,
+              {
+                $arrayElemAt: ["$endorser.weight", 0],
+              },
+            ],
+          },
+        },
       },
       {
         $match: { "userId.username": username }

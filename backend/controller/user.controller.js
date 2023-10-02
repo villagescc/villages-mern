@@ -258,7 +258,7 @@ exports.search = async (req, res, next) => {
       // let userData = [];
       let userInfo = []
       // if (network?.length !== 0) {
-      userInfo = await getUserDetail(filteredUsers.map(x => x.username));
+      userInfo = await getUserDetail(filteredUsers.map(x => x.username), user?._id);
       // }
       // userData.push(userInfo);
       res.send({ total: users.length, users: userInfo });
@@ -551,7 +551,7 @@ exports.search = async (req, res, next) => {
       }
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userInfo = [];
-      userInfo = await getUserDetail(filteredUsers.map(x => x.username));
+      userInfo = await getUserDetail(filteredUsers.map(x => x.username), user?._id);
       // userData.push(userInfo);
       res.send({ total: users.length, users: userInfo });
     }
@@ -570,21 +570,56 @@ exports.getById = async (req, res, next) => {
   }
 };
 exports.getByUserName = async (req, res, next) => {
+  const token = req.header("Authorization");
+  const decoded = token && jwt.verify(token, process.env.jwtSecret);
   try {
-    const user = await getUserDetailByUserName(req.params.username);
+    const user = await getUserDetailByUserName(req.params.username, decoded?.user?._id);
     user?.length ? res.send(...user) : res.send({})
   } catch (err) {
     next(err);
   }
 };
 
-const getUserDetail = async (username) => {
+const getUserDetail = async (username, _id) => {
   const user = await User.aggregate([
     {
       $match: { "username": { $in: username } }
     },
     {
-      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
+      $lookup: {
+        from: "endorsements",
+        let: {
+          userid: {
+            $toObjectId: "$_id",
+          },
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: [
+                      "$recipientId",
+                      "$$userid",
+                    ],
+                  },
+                  {
+                    $eq: [
+                      "$endorserId",
+                      mongoose.Types.ObjectId(_id)
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: "endorser",
+      },
+    },
+    {
+      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1, endorser: 1 }
     },
     {
       $lookup: {
@@ -723,6 +758,18 @@ const getUserDetail = async (username) => {
       }
     },
     {
+      $addFields: {
+        trustedBalance: {
+          $cond: [
+            { $eq: [{ $size: "$endorser" }, 0] },
+            0,
+            { $arrayElemAt: ["$endorser.weight", 0] },
+          ],
+        },
+      }
+    },
+    { $unset: ['endorser'] },
+    {
       $sort: { createdAt: -1 }
     }
   ])
@@ -731,13 +778,57 @@ const getUserDetail = async (username) => {
   return user;
 };
 
-const getUserDetailByUserName = async (username) => {
+const getUserDetailByUserName = async (username, _id) => {
   const user = await User.aggregate([
     {
       $match: { username }
     },
     {
       $project: { password: 0, token: 0, lastLogin: 0 }
+    },
+    {
+      $lookup: {
+        from: "endorsements",
+        let: {
+          userid: {
+            $toObjectId: "$_id",
+          },
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: [
+                      "$recipientId",
+                      "$$userid",
+                    ],
+                  },
+                  {
+                    $eq: [
+                      "$endorserId",
+                      mongoose.Types.ObjectId(_id)
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: "endorser",
+      },
+    },
+    {
+      $addFields: {
+        trustedBalance: {
+          $cond: [
+            { $eq: [{ $size: "$endorser" }, 0] },
+            0,
+            { $arrayElemAt: ["$endorser.weight", 0] },
+          ],
+        },
+      }
     },
     {
       $lookup: {

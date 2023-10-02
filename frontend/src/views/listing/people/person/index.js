@@ -29,6 +29,7 @@ import { getUserByUserName } from 'store/slices/user';
 import DefaultUserIcon from '../../../../assets/images/auth/default.png';
 import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
+import useAuth from 'hooks/useAuth';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -83,7 +84,7 @@ const tabOptions = [
 const SocialProfile = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-
+  const { isLoggedIn } = useAuth()
   const { borderRadius } = useConfig();
   const { username, tab } = useParams();
   const { user } = useSelector((state) => state.user);
@@ -196,6 +197,9 @@ const SocialProfile = () => {
                       {user?.firstName} {user?.lastName}
                     </Typography>
                     <Typography variant="subtitle2">{user?.profile?.job || <Chip label="No job" />}</Typography>
+                    <Typography variant="h5">
+                      {`${user?.account?.balance ?? 0} V.H. ${(isLoggedIn && ((user?.account?.balance ?? 0) > 0 && (user?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${user?.trustedBalance ?? 0} V.H.)` : ''}`}
+                    </Typography>
                   </Grid>
                   <Grid item xs={12} md={8}>
                     <Grid
