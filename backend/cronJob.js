@@ -7,11 +7,12 @@ const isEmpty = require("./validation/is-empty");
 const { headingDistanceTo } = require("geolocation-utils");
 const Listing = require("./models/Listing");
 const BulkEmail = require('./models/BulkEmail');
+const { default: axios } = require('axios');
 
 // Set the EJS template file
 const templateFile = './template/template.ejs';
 
-console.log("Log From Cron Job")
+// console.log("Log From Cron Job")
 // Update DB Update Every Monday
 cron.schedule('45 7 * * 1', async function () {
     console.log("Cron Job Run And Loop started")
@@ -386,9 +387,22 @@ cron.schedule('45 7 * * 1', async function () {
 
         // let dataTest = newFilteredUser.filter(x => x.userEmail === "danielaloha@pm.me")
 
+        const excludedContacts = await axios({
+            method: "GET",
+            url: "https://api.mailjet.com/v3/REST/contact?IsExcludedFromCampaigns=true&Limit=1000",
+            auth: {
+                username: process.env.MJ_APIKEY_PUBLIC,
+                password: process.env.MJ_APIKEY_PRIVATE,
+            }
+        })
+        const excludedContactsEmail = excludedContacts?.data?.Data?.map(e => e?.Email)
         let manuplatedData = []
-
-        newFilteredUser?.map(async (x) => {
+        const emailSendWrapper = (email, cards, post) => {
+            if (cards?.length || post.length) {
+                manuplatedData.push({ "email": email, "users": cards, "posts": post })
+            }
+        }
+        newFilteredUser?.map((x) => {
             let cards = []
             const userCard = (user) => {
                 user?.map(x => {
@@ -397,7 +411,7 @@ cron.schedule('45 7 * * 1', async function () {
                     },)
                 })
             }
-            await userCard(x?.newUser)
+            userCard(x?.newUser)
 
             let post = []
             const postCard = (user) => {
@@ -407,16 +421,13 @@ cron.schedule('45 7 * * 1', async function () {
                     },)
                 })
             }
-            await postCard(x?.newPost)
+            postCard(x?.newPost)
 
-            emailSendWrapper(x.userEmail, cards, post)
+            if (!excludedContactsEmail?.includes(x.userEmail)) {
+                emailSendWrapper(x.userEmail, cards, post)
+            }
         })
 
-        const emailSendWrapper = (email, cards, post) => {
-            if (cards?.length || post.length) {
-                manuplatedData.push({ "email": email, "users": cards, "posts": post })
-            }
-        }
         await BulkEmail.deleteMany({})
         await BulkEmail.insertMany(manuplatedData).then(res =>
             console.log("Data Updated For email")
@@ -426,7 +437,7 @@ cron.schedule('45 7 * * 1', async function () {
         console.log('====================================');
         console.log(err);
         console.log('====================================');
-        next(err);
+        // next(err);
     }
 }, {
     timezone: 'Pacific/Honolulu'

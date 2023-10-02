@@ -18,11 +18,13 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import ChatIcon from '@mui/icons-material/Chat';
 import DefaultAvatar from '../../assets/images/auth/default.png';
 import { geocodeByPlaceId } from 'react-places-autocomplete';
+import useAuth from 'hooks/useAuth';
 
 
 
 const UserListCard = (user, index) => {
   const theme = useTheme();
+  const { isLoggedIn, user: currentUser } = useAuth()
   const [location, setLocation] = useState('');
   useEffect(() => {
     async function fetchData() {
@@ -49,7 +51,7 @@ const UserListCard = (user, index) => {
         <Grid container spacing={2}>
           <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {
-              user?.user?.followers?.length ? (<StyledBadge
+              user?.user?.followers?.map(e => e?.profile?.user?._id)?.includes(currentUser?._id) ? (<StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={<FavoriteIcon />}
@@ -101,10 +103,15 @@ const UserListCard = (user, index) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                  {user?.user?.account?.balance}
-                  {' V.H.'}
+                  {`${user?.user?.account?.balance ?? 0} V.H. ${(isLoggedIn && ((user?.user?.account?.balance ?? 0) > 0 && (user?.user?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${user?.user?.trustedBalance ?? 0} V.H.)` : ''}`}
                 </Typography>
               </Grid>
+              {/* {isLoggedIn && <Grid item xs={12}>
+                <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
+                  {user?.trustedBalance ?? 0}
+                  {' V.H.'}
+                </Typography>
+              </Grid>} */}
             </Grid>
           </Grid>
         </Grid>
