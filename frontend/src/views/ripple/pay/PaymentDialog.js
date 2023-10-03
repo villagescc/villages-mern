@@ -45,6 +45,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
 
   const [users, setUsers] = useState([]);
   const [recipient, setRecipient] = useState('');
+  const [recipientValue, setRecipientValue] = useState(null)
   const [maxLimit, setMaxLimit] = useState(null);
 
   const [paylogs, setPaylogs] = useState([]);
@@ -135,6 +136,13 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
   }, []);
 
   useEffect(() => {
+    if (open)
+      setRecipientValue(null)
+  }, [open])
+
+
+  useEffect(() => {
+    setRecipientValue(recipient ? users.find((user) => user._id == recipient) : null)
     // console.log(users.find(x => x.username == username)?._id, 'allUsers');
     if (users.length !== 0 && username) {
       setRecipient(users.find(x => x.username == username)?._id);
@@ -210,10 +218,11 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
                     {...defaultProps}
                     id="recipient"
                     disabled={loading}
-                    value={recipient?.length ? users.find((user) => user._id === recipient) : null}
+                    value={recipientValue}
                     onChange={(event, newValue) => {
                       setUsername(null)
                       setRecipient(newValue?._id);
+                      setRecipientValue(newValue?._id);
                     }}
                     renderInput={(params) => (
                       < TextField
