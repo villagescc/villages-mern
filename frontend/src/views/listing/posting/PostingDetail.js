@@ -138,10 +138,6 @@ const PostingDetail = () => {
                       {`${post.price ?? 0} V.H.`}
                       {/* {post.price}V.H. */}
                     </Typography>
-                    <Typography variant="h4" color="body2">
-                      {`${(isLoggedIn && ((post?.account?.balance ?? 0) > 0 && (post?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${post.trustedBalance ?? 0} V.H.)` : ''}`}
-                      {/* {post.price}V.H. */}
-                    </Typography>
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -219,6 +215,8 @@ const PostingDetail = () => {
                     </Typography>
                     <Typography variant="h4" sx={{ marginLeft: 1 }}>
                       {post?.account?.balance} V.H.
+                      {`${(isLoggedIn && ((post?.account?.balance ?? 0) > 0 && (post?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${post?.trustedBalance ?? 0} V.H.)` : ((post?.account?.balance ?? 0) < 0) ? `(You can send ${post?.userId?.username} ${post?.trustedBalance} V.H.)` : ""}`}
+                      {/* {post.price}V.H. */}
                     </Typography>
                   </Stack>
                 </Grid>

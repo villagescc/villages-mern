@@ -103,7 +103,7 @@ const UserListCard = (user, index) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography align="left" variant="body2" sx={{ whiteSpace: 'break-spaces' }}>
-                  {`${user?.user?.account?.balance ?? 0} V.H. ${(isLoggedIn && ((user?.user?.account?.balance ?? 0) > 0 && (user?.user?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${user?.user?.trustedBalance ?? 0} V.H.)` : ''}`}
+                  {`${user?.user?.account?.balance ?? 0} V.H. ${(isLoggedIn && ((user?.user?.account?.balance ?? 0) > 0 && (user?.user?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${user?.user?.trustedBalance ?? 0} V.H.)` : ((user?.user?.account?.balance ?? 0) < 0) ? `(You can send ${user?.user?.username} ${user?.user?.trustedBalance} V.H.)` : ""}`}
                 </Typography>
               </Grid>
               {/* {isLoggedIn && <Grid item xs={12}>
