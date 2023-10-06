@@ -216,7 +216,7 @@ export function getUsers() {
   };
 }
 
-export function getUserList(keyword = '', page = 1, value = 'Suggested', network = []) {
+export function getUserList(keyword = '', page = 1, value = 'All', network = []) {
   return async () => {
     dispatch(slice.actions.setLoading(true));
     try {

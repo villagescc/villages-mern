@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Grid, InputAdornment, OutlinedInput, Pagination, Typography, MenuItem, TextField, ListItemText, Checkbox, Select, FilledInput } from '@mui/material';
+import { Grid, InputAdornment, OutlinedInput, Pagination, Typography, MenuItem, TextField, ListItemText, Checkbox, Select, FilledInput, Switch, FormControlLabel } from '@mui/material';
 
 // project imports
 import UserList from './UserList';
@@ -14,6 +14,8 @@ import { IconSearch } from '@tabler/icons';
 import { getUserList } from 'store/slices/user';
 import { useDispatch, useSelector } from 'store';
 import useAuth from 'hooks/useAuth';
+import { styled } from '@mui/styles';
+import { Stack } from '@mui/system';
 
 // ==============================|| USER LIST STYLE 2 ||============================== //
 
@@ -28,7 +30,7 @@ const Index = () => {
     const [keyword, setKeyword] = React.useState('');
     const [page, setPage] = React.useState(1);
     const [total, setTotal] = React.useState(0);
-    const [value, setValue] = React.useState('Suggested');
+    const [value, setValue] = React.useState('All');
     const [trustNetworkValue, setTrustNetworkValue] = React.useState([]);
 
     const userState = useSelector((state) => state.user);
@@ -55,19 +57,19 @@ const Index = () => {
     };
 
     const handlePeopleFilter = (e) => {
-        setValue(e.target.value)
-        dispatch(getUserList(keyword, page, e.target.value, trustNetworkValue));
+        setValue(e.target.checked ? "Suggested" : "All")
+        dispatch(getUserList(keyword, page, e.target.checked ? "Suggested" : "All", trustNetworkValue));
     }
-    const status = [
-        {
-            value: 'Suggested',
-            label: 'Suggested'
-        },
-        {
-            value: 'All',
-            label: 'All'
-        }
-    ];
+    // const status = [
+    //     {
+    //         value: 'Suggested',
+    //         label: 'Suggested'
+    //     },
+    //     {
+    //         value: 'All',
+    //         label: 'All'
+    //     }
+    // ];
     const trustNetwork = [
         {
             value: "TrustsMe",
@@ -78,6 +80,57 @@ const Index = () => {
             label: "Trusted"
         }
     ]
+
+    const IOSSwitch = styled((props) => (
+        <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+    ))(({ theme }) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+            padding: 0,
+            margin: 2,
+            transitionDuration: '300ms',
+            '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                    backgroundColor: "#673ab7",
+                    opacity: 1,
+                    border: 0,
+                },
+                '&.Mui-disabled + .MuiSwitch-track': {
+                    opacity: 0.5,
+                },
+            },
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#33cf4d',
+                border: '6px solid #fff',
+            },
+            '&.Mui-disabled .MuiSwitch-thumb': {
+                color:
+                    theme.palette.mode === 'light'
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[600],
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxSizing: 'border-box',
+            width: 22,
+            height: 22,
+        },
+        '& .MuiSwitch-track': {
+            borderRadius: 26 / 2,
+            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+            opacity: 1,
+            transition: theme.transitions.create(['background-color'], {
+                duration: 500,
+            }),
+        },
+    }));
 
     return (
         <MainCard
@@ -93,7 +146,7 @@ const Index = () => {
                         <Typography variant="h3">People</Typography>
                     </Grid>
                     <Grid item xs={12} md={8}>
-                        <Grid container sx={{ justifyContent: { xs: 'left' } }} spacing={1} style={{ justifyContent: "right" }} >
+                        <Grid container sx={{ justifyContent: { xs: 'left' }, alignItems: "center" }} spacing={1} style={{ justifyContent: "right" }} >
                             <Grid item xs={12} sm={4} xl={2}>
                                 <OutlinedInput
                                     disabled={loading}
@@ -112,13 +165,22 @@ const Index = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4} xl={2}>
-                                <TextField disabled={loading} id="standard-select-currency" fullWidth select value={value} onChange={handlePeopleFilter} sx={{ "& .MuiSelect-select": { padding: "10px 32px 10px 14px", minWidth: 70 } }}>
+                                {/* <FormControlLabel
+                                    control={<IOSSwitch value={value} />}
+                                    label="Android 12"
+                                /> */}
+                                <Stack direction="row" spacing={1} alignItems="center" justifyContent={{ xs: 'start', sm: "center" }}>
+                                    {/* <Typography>All</Typography> */}
+                                    <IOSSwitch onChange={handlePeopleFilter} checked={value == 'Suggested'} disabled={loading} />
+                                    <Typography>Suggested</Typography>
+                                </Stack>
+                                {/* <TextField disabled={loading} id="standard-select-currency" fullWidth select value={value} onChange={handlePeopleFilter} sx={{ "& .MuiSelect-select": { padding: "10px 32px 10px 14px", minWidth: 70 } }}>
                                     {status.map((option) => (
                                         <MenuItem key={option.value} value={option.value} >
                                             {option.label}
                                         </MenuItem>
                                     ))}
-                                </TextField>
+                                </TextField> */}
                             </Grid>
                             <Grid item xs={12} sm={4} xl={2}>
                                 <Select
