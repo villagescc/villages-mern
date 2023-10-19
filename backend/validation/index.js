@@ -1,5 +1,6 @@
 const validator = require("validator");
 const isEmpty = require("./is-empty");
+const Categories = require('../models/Category');
 
 exports.validateLoginInput = (data) => {
   let errors = {};
@@ -175,9 +176,9 @@ exports.validateNotificationCreate = (data) => {
   };
 };
 
-exports.validatePostingCreate = (data) => {
+exports.validatePostingCreate = async (data) => {
   let errors = {};
-
+  const category = await Categories.findOne({ title: "DIGITAL PRODUCT" })
   data.title = !isEmpty(data.title) ? data.title : "";
   data.type = !isEmpty(data.type) ? data.type : "";
   data.category = !isEmpty(data.category) ? data.category : "";
@@ -199,8 +200,12 @@ exports.validatePostingCreate = (data) => {
     errors.category = "Category field is required";
   }
 
-  if (validator.isEmpty(data.subCategory)) {
+  if (validator.isEmpty(data.subCategory) && category?._id?.toString() !== data.category) {
     errors.subCategory = "Subcategory field is required";
+  }
+
+  if (validator.isEmpty(data.paidContent) && category?._id?.toString() === data.category) {
+    errors.paidContent = "Paid content is required";
   }
 
   return {

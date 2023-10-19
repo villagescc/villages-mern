@@ -30,6 +30,8 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import moment from 'moment';
 import useAuth from 'hooks/useAuth';
+import AuthError from './digital product/AuthError';
+import PaymentError from './digital product/PaymentError';
 
 const PostingDetail = () => {
   const { username, title } = useParams();
@@ -38,8 +40,9 @@ const PostingDetail = () => {
   const theme = useTheme();
 
   const [location, setLocation] = React.useState('');
+  const [errorType, setErrorType] = useState(null)
 
-  const { post } = useSelector((state) => state.posting);
+  const { post, error, loading } = useSelector((state) => state.posting);
 
   useEffect(() => {
     dispatch(getPost(username, title));
@@ -51,7 +54,14 @@ const PostingDetail = () => {
     }
   }, [post]);
 
-  // console.log(post?.userId?._id);
+  useEffect(() => {
+    if (error) {
+      setErrorType(error?.statusCode == 401 ? "auth" : error?.statusCode == 402 ? "payment" : null)
+    }
+    return () => {
+      setErrorType(null)
+    }
+  }, [error])
 
   return (
     <>
@@ -68,7 +78,7 @@ const PostingDetail = () => {
         <meta property="twitter:description" content={post.description} />
         <meta property="twitter:image" content={post.photo ? `${SERVER_URL}/upload/posting/` + post.photo : DefaultPostingIcon} />
       </Helmet>
-      <MainCard title={'Posting Detail'} border={false} elevation={16} content={false} boxShadow>
+      {(!errorType && !loading) ? <MainCard title={'Posting Detail'} border={false} elevation={16} content={false} boxShadow>
         <Box sx={{ p: 2 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={6}>
@@ -132,6 +142,9 @@ const PostingDetail = () => {
                 <Grid item xs={12}>
                   <Typography variant="body2">{post.description}</Typography>
                 </Grid>
+                {post?.categoryId?.title === 'DIGITAL PRODUCT' && <Grid item xs={12}>
+                  <Typography variant="body2">{post.paidContent}</Typography>
+                </Grid>}
                 <Grid item xs={12}>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="h2" color="primary">
@@ -140,7 +153,7 @@ const PostingDetail = () => {
                     </Typography>
                   </Stack>
                 </Grid>
-                <Grid item xs={12}>
+                {(Boolean(post?.subcategoryId?.categoryId?.title) && Boolean(post?.subcategoryId?.title)) && <Grid item xs={12}>
                   <MuiBreadcrumbs
                     sx={{ '& .MuiBreadcrumbs-separator': { width: 16, ml: 1.25, mr: 1.25 } }}
                     aria-label="breadcrumb"
@@ -149,7 +162,7 @@ const PostingDetail = () => {
                     <Typography variant="body">{post?.subcategoryId?.categoryId?.title}</Typography>
                     <Typography variant="body">{post?.subcategoryId?.title}</Typography>
                   </MuiBreadcrumbs>
-                </Grid>
+                </Grid>}
                 <Grid item xs={12}>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     {post.tags && post?.tags.map((tag, index) => <Chip key={index} label={tag.title} size="small" />)}
@@ -214,7 +227,7 @@ const PostingDetail = () => {
                       Balance
                     </Typography>
                     <Typography variant="h4" sx={{ marginLeft: 1 }}>
-                      {post?.account?.balance} V.H.
+                      {Number(Number(post?.account?.balance).toFixed(2)).toString()} V.H.
                       {`${(isLoggedIn && ((post?.account?.balance ?? 0) > 0 && (post?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${post?.trustedBalance ?? 0} V.H.)` : ((post?.account?.balance ?? 0) < 0) ? `(You can send ${post?.userId?.username} ${post?.trustedBalance} V.H.)` : ""}`}
                       {/* {post.price}V.H. */}
                     </Typography>
@@ -224,8 +237,7 @@ const PostingDetail = () => {
             </Grid>
           </Grid>
         </Box>
-      </MainCard>
-
+      </MainCard> : errorType == 'auth' ? <AuthError></AuthError> : errorType == 'payment' ? <PaymentError></PaymentError> : null}
     </>
   );
 };

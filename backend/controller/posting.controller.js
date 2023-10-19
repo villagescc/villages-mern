@@ -1,4 +1,5 @@
 const fs = require("fs");
+const ejs = require('ejs');
 const Category = require("../models/Category");
 const Subcategory = require("../models/Subcategory");
 const Listing = require("../models/Listing");
@@ -11,6 +12,9 @@ const Endorsement = require("../models/Endorsement");
 const { default: mongoose } = require("mongoose");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Account = require("../models/Account");
+const sendEmail = require("../utils/email");
+const Payment = require("../models/Payment");
 
 
 exports.searchPosts = async (req, res, next) => {
@@ -23,7 +27,29 @@ exports.searchPosts = async (req, res, next) => {
       const cate = await Category.findOne({ title: filterData.filterCategory });
       const categoryId = cate._id;
       const subCategories = await Subcategory.find({ categoryId }).lean();
-      pipeline.push({ $match: { subcategoryId: { $in: subCategories.map((subCategory) => mongoose.Types.ObjectId(subCategory._id)) } } })
+      if (subCategories.length !== 0)
+        pipeline.push({ $match: { subcategoryId: { $in: subCategories.map((subCategory) => mongoose.Types.ObjectId(subCategory._id)) } } })
+      else if (subCategories.length == 0)
+        pipeline.push(
+          {
+            $lookup: {
+              from: "categories",
+              foreignField: "_id",
+              localField: "categoryId",
+              as: "categoryId"
+            }
+          },
+          {
+            $addFields: {
+              categoryId: { $arrayElemAt: ["$categoryId", 0] },
+            }
+          },
+          {
+            $match: {
+              "categoryId.title": filterData.filterCategory
+            }
+          }
+        )
       // query
       //   .where("subcategoryId")
       //   .in(subCategories.map((subCategory) => subCategory._id));
@@ -80,6 +106,55 @@ exports.searchPosts = async (req, res, next) => {
       })
     }
     pipeline.push(
+      {
+        $lookup: {
+          from: "categories",
+          foreignField: "_id",
+          localField: "categoryId",
+          as: "categoryId"
+        }
+      },
+      {
+        $addFields: {
+          categoryId: { $arrayElemAt: ["$categoryId", 0] },
+        }
+      },
+      {
+        $match: {
+          $or: [
+            {
+              isSingleTimePurchase: true,
+              purchasedBy: {
+                $in: [mongoose.Types.ObjectId(req.user._id)],
+              },
+            },
+            {
+              "categoryId.title": {
+                $ne: "DIGITAL PRODUCT",
+              },
+            },
+            {
+              "categoryId.title": {
+                $eq: "DIGITAL PRODUCT",
+              },
+              isSingleTimePurchase: false,
+            },
+            {
+              "categoryId.title": {
+                $eq: "DIGITAL PRODUCT",
+              },
+              isSingleTimePurchase: true,
+              purchasedBy: { $size: 0 }
+            },
+            {
+              "categoryId.title": {
+                $eq: "DIGITAL PRODUCT",
+              },
+              "userId": mongoose.Types.ObjectId(req.user._id)
+            }
+          ],
+        },
+      },
       // {
       //   $lookup: {
       //     from: "endorsements",
@@ -531,7 +606,7 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
   const decoded = token && jwt.verify(token, process.env.jwtSecret);
   try {
     const { username, title } = req.params;
-    const post = await Listing.aggregate([
+    let post = (await Listing.aggregate([
       { $addFields: { "title": { $trim: { input: "$title" } } } },
       { $match: { title: String(title).trim() } },
       {
@@ -543,121 +618,310 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
         }
       },
       {
-        $lookup: {
-          from: "accounts",
-          foreignField: "_id",
-          localField: "userId.account",
-          as: "account",
+        $addFields: {
+          userId: {
+            $arrayElemAt: ["$userId", 0],
+          },
         },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "categoryId"
+        }
       },
       {
         $addFields: {
-          account: {
-            $arrayElemAt: ["$account", 0],
+          categoryId: {
+            $arrayElemAt: ["$categoryId", 0],
           },
         },
       },
-      {
-        $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
-      },
-      {
-        $lookup: {
-          from: "endorsements",
-          let: {
-            userid: "$userId._id"
-          },
-          pipeline: [
+    ]))?.[0]
+    if (post?.categoryId?.title === 'DIGITAL PRODUCT') {
+      if (decoded) {
+        if (post?.purchasedBy?.map(e => e.toString()).includes(decoded?.user._id) || post?.userId?._id?.toString() == decoded?.user?._id) {
+          post = await Listing.aggregate([
+            { $addFields: { "title": { $trim: { input: "$title" } } } },
+            { $match: { title: String(title).trim() } },
             {
-              $match: {
-                $expr: {
-                  $and: [
+              $lookup: {
+                from: "categories",
+                localField: "categoryId",
+                foreignField: "_id",
+                as: "categoryId"
+              }
+            },
+            {
+              $addFields: {
+                categoryId: {
+                  $arrayElemAt: ["$categoryId", 0],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "userId"
+              }
+            },
+            {
+              $lookup: {
+                from: "accounts",
+                foreignField: "_id",
+                localField: "userId.account",
+                as: "account",
+              },
+            },
+            {
+              $addFields: {
+                account: {
+                  $arrayElemAt: ["$account", 0],
+                },
+              },
+            },
+            {
+              $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "endorsements",
+                let: {
+                  userid: "$userId._id"
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          {
+                            $eq: [
+                              "$recipientId",
+                              "$$userid",
+                            ],
+                          },
+                          {
+                            $eq: [
+                              "$endorserId",
+                              mongoose.Types.ObjectId(decoded?.user?._id)
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                as: "endorser",
+              },
+            },
+            {
+              $addFields: {
+                trustedBalance: {
+                  $cond: [
                     {
                       $eq: [
-                        "$recipientId",
-                        "$$userid",
+                        {
+                          $size: "$endorser",
+                        },
+                        0,
                       ],
                     },
+                    0,
                     {
-                      $eq: [
-                        "$endorserId",
-                        mongoose.Types.ObjectId(decoded?.user?._id)
-                      ],
+                      $arrayElemAt: ["$endorser.weight", 0],
                     },
                   ],
                 },
               },
             },
-          ],
-          as: "endorser",
-        },
-      },
-      {
-        $addFields: {
-          trustedBalance: {
-            $cond: [
-              {
-                $eq: [
-                  {
-                    $size: "$endorser",
-                  },
-                  0,
-                ],
-              },
-              0,
-              {
-                $arrayElemAt: ["$endorser.weight", 0],
-              },
-            ],
-          },
-        },
-      },
-      {
-        $match: { "userId.username": username }
-      },
-      {
-        $lookup: {
-          from: "profiles",
-          localField: "userId.profile",
-          foreignField: "_id",
-          as: "userId.profile"
+            {
+              $match: { "userId.username": username }
+            },
+            {
+              $lookup: {
+                from: "profiles",
+                localField: "userId.profile",
+                foreignField: "_id",
+                as: "userId.profile"
+              }
+            },
+            {
+              $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "subcategories",
+                localField: "subcategoryId",
+                foreignField: "_id",
+                as: "subcategoryId"
+              }
+            },
+            {
+              $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "subcategoryId.categoryId",
+                foreignField: "_id",
+                as: "subcategoryId.categoryId"
+              }
+            },
+            {
+              $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "tags",
+                localField: "tags",
+                foreignField: "_id",
+                as: "tags"
+              }
+            }
+          ])
+          res.send(post.find(x => x));
         }
-      },
-      {
-        $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
-      },
-      {
-        $lookup: {
-          from: "subcategories",
-          localField: "subcategoryId",
-          foreignField: "_id",
-          as: "subcategoryId"
-        }
-      },
-      {
-        $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
-      },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "subcategoryId.categoryId",
-          foreignField: "_id",
-          as: "subcategoryId.categoryId"
-        }
-      },
-      {
-        $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
-      },
-      {
-        $lookup: {
-          from: "tags",
-          localField: "tags",
-          foreignField: "_id",
-          as: "tags"
+        else {
+          return res.status(402).json({ success: false, message: "You need to purchase this item to view it's content", statusCode: 402 });
         }
       }
-    ])
-      .exec();
-    res.send(post.find(x => x));
+      else {
+        return res.status(401).json({ success: false, message: "No token, authorization denied", statusCode: 401 });
+      }
+    }
+    else {
+      post = await Listing.aggregate([
+        { $addFields: { "title": { $trim: { input: "$title" } } } },
+        { $match: { title: String(title).trim() } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userId"
+          }
+        },
+        {
+          $lookup: {
+            from: "accounts",
+            foreignField: "_id",
+            localField: "userId.account",
+            as: "account",
+          },
+        },
+        {
+          $addFields: {
+            account: {
+              $arrayElemAt: ["$account", 0],
+            },
+          },
+        },
+        {
+          $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+        },
+        {
+          $lookup: {
+            from: "endorsements",
+            let: {
+              userid: "$userId._id"
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $eq: [
+                          "$recipientId",
+                          "$$userid",
+                        ],
+                      },
+                      {
+                        $eq: [
+                          "$endorserId",
+                          mongoose.Types.ObjectId(decoded?.user?._id)
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+            as: "endorser",
+          },
+        },
+        {
+          $addFields: {
+            trustedBalance: {
+              $cond: [
+                {
+                  $eq: [
+                    {
+                      $size: "$endorser",
+                    },
+                    0,
+                  ],
+                },
+                0,
+                {
+                  $arrayElemAt: ["$endorser.weight", 0],
+                },
+              ],
+            },
+          },
+        },
+        {
+          $match: { "userId.username": username }
+        },
+        {
+          $lookup: {
+            from: "profiles",
+            localField: "userId.profile",
+            foreignField: "_id",
+            as: "userId.profile"
+          }
+        },
+        {
+          $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
+        },
+        {
+          $lookup: {
+            from: "subcategories",
+            localField: "subcategoryId",
+            foreignField: "_id",
+            as: "subcategoryId"
+          }
+        },
+        {
+          $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "subcategoryId.categoryId",
+            foreignField: "_id",
+            as: "subcategoryId.categoryId"
+          }
+        },
+        {
+          $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
+        },
+        {
+          $lookup: {
+            from: "tags",
+            localField: "tags",
+            foreignField: "_id",
+            as: "tags"
+          }
+        }
+      ])
+        .exec();
+      res.send(post.find(x => x));
+    }
   } catch (error) {
     next(error);
   }
@@ -689,8 +953,12 @@ exports.createPost = async (req, res, next) => {
         title: req.body.title,
         price: req.body.price,
         listing_type: req.body.type,
+        paidContent: req.body.paidContent ?? null,
+        isSingleTimePurchase: req.body.isSingleTimePurchase ?? null,
+        // subcategoryId: req.body.subCategory,
         userId: req.user._id,
-        subcategoryId: req.body.subCategory,
+        subcategoryId: Boolean(req.body.subCategory) ? req.body.subCategory : null,
+        categoryId: Boolean(req.body.category) ? req.body.category : null,
         description: req.body.description,
         tags: tagId,
       };
@@ -714,9 +982,12 @@ exports.createPost = async (req, res, next) => {
         title: req.body.title,
         price: req.body.price,
         listing_type: req.body.type,
+        paidContent: req.body.paidContent ?? null,
+        isSingleTimePurchase: req.body.isSingleTimePurchase ?? null,
         // photo: uploadFile ? `resized/${uploadFile.filename}` : null,
         userId: req.user._id,
-        subcategoryId: req.body.subCategory,
+        subcategoryId: Boolean(req.body.subCategory) ? req.body.subCategory : null,
+        categoryId: Boolean(req.body.category) ? req.body.category : null,
         description: req.body.description,
         tags: tagId,
       };
@@ -765,5 +1036,139 @@ exports.deleteById = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(err);
+  }
+};
+
+exports.purchase = async (req, res, next) => {
+  try {
+    const postID = req.body._id;
+    const { _id } = req.user;
+    const post = await Listing.findOne({ _id: postID }).populate('categoryId').populate('userId')
+    if (post.categoryId.title === 'DIGITAL PRODUCT') {
+      if (post?.isSingleTimePurchase) {
+        if (!post?.purchasedBy?.includes(_id) && post?.purchasedBy?.length == 0) {
+          await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
+          await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
+          await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
+          await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
+          ejs.renderFile('./template/purchaseItem.ejs', {
+            post
+          }, async (error, renderedTemplate) => {
+            if (error) {
+              console.log('Error rendering template:', error.message);
+            } else {
+              // Use the renderedTemplate to send the email
+              // res.send(renderedTemplate)
+              await sendEmail(req.user.email, 'Your purchased digital product on villages.io', renderedTemplate)
+            }
+          });
+          res.send({ success: true, message: "Item purchased successfully" })
+        }
+        else if (!post?.purchasedBy?.includes(_id) && post?.purchasedBy?.length !== 0) {
+          res.send({ success: false, message: "You cannot purchase this item" })
+        }
+        else if (post?.purchasedBy?.includes(_id)) {
+          res.send({ success: false, message: "You have already purchased this item" })
+        }
+      }
+      else {
+        if (!post?.purchasedBy?.includes(_id)) {
+          await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
+          res.send({ success: true, message: "Item purchased successfully" })
+        }
+        else if (post?.purchasedBy?.includes(_id)) {
+          res.send({ success: false, message: "You have already purchased this item" })
+        }
+      }
+    }
+    else
+      res.send({ success: false, message: "You cannot purchase this item" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.purchaseLimit = async (req, res, next) => {
+  try {
+    const { postID } = req.body
+    const post = await Listing.findById(postID)
+    if (post) {
+      const user = await User.aggregate([
+        {
+          $facet: {
+            trustedBalance: [
+              {
+                $match: { "_id": post.userId?._id }
+              },
+              {
+                $lookup: {
+                  from: "endorsements",
+                  let: {
+                    userid: {
+                      $toObjectId: "$_id",
+                    },
+                  },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $and: [
+                            {
+                              $eq: [
+                                "$recipientId",
+                                mongoose.Types.ObjectId(req.user._id)
+                              ],
+                            },
+                            {
+                              $eq: [
+                                "$endorserId",
+                                "$$userid",
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  as: "endorser",
+                },
+              },
+              {
+                $addFields: {
+                  trustedBalance: {
+                    $cond: [
+                      { $eq: [{ $size: "$endorser" }, 0] },
+                      0,
+                      { $arrayElemAt: ["$endorser.weight", 0] },
+                    ],
+                  },
+                }
+              },
+              {
+                $project: {
+                  trustedBalance: 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          $addFields: {
+            trustedBalance: { $arrayElemAt: ['$trustedBalance.trustedBalance', 0] }
+          }
+        },
+        {
+          $project: {
+            trustedBalance: 1
+          }
+        }
+      ])
+      res.send({ success: true, ...user[0] ?? { trustedBalance: 0 } })
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ success: false })
+    // next(err);
   }
 };

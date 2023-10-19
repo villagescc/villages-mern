@@ -61,11 +61,13 @@ const slice = createSlice({
       state.posts = action.payload.posts;
       state.total = action.payload.total;
       state.loading = false;
+      state.error = null
     },
 
     // GET POST
     getPostSuccess(state, action) {
       state.post = action.payload;
+      state.error = null
       state.loading = false;
     },
 
@@ -139,9 +141,10 @@ export function getPost(username, title) {
     try {
       const response = await axios.get(`/posting/post/${username}/${encodeURIComponent(title)}`);
       dispatch(slice.actions.getPostSuccess(response.data));
-      dispatch(slice.actions.setLoading(false));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+    } finally {
+      dispatch(slice.actions.setLoading(false));
     }
   };
 }
