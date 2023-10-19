@@ -59,6 +59,8 @@ router.post(
   postMiddleware.create,
   postController.createPost
 );
+router.post('/posting/purchase', authMiddleware.auth, postController.purchase)
+router.post('/posting/purchase/getPurchaseLimit', authMiddleware.auth, postController.purchaseLimit)
 router.get("/posting/getByUser/:userId", postController.getByUser);
 router.delete("/posting/:id", postController.deleteById);
 

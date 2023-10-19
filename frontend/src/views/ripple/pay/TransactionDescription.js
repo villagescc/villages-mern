@@ -6,6 +6,10 @@ import { Grid, Typography, TableContainer, Table, TableBody, TableRow, TableCell
 import moment from 'moment';
 
 const TransactionDescription = ({ transaction }) => {
+  const text = transaction.memo ?? ""
+  const urlRegex = /https?:\/\/\S+/;
+  const urlMatch = text.match(urlRegex);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -66,7 +70,9 @@ const TransactionDescription = ({ transaction }) => {
                 <TableCell component="th" scope="row">
                   <Typography variant="h5">Description</Typography>
                 </TableCell>
-                <TableCell>{transaction.memo}</TableCell>
+                <TableCell>{urlMatch ? <>
+                  <p>{text?.slice(0, urlMatch?.index)}</p> <Link to={urlMatch[0]}>{urlMatch[0]}</Link>
+                </> : transaction.memo}</TableCell>
               </TableRow>
             </TableBody>
           </Table>

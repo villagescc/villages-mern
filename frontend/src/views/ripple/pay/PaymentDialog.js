@@ -293,7 +293,7 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
                           event.preventDefault()
                         }
                       }}
-                      onChange={(e) => setAmount(Number(e.target.value))}
+                      onChange={(e) => setAmount((e.target.value))}
                       error={errors.amount}
                       helperText={errors?.amount}
                       InputProps={{ endAdornment: <InputAdornment position="start">V.H.</InputAdornment>, inputProps: { min: 0 } }}
@@ -326,11 +326,11 @@ function PaymentDialog({ open, setOpen, recipientId, setCount, amount, setAmount
                 variant="contained"
                 color="secondary"
                 onClick={submitPayment}
-                disabled={maxLimit > 0 ? (isSubmitting ? true : false) : true}
+                disabled={(maxLimit > 0 && amount) ? (isSubmitting ? true : false) : true}
               >
                 Send Payment
               </Button>
-              {maxLimit > 0 && (
+              {(maxLimit > 0) && (
                 <Button variant="contained" color="primary" onClick={() => setShowGraph(!showGraph)} sx={{ ml: 1 }}>
                   Show Graph
                 </Button>

@@ -23,6 +23,8 @@ import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 import { SERVER_URL } from 'config';
 import Chip from 'ui-component/extended/Chip';
 import moment from 'moment';
+import useAuth from 'hooks/useAuth';
+import { LoadingButton } from '@mui/lab';
 
 // styles
 const DeleteWrapper = styled(Button)({
@@ -105,12 +107,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const PostingCard = ({ id, avatar, title, post, author, description, listingType, own, userData, recentlyActive, isTrusted, ...other }) => {
   const theme = useTheme();
+  const { user } = useAuth();
   const postImage = post ? `${SERVER_URL}/upload/posting/` + post : DefaultPostingIcon;
   const avatarImage = avatar ? `${SERVER_URL}/upload/avatar/` + avatar : DefaultUserIcon;
-
   return (
     <Card
       sx={{
+        height: "100%",
         background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
         border: theme.palette.mode === 'dark' ? 'none' : '1px solid',
         borderColor: theme.palette.grey[100],
@@ -124,12 +127,28 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
         chipcolor={'warning'}
         sx={{ borderRadius: '0px 4px 4px 0px', textTransform: 'capitalize', position: 'absolute', left: 0, top: "12px" }}
       />
+      {other?.category?.title === 'DIGITAL PRODUCT' && <span className='btn-shine-parent'>
+        <span></span>
+        <span></span>
+        <div
+          className="btn-shine"
+          style={{ borderRadius: '4px 0px 0px 4px', textTransform: 'capitalize' }}
+        >
+          <span>{other?.category?.title}</span>
+        </div>
+      </span>}
+      {/* {other?.category?.title === 'DIGITAL PRODUCT' && <Chip
+        size="small"
+        label={other?.category?.title}
+        chipcolor={'warning'}
+        sx={{ borderRadius: '4px 0px 0px 4px', textTransform: 'capitalize', position: 'absolute', right: 0, top: "12px" }}
+      />} */}
       <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
       <CardContent sx={{ p: 2, pb: '16px !important' }}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>
             <Grid container spacing={gridSpacing}>
-              <Grid item xs={12} component={Link} to={`/${userData?.username}/${encodeURIComponent(title)}`} style={{ textDecoration: 'none' }}>
+              <Grid item xs={12} component={(own || (other?.category?.title === 'DIGITAL PRODUCT' && other?.purchasedBy?.includes(user?._id)) || other?.category?.title !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`} style={{ textDecoration: 'none' }}>
                 {
                   isTrusted ? (<StyledBadge
                     overlap="circular"
@@ -145,7 +164,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
           <Grid item xs={12} alignItems="center">
             <Grid container spacing={1}>
               <Grid item xs={12} sx={{ height: 50 }}>
-                <Typography variant="h4" component={Link} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
+                <Typography variant="h4" component={(own || (other?.category?.title === 'DIGITAL PRODUCT' && other?.purchasedBy?.includes(user?._id)) || other?.category?.title !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
                   {title?.length > 30 ? title.substring(0, 30) + '...' : title}
                 </Typography>
               </Grid>
@@ -163,7 +182,20 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} alignItems="center" display={'flex'} flexDirection={'column'} gap={'15px'}>
+            {(other?.category?.title === 'DIGITAL PRODUCT' && !own) ?
+              <Grid item xs={12} justifyContent="center">
+                <LoadingButton disabled={other?.purchasedBy?.includes(user?._id)} variant='contained' onClick={other.onPurchase} sx={{ gap: "5px" }} loading={other?.isFetchingPurchaseLimit}>
+                  {other?.purchasedBy?.includes(user?._id) ? "Purchased" : 'Purchase'} <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-shopping-cart" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                    <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                    <path d="M17 17h-11v-14h-2"></path>
+                    <path d="M6 5l14 1l-1 7h-13"></path>
+                  </svg>
+                </LoadingButton>
+              </Grid> : <Grid height={"36px"}></Grid>
+            }
             {own ? (
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>

@@ -26,9 +26,8 @@
 
 .scrollbar-container {
     .ps__rail-y {
-
-        &:hover>.ps__thumb-y,
-        &:focus>.ps__thumb-y,
+        &:hover > .ps__thumb-y,
+        &:focus > .ps__thumb-y,
         &.ps--clicking .ps__thumb-y {
             background-color: $grey500;
             width: 5px;
@@ -44,8 +43,8 @@
 }
 
 .scrollbar-container.ps,
-.scrollbar-container>.ps {
-    &.ps--active-y>.ps__rail-y {
+.scrollbar-container > .ps {
+    &.ps--active-y > .ps__rail-y {
         width: 5px;
         background-color: transparent !important;
         z-index: 999;
@@ -57,8 +56,8 @@
         }
     }
 
-    &.ps--scrolling-y>.ps__rail-y,
-    &.ps--scrolling-x>.ps__rail-x {
+    &.ps--scrolling-y > .ps__rail-y,
+    &.ps--scrolling-x > .ps__rail-x {
         opacity: 0.4;
         background-color: transparent;
     }
@@ -87,7 +86,6 @@
 }
 
 @keyframes bounce {
-
     0%,
     20%,
     53%,
@@ -118,7 +116,6 @@
 }
 
 @keyframes slideY {
-
     0%,
     50%,
     100% {
@@ -135,7 +132,6 @@
 }
 
 @keyframes slideX {
-
     0%,
     50%,
     100% {
@@ -306,4 +302,109 @@ div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
 ::-webkit-scrollbar-thumb:hover {
     opacity: 0.9;
     background-color: #9e9e9e;
+}
+
+.btn-shine-parent {
+    position: absolute;
+    margin: 0;
+    right: 0;
+    top: 12px;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: mask-position 2s ease, -webkit-mask-position 2s ease;
+    // border-radius: 4px 0 0 4px;
+    font-weight: 400;
+    background-color: rgb(211, 47, 47);
+    color: white;
+    padding: 5px;
+    font-family: inherit;
+    z-index: 0;
+}
+
+.btn-shine-parent:after {
+    content: '';
+    top: 0;
+    transform: translateX(100%);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    animation: slide 1s infinite 1s;
+    background: -moz-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%
+    ); /* FF3.6+ */
+    background: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        color-stop(0%, rgba(255, 255, 255, 0)),
+        color-stop(50%, rgba(255, 255, 255, 0.8)),
+        color-stop(99%, rgba(128, 186, 232, 0)),
+        color-stop(100%, rgba(125, 185, 232, 0))
+    ); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%
+    ); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%
+    ); /* Opera 11.10+ */
+    background: -ms-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%
+    ); /* IE10+ */
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%
+    );
+}
+
+.btn-shine-parent span:nth-child(1)::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    border-top: 15px solid transparent;
+    border-right: 10px solid rgb(211, 47, 47);
+    border-bottom: 0px solid transparent;
+}
+
+.btn-shine-parent span:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    width: 0;
+    height: 0;
+    top: 0;
+    border-top: 0px solid transparent;
+    border-right: 10px solid rgb(211, 47, 47);
+    border-bottom: 15px solid transparent;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(-65%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
 }

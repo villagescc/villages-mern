@@ -13,8 +13,8 @@ exports.upload = multer({ storage: storage })
 
 const { validatePostingCreate } = require('../validation');
 
-exports.create = (req, res, next) => {
-  const { errors, isValid } = validatePostingCreate(req.body);
+exports.create = async (req, res, next) => {
+  const { errors, isValid } = await validatePostingCreate(req.body);
 
   if (!isValid) {
     return res.status(400).json(errors);
