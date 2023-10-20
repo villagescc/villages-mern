@@ -129,25 +129,25 @@ exports.searchPosts = async (req, res, next) => {
               },
             },
             {
-              "categoryId.title": {
+              "listing_type": {
                 $ne: "DIGITAL PRODUCT",
               },
             },
             {
-              "categoryId.title": {
+              "listing_type": {
                 $eq: "DIGITAL PRODUCT",
               },
               isSingleTimePurchase: false,
             },
             {
-              "categoryId.title": {
+              "listing_type": {
                 $eq: "DIGITAL PRODUCT",
               },
               isSingleTimePurchase: true,
               purchasedBy: { $size: 0 }
             },
             {
-              "categoryId.title": {
+              "listing_type": {
                 $eq: "DIGITAL PRODUCT",
               },
               "userId": mongoose.Types.ObjectId(req.user._id)
@@ -640,7 +640,7 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
         },
       },
     ]))?.[0]
-    if (post?.categoryId?.title === 'DIGITAL PRODUCT') {
+    if (post?.listing_type === 'DIGITAL PRODUCT') {
       if (decoded) {
         if (post?.purchasedBy?.map(e => e.toString()).includes(decoded?.user._id) || post?.userId?._id?.toString() == decoded?.user?._id) {
           post = await Listing.aggregate([
@@ -786,11 +786,293 @@ exports.getByUsernameAndTitle = async (req, res, next) => {
           res.send(post.find(x => x));
         }
         else {
-          return res.status(402).json({ success: false, message: "You need to purchase this item to view it's content", statusCode: 402 });
+          post = await Listing.aggregate([
+            { $addFields: { "title": { $trim: { input: "$title" } } } },
+            { $match: { title: String(title).trim() } },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "categoryId",
+                foreignField: "_id",
+                as: "categoryId"
+              }
+            },
+            {
+              $addFields: {
+                categoryId: {
+                  $arrayElemAt: ["$categoryId", 0],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "userId"
+              }
+            },
+            {
+              $lookup: {
+                from: "accounts",
+                foreignField: "_id",
+                localField: "userId.account",
+                as: "account",
+              },
+            },
+            {
+              $addFields: {
+                account: {
+                  $arrayElemAt: ["$account", 0],
+                },
+              },
+            },
+            {
+              $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "endorsements",
+                let: {
+                  userid: "$userId._id"
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          {
+                            $eq: [
+                              "$recipientId",
+                              "$$userid",
+                            ],
+                          },
+                          {
+                            $eq: [
+                              "$endorserId",
+                              mongoose.Types.ObjectId(decoded?.user?._id)
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                as: "endorser",
+              },
+            },
+            {
+              $addFields: {
+                trustedBalance: {
+                  $cond: [
+                    {
+                      $eq: [
+                        {
+                          $size: "$endorser",
+                        },
+                        0,
+                      ],
+                    },
+                    0,
+                    {
+                      $arrayElemAt: ["$endorser.weight", 0],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $match: { "userId.username": username }
+            },
+            {
+              $lookup: {
+                from: "profiles",
+                localField: "userId.profile",
+                foreignField: "_id",
+                as: "userId.profile"
+              }
+            },
+            {
+              $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "subcategories",
+                localField: "subcategoryId",
+                foreignField: "_id",
+                as: "subcategoryId"
+              }
+            },
+            {
+              $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "subcategoryId.categoryId",
+                foreignField: "_id",
+                as: "subcategoryId.categoryId"
+              }
+            },
+            {
+              $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
+            },
+            {
+              $lookup: {
+                from: "tags",
+                localField: "tags",
+                foreignField: "_id",
+                as: "tags"
+              }
+            },
+            { $unset: ['paidContent'] }
+          ])
+          res.send(post.find(x => x));
         }
       }
       else {
-        return res.status(401).json({ success: false, message: "No token, authorization denied", statusCode: 401 });
+        post = await Listing.aggregate([
+          { $addFields: { "title": { $trim: { input: "$title" } } } },
+          { $match: { title: String(title).trim() } },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "categoryId",
+              foreignField: "_id",
+              as: "categoryId"
+            }
+          },
+          {
+            $addFields: {
+              categoryId: {
+                $arrayElemAt: ["$categoryId", 0],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "userId"
+            }
+          },
+          {
+            $lookup: {
+              from: "accounts",
+              foreignField: "_id",
+              localField: "userId.account",
+              as: "account",
+            },
+          },
+          {
+            $addFields: {
+              account: {
+                $arrayElemAt: ["$account", 0],
+              },
+            },
+          },
+          {
+            $unwind: { path: "$userId", preserveNullAndEmptyArrays: true }
+          },
+          {
+            $lookup: {
+              from: "endorsements",
+              let: {
+                userid: "$userId._id"
+              },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        {
+                          $eq: [
+                            "$recipientId",
+                            "$$userid",
+                          ],
+                        },
+                        {
+                          $eq: [
+                            "$endorserId",
+                            mongoose.Types.ObjectId(decoded?.user?._id)
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+              as: "endorser",
+            },
+          },
+          {
+            $addFields: {
+              trustedBalance: {
+                $cond: [
+                  {
+                    $eq: [
+                      {
+                        $size: "$endorser",
+                      },
+                      0,
+                    ],
+                  },
+                  0,
+                  {
+                    $arrayElemAt: ["$endorser.weight", 0],
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $match: { "userId.username": username }
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              localField: "userId.profile",
+              foreignField: "_id",
+              as: "userId.profile"
+            }
+          },
+          {
+            $unwind: { path: "$userId.profile", preserveNullAndEmptyArrays: true }
+          },
+          {
+            $lookup: {
+              from: "subcategories",
+              localField: "subcategoryId",
+              foreignField: "_id",
+              as: "subcategoryId"
+            }
+          },
+          {
+            $unwind: { path: "$subcategoryId", preserveNullAndEmptyArrays: true }
+          },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "subcategoryId.categoryId",
+              foreignField: "_id",
+              as: "subcategoryId.categoryId"
+            }
+          },
+          {
+            $unwind: { path: "$subcategoryId.categoryId", preserveNullAndEmptyArrays: true }
+          },
+          {
+            $lookup: {
+              from: "tags",
+              localField: "tags",
+              foreignField: "_id",
+              as: "tags"
+            }
+          },
+          { $unset: ['paidContent'] }
+        ])
+        res.send(post.find(x => x));
       }
     }
     else {
@@ -1044,7 +1326,7 @@ exports.purchase = async (req, res, next) => {
     const postID = req.body._id;
     const { _id } = req.user;
     const post = await Listing.findOne({ _id: postID }).populate('categoryId').populate('userId')
-    if (post.categoryId.title === 'DIGITAL PRODUCT') {
+    if (post.listing_type === 'DIGITAL PRODUCT') {
       if (post?.isSingleTimePurchase) {
         if (!post?.purchasedBy?.includes(_id) && post?.purchasedBy?.length == 0) {
           await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
@@ -1074,6 +1356,9 @@ exports.purchase = async (req, res, next) => {
       else {
         if (!post?.purchasedBy?.includes(_id)) {
           await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
+          await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
+          await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
+          await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
           res.send({ success: true, message: "Item purchased successfully" })
         }
         else if (post?.purchasedBy?.includes(_id)) {

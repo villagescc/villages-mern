@@ -25,7 +25,11 @@ export const listing_type = [
   {
     value: 'LEARN',
     label: 'LEARN'
-  }
+  },
+  {
+    value: 'DIGITAL PRODUCT',
+    label: 'DIGITAL PRODUCT'
+  },
 ];
 
 export const radius = [

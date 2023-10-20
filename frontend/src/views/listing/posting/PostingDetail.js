@@ -142,7 +142,7 @@ const PostingDetail = () => {
                 <Grid item xs={12}>
                   <Typography variant="body2">{post.description}</Typography>
                 </Grid>
-                {post?.categoryId?.title === 'DIGITAL PRODUCT' && <Grid item xs={12}>
+                {post?.listing_type === 'DIGITAL PRODUCT' && <Grid item xs={12}>
                   <Typography variant="body2">{post.paidContent}</Typography>
                 </Grid>}
                 <Grid item xs={12}>
