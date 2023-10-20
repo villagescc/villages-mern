@@ -118,9 +118,6 @@ const Posting = () => {
   const [keyword, setKeyword] = React.useState('');
   // const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
   const [posts, setPosts] = React.useState([]);
-  const [post, setPost] = React.useState(null)
-  const [trustedBalance, setTrustedBalance] = React.useState(null)
-  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = React.useState(false)
   const [total, setTotal] = React.useState(0);
   const [categories, setCategories] = React.useState([]);
   const [subCategories, setSubCategories] = React.useState([]);
@@ -155,7 +152,6 @@ const Posting = () => {
   const [id, setId] = React.useState('');
   const [type, setType] = React.useState('');
   const [title, setTitle] = React.useState('');
-  const [isFetchingPurchaseLimit, setIsFetchingPurchaseLimit] = React.useState(false)
   const [paidContent, setPaidContent] = React.useState('')
   const [description, setDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
@@ -296,11 +292,11 @@ const Posting = () => {
     data.append('type', type);
     data.append('title', title);
     data.append('isSingleTimePurchase', isSingleTimePurchase);
-    data.append('paidContent', categories.find(x => x?.title === 'DIGITAL PRODUCT')?._id !== category ? "" : paidContent);
+    data.append('paidContent', listing_type.find(x => x?.label === 'DIGITAL PRODUCT')?.value !== type ? "" : paidContent);
     data.append('description', description);
     data.append('price', price);
     data.append('category', category);
-    data.append('subCategory', categories.find(x => x?.title === 'DIGITAL PRODUCT')?._id === category ? "" : subCategory);
+    data.append('subCategory', subCategory);
     tags.forEach((tag) => {
       data.append('tags', tag.text);
     });
@@ -582,104 +578,12 @@ const Posting = () => {
                       isTrusted={post?.isTrusted}
                       onDelete={() => handleDeletePostClick(post)}
                       onEdit={() => handleEditPostClick(post)}
-                      onPurchase={() => {
-                        setPost(post)
-                        setIsFetchingPurchaseLimit(true)
-                        axios.post(`${SERVER_URL}/api/posting/purchase/getPurchaseLimit`, { postID: post?._id }).then((res) => {
-                          // console.log(res.data);
-                          if (res.data.success && res.data.trustedBalance > 0 && user.account.balance >= post.price) {
-                            setTrustedBalance(res.data.trustedBalance)
-                            // dispatch(
-                            //   openDialog({
-                            //     open: true,
-                            //     title: 'Confirm',
-                            //     message: `Are you sure want to purchase this ?`,
-                            //     okLabel: 'Yes',
-                            //     onOkClick: () => {
-                            //       axios.post('/posting/purchase', { _id: post?._id }).then(res => {
-                            //         console.log(res.data, 'resssss');
-                            //         if (res.data.success) {
-                            //           dispatch(
-                            //             openSnackbar({
-                            //               open: true,
-                            //               message: res.data.message,
-                            //               variant: 'alert',
-                            //               alert: {
-                            //                 color: 'success',
-                            //                 severity: 'error'
-                            //               },
-                            //               close: false
-                            //             })
-                            //           )
-                            //         }
-                            //         else if (!res.data.success) {
-                            //           dispatch(
-                            //             openSnackbar({
-                            //               open: true,
-                            //               message: res.data.message,
-                            //               variant: 'alert',
-                            //               alert: {
-                            //                 color: 'error',
-                            //                 severity: 'error'
-                            //               },
-                            //               close: false
-                            //             })
-                            //           )
-                            //         }
-                            //       }).catch(err => {
-                            //         console.log(err);
-                            //       }).finally(() => {
-
-                            //       })
-                            //     }
-                            //   })
-                            // )
-                            setIsPurchaseModalOpen(true)
-                          }
-                          else if (res.data.trustedBalance <= 0) {
-                            dispatch(openSnackbar({
-                              open: true,
-                              message: `You do not have a credit line available with ${post?.userId?.username}`,
-                              variant: 'alert',
-                              alert: {
-                                color: 'error',
-                                severity: 'error'
-                              },
-                              close: false
-                            }))
-                          }
-                          else if (user.account.balance < post.price) {
-                            dispatch(openSnackbar({
-                              open: true,
-                              message: `You do not have enough balance to purchase this item`,
-                              variant: 'alert',
-                              alert: {
-                                color: 'error',
-                                severity: 'error'
-                              },
-                              close: false
-                            }))
-                          }
-                          else {
-                            openSnackbar({
-                              open: true,
-                              message: 'Something went wrong',
-                              variant: 'alert',
-                              alert: {
-                                color: 'error',
-                                severity: 'error'
-                              },
-                              close: false
-                            })
-                          }
-                        }).finally(() => {
-                          setIsFetchingPurchaseLimit(false)
-                        })
-                      }}
-                      isFetchingPurchaseLimit={isFetchingPurchaseLimit}
                       category={post.categoryId}
                       paidContent={post.paidContent}
+                      filterPost={filterPost}
+                      filterData={filterData}
                       purchasedBy={post.purchasedBy}
+                      postData={post}
                     />
                   </Grid>
                 ))
@@ -689,76 +593,6 @@ const Posting = () => {
                 </Grid>
               )}
             </Grid>
-            <Dialog
-              open={isPurchaseModalOpen}
-              onClose={() => {
-                setIsPurchaseModalOpen(false)
-              }}
-              aria-labelledby="responsive-dialog-title"
-            >
-              <DialogTitle id="responsive-dialog-title">
-                Are you sure want to purchase this ?
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  {`You can purchase this item! You can spend up to ${trustedBalance} village hours with ${post?.userId?.username}`}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  autoFocus
-                  onClick={() => {
-                    setIsPurchaseModalOpen(false)
-                  }}
-                >
-                  No
-                </Button>
-                <Button
-                  autoFocus
-                  onClick={() => {
-                    axios.post('/posting/purchase', { _id: post?._id }).then(res => {
-                      console.log(res.data, 'resssss');
-                      if (res.data.success) {
-                        dispatch(
-                          openSnackbar({
-                            open: true,
-                            message: res.data.message,
-                            variant: 'alert',
-                            alert: {
-                              color: 'success',
-                              severity: 'success'
-                            },
-                            close: false
-                          })
-                        )
-                        dispatch(filterPost(filterData))
-                        setTrustedBalance(null)
-                        setPost(null)
-                        setIsPurchaseModalOpen(false)
-                      }
-                      else if (!res.data.success) {
-                        dispatch(
-                          openSnackbar({
-                            open: true,
-                            message: res.data.message,
-                            variant: 'alert',
-                            alert: {
-                              color: 'error',
-                              severity: 'error'
-                            },
-                            close: false
-                          })
-                        )
-                      }
-                    }).catch(err => {
-                      console.log(err);
-                    })
-                  }}
-                >
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
             {posts.length > 0 && (
               <Grid container spacing={2} justifyContent="end" sx={{ my: 1 }}>
                 <Pagination
@@ -844,7 +678,7 @@ const Posting = () => {
                   error={errors?.category}
                   captionLabel="CATEGORY"
                 />
-                {categories.find(x => x?.title === 'DIGITAL PRODUCT')?._id === category && (<>
+                {listing_type.find(x => x?.label === 'DIGITAL PRODUCT')?.value === type && (<>
                   <TextField
                     fullWidth
                     id="outlined-multiline-flexible"

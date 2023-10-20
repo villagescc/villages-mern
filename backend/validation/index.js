@@ -178,7 +178,7 @@ exports.validateNotificationCreate = (data) => {
 
 exports.validatePostingCreate = async (data) => {
   let errors = {};
-  const category = await Categories.findOne({ title: "DIGITAL PRODUCT" })
+  // const category = await Categories.findOne({ title: "DIGITAL PRODUCT" })
   data.title = !isEmpty(data.title) ? data.title : "";
   data.type = !isEmpty(data.type) ? data.type : "";
   data.category = !isEmpty(data.category) ? data.category : "";
@@ -200,11 +200,11 @@ exports.validatePostingCreate = async (data) => {
     errors.category = "Category field is required";
   }
 
-  if (validator.isEmpty(data.subCategory) && category?._id?.toString() !== data.category) {
+  if (validator.isEmpty(data.subCategory)) {
     errors.subCategory = "Subcategory field is required";
   }
 
-  if (validator.isEmpty(data.paidContent) && category?._id?.toString() === data.category) {
+  if (validator.isEmpty(data.paidContent) && data?.type === 'DIGITAL PRODUCT') {
     errors.paidContent = "Paid content is required";
   }
 
