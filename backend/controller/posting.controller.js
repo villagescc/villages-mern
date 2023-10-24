@@ -13,9 +13,35 @@ const { default: mongoose } = require("mongoose");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Account = require("../models/Account");
-const sendEmail = require("../utils/email");
 const Payment = require("../models/Payment");
+const nodemailer = require("nodemailer");
+const { _create } = require("./notification.controller");
 
+const sendEmail = async (sender, email, subject, text) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILJET_HOST,
+      // service: process.env.SERVICE,
+      port: 465,
+      auth: {
+        user: process.env.MJ_APIKEY_PUBLIC,
+        pass: process.env.MJ_APIKEY_PRIVATE,
+      },
+    });
+
+    await transporter.sendMail({
+      from: 'info@villages.io',
+      replyTo: sender,
+      to: email,
+      subject: subject,
+      html: text,
+    });
+    console.log("email sent sucessfully");
+  } catch (error) {
+    console.log("email not sent");
+    console.log(error);
+  }
+};
 
 exports.searchPosts = async (req, res, next) => {
   const { filterData } = req.body;
@@ -1333,6 +1359,33 @@ exports.purchase = async (req, res, next) => {
           await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
           await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
           await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
+          const receiverNotification = await _create(
+            "PAYMENT",
+            req.user._id,
+            post.userId._id,
+            post.price,
+            `${req.user.username} has just purchased your item`
+          );
+          const purchaserNotification = await _create(
+            "PAYMENT",
+            post.userId._id,
+            req.user._id,
+            post.price,
+            `You just purchased ${post.userId.username}'s item`
+          );
+          global.io.emit("newNotification", purchaserNotification);
+          ejs.renderFile('./template/paymentReceiver.ejs', {
+            post,
+            purchaser: req.user.username
+          }, async (error, renderedTemplate) => {
+            if (error) {
+              console.log('Error rendering template:', error.message);
+            } else {
+              // Use the renderedTemplate to send the email
+              // res.send(renderedTemplate)
+              await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
+            }
+          })
           ejs.renderFile('./template/purchaseItem.ejs', {
             post
           }, async (error, renderedTemplate) => {
@@ -1341,7 +1394,7 @@ exports.purchase = async (req, res, next) => {
             } else {
               // Use the renderedTemplate to send the email
               // res.send(renderedTemplate)
-              await sendEmail(req.user.email, 'Your purchased digital product on villages.io', renderedTemplate)
+              await sendEmail(post.userId.email, req.user.email, 'Your purchased digital product on villages.io', renderedTemplate)
             }
           });
           res.send({ success: true, message: "Item purchased successfully" })
@@ -1359,7 +1412,41 @@ exports.purchase = async (req, res, next) => {
           await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
           await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
           await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
-          res.send({ success: true, message: "Item purchased successfully" })
+          const receiverNotification = await _create(
+            "PAYMENT",
+            req.user._id,
+            post.userId._id,
+            post.price,
+            `${req.user.username} has just purchased your item`
+          );
+          const purchaserNotification = await _create(
+            "PAYMENT",
+            post.userId._id,
+            req.user._id,
+            post.price,
+            `You just purchased ${post.userId.username}'s item`
+          );
+          global.io.emit("newNotification", purchaserNotification);
+          ejs.renderFile('./template/purchaseItem.ejs', {
+            post
+          }, async (error, renderedTemplate) => {
+            if (error) {
+              console.log('Error rendering template:', error.message);
+            } else {
+              await sendEmail(post.userId.email, req.user.email, "Your purchased digital product on villages.io", renderedTemplate)
+            }
+          });
+          ejs.renderFile('./template/paymentReceiver.ejs', {
+            post,
+            purchaser: req.user.username
+          }, async (error, renderedTemplate) => {
+            if (error) {
+              console.log('Error rendering template:', error.message);
+            } else {
+              await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
+            }
+          })
+          res.send({ success: true, message: "Item purchased successfully", post })
         }
         else if (post?.purchasedBy?.includes(_id)) {
           res.send({ success: false, message: "You have already purchased this item" })
@@ -1374,82 +1461,168 @@ exports.purchase = async (req, res, next) => {
   }
 };
 
+// exports.purchaseLimit = async (req, res, next) => {
+//   try {
+//     const { postID } = req.body
+//     const post = await Listing.findById(postID)
+//     if (post) {
+//       const user = await User.aggregate([
+//         {
+//           $facet: {
+//             trustedBalance: [
+//               {
+//                 $match: { "_id": post.userId?._id }
+//               },
+//               {
+//                 $lookup: {
+//                   from: "endorsements",
+//                   let: {
+//                     userid: {
+//                       $toObjectId: "$_id",
+//                     },
+//                   },
+//                   pipeline: [
+//                     {
+//                       $match: {
+//                         $expr: {
+//                           $and: [
+//                             {
+//                               $eq: [
+//                                 "$recipientId",
+//                                 mongoose.Types.ObjectId(req.user._id)
+//                               ],
+//                             },
+//                             {
+//                               $eq: [
+//                                 "$endorserId",
+//                                 "$$userid",
+//                               ],
+//                             },
+//                           ],
+//                         },
+//                       },
+//                     },
+//                   ],
+//                   as: "endorser",
+//                 },
+//               },
+//               {
+//                 $addFields: {
+//                   trustedBalance: {
+//                     $cond: [
+//                       { $eq: [{ $size: "$endorser" }, 0] },
+//                       0,
+//                       { $arrayElemAt: ["$endorser.weight", 0] },
+//                     ],
+//                   },
+//                 }
+//               },
+//               {
+//                 $project: {
+//                   trustedBalance: 1
+//                 }
+//               }
+//             ]
+//           }
+//         },
+//         {
+//           $addFields: {
+//             trustedBalance: { $arrayElemAt: ['$trustedBalance.trustedBalance', 0] }
+//           }
+//         },
+//         {
+//           $project: {
+//             trustedBalance: 1
+//           }
+//         }
+//       ])
+//       res.send({ success: true, ...user[0] ?? { trustedBalance: 0 } })
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.send({ success: false })
+//     // next(err);
+//   }
+// };
+
 exports.purchaseLimit = async (req, res, next) => {
   try {
     const { postID } = req.body
     const post = await Listing.findById(postID)
     if (post) {
-      const user = await User.aggregate([
+      const trustedBalance = await Payment.aggregate([
         {
-          $facet: {
-            trustedBalance: [
+          $match: {
+            recipient: mongoose.Types.ObjectId(post.userId),
+            payer: mongoose.Types.ObjectId(req.user._id),
+          }
+        },
+        {
+          $lookup: {
+            from: "endorsements",
+            pipeline: [
               {
-                $match: { "_id": post.userId?._id }
-              },
-              {
-                $lookup: {
-                  from: "endorsements",
-                  let: {
-                    userid: {
-                      $toObjectId: "$_id",
-                    },
-                  },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $and: [
-                            {
-                              $eq: [
-                                "$recipientId",
-                                mongoose.Types.ObjectId(req.user._id)
-                              ],
-                            },
-                            {
-                              $eq: [
-                                "$endorserId",
-                                "$$userid",
-                              ],
-                            },
-                          ],
-                        },
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $eq: [
+                          "$recipientId",
+                          mongoose.Types.ObjectId(req.user._id)
+                        ],
                       },
-                    },
-                  ],
-                  as: "endorser",
-                },
-              },
-              {
-                $addFields: {
-                  trustedBalance: {
-                    $cond: [
-                      { $eq: [{ $size: "$endorser" }, 0] },
-                      0,
-                      { $arrayElemAt: ["$endorser.weight", 0] },
+                      {
+                        $eq: [
+                          "$endorserId",
+                          mongoose.Types.ObjectId(post.userId)
+                        ],
+                      },
                     ],
                   },
-                }
+                },
               },
-              {
-                $project: {
-                  trustedBalance: 1
-                }
-              }
-            ]
+            ],
+            as: "endorser",
+          }
+        },
+        // {
+        //   $match: {
+        //     endorser: { $not: { $size: 0 } },
+        //   }
+        // },
+        {
+          $addFields: {
+            endorser: {
+              $arrayElemAt: ["$endorser.weight", 0],
+            },
+          }
+        },
+        {
+          $group: {
+            _id: "$payer",
+            endorserWeight: { $first: "$endorser" },
+            sumOfWeight: {
+              $sum: "$weight",
+            },
           }
         },
         {
           $addFields: {
-            trustedBalance: { $arrayElemAt: ['$trustedBalance.trustedBalance', 0] }
+            trustedBalance: {
+              $subtract: [
+                "$endorserWeight",
+                "$sumOfWeight",
+              ],
+            },
           }
         },
         {
           $project: {
-            trustedBalance: 1
+            trustedBalance: 1,
           }
         }
       ])
-      res.send({ success: true, ...user[0] ?? { trustedBalance: 0 } })
+      res.send({ success: true, ...trustedBalance?.[0] ?? { trustedBalance: 0 } })
     }
   } catch (err) {
     console.log(err);
