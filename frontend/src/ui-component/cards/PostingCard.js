@@ -111,7 +111,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const PostingCard = ({ id, avatar, title, post, author, description, listingType, own, userData, recentlyActive, isTrusted, ...other }) => {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { user, init } = useAuth();
   const navigate = useNavigate()
   const dispatch = useDispatch();
   // const [post, setPost] = React.useState(null)
@@ -154,14 +154,14 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
         chipcolor={'warning'}
         sx={{ borderRadius: '4px 0px 0px 4px', textTransform: 'capitalize', position: 'absolute', right: 0, top: "12px" }}
       />} */}
-        <Box component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT' && other?.purchasedBy?.includes(user?._id)) || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
+        <Box component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT') || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
           <CardMedia component="img" image={postImage} title={title} sx={{ height: '125px' }} />
         </Box>
         <CardContent sx={{ p: 2, pb: '16px !important' }}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
               <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT' && other?.purchasedBy?.includes(user?._id)) || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`} style={{ textDecoration: 'none' }}>
+                <Grid item xs={12} component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT') || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`} style={{ textDecoration: 'none' }}>
                   {
                     isTrusted ? (<StyledBadge
                       overlap="circular"
@@ -177,7 +177,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
             <Grid item xs={12} alignItems="center">
               <Grid container spacing={1}>
                 <Grid item xs={12} sx={{ height: 50 }}>
-                  <Typography variant="h4" component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT' && other?.purchasedBy?.includes(user?._id)) || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
+                  <Typography variant="h4" component={(own || (other?.postData?.listing_type === 'DIGITAL PRODUCT') || other?.postData?.listing_type !== 'DIGITAL PRODUCT') ? Link : null} to={`/${userData?.username}/${encodeURIComponent(title)}`}>
                     {title?.length > 30 ? title.substring(0, 30) + '...' : title}
                   </Typography>
                 </Grid>
@@ -326,6 +326,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
                     })
                   )
                   dispatch(other?.filterPost(other?.filterData))
+                  init()
                   setTrustedBalance(null)
                   setIsPurchaseModalOpen(false)
                 }

@@ -271,77 +271,6 @@
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;"
                                                                         align="center">
-                                                                        Thank you for purchasing this item
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div
-                                style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-                                <div class=""
-                                    style="max-width: 320px;min-width: 325px;display: table-cell;vertical-align: top;">
-                                    <div style="background-color: #ffffff;height: 100%;width: 100% !important;">
-                                        <div
-                                            style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;">
-                                            <table style="font-family:'Playfair Display',serif;" role="presentation"
-                                                cellpadding="0" cellspacing="0" width="100%" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Playfair Display',serif;"
-                                                            align="left">
-                                                            <table width="100%" cellpadding="0" cellspacing="0"
-                                                                border="0">
-                                                                <tr>
-                                                                    <td style="padding-right: 0px;padding-left: 0px;"
-                                                                        align="center">
-                                                                        <img align="center" border="0"
-                                                                            src=<%=`https://villages.io/upload/posting/${post.photo}`
-                                                                            %> alt="Image"
-                                                                        title="Image"
-                                                                        style="outline: none;text-decoration:
-                                                                        none;-ms-interpolation-mode: bicubic;clear:
-                                                                        both;display: inline-block !important;border:
-                                                                        none;height: auto;float: none;width:
-                                                                        100%;max-width: 100%; height: 100%;"
-                                                                        width="70" />
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div
-                                style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-                                <div class=""
-                                    style="max-width: 320px;min-width: 325px;display: table-cell;vertical-align: top;">
-                                    <div style="background-color: #ffffff;height: 100%;width: 100% !important;">
-                                        <div
-                                            style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;">
-                                            <table style="font-family:'Playfair Display',serif;" role="presentation"
-                                                cellpadding="0" cellspacing="0" width="100%" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Playfair Display',serif;"
-                                                            align="left">
-                                                            <table width="100%" cellpadding="0" cellspacing="0"
-                                                                border="0">
-                                                                <tr>
-                                                                    <td style="padding-right: 0px;padding-left: 0px;"
-                                                                        align="center">
                                                                         <%=post.title %>
                                                                     </td>
                                                                 </tr>
@@ -355,6 +284,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="u-row"
+                            style="Margin: 0 auto;min-width: 320px;max-width: 650px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #ffffff;">
                             <div
                                 style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
                                 <div class=""
@@ -373,7 +305,8 @@
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;"
                                                                         align="center">
-                                                                        <%=post.description %>
+                                                                        <%=`${purchaser} has just purchased your item`
+                                                                            %>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -386,6 +319,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="u-row"
+                            style="Margin: 0 auto;min-width: 320px;max-width: 650px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #ffffff;">
                             <div
                                 style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
                                 <div class=""
@@ -404,9 +340,7 @@
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;"
                                                                         align="center">
-                                                                        <b>
-                                                                            <%=post.paidContent %>
-                                                                        </b>
+                                                                       Price: <%=post.price %> V.H.
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -419,59 +353,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-                                <div class=""
-                                    style="max-width: 320px;min-width: 325px;display: table-cell;vertical-align: top;">
-                                    <div style="background-color: #ffffff;height: 100%;width: 100% !important;">
-                                        <div
-                                            style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;">
-                                            <table style="font-family:'Playfair Display',serif;" role="presentation"
-                                                cellpadding="0" cellspacing="0" width="100%" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Playfair Display',serif;"
-                                                            align="left">
-                                                            <table width="100%" cellpadding="0" cellspacing="0"
-                                                                border="0">
-                                                                <tr>
-                                                                    <td style="padding-right: 0px;padding-left: 0px;"
-                                                                        align="center">
-
-                                                                        <a href=<%=`https://villages.io/${post.userId.username}/${encodeURIComponent(post.title)}`
-                                                                            %> target="_blank"
-                                                                            class="v-button"
-                                                                            style="box-sizing: border-box;display:
-                                                                            inline-block;text-decoration:
-                                                                            none;-webkit-text-size-adjust:
-                                                                            none;text-align: center;color: #FFFFFF;
-                                                                            background-color: #352772; border-radius:
-                                                                            0px;-webkit-border-radius: 0px;
-                                                                            -moz-border-radius: 0px; width:auto;
-                                                                            max-width:100%; overflow-wrap: break-word;
-                                                                            word-break: break-word;
-                                                                            word-wrap:break-word; mso-border-alt:
-                                                                            none;font-size: 14px;">
-                                                                            <span
-                                                                                style="display:block;padding:12px 30px;line-height:120%;"><span
-                                                                                    style="font-size: 18px; line-height: 21.6px;"><span
-                                                                                        style="line-height: 21.6px; font-size: 18px;">View
-                                                                                        Post</span></span></span>
-                                                                        </a>
-
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </td>
