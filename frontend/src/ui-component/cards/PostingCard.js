@@ -190,6 +190,15 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
+                    Price: {other.postData.price} V.H.
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} alignItems="center">
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Typography variant="h5">
                     Recently active: {moment(recentlyActive).format('YYYY-MM-DD')}
                   </Typography>
                 </Grid>
@@ -294,6 +303,10 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
           Are you sure want to purchase this ?
         </DialogTitle>
         <DialogContent>
+          <DialogContentText style={{ fontWeight: "500" }} color='black'>
+            Price :{other?.postData?.price} V.H.
+          </DialogContentText>
+          <br />
           <DialogContentText>
             {`You can purchase this item! You can spend up to ${trustedBalance} village hours with ${other?.postData?.userId?.username}`}
           </DialogContentText>
