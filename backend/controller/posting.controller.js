@@ -1588,79 +1588,85 @@ exports.purchaseLimit = async (req, res, next) => {
     const { postID } = req.body
     const post = await Listing.findById(postID)
     if (post) {
-      const trustedBalance = await Payment.aggregate([
-        {
-          $match: {
-            recipient: mongoose.Types.ObjectId(post.userId),
-            payer: mongoose.Types.ObjectId(req.user._id),
-          }
-        },
-        {
-          $lookup: {
-            from: "endorsements",
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      {
-                        $eq: [
-                          "$recipientId",
-                          mongoose.Types.ObjectId(req.user._id)
-                        ],
-                      },
-                      {
-                        $eq: [
-                          "$endorserId",
-                          mongoose.Types.ObjectId(post.userId)
-                        ],
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-            as: "endorser",
-          }
-        },
-        // {
-        //   $match: {
-        //     endorser: { $not: { $size: 0 } },
-        //   }
-        // },
-        {
-          $addFields: {
-            endorser: {
-              $arrayElemAt: ["$endorser.weight", 0],
-            },
-          }
-        },
-        {
-          $group: {
-            _id: "$payer",
-            endorserWeight: { $first: "$endorser" },
-            sumOfWeight: {
-              $sum: "$amount",
-            },
-          }
-        },
-        {
-          $addFields: {
-            trustedBalance: {
-              $subtract: [
-                "$endorserWeight",
-                "$sumOfWeight",
-              ],
-            },
-          }
-        },
-        {
-          $project: {
-            trustedBalance: 1,
-          }
-        }
-      ])
-      res.send({ success: true, ...trustedBalance?.[0] ?? { trustedBalance: 0 } })
+      // const trustedBalance = await Payment.aggregate([
+      //   {
+      //     $match: {
+      //       recipient: mongoose.Types.ObjectId(post.userId),
+      //       payer: mongoose.Types.ObjectId(req.user._id),
+      //     }
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "endorsements",
+      //       pipeline: [
+      //         {
+      //           $match: {
+      //             $expr: {
+      //               $and: [
+      //                 {
+      //                   $eq: [
+      //                     "$recipientId",
+      //                     mongoose.Types.ObjectId(req.user._id)
+      //                   ],
+      //                 },
+      //                 {
+      //                   $eq: [
+      //                     "$endorserId",
+      //                     mongoose.Types.ObjectId(post.userId)
+      //                   ],
+      //                 },
+      //               ],
+      //             },
+      //           },
+      //         },
+      //       ],
+      //       as: "endorser",
+      //     }
+      //   },
+      //   // {
+      //   //   $match: {
+      //   //     endorser: { $not: { $size: 0 } },
+      //   //   }
+      //   // },
+      //   {
+      //     $addFields: {
+      //       endorser: {
+      //         $arrayElemAt: ["$endorser.weight", 0],
+      //       },
+      //     }
+      //   },
+      //   {
+      //     $group: {
+      //       _id: "$payer",
+      //       endorserWeight: { $first: "$endorser" },
+      //       sumOfWeight: {
+      //         $sum: "$amount",
+      //       },
+      //     }
+      //   },
+      //   {
+      //     $addFields: {
+      //       trustedBalance: {
+      //         $subtract: [
+      //           "$endorserWeight",
+      //           "$sumOfWeight",
+      //         ],
+      //       },
+      //     }
+      //   },
+      //   {
+      //     $project: {
+      //       trustedBalance: 1,
+      //     }
+      //   }
+      // ])
+      const result = await _getMaxFlow(req.user._id, post.userId);
+      if (result.success) {
+        res.send({ success: true, trustedBalance: result?.maxLimit })
+      }
+      else {
+        res.send({ success: false, error: result.errors })
+      }
     }
   } catch (err) {
     console.log(err);
