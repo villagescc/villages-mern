@@ -16,6 +16,8 @@ const Account = require("../models/Account");
 const Payment = require("../models/Payment");
 const nodemailer = require("nodemailer");
 const { _create } = require("./notification.controller");
+const { _getMaxFlow } = require("./payment.controller");
+const Paylog = require("../models/Paylog");
 
 const sendEmail = async (sender, email, subject, text) => {
   try {
@@ -1358,46 +1360,64 @@ exports.purchase = async (req, res, next) => {
           await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
           await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
           await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
-          await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
-          const receiverNotification = await _create(
-            "PAYMENT",
-            req.user._id,
-            post.userId._id,
-            post.price,
-            `${req.user.username} has just purchased your item`
-          );
-          const purchaserNotification = await _create(
-            "PAYMENT",
-            post.userId._id,
-            req.user._id,
-            post.price,
-            `You just purchased ${post.userId.username}'s item`
-          );
-          global.io.emit("newNotification", purchaserNotification);
-          ejs.renderFile('./template/paymentReceiver.ejs', {
-            post,
-            purchaser: req.user.username
-          }, async (error, renderedTemplate) => {
-            if (error) {
-              console.log('Error rendering template:', error.message);
-            } else {
-              // Use the renderedTemplate to send the email
-              // res.send(renderedTemplate)
-              await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
-            }
-          })
-          ejs.renderFile('./template/purchaseItem.ejs', {
-            post
-          }, async (error, renderedTemplate) => {
-            if (error) {
-              console.log('Error rendering template:', error.message);
-            } else {
-              // Use the renderedTemplate to send the email
-              // res.send(renderedTemplate)
-              await sendEmail(post.userId.email, req.user.email, 'Your purchased digital product on villages.io', renderedTemplate)
-            }
-          });
-          res.send({ success: true, message: "Item purchased successfully" })
+          const payment = await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId })
+          const result = await _getMaxFlow(_id, post.userId._id, post.price);
+          if (result.success) {
+            payment.status = 'Completed'
+            payment.save()
+            await Paylog.insertMany(
+              result.paylogs.map((paylog) => ({
+                ...paylog,
+                paymentId: payment._id,
+              })),
+              { ordered: false }
+            );
+            const receiverNotification = await _create(
+              "PAYMENT",
+              req.user._id,
+              post.userId._id,
+              post.price,
+              `${req.user.username} has just purchased your item`
+            );
+            const purchaserNotification = await _create(
+              "PAYMENT",
+              post.userId._id,
+              req.user._id,
+              post.price,
+              `You just purchased ${post.userId.username}'s item`
+            );
+            global.io.emit("newNotification", purchaserNotification);
+            ejs.renderFile('./template/paymentReceiver.ejs', {
+              post,
+              purchaser: req.user.username
+            }, async (error, renderedTemplate) => {
+              if (error) {
+                console.log('Error rendering template:', error.message);
+              } else {
+                // Use the renderedTemplate to send the email
+                // res.send(renderedTemplate)
+                await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
+              }
+            })
+            ejs.renderFile('./template/purchaseItem.ejs', {
+              post
+            }, async (error, renderedTemplate) => {
+              if (error) {
+                console.log('Error rendering template:', error.message);
+              } else {
+                // Use the renderedTemplate to send the email
+                // res.send(renderedTemplate)
+                await sendEmail(post.userId.email, req.user.email, 'Your purchased digital product on villages.io', renderedTemplate)
+              }
+            });
+            res.send({ success: true, message: "Item purchased successfully" })
+          }
+          else {
+            await Paylog.deleteMany({ paymentId: payment._id });
+            payment.status = "Failed";
+            await payment.save();
+            res.status(400).send(result.errors);
+          }
         }
         else if (!post?.purchasedBy?.includes(_id) && post?.purchasedBy?.length !== 0) {
           res.send({ success: false, message: "You cannot purchase this item" })
@@ -1408,45 +1428,63 @@ exports.purchase = async (req, res, next) => {
       }
       else {
         if (!post?.purchasedBy?.includes(_id)) {
-          await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
           await Account.findOneAndUpdate({ user: _id }, { $inc: { balance: -post.price } })
           await Account.findOneAndUpdate({ user: post.userId }, { $inc: { balance: post.price } })
-          await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId, status: "Completed" })
-          const receiverNotification = await _create(
-            "PAYMENT",
-            req.user._id,
-            post.userId._id,
-            post.price,
-            `${req.user.username} has just purchased your item`
-          );
-          const purchaserNotification = await _create(
-            "PAYMENT",
-            post.userId._id,
-            req.user._id,
-            post.price,
-            `You just purchased ${post.userId.username}'s item`
-          );
-          global.io.emit("newNotification", purchaserNotification);
-          ejs.renderFile('./template/purchaseItem.ejs', {
-            post
-          }, async (error, renderedTemplate) => {
-            if (error) {
-              console.log('Error rendering template:', error.message);
-            } else {
-              await sendEmail(post.userId.email, req.user.email, "Your purchased digital product on villages.io", renderedTemplate)
-            }
-          });
-          ejs.renderFile('./template/paymentReceiver.ejs', {
-            post,
-            purchaser: req.user.username
-          }, async (error, renderedTemplate) => {
-            if (error) {
-              console.log('Error rendering template:', error.message);
-            } else {
-              await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
-            }
-          })
-          res.send({ success: true, message: "Item purchased successfully", post })
+          await Listing.findByIdAndUpdate({ _id: postID }, { $push: { purchasedBy: _id } })
+          const payment = await Payment.create({ amount: post.price, memo: `Testing digital product https://villages.io/${post?.userId?.username}/${encodeURI(post?.title)}`, payer: _id, recipient: post.userId })
+          const result = await _getMaxFlow(_id, post.userId._id, post.price);
+          if (result.success) {
+            payment.status = 'Completed'
+            payment.save()
+            await Paylog.insertMany(
+              result.paylogs.map((paylog) => ({
+                ...paylog,
+                paymentId: payment._id,
+              })),
+              { ordered: false }
+            );
+            const receiverNotification = await _create(
+              "PAYMENT",
+              req.user._id,
+              post.userId._id,
+              post.price,
+              `${req.user.username} has just purchased your item`
+            );
+            const purchaserNotification = await _create(
+              "PAYMENT",
+              post.userId._id,
+              req.user._id,
+              post.price,
+              `You just purchased ${post.userId.username}'s item`
+            );
+            global.io.emit("newNotification", purchaserNotification);
+            ejs.renderFile('./template/purchaseItem.ejs', {
+              post
+            }, async (error, renderedTemplate) => {
+              if (error) {
+                console.log('Error rendering template:', error.message);
+              } else {
+                await sendEmail(post.userId.email, req.user.email, "Your purchased digital product on villages.io", renderedTemplate)
+              }
+            });
+            ejs.renderFile('./template/paymentReceiver.ejs', {
+              post,
+              purchaser: req.user.username
+            }, async (error, renderedTemplate) => {
+              if (error) {
+                console.log('Error rendering template:', error.message);
+              } else {
+                await sendEmail(req.user.email, post.userId.email, `${req.user.username} has just purchased digital product on villages.io`, renderedTemplate)
+              }
+            })
+            res.send({ success: true, message: "Item purchased successfully", post })
+          }
+          else {
+            await Paylog.deleteMany({ paymentId: payment._id });
+            payment.status = "Failed";
+            await payment.save();
+            res.status(400).send(result.errors);
+          }
         }
         else if (post?.purchasedBy?.includes(_id)) {
           res.send({ success: false, message: "You have already purchased this item" })
@@ -1602,7 +1640,7 @@ exports.purchaseLimit = async (req, res, next) => {
             _id: "$payer",
             endorserWeight: { $first: "$endorser" },
             sumOfWeight: {
-              $sum: "$weight",
+              $sum: "$amount",
             },
           }
         },
