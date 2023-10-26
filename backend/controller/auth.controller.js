@@ -27,6 +27,7 @@ const listID = process.env.MAILCHIMP_LIST_ID;
 const axios = require("axios");
 const ProfileSetting = require("../models/ProfileSetting");
 const { default: mongoose } = require("mongoose");
+const sendEmail = require("../utils/email");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
@@ -152,26 +153,34 @@ exports.registerUser = async (req, res, next) => {
       });
 
       // nodemailer.sendConfirmationEmail(user.username, user.email, user.token);
-      axios
-        .post(
-          "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-          {
-            subject: "Please confirm your account",
-            dest: email,
-            data: `<h1>Email Confirmation</h1>
-              <h2>Hello ${firstName} ${lastName}</h2>
-              <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
-              <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
-              <div>https://villages.io/auth/verify/${user._id}/${token}</div>
-              <br>`,
-          }
-        )
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+
+      sendEmail('info@villages.io', email, "Please confirm your account", `<h1>Email Confirmation</h1>
+      <h2>Hello ${firstName} ${lastName}</h2>
+      <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+      <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
+      <div>https://villages.io/auth/verify/${user._id}/${token}</div>
+      <br>`)
+
+      // axios
+      //   .post(
+      //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+      //     {
+      //       subject: "Please confirm your account",
+      //       dest: email,
+      //       data: `<h1>Email Confirmation</h1>
+      //         <h2>Hello ${firstName} ${lastName}</h2>
+      //         <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+      //         <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
+      //         <div>https://villages.io/auth/verify/${user._id}/${token}</div>
+      //         <br>`,
+      //     }
+      //   )
+      //   .then(function (response) {
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
     });
   } catch (err) {
     if (profile) await profileController._removeProfileById(profile.id);
@@ -223,26 +232,39 @@ exports.resendVerificationMail = async (req, res, next) => {
         email: "This email/username does not exist.",
       });
     }
-    axios
-      .post(
-        "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-        {
-          subject: "Please confirm your account",
-          dest: user.email,
-          data: `<h1>Email Confirmation</h1>
-              <h2>Hello ${user.firstName} ${user.lastName}</h2>
-              <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
-              <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
-             <div>https://villages.io/auth/verify/${user._id}/${user.token}</div>
-              <br>`,
-        }
-      )
-      .then(function (response) {
-        return res.status(200).send({ message: "Email sent successfully" });
-      })
+
+    sendEmail("info@villages.io", user.email, "Please confirm your account", `<h1>Email Confirmation</h1>
+    <h2>Hello ${user.firstName} ${user.lastName}</h2>
+    <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+    <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
+   <div>https://villages.io/auth/verify/${user._id}/${user.token}</div>
+    <br>`).then(function (response) {
+      return res.status(200).send({ message: "Email sent successfully" });
+    })
       .catch(function (error) {
         return res.status(400).send({ message: "Error sending Email", error: error });
       });
+
+    // axios
+    //   .post(
+    //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+    //     {
+    //       subject: "Please confirm your account",
+    //       dest: user.email,
+    //       data: `<h1>Email Confirmation</h1>
+    //           <h2>Hello ${user.firstName} ${user.lastName}</h2>
+    //           <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+    //           <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
+    //          <div>https://villages.io/auth/verify/${user._id}/${user.token}</div>
+    //           <br>`,
+    //     }
+    //   )
+    //   .then(function (response) {
+    //     return res.status(200).send({ message: "Email sent successfully" });
+    //   })
+    //   .catch(function (error) {
+    //     return res.status(400).send({ message: "Error sending Email", error: error });
+    //   });
 
   } catch (error) {
     return res.status(400).send(error)
@@ -425,26 +447,39 @@ exports.forgotPassword = async (req, res, next) => {
           success: true,
           message: "Please check your email to reset password",
         });
-        axios
-          .post(
-            "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-            {
-              subject: "Please Reset Your Password",
-              dest: email,
-              data: `<h1>Reseting Password</h1>
-                <h2>Hello ${user.firstName} ${user.lastName}</h2>
-                <p>Please follow the link to reset your password</p>
-                <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
-                <div>https://villages.io/auth/forgot-password/${user._id}/${token}</div>
-                <br>`,
-            }
-          )
-          .then(function (response) {
-            console.log(response);
-          })
+
+        sendEmail("info@villages.io", email, "Please Reset Your Password", `<h1>Resetting Password</h1>
+        <h2>Hello ${user.firstName} ${user.lastName}</h2>
+        <p>Please follow the link to reset your password</p>
+        <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
+        <div>https://villages.io/auth/forgot-password/${user._id}/${token}</div>
+        <br>`).then(function (response) {
+          console.log(response);
+        })
           .catch(function (error) {
             console.log(error);
           });
+
+        // axios
+        //   .post(
+        //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+        //     {
+        //       subject: "Please Reset Your Password",
+        //       dest: email,
+        //       data: `<h1>Reseting Password</h1>
+        //         <h2>Hello ${user.firstName} ${user.lastName}</h2>
+        //         <p>Please follow the link to reset your password</p>
+        //         <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
+        //         <div>https://villages.io/auth/forgot-password/${user._id}/${token}</div>
+        //         <br>`,
+        //     }
+        //   )
+        //   .then(function (response) {
+        //     console.log(response);
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
       })
       .catch((err) => {
         console.log("update user error", err);

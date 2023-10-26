@@ -244,7 +244,11 @@ const ChatMainPage = () => {
       sender: authUser._id,
       recipient: user?.user?._id,
       text: messageRef.current.value,
-      senderSocketId: SocketRef.current?.id
+      senderSocketId: SocketRef.current?.id,
+      senderEmail: authUser?.email,
+      recipientEmail: user?.user?.email,
+      authUser: authUser,
+      loggedInUser: user
     };
     SocketRef.current.emit('newChat', newMessage)
     setData((prevState) => [...prevState, newMessage]);
@@ -258,28 +262,28 @@ const ChatMainPage = () => {
       sender: authUser.username,
       image: authUser.profile.avatar
     });
-    axios
-      .post('https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail', {
-        subject: `Chat Message Notification`,
-        dest: user?.user?.email,
-        data: `<h1>You have unread message from ${authUser?.firstName} ${authUser?.lastName}</h1>
-              <h2>Hello ${user?.user?.firstName} ${user?.user?.lastName}</h2>
-              <p>New message arrived from ${authUser?.firstName} ${authUser?.lastName}(${authUser.username}) like below:</p>
-              <br>
-              <div style="border: 2px solid #dedede; background-color:#f1f1f1; border-radius: 20px; padding 10px; margin: 10px 0; width:60%">
-                <p>${newMessage.text}</p>
-                <span style="float:right; color:#999">${moment().format('YYYY-MM-DD HH:mm:ss')}</span>
-              </div>
-              <br>
-              To go to check message directly <a href=https://villages.io/personal/message/${authUser._id}> Click here</a>
-              <br>`
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
+    // axios
+    //   .post('https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail', {
+    //     subject: `Chat Message Notification`,
+    //     dest: user?.user?.email,
+    //     data: `<h1>You have unread message from ${authUser?.firstName} ${authUser?.lastName}</h1>
+    //           <h2>Hello ${user?.user?.firstName} ${user?.user?.lastName}</h2>
+    //           <p>New message arrived from ${authUser?.firstName} ${authUser?.lastName}(${authUser.username}) like below:</p>
+    //           <br>
+    //           <div style="border: 2px solid #dedede; background-color:#f1f1f1; border-radius: 20px; padding 10px; margin: 10px 0; width:60%">
+    //             <p>${newMessage.text}</p>
+    //             <span style="float:right; color:#999">${moment().format('YYYY-MM-DD HH:mm:ss')}</span>
+    //           </div>
+    //           <br>
+    //           To go to check message directly <a href=https://villages.io/personal/message/${authUser._id}> Click here</a>
+    //           <br>`
+    //   })
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   })
   };
 
   const handleEnter = (event) => {

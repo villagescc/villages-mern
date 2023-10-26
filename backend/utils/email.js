@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (email, subject, text) => {
+const sendEmail = async (sender, email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.MAILJET_HOST,
@@ -14,6 +14,7 @@ const sendEmail = async (email, subject, text) => {
 
     await transporter.sendMail({
       from: 'info@villages.io',
+      replyTo: sender,
       to: email,
       subject: subject,
       html: text,

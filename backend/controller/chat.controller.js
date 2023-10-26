@@ -3,6 +3,8 @@ const Chat = require("../models/Chat");
 const ChatState = require("../models/ChatState");
 const SocketRoom = require("../models/SocketRoom");
 const User = require("../models/User");
+const sendEmail = require("../utils/email");
+const moment = require('moment')
 
 
 exports.getUsers = async (req, res, next) => {
@@ -465,6 +467,8 @@ exports.createChat = async (req, res, next) => {
       recipient: req.body.recipient,
       text: req.body.text,
     });
+
+    const { authUser, loggedInUser: user } = req.body
     const senderUser = await SocketRoom.findOne({ user: req.body.sender }).select("socket_id")
     const receiverUser = await SocketRoom.findOne({ user: req.body.recipient }).select("socket_id")
     // console.log(senderUser, "sender")
@@ -485,6 +489,24 @@ exports.createChat = async (req, res, next) => {
         global.io.to(item).emit("newChat", chat);
       })
     )
+
+    sendEmail(req.body.senderEmail, req.body.recipientEmail, "Chat Message Notification", `<h1>You have unread message from ${authUser?.firstName} ${authUser?.lastName}</h1>
+    <h2>Hello ${user?.user?.firstName} ${user?.user?.lastName}</h2>
+    <p>New message arrived from ${authUser?.firstName} ${authUser?.lastName}(${authUser.username}) like below:</p>
+    <br>
+    <div style="border: 2px solid #dedede; background-color:#f1f1f1; border-radius: 20px; padding 10px; margin: 10px 0; width:60%">
+      <p>${req.body.text}</p>
+      <span style="float:right; color:#999">${moment().format('YYYY-MM-DD HH:mm:ss')}</span>
+    </div>
+    <br>
+    To go to check message directly <a href=https://villages.io/personal/message/${authUser._id}> Click here</a>
+    <br>`).then(function (response) {
+      console.log(response);
+    })
+      .catch(function (error) {
+        console.log(error);
+      })
+
     // global.io.on('connection', (socket) => {
     //   socket.broadcast.in(socketUser?.socket_id).emit("newChat", chat);
     // })
