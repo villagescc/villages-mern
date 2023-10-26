@@ -6,6 +6,7 @@ const { _create: createNotification } = require("./notification.controller");
 const axios = require("axios");
 const Payment = require("../models/Payment");
 const { default: mongoose } = require("mongoose");
+const sendEmail = require("../utils/email");
 
 exports.save = async (req, res, next) => {
   let errors = {};
@@ -80,26 +81,38 @@ exports.save = async (req, res, next) => {
         console.log(error);
       });
 
-    axios
-      .post(
-        "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-        {
-          subject: "Notification from Villages.io",
-          dest: recipientUser.email,
-          data: `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
-                <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
-                <p>${notifyText}</p>
-                <p>Testimonial: ${text}</p>
-                <a href=https://villages.io/trust> Click here</a>
-                <br>`,
-        }
-      )
-      .then(function (response) {
-        console.log(response);
-      })
+    sendEmail(endorserUser.email, recipientUser.email, "Notification from Villages.io", `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
+    <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
+    <p>${notifyText}</p>
+    <p>Testimonial: ${text}</p>
+    <a href=https://villages.io/trust> Click here</a>
+    <br>`).then(function (response) {
+      console.log(response);
+    })
       .catch(function (error) {
         console.log(error);
       });
+
+    // axios
+    //   .post(
+    //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+    //     {
+    //       subject: "Notification from Villages.io",
+    //       dest: recipientUser.email,
+    //       data: `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
+    //             <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
+    //             <p>${notifyText}</p>
+    //             <p>Testimonial: ${text}</p>
+    //             <a href=https://villages.io/trust> Click here</a>
+    //             <br>`,
+    //     }
+    //   )
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
 
     const notification = await createNotification(
       "TRUST",

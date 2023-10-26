@@ -455,7 +455,7 @@ cron.schedule('0 8 * * 1', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail('info@villages.io', x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -476,7 +476,7 @@ cron.schedule('0 8 * * 2', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -496,7 +496,7 @@ cron.schedule('0 8 * * 3', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -516,7 +516,7 @@ cron.schedule('0 8 * * 4', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -536,7 +536,7 @@ cron.schedule('0 8 * * 5', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -556,7 +556,7 @@ cron.schedule('0 8 * * 6', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })
@@ -576,7 +576,7 @@ cron.schedule('0 8 * * 7', async () => {
                 console.log('Error rendering template:', error);
             } else {
                 // Use the renderedTemplate to send the email
-                await sendEmail(x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
+                await sendEmail("info@villages.io", x?.email, 'Your Network is Growing - Discover New Trusted Members and Posts!', renderedTemplate)
             }
         });
     })

@@ -11,6 +11,7 @@ const isEmpty = require("../validation/is-empty");
 
 const axios = require("axios");
 const { default: mongoose } = require("mongoose");
+const sendEmail = require("../utils/email");
 
 // const _getUser = async (id) => {
 //   const user = await User.findById(id).exec();
@@ -269,25 +270,37 @@ exports.pay = async (req, res, next) => {
         );
         global.io.emit("newNotification", notification);
         const receiveUser = await User.findById(recipient);
-        axios
-          .post(
-            "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-            {
-              subject: "Notification from Villages.io",
-              dest: receiveUser?.email,
-              data: `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
-              <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
-              <p>${notifyText}</p>
-              <a href=https://villages.io/pay> Click here</a>
-              <br>`,
-            }
-          )
-          .then(function (response) {
-            // console.log(response);
-          })
+
+        sendEmail(req.user.email, receiveUser?.email, "Notification from Villages.io", `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+        <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
+        <p>${notifyText}</p>
+        <a href=https://villages.io/pay> Click here</a>
+        <br>`).then(function (response) {
+          // console.log(response);
+        })
           .catch(function (error) {
             console.log(error);
           });
+
+        // axios
+        //   .post(
+        //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+        //     {
+        //       subject: "Notification from Villages.io",
+        //       dest: receiveUser?.email,
+        //       data: `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+        //       <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
+        //       <p>${notifyText}</p>
+        //       <a href=https://villages.io/pay> Click here</a>
+        //       <br>`,
+        //     }
+        //   )
+        //   .then(function (response) {
+        //     // console.log(response);
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
 
         payment.status = "Completed";
         await payment.save();
