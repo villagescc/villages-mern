@@ -198,7 +198,22 @@ const SocialProfile = () => {
                     </Typography>
                     <Typography variant="subtitle2">{user?.profile?.job || <Chip label="No job" />}</Typography>
                     <Typography variant="h5">
-                    {`${user?.account?.balance ?? 0} V.H. ${(isLoggedIn && ((user?.account?.balance ?? 0) > 0 && (user?.trustedBalance ?? 0) > 0)) ? `(Trusted: ${user?.trustedBalance ?? 0} V.H.)` : ((user?.account?.balance ?? 0) < 0) ? `(You can send ${user?.username} ${user?.trustedBalance} V.H.)` : ""}`}
+
+                    {`${user?.account?.balance ?? 0} V.H. ${isLoggedIn ?
+                    (((user?.account?.balance ?? 0) > 0
+                      && (user?.trustedBalance ?? 0) > 0
+                      && ((user?.account?.balance ?? 0) >
+                        (user?.trustedBalance ?? 0))) ?
+                      `(Trusted: ${user?.trustedBalance ?? 0} V.H.)`
+                      : ((user?.account?.balance ?? 0) < 0)
+                        ? `(You can send ${user?.username} ${user?.trustedBalance} V.H.)`
+                        : ((user?.account?.balance ?? 0) > 0
+                          && (user?.trustedBalance ?? 0) > 0
+                          && ((user?.account?.balance ?? 0) <
+                            (user?.trustedBalance ?? 0))) ? `(Trusted: ${user?.account?.balance ?? 0} V.H.)` : ((user?.account?.balance ?? 0) > 0
+                              && (user?.trustedBalance ?? 0) > 0
+                              && ((user?.account?.balance ?? 0) ==
+                                (user?.trustedBalance ?? 0))) ? `(Trusted: ${user?.account?.balance ?? 0} V.H.)` : "") : ""}`}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={8}>

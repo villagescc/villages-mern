@@ -24,6 +24,8 @@ const mapController = require("./controller/map.controller");
 const notificationController = require("./controller/notification.controller");
 const chatController = require("./controller/chat.controller");
 const socketController = require("./controller/socket.controller");
+const Listing = require("./models/Listing");
+const User = require("./models/User");
 
 // ######################### AUTH ROUTER #############################
 router.get("/auth", authMiddleware.auth, authController.getUser);
