@@ -20,6 +20,7 @@ import {
 import DefaultUserIcon from 'assets/images/auth/default.png';
 import MainCard from 'ui-component/cards/MainCard';
 import { SERVER_URL } from 'config';
+import { Link } from 'react-router-dom';
 // table data
 function createData(time, subTime, avatar, name, title, subtext) {
     return { time, subTime, avatar, name, title, subtext };
@@ -52,6 +53,8 @@ const PaymentList = ({ title, payments }) => (
                                     <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                                         <Grid item>
                                             <Avatar
+                                                component={Link}
+                                                to={`https://villages.io/${row?.payer?.username}`}
                                                 alt="User 1"
                                                 src={
                                                     row?.payer?.profile?.avatar
@@ -61,7 +64,13 @@ const PaymentList = ({ title, payments }) => (
                                             />
                                         </Grid>
                                         <Grid item xs zeroMinWidth>
-                                            <Typography component="div" align="left" variant="subtitle1">
+                                            <Typography
+                                                align="left"
+                                                variant="subtitle1"
+                                                style={{ textDecoration: "none" }}
+                                                component={Link}
+                                                to={`https://villages.io/${row?.payer?.username}`}
+                                            >
                                                 {row?.payer?.username}
                                             </Typography>
                                         </Grid>
@@ -71,6 +80,8 @@ const PaymentList = ({ title, payments }) => (
                                     <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                                         <Grid item>
                                             <Avatar
+                                                component={Link}
+                                                to={`https://villages.io/${row?.recipient?.username}`}
                                                 alt="User 1"
                                                 src={
                                                     row?.recipient?.profile?.avatar
@@ -80,7 +91,12 @@ const PaymentList = ({ title, payments }) => (
                                             />
                                         </Grid>
                                         <Grid item xs zeroMinWidth>
-                                            <Typography component="div" align="left" variant="subtitle1">
+                                            <Typography
+                                                align="left"
+                                                variant="subtitle1"
+                                                style={{ textDecoration: "none" }}
+                                                component={Link}
+                                                to={`https://villages.io/${row?.recipient?.username}`}>
                                                 {row?.recipient?.username}
                                             </Typography>
                                         </Grid>

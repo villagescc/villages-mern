@@ -17,6 +17,7 @@ const { headingDistanceTo } = require("geolocation-utils");
 const Endorsement = require("../models/Endorsement");
 var mongoose = require('mongoose');
 const jwt = require("jsonwebtoken");
+const { buildGraph } = require("./payment.controller");
 
 
 exports.search = async (req, res, next) => {
@@ -47,140 +48,231 @@ exports.search = async (req, res, next) => {
       let users = []
 
       if (network.length !== 0) {
-        const currentUser = await User.aggregate([
-          {
-            $match: { username: user?.username }
-          },
-          {
-            $project: { password: 0, token: 0, lastLogin: 0 }
-          },
-          {
-            $lookup: {
-              from: "profiles",
-              foreignField: "_id",
-              localField: "profile",
-              as: "profile"
-            }
-          },
-          {
-            $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
-          },
-          {
-            $lookup: {
-              from: "endorsements",
-              foreignField: "recipientId",
-              localField: "_id",
-              as: "followers",
-              pipeline: [
-                {
-                  $match: { weight: { $ne: Number(0) } }
-                },
-                {
-                  $sort: { createdAt: -1 }
-                },
-                {
-                  $lookup: {
-                    from: "profiles",
-                    foreignField: "user",
-                    localField: "endorserId",
-                    as: "profile",
-                    pipeline: [
-                      {
-                        $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
-                      }
-                    ]
-                  }
-                },
-                {
-                  $addFields: {
-                    profile: { $arrayElemAt: ["$profile", 0] }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: "users",
-                    foreignField: "_id",
-                    localField: "profile.user",
-                    as: "profile.user",
-                    pipeline: [
-                      {
-                        $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
-                      }
-                    ]
-                  }
-                },
-                {
-                  $addFields: {
-                    "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-                  }
-                },
-                {
-                  $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
-                }
-              ]
-            }
-          },
-          {
-            $lookup: {
-              from: "endorsements",
-              foreignField: "endorserId",
-              localField: "_id",
-              as: "followings",
-              pipeline: [
-                {
-                  $match: { weight: { $ne: Number(0) } }
-                },
-                {
-                  $sort: { createdAt: -1 }
-                },
-                {
-                  $lookup: {
-                    from: "profiles",
-                    foreignField: "user",
-                    localField: "recipientId",
-                    as: "profile"
-                  }
-                },
-                {
-                  $addFields: {
-                    profile: { $arrayElemAt: ["$profile", 0] }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: "users",
-                    foreignField: "_id",
-                    localField: "profile.user",
-                    as: "profile.user",
-                  }
-                },
-                {
-                  $addFields: {
-                    "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-                  }
-                }
-              ]
-            }
+        // const currentUser = await User.aggregate([
+        //   {
+        //     $match: { username: user?.username }
+        //   },
+        //   {
+        //     $project: { password: 0, token: 0, lastLogin: 0 }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "profiles",
+        //       foreignField: "_id",
+        //       localField: "profile",
+        //       as: "profile"
+        //     }
+        //   },
+        //   {
+        //     $addFields: {
+        //       profile: { $arrayElemAt: ["$profile", 0] }
+        //     }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "endorsements",
+        //       foreignField: "recipientId",
+        //       localField: "_id",
+        //       as: "followers",
+        //       pipeline: [
+        //         {
+        //           $match: { weight: { $ne: Number(0) } }
+        //         },
+        //         {
+        //           $sort: { createdAt: -1 }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "profiles",
+        //             foreignField: "user",
+        //             localField: "endorserId",
+        //             as: "profile",
+        //             pipeline: [
+        //               {
+        //                 $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+        //               }
+        //             ]
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             profile: { $arrayElemAt: ["$profile", 0] }
+        //           }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "users",
+        //             foreignField: "_id",
+        //             localField: "profile.user",
+        //             as: "profile.user",
+        //             pipeline: [
+        //               {
+        //                 $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
+        //               }
+        //             ]
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+        //           }
+        //         },
+        //         {
+        //           $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+        //         }
+        //       ]
+        //     }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "endorsements",
+        //       foreignField: "endorserId",
+        //       localField: "_id",
+        //       as: "followings",
+        //       pipeline: [
+        //         {
+        //           $match: { weight: { $ne: Number(0) } }
+        //         },
+        //         {
+        //           $sort: { createdAt: -1 }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "profiles",
+        //             foreignField: "user",
+        //             localField: "recipientId",
+        //             as: "profile"
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             profile: { $arrayElemAt: ["$profile", 0] }
+        //           }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "users",
+        //             foreignField: "_id",
+        //             localField: "profile.user",
+        //             as: "profile.user",
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+        //           }
+        //         }
+        //       ]
+        //     }
+        //   }
+        // ])
+        const graph = await buildGraph()
+        const loggedInUser = user._id;
+        let usersInTrustNetworkAndTrustors = []
+        let usersYouTrustAndTheirTrustees = []
+        if (network.includes('TrustsMe') && network.includes('TrustedByMe')) {
+          const trustNetwork = new Set();
+
+          // Create a function to find users you trust and anyone they have trusted
+          function findTrustNetworkAndTheirTrustees(user) {
+            trustNetwork.add(user);
+
+            // Find trustees (users trusted by the current user)
+            const trustees = new Set(graph.outNeighbors(user));
+
+            trustees.forEach((trustee) => {
+              if (!trustNetwork.has(trustee)) {
+                findTrustNetworkAndTheirTrustees(trustee);
+              }
+            });
           }
-        ])
+
+          findTrustNetworkAndTheirTrustees(loggedInUser);
+
+          usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
+
+
+          const trustNetwork2 = new Set();
+
+          // Perform a depth-first search to find users in the trust network and their trustors
+          function findTrustNetworkAndTrustors(user) {
+            trustNetwork2.add(user);
+
+            // Find trustors (users who trust the current user)
+            const trustors = new Set(graph.neighbors(user));
+
+            trustors.forEach((trustor) => {
+              trustNetwork2.add(trustor);
+            });
+
+            // Recursively search trustors
+            trustors.forEach((trustor) => {
+              if (!trustNetwork2.has(trustor)) {
+                findTrustNetworkAndTrustors(trustor);
+              }
+            });
+          }
+
+          findTrustNetworkAndTrustors(loggedInUser);
+
+          // Convert the trustNetwork set to an array
+          usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+        }
+        else if (network.includes('TrustsMe')) {
+          const trustNetwork = new Set();
+
+          // Create a function to find users you trust and anyone they have trusted
+          function findTrustNetworkAndTheirTrustees(user) {
+            trustNetwork.add(user);
+
+            // Find trustees (users trusted by the current user)
+            const trustees = new Set(graph.outNeighbors(user));
+
+            trustees.forEach((trustee) => {
+              if (!trustNetwork.has(trustee)) {
+                findTrustNetworkAndTheirTrustees(trustee);
+              }
+            });
+          }
+
+          findTrustNetworkAndTheirTrustees(loggedInUser);
+
+          usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
+        }
+        else if (network.includes('TrustedByMe')) {
+          const trustNetwork2 = new Set();
+          function findTrustNetworkAndTrustors(user) {
+            trustNetwork2.add(user);
+            const trustors = new Set(graph.neighbors(user));
+            trustors.forEach((trustor) => {
+              trustNetwork2.add(trustor);
+            });
+
+            trustors.forEach((trustor) => {
+              if (!trustNetwork2.has(trustor)) {
+                findTrustNetworkAndTrustors(trustor);
+              }
+            });
+          }
+          findTrustNetworkAndTrustors(loggedInUser);
+          usersInTrustNetworkAndTrustors = Array.from(trustNetwork2);
+        }
         query = {
           ...query,
           ...(network.includes('TrustsMe') && network.includes('TrustedByMe'))
             ? {
               $and: [
-                { "_id": { $in: currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) } },
-                { "_id": { $in: currentUser[0].followings.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) } }
+                { "_id": { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) } },
+                { "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) } }
               ]
             } :
             network.includes('TrustedByMe') ? {
-              "_id": { $in: currentUser[0].followings.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) }
+              "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) }
             } :
               (network.includes('TrustsMe') ?
                 {
                   "_id":
-                    { $in: currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) }
+                    { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) }
                 } : {}),
         }
         users = await User.aggregate([
@@ -344,124 +436,231 @@ exports.search = async (req, res, next) => {
       // const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
       let users = []
       if (network?.length !== 0) {
-        const currentUser = await User.aggregate([
-          {
-            $match: { username: user?.username }
-          },
-          {
-            $project: { password: 0, token: 0, lastLogin: 0 }
-          },
-          {
-            $lookup: {
-              from: "profiles",
-              foreignField: "_id",
-              localField: "profile",
-              as: "profile"
-            }
-          },
-          {
-            $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
-          },
-          {
-            $lookup: {
-              from: "endorsements",
-              foreignField: "recipientId",
-              localField: "_id",
-              as: "followers",
-              pipeline: [
-                {
-                  $match: { weight: { $ne: Number(0) } }
-                },
-                {
-                  $sort: { createdAt: -1 }
-                },
-                {
-                  $lookup: {
-                    from: "profiles",
-                    foreignField: "user",
-                    localField: "endorserId",
-                    as: "profile",
-                    pipeline: [
-                      {
-                        $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
-                      }
-                    ]
-                  }
-                },
-                {
-                  $addFields: {
-                    profile: { $arrayElemAt: ["$profile", 0] }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: "users",
-                    foreignField: "_id",
-                    localField: "profile.user",
-                    as: "profile.user",
-                    pipeline: [
-                      {
-                        $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
-                      }
-                    ]
-                  }
-                },
-                {
-                  $addFields: {
-                    "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-                  }
-                },
-                {
-                  $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
-                }
-              ]
-            }
-          },
-          {
-            $lookup: {
-              from: "endorsements",
-              foreignField: "endorserId",
-              localField: "_id",
-              as: "followings",
-              pipeline: [
-                {
-                  $match: { weight: { $ne: Number(0) } }
-                },
-                {
-                  $sort: { createdAt: -1 }
-                },
-                {
-                  $lookup: {
-                    from: "profiles",
-                    foreignField: "user",
-                    localField: "recipientId",
-                    as: "profile"
-                  }
-                },
-                {
-                  $addFields: {
-                    profile: { $arrayElemAt: ["$profile", 0] }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: "users",
-                    foreignField: "_id",
-                    localField: "profile.user",
-                    as: "profile.user",
-                  }
-                },
-                {
-                  $addFields: {
-                    "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-                  }
-                }
-              ]
+        // const currentUser = await User.aggregate([
+        //   {
+        //     $match: { username: user?.username }
+        //   },
+        //   {
+        //     $project: { password: 0, token: 0, lastLogin: 0 }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "profiles",
+        //       foreignField: "_id",
+        //       localField: "profile",
+        //       as: "profile"
+        //     }
+        //   },
+        //   {
+        //     $addFields: {
+        //       profile: { $arrayElemAt: ["$profile", 0] }
+        //     }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "endorsements",
+        //       foreignField: "recipientId",
+        //       localField: "_id",
+        //       as: "followers",
+        //       pipeline: [
+        //         {
+        //           $match: { weight: { $ne: Number(0) } }
+        //         },
+        //         {
+        //           $sort: { createdAt: -1 }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "profiles",
+        //             foreignField: "user",
+        //             localField: "endorserId",
+        //             as: "profile",
+        //             pipeline: [
+        //               {
+        //                 $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
+        //               }
+        //             ]
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             profile: { $arrayElemAt: ["$profile", 0] }
+        //           }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "users",
+        //             foreignField: "_id",
+        //             localField: "profile.user",
+        //             as: "profile.user",
+        //             pipeline: [
+        //               {
+        //                 $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
+        //               }
+        //             ]
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+        //           }
+        //         },
+        //         {
+        //           $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
+        //         }
+        //       ]
+        //     }
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "endorsements",
+        //       foreignField: "endorserId",
+        //       localField: "_id",
+        //       as: "followings",
+        //       pipeline: [
+        //         {
+        //           $match: { weight: { $ne: Number(0) } }
+        //         },
+        //         {
+        //           $sort: { createdAt: -1 }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "profiles",
+        //             foreignField: "user",
+        //             localField: "recipientId",
+        //             as: "profile"
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             profile: { $arrayElemAt: ["$profile", 0] }
+        //           }
+        //         },
+        //         {
+        //           $lookup: {
+        //             from: "users",
+        //             foreignField: "_id",
+        //             localField: "profile.user",
+        //             as: "profile.user",
+        //           }
+        //         },
+        //         {
+        //           $addFields: {
+        //             "profile.user": { $arrayElemAt: ["$profile.user", 0] }
+        //           }
+        //         }
+        //       ]
+        //     }
+        //   }
+        // ])
+
+        const graph = await buildGraph()
+        const loggedInUser = user._id;
+        let usersInTrustNetworkAndTrustors = []
+        let usersYouTrustAndTheirTrustees = []
+        if (network.includes('TrustsMe') && network.includes('TrustedByMe')) {
+          const trustNetwork = new Set();
+
+          // Create a function to find users you trust and those who trust them
+          function findTrustNetworkAndTheirTrustees(user) {
+            const queue = [user];
+
+            while (queue.length > 0) {
+              const currentNode = queue.shift();
+
+              if (!trustNetwork.has(currentNode)) {
+                trustNetwork.add(currentNode);
+
+                // Find trustees (users trusted by the current user)
+                const trustees = new Set(graph.outNeighbors(currentNode));
+
+                trustees.forEach((trustee) => {
+                  queue.push(trustee);
+                });
+
+                // Find trustors (users who trust the current user)
+                const trustors = new Set(graph.inNeighbors(currentNode));
+
+                trustors.forEach((trustor) => {
+                  queue.push(trustor);
+                });
+              }
             }
           }
-        ])
+
+          findTrustNetworkAndTheirTrustees(loggedInUser);
+
+          // Convert the trustNetwork set to an array
+          usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
+
+
+          const trustNetwork2 = new Set();
+
+          // Perform a depth-first search to find users in the trust network and their trustors
+          function findTrustNetworkAndTrustors(user) {
+            trustNetwork2.add(user);
+
+            // Find trustors (users who trust the current user)
+            const trustors = new Set(graph.neighbors(user));
+
+            trustors.forEach((trustor) => {
+              trustNetwork2.add(trustor);
+            });
+
+            // Recursively search trustors
+            trustors.forEach((trustor) => {
+              if (!trustNetwork2.has(trustor)) {
+                findTrustNetworkAndTrustors(trustor);
+              }
+            });
+          }
+
+          findTrustNetworkAndTrustors(loggedInUser);
+
+          // Convert the trustNetwork set to an array
+          usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+        }
+        else if (network.includes('TrustsMe')) {
+          const trustNetwork = new Set();
+
+          // Create a function to find users you trust and anyone they have trusted
+          function findTrustNetworkAndTheirTrustees(user) {
+            trustNetwork.add(user);
+
+            // Find trustees (users trusted by the current user)
+            const trustees = new Set(graph.outNeighbors(user));
+
+            trustees.forEach((trustee) => {
+              if (!trustNetwork.has(trustee)) {
+                findTrustNetworkAndTheirTrustees(trustee);
+              }
+            });
+          }
+
+          findTrustNetworkAndTheirTrustees(loggedInUser);
+
+          usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
+        }
+        else if (network.includes('TrustedByMe')) {
+          const trustNetwork2 = new Set();
+          function findTrustNetworkAndTrustors(user) {
+            trustNetwork2.add(user);
+            const trustors = new Set(graph.neighbors(user));
+            trustors.forEach((trustor) => {
+              trustNetwork2.add(trustor);
+            });
+
+            trustors.forEach((trustor) => {
+              if (!trustNetwork2.has(trustor)) {
+                findTrustNetworkAndTrustors(trustor);
+              }
+            });
+          }
+          findTrustNetworkAndTrustors(loggedInUser);
+          usersInTrustNetworkAndTrustors = Array.from(trustNetwork2);
+        }
+
         // console.log(currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)));
         users = await User.aggregate([
           {
@@ -490,17 +689,17 @@ exports.search = async (req, res, next) => {
               ...(network.includes('TrustsMe') && network.includes('TrustedByMe'))
                 ? {
                   $and: [
-                    { "_id": { $in: currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) } },
-                    { "_id": { $in: currentUser[0].followings.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) } }
+                    { "_id": { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) } },
+                    { "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) } }
                   ]
                 } :
                 network.includes('TrustedByMe') ? {
-                  "_id": { $in: currentUser[0].followings.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) }
+                  "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) }
                 } :
                   (network.includes('TrustsMe') ?
                     {
                       "_id":
-                        { $in: currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)) }
+                        { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) }
                     } : {}),
               verified: true
             }

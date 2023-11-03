@@ -99,7 +99,7 @@ const sendEmail = require("../utils/email");
 //   return graph;
 // };
 
-const buildGraph = async (nodes = null) => {
+exports.buildGraph = async (nodes = null) => {
   const graph = await new Graph();
   // const users = await User.find();
   // for (let user of users) {
@@ -183,7 +183,7 @@ const buildGraph = async (nodes = null) => {
 
 exports.getGraph = async (req, res, next) => {
   try {
-    const graph = await buildGraph();
+    const graph = await this.buildGraph();
     res.send(graph);
   } catch (err) {
     next(err);
@@ -202,7 +202,7 @@ exports.getPath = async (req, res, next) => {
       }
       nodes = await nodes.filter((item, pos) => nodes.indexOf(item) === pos);
 
-      const graph = await buildGraph(nodes);
+      const graph = await this.buildGraph(nodes);
 
       res.send(graph);
     } else {
@@ -331,7 +331,7 @@ exports.pay = async (req, res, next) => {
 };
 
 exports._getMaxFlow = async (sender, recipient, amount = null) => {
-  const graph = await buildGraph();
+  const graph = await this.buildGraph();
   if (!graph.hasNode(recipient)) {
     console.log("error");
     return {

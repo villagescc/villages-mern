@@ -190,7 +190,7 @@ const PostingCard = ({ id, avatar, title, post, author, description, listingType
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
-                    Price: {other.postData.price} V.H.
+                    Price: {other?.postData?.price ?? 0} V.H.
                   </Typography>
                 </Grid>
               </Grid>
