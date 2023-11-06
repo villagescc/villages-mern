@@ -1585,11 +1585,11 @@ exports.editTransactionHistory = async (req, res, next) => {
     const diff = req.body?.amount - transaction?.amount
     if (transaction.status === 'Completed') {
       // await Account.findOneAndUpdate({ user: transaction.payer }, { $set: { balance: req.body?.amount } })
-      await Account.findOneAndUpdate({ user: transaction.payer }, { $inc: { balance: -diff } }, { upsert: true })
+      await Account.findOneAndUpdate({ user: transaction.payer }, { $inc: { balance: -diff } })
       // await Account.findOneAndUpdate({ user: transaction.recipient }, { $set: { balance: req.body?.amount } })
-      await Account.findOneAndUpdate({ user: transaction.recipient }, { $inc: { balance: diff } }, { upsert: true })
+      await Account.findOneAndUpdate({ user: transaction.recipient }, { $inc: { balance: diff } })
       // const recipientAccount = await Account.findOneAndUpdate({ user: transaction.recipient }, { $set: { balance: req.body?.amount }, $inc: { balance: req.body.amount - transaction.amount } })
-      await Payment.findByIdAndUpdate(req.body._id, { amount: req?.body?.amount, memo: req?.body?.description }, { upsert: true })
+      await Payment.findByIdAndUpdate(req.body._id, { amount: req?.body?.amount, memo: req?.body?.description })
       // const payerAccount = await Account.findOneAndUpdate({ user: transaction.payer }, { $set: { balance: { $add: ['$balance', transaction.amount] } } })
       // const recipientAccount = await Account.findOneAndUpdate({ user: transaction.recipient }, { $set: { balance: { $subtract: ['$balance', transaction.amount] } } })
       // return res.send({ success: true, message: 'Transaction edited successfully' })
