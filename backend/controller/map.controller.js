@@ -9,6 +9,7 @@ const { headingDistanceTo } = require("geolocation-utils");
 const { default: mongoose } = require('mongoose');
 const jwt = require("jsonwebtoken");
 const { buildGraph } = require('./payment.controller');
+const { getAllTrustors, getAllTrustees } = require('./user.controller');
 
 const router = express.Router();
 
@@ -289,125 +290,17 @@ exports.mapPosts = async (req, res, next) => {
       //     }
       //   }
       // ])
-
-      const graph = await buildGraph()
-      const loggedInUser = user._id;
       let usersInTrustNetworkAndTrustors = []
       let usersYouTrustAndTheirTrustees = []
       if (filterData?.network.includes('TrustsMe') && filterData?.network.includes('TrustedByMe')) {
-        const trustNetwork = new Set();
-
-        // Create a function to find users you trust and those who trust them
-        function findTrustNetworkAndTheirTrustees(user) {
-          const queue = [user];
-
-          while (queue.length > 0) {
-            const currentNode = queue.shift();
-
-            if (!trustNetwork.has(currentNode)) {
-              trustNetwork.add(currentNode);
-
-              // Find trustees (users trusted by the current user)
-              const trustees = new Set(graph.outNeighbors(currentNode));
-
-              trustees.forEach((trustee) => {
-                queue.push(trustee);
-              });
-
-              // Find trustors (users who trust the current user)
-              const trustors = new Set(graph.inNeighbors(currentNode));
-
-              trustors.forEach((trustor) => {
-                queue.push(trustor);
-              });
-            }
-          }
-        }
-
-        findTrustNetworkAndTheirTrustees(loggedInUser);
-
-        // Convert the trustNetwork set to an array
-        usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
-
-
-        const trustNetwork2 = new Set();
-
-        // Perform a depth-first search to find users in the trust network and their trustors
-        function findTrustNetworkAndTrustors(user) {
-          trustNetwork2.add(user);
-
-          // Find trustors (users who trust the current user)
-          const trustors = new Set(graph.neighbors(user));
-
-          trustors.forEach((trustor) => {
-            trustNetwork2.add(trustor);
-          });
-
-          // Recursively search trustors
-          trustors.forEach((trustor) => {
-            if (!trustNetwork2.has(trustor)) {
-              findTrustNetworkAndTrustors(trustor);
-            }
-          });
-        }
-
-        findTrustNetworkAndTrustors(loggedInUser);
-
-        // Convert the trustNetwork set to an array
-        usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+        usersYouTrustAndTheirTrustees = await getAllTrustees(user)
+        usersInTrustNetworkAndTrustors = await getAllTrustors(user)
       }
       else if (filterData?.network.includes('TrustsMe')) {
-        const trustNetwork = new Set();
-
-        // Create a function to find users you trust and those who trust them
-        function findTrustNetworkAndTheirTrustees(user) {
-          const queue = [user];
-
-          while (queue.length > 0) {
-            const currentNode = queue.shift();
-
-            if (!trustNetwork.has(currentNode)) {
-              trustNetwork.add(currentNode);
-
-              // Find trustees (users trusted by the current user)
-              const trustees = new Set(graph.outNeighbors(currentNode));
-
-              trustees.forEach((trustee) => {
-                queue.push(trustee);
-              });
-
-              // Find trustors (users who trust the current user)
-              const trustors = new Set(graph.inNeighbors(currentNode));
-
-              trustors.forEach((trustor) => {
-                queue.push(trustor);
-              });
-            }
-          }
-        }
-
-        findTrustNetworkAndTheirTrustees(loggedInUser);
-
-        // Convert the trustNetwork set to an array
-        usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
+        usersInTrustNetworkAndTrustors = await getAllTrustors(user)
       }
       else if (filterData?.network.includes('TrustedByMe')) {
-        const trustNetwork2 = new Set();
-        function findTrustNetworkAndTrustors(user) {
-          trustNetwork2.add(user);
-          const trustors = new Set(graph.neighbors(user));
-          trustors.forEach((trustor) => {
-            trustNetwork2.add(trustor);
-          });
-
-          trustors.forEach((trustor) => {
-            if (!trustNetwork2.has(trustor)) {
-              findTrustNetworkAndTrustors(trustor);
-            }
-          });
-        }
-        findTrustNetworkAndTrustors(loggedInUser);
-        usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+        usersYouTrustAndTheirTrustees = await getAllTrustees(user)
       }
       pipeline.push({
         // $match: {
