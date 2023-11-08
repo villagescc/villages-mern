@@ -356,6 +356,7 @@ const Posting = () => {
                       onChange={handleSearch}
                       onKeyPress={handleKeyPress}
                       placeholder="Search Post"
+                      autoComplete='off'
                       value={keyword}
                       size="small"
                     />
@@ -392,6 +393,7 @@ const Posting = () => {
                       onChange={handleSearch}
                       onKeyPress={handleKeyPress}
                       placeholder="Search Post"
+                      autoComplete='off'
                       value={keyword}
                       size="small"
                     />
@@ -478,6 +480,7 @@ const Posting = () => {
                       onChange={handleSearch}
                       onKeyPress={handleKeyPress}
                       placeholder="Search Post"
+                      autoComplete='off'
                       value={keyword}
                       size="small"
                     />
