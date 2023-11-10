@@ -51,7 +51,7 @@ exports.searchPosts = async (req, res, next) => {
   const { filterData } = req.body;
   const pipeline = [{ $sort: { updatedAt: -1 } }]
   try {
-    const loggedInUser = req.user._id;
+    // const loggedInUser = req.user._id;
     // const total = await Listing.countDocuments();
     // const query = Listing.find().sort({ updatedAt: -1 });
     if (!isEmpty(filterData.filterCategory)) {
@@ -256,7 +256,6 @@ exports.searchPosts = async (req, res, next) => {
       }
     )
     if (filterData?.network?.length !== 0) {
-      const graph = await buildGraph()
       let usersInTrustNetworkAndTrustors = []
       let usersYouTrustAndTheirTrustees = []
       if (filterData?.network.includes('TrustsMe') && filterData?.network.includes('TrustedByMe')) {
@@ -269,8 +268,8 @@ exports.searchPosts = async (req, res, next) => {
       else if (filterData?.network.includes('TrustedByMe')) {
         usersYouTrustAndTheirTrustees = await getAllTrustees(req.user)
       }
-      const token = req.header("Authorization");
-      const decoded = token && jwt.verify(token, process.env.jwtSecret);
+      // const token = req.header("Authorization");
+      // const decoded = token && jwt.verify(token, process.env.jwtSecret);
       // const user = decoded?.user
       // const currentUser = await User.aggregate([
       //   {

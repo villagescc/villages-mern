@@ -164,7 +164,7 @@ const Index = () => {
                                     value={keyword}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={4} xl={2}>
+                            {user ? <><Grid item xs={12} sm={4} xl={2}>
                                 {/* <FormControlLabel
                                     control={<IOSSwitch value={value} />}
                                     label="Android 12"
@@ -182,46 +182,46 @@ const Index = () => {
                                     ))}
                                 </TextField> */}
                             </Grid>
-                            <Grid item xs={12} sm={4} xl={2}>
-                                <Select
-                                    open={isDropdownOpen}
-                                    fullWidth
-                                    onClose={() => setIsDropdownOpen(false)}
-                                    disabled={loading}
-                                    id="standard-select-currency"
-                                    multiple
-                                    onOpen={() => setIsDropdownOpen(true)}
-                                    displayEmpty
-                                    value={trustNetworkValue}
-                                    renderValue={(selected) => {
-                                        let x = selected.map(s => {
-                                            return trustNetwork.find(e => e.value == s)?.label
-                                        }).join(', ')
-                                        return x.trim().length == 0 ? "None" : x
-                                    }}
-                                    onChange={(e) => {
-                                        setTrustNetworkValue(e.target.value)
-                                        clearTimeout(networkFilterRef.current)
-                                        networkFilterRef.current = setTimeout(() => {
-                                            setIsDropdownOpen(false)
-                                            dispatch(getUserList(keyword, page, value, e.target.value));
-                                        }, 1000);
-                                    }}
-                                    sx={{
-                                        "& .MuiSelect-select": { padding: "10px 32px 10px 14px" }
-                                    }}
-                                >
-                                    {trustNetwork.map((option) => (
-                                        // <MenuItem key={option.value} value={option.value} >
-                                        //     {option.label}
-                                        // </MenuItem>
-                                        <MenuItem key={option.value} value={option.value} >
-                                            <Checkbox checked={trustNetworkValue.indexOf(option.value) > -1} />
-                                            <ListItemText primary={option.label} />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </Grid>
+                                <Grid item xs={12} sm={4} xl={2}>
+                                    <Select
+                                        open={isDropdownOpen}
+                                        fullWidth
+                                        onClose={() => setIsDropdownOpen(false)}
+                                        disabled={loading}
+                                        id="standard-select-currency"
+                                        multiple
+                                        onOpen={() => setIsDropdownOpen(true)}
+                                        displayEmpty
+                                        value={trustNetworkValue}
+                                        renderValue={(selected) => {
+                                            let x = selected.map(s => {
+                                                return trustNetwork.find(e => e.value == s)?.label
+                                            }).join(', ')
+                                            return x.trim().length == 0 ? "None" : x
+                                        }}
+                                        onChange={(e) => {
+                                            setTrustNetworkValue(e.target.value)
+                                            clearTimeout(networkFilterRef.current)
+                                            networkFilterRef.current = setTimeout(() => {
+                                                setIsDropdownOpen(false)
+                                                dispatch(getUserList(keyword, page, value, e.target.value));
+                                            }, 1000);
+                                        }}
+                                        sx={{
+                                            "& .MuiSelect-select": { padding: "10px 32px 10px 14px" }
+                                        }}
+                                    >
+                                        {trustNetwork.map((option) => (
+                                            // <MenuItem key={option.value} value={option.value} >
+                                            //     {option.label}
+                                            // </MenuItem>
+                                            <MenuItem key={option.value} value={option.value} >
+                                                <Checkbox checked={trustNetworkValue.indexOf(option.value) > -1} />
+                                                <ListItemText primary={option.label} />
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </Grid></> : <></>}
                         </Grid>
                     </Grid>
                 </Grid >
