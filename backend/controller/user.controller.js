@@ -22,77 +22,99 @@ const { buildGraph } = require("./payment.controller");
 
 exports.getAllTrustors = async (user) => {
   let usersInTrustNetworkAndTrustors = []
-  async function findFollowersPathway(startUser) {
+  // let allUsers = await User.find({});
+  // let allEndorsements = await Endorsement.find({})
+  // let allFollowers = await Profile.find({}).populate("user").exec();
+  const [allUsers, allEndorsements, allFollowers] = await Promise.all([
+    User.find({}),
+    Endorsement.find({}),
+    Profile.find({}).populate("user"),
+  ]);
+  function findFollowersPathway(startUser) {
     const pathway = [startUser];
     const visited = new Set();
-
-    async function findPath(currentUser) {
+    function findPath(currentUser) {
       visited.add(currentUser);
-
-      const user = await User.findOne({ _id: currentUser });
-      const endorsers = await Endorsement.find({
-        recipientId: user?._id,
-        weight: { $ne: Number(0) },
-      }).exec();
-      let followers = await Profile.find({
-        user: { $in: endorsers?.map((endorser) => endorser?.endorserId) },
-      })
-        .populate("user")
-        .exec();
-
-      for (const follower of followers) {
-        const followerUser = follower.user._id;
-
-        if (!visited.has(followerUser?.toString())) {
-          pathway.push(followerUser?.toString());
-          await findPath(followerUser?.toString());
+      const user = allUsers?.find(x => x?._id?.toString() == currentUser)
+      let endorsers = allEndorsements?.filter(x => x?.recipientId?.toString() == user?._id?.toString() && x.weight !== 0)
+      endorsers = endorsers?.map((endorser) => endorser?.endorserId?.toString())
+      let followers = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
+      if (followers.length == 0) {
+        visited.delete(currentUser)
+      }
+      for (let follower of followers) {
+        const followerUser = follower?.user?._id?.toString()
+        if (!visited.has(followerUser)) {
+          pathway.push(followerUser);
+          findPath(followerUser);
         }
       }
     }
-
-    await findPath(startUser);
-    return Array.from(visited); // Return all users in the pathway
+    findPath(startUser);
+    return Array.from(visited);
   }
-
-  // Usage:
   const startUser = user._id
-  // const startUsername = "644ac00ba724e86d53c816ea"
-
-  usersInTrustNetworkAndTrustors = await findFollowersPathway(startUser)
-
+  usersInTrustNetworkAndTrustors = findFollowersPathway(startUser)
   usersInTrustNetworkAndTrustors = usersInTrustNetworkAndTrustors.filter(e => e !== startUser)
   return usersInTrustNetworkAndTrustors
 }
 
 exports.getAllTrustees = async (user) => {
   let usersYouTrustAndTheirTrustees = []
+  const [allUsers, allEndorsements, allFollowers] = await Promise.all([
+    User.find({}).allowDiskUse(),
+    Endorsement.find({}).allowDiskUse(),
+    Profile.find({}).populate("user").allowDiskUse(),
+  ]);
   async function findFollowingsPathway(startUser) {
     const pathway = [startUser];
     const visited = new Set();
 
-    async function findFollowingsPath(currentUser) {
+    function findFollowingsPath(currentUser) {
       visited.add(currentUser);
-      const user = await User.findOne({ _id: currentUser });
-      const endorsers = await Endorsement.find({
-        endorserId: user?._id,
-        weight: { $ne: Number(0) },
-      }).exec();
-      let followings = await Profile.find({
-        user: { $in: endorsers?.map((endorser) => endorser?.recipientId) },
-      })
-        .populate("user")
-        .exec();
-      for (const followee of followings) {
-        const followeeUser = followee?.user?._id;
-
-        if (!visited.has(followeeUser?.toString())) {
-          pathway.push(followeeUser?.toString());
-          await findFollowingsPath(followeeUser?.toString());
+      // const user = await allUsers.find({ _id: currentUser });
+      const user = allUsers?.find(x => x?._id?.toString() == currentUser)
+      // const endorsers = await Endorsement.find({
+      //   endorserId: user?._id,
+      //   weight: { $ne: Number(0) },
+      // }).exec();
+      let endorsers = allEndorsements?.filter(x => x?.endorserId?.toString() == user?._id?.toString() && x.weight !== 0)
+      endorsers = endorsers?.map((endorser) => endorser?.recipientId?.toString())
+      // let followings = await Profile.find({
+      //   user: { $in: endorsers?.map((endorser) => endorser?.recipientId) },
+      // })
+      //   .populate("user")
+      //   .exec();
+      let followings = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
+      // let followings = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
+      // if (currentUser == '653a8cb1046d47a90b238fc8') {
+      //   console.log(followings, endorsers, 'Current');
+      // }
+      if (followings.length == 0) {
+        visited.delete(currentUser)
+      }
+      for (let follower of followings) {
+        const followerUser = follower?.user?._id?.toString()
+        if (!visited.has(followerUser)) {
+          pathway.push(followerUser);
+          findFollowingsPath(followerUser);
         }
       }
+      // const pendingPromises = [];
+
+      // for (const followee of followings) {
+      //   const followeeUser = followee?.user?._id;
+
+      //   if (!visited.has(followeeUser?.toString())) {
+      //     pendingPromises.push(findFollowingsPath(followeeUser?.toString()));
+      //   }
+      // }
+
+      // // Use Promise.all for concurrent processing of followings
+      // await Promise.all(pendingPromises);
     }
 
-    await findFollowingsPath(startUser);
+    findFollowingsPath(startUser);
     return Array.from(visited); // Return all users in the pathway
   }
   const startUser = user._id
@@ -762,110 +784,114 @@ exports.search = async (req, res, next) => {
         //   }
         // ])
 
-        const graph = await buildGraph()
-        const loggedInUser = user._id;
+        // const graph = await buildGraph()
+        // const loggedInUser = user._id;
         let usersInTrustNetworkAndTrustors = []
         let usersYouTrustAndTheirTrustees = []
         if (network.includes('TrustsMe') && network.includes('TrustedByMe')) {
-          const trustNetwork = new Set();
+          // const trustNetwork = new Set();
 
-          // Create a function to find users you trust and those who trust them
-          function findTrustNetworkAndTheirTrustees(user) {
-            const queue = [user];
+          // // Create a function to find users you trust and those who trust them
+          // function findTrustNetworkAndTheirTrustees(user) {
+          //   const queue = [user];
 
-            while (queue.length > 0) {
-              const currentNode = queue.shift();
+          //   while (queue.length > 0) {
+          //     const currentNode = queue.shift();
 
-              if (!trustNetwork.has(currentNode)) {
-                trustNetwork.add(currentNode);
+          //     if (!trustNetwork.has(currentNode)) {
+          //       trustNetwork.add(currentNode);
 
-                // Find trustees (users trusted by the current user)
-                const trustees = new Set(graph.outNeighbors(currentNode));
+          //       // Find trustees (users trusted by the current user)
+          //       const trustees = new Set(graph.outNeighbors(currentNode));
 
-                trustees.forEach((trustee) => {
-                  queue.push(trustee);
-                });
+          //       trustees.forEach((trustee) => {
+          //         queue.push(trustee);
+          //       });
 
-                // Find trustors (users who trust the current user)
-                const trustors = new Set(graph.inNeighbors(currentNode));
+          //       // Find trustors (users who trust the current user)
+          //       const trustors = new Set(graph.inNeighbors(currentNode));
 
-                trustors.forEach((trustor) => {
-                  queue.push(trustor);
-                });
-              }
-            }
-          }
+          //       trustors.forEach((trustor) => {
+          //         queue.push(trustor);
+          //       });
+          //     }
+          //   }
+          // }
 
-          findTrustNetworkAndTheirTrustees(loggedInUser);
+          // findTrustNetworkAndTheirTrustees(loggedInUser);
 
-          // Convert the trustNetwork set to an array
-          usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
+          // // Convert the trustNetwork set to an array
+          // usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
 
 
-          const trustNetwork2 = new Set();
+          // const trustNetwork2 = new Set();
 
-          // Perform a depth-first search to find users in the trust network and their trustors
-          function findTrustNetworkAndTrustors(user) {
-            trustNetwork2.add(user);
+          // // Perform a depth-first search to find users in the trust network and their trustors
+          // function findTrustNetworkAndTrustors(user) {
+          //   trustNetwork2.add(user);
 
-            // Find trustors (users who trust the current user)
-            const trustors = new Set(graph.neighbors(user));
+          //   // Find trustors (users who trust the current user)
+          //   const trustors = new Set(graph.neighbors(user));
 
-            trustors.forEach((trustor) => {
-              trustNetwork2.add(trustor);
-            });
+          //   trustors.forEach((trustor) => {
+          //     trustNetwork2.add(trustor);
+          //   });
 
-            // Recursively search trustors
-            trustors.forEach((trustor) => {
-              if (!trustNetwork2.has(trustor)) {
-                findTrustNetworkAndTrustors(trustor);
-              }
-            });
-          }
+          //   // Recursively search trustors
+          //   trustors.forEach((trustor) => {
+          //     if (!trustNetwork2.has(trustor)) {
+          //       findTrustNetworkAndTrustors(trustor);
+          //     }
+          //   });
+          // }
 
-          findTrustNetworkAndTrustors(loggedInUser);
+          // findTrustNetworkAndTrustors(loggedInUser);
 
-          // Convert the trustNetwork set to an array
-          usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+          // // Convert the trustNetwork set to an array
+          // usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
+          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user)
         }
         else if (network.includes('TrustsMe')) {
-          const trustNetwork = new Set();
+          // const trustNetwork = new Set();
 
-          // Create a function to find users you trust and anyone they have trusted
-          function findTrustNetworkAndTheirTrustees(user) {
-            trustNetwork.add(user);
+          // // Create a function to find users you trust and anyone they have trusted
+          // function findTrustNetworkAndTheirTrustees(user) {
+          //   trustNetwork.add(user);
 
-            // Find trustees (users trusted by the current user)
-            const trustees = new Set(graph.outNeighbors(user));
+          //   // Find trustees (users trusted by the current user)
+          //   const trustees = new Set(graph.outNeighbors(user));
 
-            trustees.forEach((trustee) => {
-              if (!trustNetwork.has(trustee)) {
-                findTrustNetworkAndTheirTrustees(trustee);
-              }
-            });
-          }
+          //   trustees.forEach((trustee) => {
+          //     if (!trustNetwork.has(trustee)) {
+          //       findTrustNetworkAndTheirTrustees(trustee);
+          //     }
+          //   });
+          // }
 
-          findTrustNetworkAndTheirTrustees(loggedInUser);
+          // findTrustNetworkAndTheirTrustees(loggedInUser);
 
-          usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
+          // usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
         }
         else if (network.includes('TrustedByMe')) {
-          const trustNetwork2 = new Set();
-          function findTrustNetworkAndTrustors(user) {
-            trustNetwork2.add(user);
-            const trustors = new Set(graph.neighbors(user));
-            trustors.forEach((trustor) => {
-              trustNetwork2.add(trustor);
-            });
+          // const trustNetwork2 = new Set();
+          // function findTrustNetworkAndTrustors(user) {
+          //   trustNetwork2.add(user);
+          //   const trustors = new Set(graph.neighbors(user));
+          //   trustors.forEach((trustor) => {
+          //     trustNetwork2.add(trustor);
+          //   });
 
-            trustors.forEach((trustor) => {
-              if (!trustNetwork2.has(trustor)) {
-                findTrustNetworkAndTrustors(trustor);
-              }
-            });
-          }
-          findTrustNetworkAndTrustors(loggedInUser);
-          usersInTrustNetworkAndTrustors = Array.from(trustNetwork2);
+          //   trustors.forEach((trustor) => {
+          //     if (!trustNetwork2.has(trustor)) {
+          //       findTrustNetworkAndTrustors(trustor);
+          //     }
+          //   });
+          // }
+          // findTrustNetworkAndTrustors(loggedInUser);
+          // usersInTrustNetworkAndTrustors = Array.from(trustNetwork2);
+          usersInTrustNetworkAndTrustors = await this.getAllTrustees(user)
         }
 
         // console.log(currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)));
