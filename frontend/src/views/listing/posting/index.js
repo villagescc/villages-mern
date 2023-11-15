@@ -1,25 +1,32 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/styles';
 import { LoadingButton } from '@mui/lab';
 // material-ui
-import { useTheme } from '@mui/material/styles';
+// import { useTheme } from '@mui/material/styles';
 import {
+  Avatar,
   Box,
   Button,
   CardContent,
   Checkbox,
+  ClickAwayListener,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  Divider,
   Grid,
+  Grow,
   InputAdornment,
   ListItemText,
   MenuItem,
+  MenuList,
   Pagination,
+  Paper,
+  Popper,
   Select,
+  Skeleton,
   Switch,
   TextField,
   Typography
@@ -32,7 +39,7 @@ import { listing_type, radius } from 'constant';
 
 // assets
 import { WithContext as ReactTags } from 'react-tag-input';
-import axios from 'utils/axios';
+// import axios from 'utils/axios';
 import { Search as SearchIcon, AddCircleRounded } from '@mui/icons-material';
 import FormControlSelect from 'ui-component/extended/Form/FormControlSelect';
 import { useDispatch, useSelector } from 'store';
@@ -44,10 +51,11 @@ import PostingCard from 'ui-component/cards/PostingCard';
 import Empty from 'ui-component/Empty';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { isEmpty } from 'lodash';
+import { useNavigate, useParams } from 'react-router-dom';
+// import { isEmpty } from 'lodash';
 import { SERVER_URL } from 'config';
 import { Stack } from '@mui/system';
+import axios from 'utils/axios';
 
 // ==============================|| Posting ||============================== //
 const KeyCodes = {
@@ -57,7 +65,7 @@ const KeyCodes = {
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 const Posting = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
   ))(({ theme }) => ({
@@ -112,12 +120,14 @@ const Posting = () => {
   if (!pageId) pageId = 1;
   const dispatch = useDispatch();
   const { isLoggedIn, user } = useAuth();
+  const debouceRef = React.useRef(null)
   // const networkFilterRef = useRef(null)
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const [keyword, setKeyword] = React.useState('');
   // const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
   const [posts, setPosts] = React.useState([]);
+  const [marketPlaceProfiles, setMarketPlaceProfiles] = useState([])
   const [total, setTotal] = React.useState(0);
   const [categories, setCategories] = React.useState([]);
   const [subCategories, setSubCategories] = React.useState([]);
@@ -150,6 +160,10 @@ const Posting = () => {
   // POST MODAL FORM
   const [openCreate, setOpenCreate] = React.useState(false);
   const [id, setId] = React.useState('');
+  const deferredKeyWord = React.useDeferredValue(keyword);
+  const [marketPlaceModalOpen, setMarketPlaceModalOpen] = React.useState(false);
+  const [isMarketPlaceLoading, setIsMarketPlaceLoading] = useState(false)
+  const anchorEl = useRef(null)
   const [type, setType] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [paidContent, setPaidContent] = React.useState('')
@@ -324,8 +338,139 @@ const Posting = () => {
 
   };
 
+  useEffect(() => {
+    setMarketPlaceModalOpen(keyword.length >= 3)
+  }, [keyword])
+
+  const renderPosts = React.useMemo(() => {
+    return posts.slice(0).map((post, index) => (
+      <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
+        <PostingCard
+          id={post?._id}
+          recentlyActive={post?.userId?.profile?.recentlyActive}
+          avatar={post.userId?.profile?.avatar}
+          post={post?.photo}
+          title={post?.title}
+          description={post?.description}
+          listingType={post?.listing_type}
+          own={post?.userId?._id === user?._id}
+          author={post?.userId?._id}
+          userData={post?.userId}
+          isTrusted={post?.isTrusted}
+          onDelete={() => handleDeletePostClick(post)}
+          onEdit={() => handleEditPostClick(post)}
+          category={post.categoryId}
+          paidContent={post.paidContent}
+          filterPost={filterPost}
+          filterData={filterData}
+          purchasedBy={post.purchasedBy}
+          postData={post}
+        />
+      </Grid>
+    ))
+  }, [posts])
+
+  React.useEffect(() => {
+    // console.log(deferredKeyWord, 'deferredKeyWord');
+    if (deferredKeyWord.length >= 3) {
+      setIsMarketPlaceLoading(true)
+      clearTimeout(debouceRef.current)
+      debouceRef.current = setTimeout(() => {
+        (async function () {
+          try {
+            const res = await axios.post('/posting/post/getMarketPlaceProfile', { searchKeyWord: deferredKeyWord })
+            console.log(res.data, 'res');
+            setMarketPlaceProfiles(res.data.profiles)
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setIsMarketPlaceLoading(false)
+          }
+        }())
+      }, 1000);
+    }
+  }, [deferredKeyWord])
+
+
   return (
     <>
+      <Popper
+                    open={marketPlaceModalOpen}
+                    anchorEl={anchorEl.current}
+                    role={undefined}
+                    style={{ width: anchorEl?.current?.getBoundingClientRect()?.width, zIndex: 9 }}
+                    placement="bottom-start"
+                    transition
+                  // disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === 'bottom-start' ? 'left top' : 'left bottom'
+                        }}
+                      >
+                        <Paper sx={{
+                          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                          maxHeight: "250px",
+                          overflow: "auto"
+                        }}>
+                          <ClickAwayListener onClickAway={() => setMarketPlaceModalOpen(false)}>
+                            <MenuList dense>
+                              {
+                                isMarketPlaceLoading ? Array.from(new Array(3)).map(e => {
+                                  return (<>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                      <Box sx={{ margin: 1 }}>
+                                        <Skeleton variant="circular">
+                                          <Avatar />
+                                        </Skeleton>
+                                      </Box>
+                                      <Box sx={{ width: '100%', margin: 1 }}>
+                                        <Skeleton width="100%">
+                                          <Typography>.</Typography>
+                                        </Skeleton>
+                                      </Box>
+                                    </Box>
+                                  </>)
+                                }) : marketPlaceProfiles.length > 0 ? marketPlaceProfiles.map((profile) => {
+                                  return (
+                                    <React.Fragment key={profile._id}>
+                                      <MenuItem onClick={() => {
+                                        navigate(`/${encodeURI(String(profile?.user?.username).toLowerCase())}`)
+                                      }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                          <Box sx={{ margin: 1 }}>
+                                            <Avatar src={`${profile?.avatar ? `${SERVER_URL}/upload/avatar/${profile?.avatar}` : `${SERVER_URL}/upload/avatar/default.png`}`} />
+                                          </Box>
+                                          <Box sx={{ width: '100%' }}>
+                                            <Typography variant='subtitle1'>{profile?.user?.username}</Typography>
+                                            <Typography variant='body1' sx={{ whiteSpace: "initial" }}>{profile?.job}</Typography>
+                                          </Box>
+                                        </Box>
+                                      </MenuItem>
+                                    </React.Fragment>
+                                  )
+                                }) : <Box sx={{ margin: 1 }}>
+                                  No profiles found for {keyword}
+                                </Box>
+                              }
+                              {/* <MenuItem>
+                                <ListItemText inset>Single</ListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemText inset>1.15</ListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemText inset>Double</ListItemText>
+                              </MenuItem> */}
+                            </MenuList>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
       <MainCard
         sx={{
           ".MuiCardHeader-action": {
@@ -333,17 +478,18 @@ const Posting = () => {
             flex: "unset"
           }
         }}
-        title="Posting List"
-        content={false}
-        secondary={
-          <>
-            <Grid sx={{ justifyContent: { xs: 'left' } }} container alignItems={'center'} spacing={1}>
+        title={<>
+          <Grid sx={{ justifyContent: { xs: 'left' } }} container alignItems={'center'} spacing={1} >
+            <Grid item xs={12} md={3} lg={6} >
+              <Typography variant="h3">Posting List</Typography>
+            </Grid>
+            <Grid item xs={12} md={9} lg={6} container gap={2} sx={{ justifyContent: { xs: 'left', md: "end" } }}>
               {isLoggedIn ? (
                 // <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
                 //   Create
                 // </Button>
                 <>
-                  {!showFilter && <Grid item xs={12} sm={6}>
+                  {!showFilter && <Grid item xs={12} sm={6} style={{ position: "relative" }}>
                     <TextField
                       InputProps={{
                         startAdornment: (
@@ -352,7 +498,15 @@ const Posting = () => {
                           </InputAdornment>
                         )
                       }}
+                      aria-describedby={"simple-popover"}
                       fullWidth
+                      aria-controls={marketPlaceModalOpen ? 'composition-menu' : undefined}
+                      aria-expanded={marketPlaceModalOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      ref={anchorEl}
+                      onFocus={() => {
+                        setMarketPlaceModalOpen(keyword.length >= 3)
+                      }}
                       onChange={handleSearch}
                       onKeyPress={handleKeyPress}
                       placeholder="Search Post"
@@ -360,6 +514,64 @@ const Posting = () => {
                       value={keyword}
                       size="small"
                     />
+                    {/* <Popover
+                    hideBackdrop
+                    id={"simple-popover"}
+                    open={keyword.length !== 0}
+                    // anchorEl={true}
+                    // onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'center',
+                    }}
+
+                  >
+                    <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
+                  </Popover> */}
+                    {/* <ClickAwayListener onClickAway={() => setMarketPlaceModalOpen(false)}>
+                    <Menu
+                      id='simple-popover'
+                      anchorEl={anchorEl.current}
+                      disablePortal
+                      hideBackdrop
+                      disableScrollLock
+                      open={marketPlaceModalOpen}
+                      onClose={() => setMarketPlaceModalOpen(false)}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      <Paper>
+                        <MenuList dense>
+                          <MenuItem>
+                            <ListItemText inset>Single</ListItemText>
+                          </MenuItem>
+                          <MenuItem>
+                            <ListItemText inset>1.15</ListItemText>
+                          </MenuItem>
+                          <MenuItem>
+                            <ListItemText inset>Double</ListItemText>
+                          </MenuItem>
+                          <Divider />
+                          <MenuItem>
+                            <ListItemText>Add space before paragraph</ListItemText>
+                          </MenuItem>
+                          <MenuItem>
+                            <ListItemText>Add space after paragraph</ListItemText>
+                          </MenuItem>
+                          <Divider />
+                          <MenuItem>
+                            <ListItemText>Custom spacing...</ListItemText>
+                          </MenuItem>
+                        </MenuList>
+                      </Paper>
+                    </Menu>
+                  </ClickAwayListener> */}
+                    {/* {keyword.length !== 0 && <div style={{ position: "absolute", background: "white", border: "1px solid black", padding: "15px", width: "100%" }}>Profiles</div>} */}
                   </Grid>}
                   <Grid item >
                     <Button variant="contained" startIcon={<AddCircleRounded />} onClick={handleCreatePostClick}>
@@ -390,6 +602,13 @@ const Posting = () => {
                         )
                       }}
                       fullWidth
+                      aria-controls={marketPlaceModalOpen ? 'composition-menu' : undefined}
+                      aria-expanded={marketPlaceModalOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      ref={anchorEl}
+                      onFocus={() => {
+                        setMarketPlaceModalOpen(keyword.length >= 3)
+                      }}
                       onChange={handleSearch}
                       onKeyPress={handleKeyPress}
                       placeholder="Search Post"
@@ -413,9 +632,9 @@ const Posting = () => {
               )
               }
             </Grid>
-          </>
-
-        }
+          </Grid>
+        </>}
+        content={false}
       >
         {postingState.isPostsLoading ? (
           <PostingListSkeleton />
@@ -482,6 +701,13 @@ const Posting = () => {
                       placeholder="Search Post"
                       autoComplete='off'
                       value={keyword}
+                      aria-controls={marketPlaceModalOpen ? 'composition-menu' : undefined}
+                      aria-expanded={marketPlaceModalOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      ref={anchorEl}
+                      onFocus={() => {
+                        setMarketPlaceModalOpen(keyword.length >= 3)
+                      }}
                       size="small"
                     />
                   </Grid>
@@ -565,31 +791,7 @@ const Posting = () => {
             </Grid>
             <Grid container justifyContent="start" alignItems="top" spacing={2} sx={{ my: 1 }}>
               {posts.length > 0 ? (
-                posts.slice(0).map((post, index) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={index} >
-                    <PostingCard
-                      id={post?._id}
-                      recentlyActive={post?.userId?.profile?.recentlyActive}
-                      avatar={post.userId?.profile?.avatar}
-                      post={post?.photo}
-                      title={post?.title}
-                      description={post?.description}
-                      listingType={post?.listing_type}
-                      own={post?.userId?._id === user?._id}
-                      author={post?.userId?._id}
-                      userData={post?.userId}
-                      isTrusted={post?.isTrusted}
-                      onDelete={() => handleDeletePostClick(post)}
-                      onEdit={() => handleEditPostClick(post)}
-                      category={post.categoryId}
-                      paidContent={post.paidContent}
-                      filterPost={filterPost}
-                      filterData={filterData}
-                      purchasedBy={post.purchasedBy}
-                      postData={post}
-                    />
-                  </Grid>
-                ))
+                renderPosts
               ) : (
                 <Grid item xs={12}>
                   <Empty />

@@ -53,6 +53,7 @@ router.get(
 // ######################### POSTING ROUTER #############################
 router.post("/posting/posts", authMiddleware.auth, postController.searchPosts);
 router.get("/posting/post/:id", postController.getById);
+router.post("/posting/post/getMarketPlaceProfile", postController.getMarketPlaceProfile);
 router.get("/posting/post/:username/:title", postController.getByUsernameAndTitle);
 router.post(
   "/posting/upload",
