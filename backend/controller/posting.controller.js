@@ -20,6 +20,7 @@ const { _getMaxFlow, buildGraph } = require("./payment.controller");
 const Paylog = require("../models/Paylog");
 const sendEmail = require("../utils/email");
 const { getAllTrustors, getAllTrustees } = require("./user.controller");
+const Profile = require("../models/Profile");
 
 // const sendEmail = async (sender, email, subject, text) => {
 //   try {
@@ -1689,3 +1690,28 @@ exports.purchaseLimit = async (req, res, next) => {
     // next(err);
   }
 };
+
+exports.getMarketPlaceProfile = async (req, res, next) => {
+  const searchKeyWord = req.body.searchKeyWord
+  const profiles = await Profile.aggregate([
+    {
+      $match: {
+        job: { $regex: searchKeyWord, $options: "i" }
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
+      $addFields: {
+        user: { $arrayElemAt: ['$user', 0] }
+      }
+    }
+  ])
+  return res.send({ success: true, profiles })
+}
