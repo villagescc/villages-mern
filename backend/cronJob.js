@@ -141,7 +141,11 @@ cron.schedule('45 7 * * 1', async function () {
                             $match: {
                                 isActive: true,
                                 $expr: {
-                                    $gt: [{ $strLenCP: "$email" }, 1]
+                                    $gt: [{
+                                        $strLenCP: {
+                                            $ifNull: ["$email", ""],
+                                        }
+                                    }, 1]
                                 }
                             }
                         },
@@ -213,7 +217,11 @@ cron.schedule('45 7 * * 1', async function () {
                             $match: {
                                 isActive: true,
                                 $expr: {
-                                    $gt: [{ $strLenCP: "$email" }, 1]
+                                    $gt: [{
+                                        $strLenCP: {
+                                            $ifNull: ["$email", ""],
+                                        }
+                                    }, 1]
                                 }
                             }
                         },
