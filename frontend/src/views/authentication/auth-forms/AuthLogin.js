@@ -220,7 +220,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-            <Stack direction="column" alignItems="start" justifyContent="start" spacing={1}>
+            <Stack direction="column" alignItems="center" justifyContent="start" spacing={1}>
               <ReCAPTCHA
                 sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
                 onChange={(captcha) => setValues({ ...values, captcha })}
