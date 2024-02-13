@@ -44,12 +44,14 @@ import { geocodeByLatLng } from 'react-google-places-autocomplete';
 import { result } from 'lodash';
 import axios from 'axios';
 import { dispatch } from 'store';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ loginProp, ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
+  const reCaptchaRef = useRef(null)
   const [checked, setChecked] = React.useState(true);
 
   const [latitude, setLatitude] = useState('');
@@ -129,25 +131,28 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
       console.log(err)
     });
   }
-
   return (
     <>
       <Formik
         initialValues={{
           email: '',
           password: '',
-          submit: null
+          submit: null,
+          captcha: ''
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          password: Yup.string().max(255).required('Password is required'),
+          captcha: Yup.string().required('Captcha is required').nullable()
         })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          console.log(token, placeId, latitude, longitude);
+        onSubmit={async (values, { setErrors, setStatus, setSubmitting, setValues }) => {
           try {
-            await login(values.email, values.password, token, placeId, longitude, latitude).then(
+            await login(values.email, values.password, token, placeId, longitude, latitude, values.captcha).then(
               () => { },
               (err) => {
+                if (err.captcha) {
+                  reCaptchaRef.current.reset()
+                }
                 setStatus({ success: false });
                 setErrors(err);
                 setSubmitting(false);
@@ -162,7 +167,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setValues }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
@@ -215,6 +220,20 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
+            <Stack direction="column" alignItems="start" justifyContent="start" spacing={1}>
+              <ReCAPTCHA
+                sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                onChange={(captcha) => setValues({ ...values, captcha })}
+                name='captcha'
+                ref={reCaptchaRef}
+                onReset={() => setValues({ ...values, captcha: "" })}
+              />
+              {touched.captcha && errors.captcha && (
+                <FormHelperText error id="standard-weight-helper-text-password-login">
+                  {errors.captcha}
+                </FormHelperText>
+              )}
+            </Stack>
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
               <FormControlLabel
                 control={

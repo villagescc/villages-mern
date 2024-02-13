@@ -64,124 +64,135 @@ exports.registerUser = async (req, res, next) => {
   let errors = {};
   let profile, account, user;
   try {
-    const { password, username, firstName, lastName, email } = req.body;
+    const { password, username, firstName, lastName, email, captcha } = req.body;
 
-    user = await User.findOne({ $or: [{ email }, { username }] });
-    if (user) {
-      if (user.email.toLowerCase() === email.toLowerCase())
-        errors.email = "Email already exists";
-      else errors.username = "Username already exists";
-
-      return res.status(400).send(errors);
+    if (!captcha) {
+      return res.status(400).send({ captcha: 'Captcha is required' });
     }
+    const isValidCaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_GOOGLE_RECAPTCHA_SECRET_KEY}&response=${captcha}`)
 
-    const token = crypto.randomBytes(32).toString("hex");
-    // const verifyCode =
-    user = new User({
-      password,
-      username: username.toLowerCase(),
-      firstName,
-      lastName,
-      email: email.toLowerCase(),
-      token,
-    });
+    if (isValidCaptcha.data.success) {
 
-    profile = await profileController._createProfile({
-      user: user._id,
-      name: `${firstName} ${lastName}`,
-    });
-    account = await accountController._createAccount({
-      user: user._id,
-      balance: 0,
-    });
+      user = await User.findOne({ $or: [{ email }, { username }] });
+      if (user) {
+        if (user.email.toLowerCase() === email.toLowerCase())
+          errors.email = "Email already exists";
+        else errors.username = "Username already exists";
 
-    const salt = await bcrypt.genSalt(10);
-
-    user.password = await bcrypt.hash(password, salt);
-    user.profile = profile._id;
-    user.account = account._id;
-
-    const newUser = {
-      email_address: email.toLowerCase(),
-      status: "subscribed",
-      merge_fields: {
-        FNAME: firstName,
-        LNAME: lastName,
-      },
-    };
-
-    // TO add contacts in mailchimp
-    // try {
-    //   await mailchimp.post(`/lists/${listID}/members`, newUser)
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
-    //To add contacts in mailjet
-    try {
-      const request = mailjet
-        .post("contactslist", { 'version': 'v3' })
-        .id(process.env.MJ_CONTACT_LIST_ID)
-        .action("managecontact")
-        .request({
-          "Name": `${firstName} ${lastName}`,
-          "Properties": "object",
-          "Action": "addnoforce",
-          "Email": email
-        })
-      request
-        .then((result) => {
-          console.log(result.body)
-        })
-        .catch((err) => {
-          console.log(err.statusCode)
-        })
-    } catch (error) {
-      console.log('====================================');
-      console.log(error);
-      console.log('====================================');
-    }
-
-    user.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
+        return res.status(400).send(errors);
       }
-      res.send({
-        success: true,
-        message: "User was registered successfully! Please check your email",
+
+      const token = crypto.randomBytes(32).toString("hex");
+      // const verifyCode =
+      user = new User({
+        password,
+        username: username.toLowerCase(),
+        firstName,
+        lastName,
+        email: email.toLowerCase(),
+        token,
       });
 
-      // nodemailer.sendConfirmationEmail(user.username, user.email, user.token);
+      profile = await profileController._createProfile({
+        user: user._id,
+        name: `${firstName} ${lastName}`,
+      });
+      account = await accountController._createAccount({
+        user: user._id,
+        balance: 0,
+      });
 
-      sendEmail('info@villages.io', email, "Please confirm your account", `<h1>Email Confirmation</h1>
+      const salt = await bcrypt.genSalt(10);
+
+      user.password = await bcrypt.hash(password, salt);
+      user.profile = profile._id;
+      user.account = account._id;
+
+      const newUser = {
+        email_address: email.toLowerCase(),
+        status: "subscribed",
+        merge_fields: {
+          FNAME: firstName,
+          LNAME: lastName,
+        },
+      };
+
+      // TO add contacts in mailchimp
+      // try {
+      //   await mailchimp.post(`/lists/${listID}/members`, newUser)
+      // } catch (error) {
+      //   console.log(error);
+      // }
+
+      //To add contacts in mailjet
+      try {
+        const request = mailjet
+          .post("contactslist", { 'version': 'v3' })
+          .id(process.env.MJ_CONTACT_LIST_ID)
+          .action("managecontact")
+          .request({
+            "Name": `${firstName} ${lastName}`,
+            "Properties": "object",
+            "Action": "addnoforce",
+            "Email": email
+          })
+        request
+          .then((result) => {
+            console.log(result.body)
+          })
+          .catch((err) => {
+            console.log(err.statusCode)
+          })
+      } catch (error) {
+        console.log('====================================');
+        console.log(error);
+        console.log('====================================');
+      }
+
+      user.save((err) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+        res.send({
+          success: true,
+          message: "User was registered successfully! Please check your email",
+        });
+
+        // nodemailer.sendConfirmationEmail(user.username, user.email, user.token);
+
+        sendEmail('info@villages.io', email, "Please confirm your account", `<h1>Email Confirmation</h1>
       <h2>Hello ${firstName} ${lastName}</h2>
       <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
       <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
       <div>https://villages.io/auth/verify/${user._id}/${token}</div>
       <br>`)
 
-      // axios
-      //   .post(
-      //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
-      //     {
-      //       subject: "Please confirm your account",
-      //       dest: email,
-      //       data: `<h1>Email Confirmation</h1>
-      //         <h2>Hello ${firstName} ${lastName}</h2>
-      //         <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
-      //         <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
-      //         <div>https://villages.io/auth/verify/${user._id}/${token}</div>
-      //         <br>`,
-      //     }
-      //   )
-      //   .then(function (response) {
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
-    });
+        // axios
+        //   .post(
+        //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/sendMail",
+        //     {
+        //       subject: "Please confirm your account",
+        //       dest: email,
+        //       data: `<h1>Email Confirmation</h1>
+        //         <h2>Hello ${firstName} ${lastName}</h2>
+        //         <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
+        //         <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
+        //         <div>https://villages.io/auth/verify/${user._id}/${token}</div>
+        //         <br>`,
+        //     }
+        //   )
+        //   .then(function (response) {
+        //     console.log(response);
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
+      });
+    }
+    else {
+      return res.status(400).send({ captcha: 'Invalid captcha' });
+    }
   } catch (err) {
     if (profile) await profileController._removeProfileById(profile.id);
     if (account) await accountController._removeAccountById(account.id);
@@ -272,121 +283,134 @@ exports.resendVerificationMail = async (req, res, next) => {
 
 }
 
-exports.login = (req, res, next) => {
-  const { password, email, deviceToken, placeId, latitude, longitude } =
+exports.login = async (req, res, next) => {
+  const { password, email, deviceToken, placeId, latitude, longitude, captcha } =
     req.body;
-  const { 'user-agent': userAgent } = req.headers
-  User.findOne({
-    $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
-  })
-    .select("+password")
-    .then(async (user) => {
-      if (!user) {
-        return res.status(400).send({
-          email: "This credential does not exist.",
-        });
-      }
-      if (user.password) {
-        bcrypt
-          .compare(password, user.password)
-          .then(async (isMatch) => {
-            if (!isMatch) {
-              return res.status(400).send({
-                password: "Password is incorrect.",
+  try {
+    if (!captcha) {
+      return res.status(400).send({ captcha: 'Captcha is required' });
+    }
+    const isValidCaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_GOOGLE_RECAPTCHA_SECRET_KEY}&response=${captcha}`)
+    if (isValidCaptcha.data.success) {
+      const { 'user-agent': userAgent } = req.headers
+      User.findOne({
+        $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
+      })
+        .select("+password")
+        .then(async (user) => {
+          if (!user) {
+            return res.status(400).send({
+              email: "This credential does not exist.",
+            });
+          }
+          if (user.password) {
+            bcrypt
+              .compare(password, user.password)
+              .then(async (isMatch) => {
+                if (!isMatch) {
+                  return res.status(400).send({
+                    password: "Password is incorrect.",
+                  });
+                }
+
+                if (!user.verified) {
+                  return res.status(400).send({
+                    email: "Email is not verified",
+                    isEmailVerified: false
+                  });
+                }
+
+                if (!user.isActive) {
+                  return res.status(400).send({
+                    email: "Account is not active",
+                  });
+                }
+
+                const userData = await _getUser(user.id);
+
+                if (deviceToken !== "")
+                  await User.findByIdAndUpdate(user._id, {
+                    deviceToken,
+                  });
+                if (latitude !== "" && longitude !== "")
+                  await User.findByIdAndUpdate(user._id, {
+                    latitude,
+                    longitude,
+                  });
+                if (placeId !== "")
+                  await Profile.findOneAndUpdate(
+                    { user: user._id },
+                    { placeId: placeId }
+                  );
+                const lastLogin = Date.now();
+                await User.findByIdAndUpdate(user._id, { lastLogin });
+                const payload = {
+                  user: {
+                    _id: userData._id,
+                    username: userData.username,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    isSuperuser: userData.isSuperuser,
+                    isStaff: userData.isStaff,
+                    profile: userData.profile,
+                    account: userData.account,
+                    deviceToken: userData.deviceToken,
+                    latitude: userData.latitude,
+                    longitude: userData.longitude,
+                  },
+                };
+
+                jwt.sign(
+                  payload,
+                  process.env.jwtSecret,
+                  { expiresIn: userAgent === 'webview' ? "5 years" : 3600 * 24 },
+                  (err, serviceToken) => {
+                    if (err) {
+                      console.log("jwt sign error", err);
+                      next(err);
+                    }
+                    return res.json({ serviceToken, user: userData, isFirstTimeLogin: userData?.lastLogin ? false : true });
+                  }
+                );
+              })
+              .catch((err) => {
+                console.log("bcrypt compare error", err);
+                next(err);
               });
+          } else {
+            const salt = await bcrypt.genSalt(10);
+            const token = crypto.randomBytes(32).toString("hex");
+            user.password = await bcrypt.hash(password, salt);
+            user.token = token;
+            if (deviceToken !== "") user.deviceToken = deviceToken;
+            if (latitude !== "" && longitude !== "") {
+              user.latitude = latitude;
+              user.longitude = longitude;
             }
-
-            if (!user.verified) {
-              return res.status(400).send({
-                email: "Email is not verified",
-                isEmailVerified: false
-              });
-            }
-
-            if (!user.isActive) {
-              return res.status(400).send({
-                email: "Account is not active",
-              });
-            }
-
-            const userData = await _getUser(user.id);
-
-            if (deviceToken !== "")
-              await User.findByIdAndUpdate(user._id, {
-                deviceToken,
-              });
-            if (latitude !== "" && longitude !== "")
-              await User.findByIdAndUpdate(user._id, {
-                latitude,
-                longitude,
-              });
             if (placeId !== "")
               await Profile.findOneAndUpdate(
                 { user: user._id },
                 { placeId: placeId }
               );
-            const lastLogin = Date.now();
-            await User.findByIdAndUpdate(user._id, { lastLogin });
-            const payload = {
-              user: {
-                _id: userData._id,
-                username: userData.username,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-                isSuperuser: userData.isSuperuser,
-                isStaff: userData.isStaff,
-                profile: userData.profile,
-                account: userData.account,
-                deviceToken: userData.deviceToken,
-                latitude: userData.latitude,
-                longitude: userData.longitude,
-              },
-            };
-
-            jwt.sign(
-              payload,
-              process.env.jwtSecret,
-              { expiresIn: userAgent === 'webview' ? "5 years" : 3600 * 24 },
-              (err, serviceToken) => {
-                if (err) {
-                  console.log("jwt sign error", err);
-                  next(err);
-                }
-                return res.json({ serviceToken, user: userData, isFirstTimeLogin: userData?.lastLogin ? false : true });
-              }
-            );
-          })
-          .catch((err) => {
-            console.log("bcrypt compare error", err);
-            next(err);
-          });
-      } else {
-        const salt = await bcrypt.genSalt(10);
-        const token = crypto.randomBytes(32).toString("hex");
-        user.password = await bcrypt.hash(password, salt);
-        user.token = token;
-        if (deviceToken !== "") user.deviceToken = deviceToken;
-        if (latitude !== "" && longitude !== "") {
-          user.latitude = latitude;
-          user.longitude = longitude;
-        }
-        if (placeId !== "")
-          await Profile.findOneAndUpdate(
-            { user: user._id },
-            { placeId: placeId }
-          );
-        user.lastLogin = Date.now();
-        user
-          .save()
-          .then(() => res.send({ success: true }))
-          .catch((err) => next(err));
-      }
-    })
-    .catch((err) => {
-      console.log("find user error", err);
-      next(err);
-    });
+            user.lastLogin = Date.now();
+            user
+              .save()
+              .then(() => res.send({ success: true }))
+              .catch((err) => next(err));
+          }
+        })
+        .catch((err) => {
+          console.log("find user error", err);
+          next(err);
+        });
+    }
+    else {
+      return res.status(400).send({ captcha: 'Invalid captcha' });
+    }
+  } catch (error) {
+    return res.status(500).send({ message: 'Invalid  captcha' });
+  }
 };
 
 exports.changePassword = async (req, res, next) => {
