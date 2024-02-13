@@ -286,20 +286,6 @@ const AuthRegister = ({ setVerified, ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-            <Stack direction="column" alignItems="start" justifyContent="start" spacing={1}>
-              <ReCAPTCHA
-                sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
-                onChange={(captcha) => setValues({ ...values, captcha })}
-                name='captcha'
-                ref={reCaptchaRef}
-                onReset={() => setValues({ ...values, captcha: "" })}
-              />
-              {touched.captcha && errors.captcha && (
-                <FormHelperText error id="standard-weight-helper-text-password-login">
-                  {errors.captcha}
-                </FormHelperText>
-              )}
-            </Stack>
             {strength !== 0 && (
               <FormControl fullWidth>
                 <Box sx={{ mb: 2 }}>
@@ -316,6 +302,20 @@ const AuthRegister = ({ setVerified, ...others }) => {
                 </Box>
               </FormControl>
             )}
+            <Stack direction="column" alignItems="center" justifyContent="start" spacing={1}>
+              <ReCAPTCHA
+                sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                onChange={(captcha) => setValues({ ...values, captcha })}
+                name='captcha'
+                ref={reCaptchaRef}
+                onReset={() => setValues({ ...values, captcha: "" })}
+              />
+              {touched.captcha && errors.captcha && (
+                <FormHelperText error id="standard-weight-helper-text-password-login">
+                  {errors.captcha}
+                </FormHelperText>
+              )}
+            </Stack>
 
             <Grid container alignItems="center" justifyContent="space-between">
               <Grid item>

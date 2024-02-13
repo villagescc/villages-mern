@@ -69,7 +69,9 @@ exports.registerUser = async (req, res, next) => {
     if (!captcha) {
       return res.status(400).send({ captcha: 'Captcha is required' });
     }
-    const isValidCaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_GOOGLE_RECAPTCHA_SECRET_KEY}&response=${captcha}`)
+    let googleCaptchaSiteVerifyLink = process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI
+    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink.replace('{{0}}', process.env.GOOGLE_RECAPTCHA_SECRET_KEY).replace('{{1}}', captcha)
+    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink)
 
     if (isValidCaptcha.data.success) {
 
@@ -290,7 +292,9 @@ exports.login = async (req, res, next) => {
     if (!captcha) {
       return res.status(400).send({ captcha: 'Captcha is required' });
     }
-    const isValidCaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_GOOGLE_RECAPTCHA_SECRET_KEY}&response=${captcha}`)
+    let googleCaptchaSiteVerifyLink = process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI
+    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink.replace('{{0}}', process.env.GOOGLE_RECAPTCHA_SECRET_KEY).replace('{{1}}', captcha)
+    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink)
     if (isValidCaptcha.data.success) {
       const { 'user-agent': userAgent } = req.headers
       User.findOne({
