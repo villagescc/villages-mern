@@ -83,8 +83,8 @@ export const JWTProvider = ({ children }) => {
     init();
   }, []);
 
-  const login = async (email, password, deviceToken, placeId, latitude, longitude) => {
-    const response = await axios.post('/auth/login', { email, password, deviceToken, placeId, latitude, longitude });
+  const login = async (email, password, deviceToken, placeId, latitude, longitude, captcha) => {
+    const response = await axios.post('/auth/login', { email, password, deviceToken, placeId, latitude, longitude, captcha });
     const { serviceToken, user, isFirstTimeLogin } = response.data;
     setSession(serviceToken);
     // dispatch({
@@ -97,7 +97,7 @@ export const JWTProvider = ({ children }) => {
     init(isFirstTimeLogin);
   };
 
-  const register = async (email, password, password2, firstName, lastName, username) => {
+  const register = async (email, password, password2, firstName, lastName, username, captcha) => {
     // todo: this flow need to be recode as it not verified
     const response = await axios.post('auth/register', {
       email,
@@ -105,7 +105,8 @@ export const JWTProvider = ({ children }) => {
       password2,
       firstName,
       lastName,
-      username
+      username,
+      captcha
     });
 
     return response.data;

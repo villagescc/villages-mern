@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
@@ -15,6 +15,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Stack,
   TextField,
   Typography,
   useMediaQuery
@@ -36,6 +37,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useDispatch } from 'store';
 import { openSnackbar } from 'store/slices/snackbar';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 // ===========================|| AUTH - REGISTER ||=========================== //
 
@@ -44,6 +46,7 @@ const AuthRegister = ({ setVerified, ...others }) => {
   const dispatch = useDispatch();
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
+  const reCaptchaRef = useRef(null)
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const { borderRadius } = useConfig();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -81,7 +84,8 @@ const AuthRegister = ({ setVerified, ...others }) => {
           email: '',
           password: '',
           password2: '',
-          submit: null
+          submit: null,
+          captcha: ''
         }}
         validationSchema={Yup.object().shape({
           firstName: Yup.string().required('First Name is required'),
@@ -89,7 +93,8 @@ const AuthRegister = ({ setVerified, ...others }) => {
           username: Yup.string().required('Username is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required'),
-          password2: Yup.string().max(255).required('Confirm password is required')
+          password2: Yup.string().max(255).required('Confirm password is required'),
+          captcha: Yup.string().required('Captcha is required').nullable()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -99,7 +104,8 @@ const AuthRegister = ({ setVerified, ...others }) => {
               values.password2,
               values.firstName,
               values.lastName,
-              values.username
+              values.username,
+              values.captcha
             );
             if (result.success) {
               dispatch(
@@ -117,6 +123,9 @@ const AuthRegister = ({ setVerified, ...others }) => {
               //   navigate('/login', { replace: true });
             }
           } catch (err) {
+            if (err.captcha) {
+              reCaptchaRef.current.reset()
+            }
             // if (scriptedRef.current) {
             setStatus({ success: false });
             setErrors(err);
@@ -125,7 +134,7 @@ const AuthRegister = ({ setVerified, ...others }) => {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setValues }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <Grid container spacing={matchDownSM ? 0 : 2}>
               <Grid item xs={12} sm={6}>
@@ -277,7 +286,20 @@ const AuthRegister = ({ setVerified, ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-
+            <Stack direction="column" alignItems="start" justifyContent="start" spacing={1}>
+              <ReCAPTCHA
+                sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                onChange={(captcha) => setValues({ ...values, captcha })}
+                name='captcha'
+                ref={reCaptchaRef}
+                onReset={() => setValues({ ...values, captcha: "" })}
+              />
+              {touched.captcha && errors.captcha && (
+                <FormHelperText error id="standard-weight-helper-text-password-login">
+                  {errors.captcha}
+                </FormHelperText>
+              )}
+            </Stack>
             {strength !== 0 && (
               <FormControl fullWidth>
                 <Box sx={{ mb: 2 }}>
