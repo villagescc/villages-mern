@@ -22,6 +22,7 @@ import ReactTimeAgo from 'react-time-ago'
 // assets
 import { IconBrandTelegram, IconBuildingStore, IconMailbox, IconPhoto } from '@tabler/icons';
 import DefaultUserIcon from 'assets/images/auth/default.png';
+import { useNavigate } from 'react-router-dom';
 
 // styles
 const ListItemWrapper = styled('div')(({ theme }) => ({
@@ -40,6 +41,7 @@ const ListItemWrapper = styled('div')(({ theme }) => ({
 
 const NotificationList = ({ notifications }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const chipSX = {
     height: 24,
@@ -97,7 +99,7 @@ const NotificationList = ({ notifications }) => {
                       <Avatar alt={notification?.notifierId?.username} src={notification?.notifierId?.profile?.avatar ? notification.notifierId?.profile?.avatar : DefaultUserIcon} />
                     </Badge>
                   </ListItemAvatar>
-                  <ListItemText primary={notification?.notifierId?.username} />
+                  <ListItemText sx={{ cursor: 'pointer' }} primary={notification?.notifierId?.username} onClick={()=>navigate(`/${notification?.notifierId?.username}`)}/>
                   <ListItemSecondaryAction>
                     <Grid container justifyContent="flex-end">
                       <Grid item xs={12}>

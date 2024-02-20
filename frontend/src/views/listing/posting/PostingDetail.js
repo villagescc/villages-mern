@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { Grid, CardMedia, Typography, Divider, Box, Avatar, Tooltip, Button } from '@mui/material';
+import { Grid, CardMedia, Typography, Divider, Box, Avatar, Tooltip, Button, styled, DialogActions, TextField, Dialog, DialogTitle, DialogContent, Switch } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import Chip from 'ui-component/extended/Chip';
 import { Stack, useTheme } from '@mui/system';
@@ -9,7 +9,7 @@ import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 // import { IconTallymark1 } from '@tabler/icons';
 
 import { useSelector } from 'react-redux';
-import { getPost } from 'store/slices/posting';
+import { deletePost, getCategories, getPost, getSubCategories, getTags, submitPost } from 'store/slices/posting';
 import { dispatch } from 'store';
 
 // import isEmpty from 'utils/is-empty';
@@ -32,17 +32,115 @@ import moment from 'moment';
 import useAuth from 'hooks/useAuth';
 import AuthError from './digital product/AuthError';
 import PaymentError from './digital product/PaymentError';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { openDialog } from 'store/slices/dialog';
+import { openSnackbar } from 'store/slices/snackbar';
+import FormControlSelect from 'ui-component/extended/Form/FormControlSelect';
+import { listing_type } from 'constant';
+import { WithContext as ReactTags } from 'react-tag-input';
+import { LoadingButton } from '@mui/lab';
 
 const PostingDetail = () => {
-  const { username, title } = useParams();
-  const { isLoggedIn } = useAuth()
-  const { borderRadius } = useConfig();
-  const theme = useTheme();
 
+  const DeleteWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(153,141,141,0.2)',
+    '& svg': {
+      color: '#2b2a2a'
+    },
+    '&:hover': {
+      background: '#2b2a2a',
+      '& svg': {
+        color: '#fff'
+      }
+    }
+  });
+
+  const EditWrapper = styled(Button)({
+    padding: 8,
+    background: 'rgba(242,214,29,0.2)',
+    '& svg': {
+      color: '#f2ab1d'
+    },
+    '&:hover': {
+      background: '#f2b61d',
+      '& svg': {
+        color: '#fff'
+      }
+    }
+  });
+
+  const IOSSwitch = styled((props) => (
+    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+  ))(({ theme }) => ({
+    width: 42,
+    height: 26,
+    padding: 0,
+    '& .MuiSwitch-switchBase': {
+      padding: 0,
+      margin: 2,
+      transitionDuration: '300ms',
+      '&.Mui-checked': {
+        transform: 'translateX(16px)',
+        color: '#fff',
+        '& + .MuiSwitch-track': {
+          backgroundColor: "#673ab7",
+          opacity: 1,
+          border: 0,
+        },
+        '&.Mui-disabled + .MuiSwitch-track': {
+          opacity: 0.5,
+        },
+      },
+      '&.Mui-focusVisible .MuiSwitch-thumb': {
+        color: '#33cf4d',
+        border: '6px solid #fff',
+      },
+      '&.Mui-disabled .MuiSwitch-thumb': {
+        color:
+          theme.palette.mode === 'light'
+            ? theme.palette.grey[100]
+            : theme.palette.grey[600],
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+      },
+    },
+    '& .MuiSwitch-thumb': {
+      boxSizing: 'border-box',
+      width: 22,
+      height: 22,
+    },
+    '& .MuiSwitch-track': {
+      borderRadius: 26 / 2,
+      backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+      opacity: 1,
+      transition: theme.transitions.create(['background-color'], {
+        duration: 500,
+      }),
+    },
+  }));
+
+  const KeyCodes = {
+    comma: 188,
+    enter: 13
+  };
+  const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
+  const { username, title } = useParams();
+  const { isLoggedIn, user } = useAuth()
+  const { borderRadius } = useConfig();
+  const navigate = useNavigate();
+  const [openCreate, setOpenCreate] = useState(false);
+  const [editPost, setEditPost] = useState({})
+  const [errors, setErrors] = React.useState({});
+  const postingState = useSelector((state) => state.posting);
   const [location, setLocation] = React.useState('');
   const [errorType, setErrorType] = useState(null)
+  const [loading, setLoading] = React.useState(false);
 
-  const { post, error, loading } = useSelector((state) => state.posting);
+  const { post, error } = useSelector((state) => state.posting);
 
   useEffect(() => {
     dispatch(getPost(username, title));
@@ -52,7 +150,16 @@ const PostingDetail = () => {
     if (post && post.userId && post.userId.profile && post.userId.profile.placeId) {
       geocodeByPlaceId(post?.userId?.profile?.placeId).then((results) => setLocation(results[0].formatted_address));
     }
+    dispatch(getTags());
+    dispatch(getCategories());
+    dispatch(getSubCategories());
+    setEditPost(post)
   }, [post]);
+
+  useEffect(() => {
+    setErrors(postingState.error);
+    setLoading(postingState.loading);
+  }, [postingState]);
 
   useEffect(() => {
     if (error) {
@@ -62,6 +169,115 @@ const PostingDetail = () => {
       setErrorType(null)
     }
   }, [error])
+
+  const handleDeletePostClick = () => {
+    dispatch(
+      openDialog({
+        open: true,
+        title: 'Confirm',
+        message: `Are you sure to delete ${post.title}?`,
+        okLabel: 'delete',
+        onOkClick: () => {
+          dispatch(
+            deletePost(post._id, () => {
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: 'You deleted post successfully.',
+                  variant: 'alert',
+                  alert: {
+                    color: 'success'
+                  },
+                  close: false
+                })
+              );
+              navigate('/listing/posts')
+            })
+          );
+        }
+      })
+    );
+  };
+
+  const handleEditPostClick = () => {
+    setEditPost({
+      ...editPost,
+      category: post?.subcategoryId?.categoryId?._id ?? post.categoryId?._id,
+      paidContent: post.categoryId ? post.paidContent : null,
+      subCategory: post.subcategoryId._id,
+      isSingleTimePurchase: post.categoryId ? post.isSingleTimePurchase : null,
+      tags: [...post?.tags?.map((tag) => ({ id: tag?.title, text: tag?.title }))],
+      previewImage: post.photo ? `${SERVER_URL}/upload/posting/` + post.photo : null
+    })
+    setOpenCreate(true);
+  };
+
+  const handleAddition = (newTag) => {
+    setEditPost({ ...editPost, tags: [...editPost?.tags, newTag] })
+  };
+
+  const handleDeleteTag = (i) => {
+    setEditPost({ ...editPost, tags: [...editPost?.tags.filter((tag, index) => index !== i)] })
+  };
+
+  const handleOnChange = (e) => {
+    setEditPost({ ...editPost, [e.target.name]: e.target.value })
+  }
+
+  const handleImageChange = (e) => {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+
+    if (file) {
+      reader.onloadend = () => {
+        setEditPost({ ...editPost, file: file, previewImage: reader.result })
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmitPost = () => {
+    setLoading(true);
+    const data = new FormData();
+    data.append('id', editPost?._id);
+    data.append('file', editPost?.file);
+    data.append('type', editPost?.listing_type);
+    data.append('title', editPost?.title);
+    data.append('isSingleTimePurchase', editPost?.isSingleTimePurchase);
+    data.append('paidContent', listing_type.find(x => x?.label === 'DIGITAL PRODUCT')?.value !== editPost?.listing_type ? "" : editPost?.paidContent);
+    data.append('description', editPost?.description);
+    data.append('price', editPost?.price);
+    data.append('category', editPost?.category);
+    data.append('subCategory', editPost?.subCategory);
+    editPost?.tags.forEach((tag) => {
+      data.append('tags', tag.text);
+    });
+    dispatch(
+      submitPost(data, () => { }, () => {
+        setOpenCreate(false);
+        successAction();
+        dispatch(getPost(username, title));
+        setLoading(false)
+      })
+    );
+  };
+  const successAction = () => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: 'You have edited Post successfully',
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        },
+        close: false
+      })
+    );
+
+  };
 
   return (
     <>
@@ -113,7 +329,7 @@ const PostingDetail = () => {
                       spacing={1}
                       sx={{
                         justifyContent: 'flex-end',
-                        [theme.breakpoints.down('md')]: { justifyContent: 'flex-start' }
+                        // [theme.breakpoints.down('md')]: { justifyContent: 'flex-start' }
                       }}
                     >
                       {/* <Grid item>
@@ -123,7 +339,7 @@ const PostingDetail = () => {
                         </Button>
                       </Tooltip>
                     </Grid> */}
-                      <Grid item>
+                      <Grid item display={'flex'} gap={1}>
                         <Tooltip placement="top" title="Message">
                           <Button
                             variant="outlined"
@@ -135,6 +351,15 @@ const PostingDetail = () => {
                             <ChatIcon fontSize="small" />
                           </Button>
                         </Tooltip>
+                        {post?.userId?._id === user?._id && <>
+                          <EditWrapper sx={{ minWidth: 32, height: 32, p: 0 }} onClick={handleEditPostClick}>
+                            <EditIcon />
+                          </EditWrapper>
+                          <DeleteWrapper sx={{ minWidth: 32, height: 32, p: 0 }} onClick={handleDeletePostClick}>
+                            <DeleteIcon />
+                          </DeleteWrapper>
+                        </>
+                        }
                       </Grid>
                     </Grid>
                   </Stack>
@@ -238,6 +463,136 @@ const PostingDetail = () => {
           </Grid>
         </Box>
       </MainCard> : errorType == 'auth' ? <AuthError></AuthError> : errorType == 'payment' ? <PaymentError></PaymentError> : null}
+      <Dialog fullWidth maxWidth={'md'} open={openCreate} onClose={() => setOpenCreate(false)} scroll={'body'}>
+        {openCreate && (
+          <>
+            <DialogTitle>Edit Post</DialogTitle>
+            <DialogContent>
+              <Box
+                noValidate
+                component="form"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  marginTop: 2
+                }}
+              >
+                <FormControlSelect
+                  currencies={listing_type.filter((type) => type.value)}
+                  currency={editPost?.listing_type}
+                  onChange={(e) => {
+                    setEditPost({ ...editPost, listing_type: e.target.value })
+                  }}
+                  captionLabel="Listing type"
+                  error={errors?.listing_type}
+                />
+                <TextField
+                  fullWidth
+                  label="Title"
+                  size={'small'}
+                  sx={{ my: 1 }}
+                  value={editPost?.title}
+                  onChange={(e) => handleOnChange(e)}
+                  error={errors?.title}
+                  name='title'
+                  helperText={errors?.title}
+                />
+                <TextField
+                  fullWidth
+                  id="outlined-multiline-flexible"
+                  label="Description"
+                  name="description"
+                  multiline
+                  rows={3}
+                  sx={{ my: 1 }}
+                  value={editPost?.description}
+                  onChange={(event) => handleOnChange(event)}
+                />
+                <TextField
+                  fullWidth
+                  type="number"
+                  name='price'
+                  label="Price (Village Hours)"
+                  size={'small'}
+                  min={0}
+                  sx={{ my: 1.5 }}
+                  value={editPost?.price}
+                  onChange={(event) => handleOnChange(event)}
+                />
+                <FormControlSelect
+                  currencies={[
+                    ...postingState.categories.map((category) => ({
+                      value: category._id,
+                      label: category.title
+                    }))
+                  ]}
+                  currency={editPost?.category}
+                  onChange={(e) => {
+                    setEditPost({ ...editPost, subCategory: '', category: e.target.value })
+                  }}
+                  error={errors?.category}
+                  captionLabel="CATEGORY"
+                />
+                {listing_type.find(x => x?.label === 'DIGITAL PRODUCT')?.value === editPost?.listing_type && (<>
+                  <TextField
+                    fullWidth
+                    id="outlined-multiline-flexible"
+                    label="Paid content"
+                    multiline
+                    rows={3}
+                    name='paidContent'
+                    sx={{ my: 1 }}
+                    error={errors?.paidContent}
+                    helperText={errors?.paidContent}
+                    value={editPost?.paidContent}
+                    onChange={(event) => handleOnChange(event)}
+                  />
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <IOSSwitch sx={{ my: 1 }} onChange={e => {
+                      setEditPost({ ...editPost, isSingleTimePurchase: e.target.checked })
+                    }} checked={editPost?.isSingleTimePurchase} />
+                    <Typography>Single Purchase Item</Typography>
+                  </Stack>
+                </>)}
+                <FormControlSelect
+                  currencies={postingState.subCategories
+                    .filter((subCategory) => subCategory.categoryId === editPost?.category)
+                    .map((category) => ({
+                      value: category._id,
+                      label: category.title
+                    }))}
+                  currency={editPost?.subCategory}
+                  onChange={(e) => handleOnChange(e)}
+                  captionLabel="SUB-CATEGORY"
+                  error={errors?.subCategory}
+                />
+                <Button variant="contained" component="label" sx={{ width: 200 }}>
+                  {editPost?.previewImage ? 'Change Image' : 'Choose Image'}
+                  <input type="file" onChange={(e) => handleImageChange(e)} hidden accept='image/*' />
+                </Button>
+                {editPost?.previewImage && <img src={editPost?.previewImage} style={{ width: 200, borderRadius: 10, marginTop: 10 }} />}
+                <ReactTags
+                  tags={editPost?.tags}
+                  suggestions={postingState.tags.map((suggestion) => ({
+                    id: suggestion._id,
+                    text: suggestion.title
+                  }))}
+                  handleDelete={handleDeleteTag}
+                  handleAddition={handleAddition}
+                  delimiters={delimiters}
+                  placeholder={'Tags'}
+                />
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenCreate(false)}>Close</Button>
+              <LoadingButton onClick={handleSubmitPost} variant={'contained'} loading={loading}>
+                Update
+              </LoadingButton>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </>
   );
 };

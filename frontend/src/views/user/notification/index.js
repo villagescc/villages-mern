@@ -32,6 +32,7 @@ import ReactTimeAgo from "react-time-ago";
 import DefaultUserIcon from "assets/images/auth/default.png";
 import { openDialog } from "store/slices/dialog";
 import Empty from "ui-component/Empty";
+import { useNavigate } from "react-router-dom";
 
 // assets
 
@@ -40,6 +41,7 @@ import Empty from "ui-component/Empty";
 const Index = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const notificationState = useSelector((state) => state.notification);
 
   const [socket, setSocket] = useState(null);
@@ -186,7 +188,7 @@ const Index = () => {
                       <Grid item xs zeroMinWidth>
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
-                            <Typography component="div" align="left" variant="subtitle1">
+                            <Typography component="div" align="left" variant="subtitle1" onClick={() => navigate(`/${notification.notifierId?.username}`)} sx={{ cursor: 'pointer' }}>
                               {notification.notifierId?.username}
                             </Typography>
                             <Typography component="div" align="left" variant="subtitle2">
