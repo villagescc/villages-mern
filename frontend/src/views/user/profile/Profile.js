@@ -247,16 +247,26 @@ const Profile = () => {
             )}
             <Grid item xs={12}>
               <AnimateButton>
-                <Button variant="contained" color={!avatar ? 'primary' : 'secondary'} component={'label'} size="small">
-                  {!!avatar ? 'Change file' : 'Choose file'}
-                  <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} hidden />
-                </Button>
-                {!!avatar && (
-                  <Button variant={'outlined'} size="small" onClick={() => setAvatar(null)} sx={{ marginLeft: 1 }}>
-                    {' '}
-                    Reset{' '}
+                <Grid item xs={12} display={'flex'} alignItems={'center'} justifyContent={'center'} flexWrap={'wrap'} gap={1}>
+                  <Button variant="contained" color={!avatar ? 'primary' : 'secondary'} component={'label'} size="small">
+                    {!!avatar ? 'Change file' : 'Choose file'}
+                    <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} hidden />
                   </Button>
-                )}
+                  {!!avatar && (
+                    <Button variant={'outlined'} size="small" onClick={() => setAvatar(null)} sx={{ marginLeft: 1 }}>
+                      {' '}
+                      Reset{' '}
+                    </Button>
+                  )}
+                  <Button
+                    variant={'outlined'}
+                    size="small"
+                    onClick={() => navigate(`/${user.username}`)}
+                    sx={{ marginLeft: 1 }}
+                  >
+                    View Profile
+                  </Button>
+                </Grid>
               </AnimateButton>
             </Grid>
             <Grid item xs={12}>
