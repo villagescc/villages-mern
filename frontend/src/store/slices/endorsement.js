@@ -36,26 +36,26 @@ const slice = createSlice({
 
     // GET ENDORSEMENTS BY ID
     getEndorsementSuccess(state, action) {
-      state.endorsementData = action.payload;
       state.errors = {};
+      state.endorsementData = action.payload;
     },
 
     // GET ENDORSEMENTS BY ID
     clearEndrosement(state) {
-      state.endorsementData = {};
       state.errors = {};
+      state.endorsementData = {};
     },
 
     // TO EDIT ENDROSEMENT DATA
     editEndrosementDetails(state, action) {
-      state.endorsementData = action.payload;
       state.errors = {};
+      state.endorsementData = action.payload;
     },
 
     // GET USERS
     getUsersSuccess(state, action) {
-      state.users = action.payload;
       state.errors = {};
+      state.users = action.payload;
     },
 
     // MODIFY CONTACT
@@ -76,6 +76,7 @@ export function searchEndorsements(keyword = '', page = 1) {
     try {
       const response = await axios.post('/endorsement/search', { keyword, page });
       dispatch(slice.actions.searchEndorsementsSuccess(response.data));
+      dispatch(slice.actions.hasError({}));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -98,6 +99,7 @@ export function deleteEndorsement(recipient, text, weight, successAction) {
     try {
       const response = await axios.post('/endorsement/delete', { recipient, text, weight });
       successAction();
+      dispatch(slice.actions.hasError({}));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -109,6 +111,7 @@ export function getUsers() {
     try {
       const response = await axios.get('/base/users/getRecipients');
       dispatch(slice.actions.getUsersSuccess(response.data));
+      dispatch(slice.actions.hasError({}));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -120,6 +123,7 @@ export function getEndorsementDetail(id) {
   return async () => {
     try {
       const response = await axios.get(`/endorsement/getEndrosmentbyId/${id}`);
+      dispatch(slice.actions.hasError({}));
       dispatch(slice.actions.getEndorsementSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -132,6 +136,7 @@ export function removeEndrosement() {
   return async () => {
     try {
       dispatch(slice.actions.clearEndrosement());
+      dispatch(slice.actions.hasError({}));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -143,8 +148,16 @@ export function editEndrosement(data) {
   return async () => {
     try {
       dispatch(slice.actions.editEndrosementDetails(data));
+      dispatch(slice.actions.hasError({}));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
+  };
+}
+
+// To Clear Errors
+export function clearErrors() {
+  return async () => {
+    dispatch(slice.actions.hasError({}));
   };
 }

@@ -7,6 +7,8 @@ const axios = require("axios");
 const Payment = require("../models/Payment");
 const { default: mongoose } = require("mongoose");
 const sendEmail = require("../utils/email");
+const { buildGraph } = require("./payment.controller");
+const { allSimplePaths } = require("graphology-simple-path");
 
 exports.save = async (req, res, next) => {
   let errors = {};
@@ -131,14 +133,21 @@ exports.save = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   let errors = {};
   const { recipient } = req.body.recipient;
-  console.log(recipient);
   const recipientUser = await User.findById(recipient);
+  const graph = await buildGraph()
+  const allSimplePath = allSimplePaths(graph, req.user._id, recipientUser._id, { maxDepth: 2 })
+  const flattenSimplePath = allSimplePath.flatMap(path => path)
+  const isCreditLineAlreadyInUse = flattenSimplePath.includes(recipientUser._id.toString())
   if (!recipientUser) {
     errors.recipient = "Recipient does not exist.";
     return res.status(404).send(errors);
   }
   if (req.user._id === recipient) {
     errors.recipient = "You can't send trust to yourself.";
+    return res.status(400).send(errors);
+  }
+  if (isCreditLineAlreadyInUse) {
+    errors.creditLineAlreadyInUse = "You cannot delete credit line which is already in use";
     return res.status(400).send(errors);
   }
 
