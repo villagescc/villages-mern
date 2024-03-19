@@ -14,6 +14,7 @@ const path = require("path");
 const fs = require("fs");
 const { default: mongoose } = require("mongoose");
 const Endorsement = require("../models/Endorsement");
+const Paylog = require("../models/Paylog");
 
 exports.uploadAvatar = async (req, res, next) => {
   const uploadFile = req.file;
@@ -1611,6 +1612,7 @@ exports.deleteTransactionHistory = async (req, res, next) => {
       await Account.findOneAndUpdate({ user: transaction.payer }, { $inc: { balance: transaction.amount } })
       await Account.findOneAndUpdate({ user: transaction.recipient }, { $inc: { balance: -transaction.amount } })
       await Payment.findByIdAndDelete(req.body._id)
+      await Paylog.deleteMany({ paymentId: req.body._id })
       // const payerAccount = await Account.findOneAndUpdate({ user: transaction.payer }, { $set: { balance: { $add: ['$balance', transaction.amount] } } })
       // const recipientAccount = await Account.findOneAndUpdate({ user: transaction.recipient }, { $set: { balance: { $subtract: ['$balance', transaction.amount] } } })
       return res.send({ success: true, message: 'Transaction deleted successfully' })

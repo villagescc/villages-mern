@@ -15,7 +15,7 @@ import CreateModal from './CreateModal';
 import EndorsementCardSkeleton from 'ui-component/cards/Skeleton/EndorsementCard';
 
 import { useDispatch, useSelector } from 'store';
-import { searchEndorsements, getUsers, saveEndorsement, deleteEndorsement, getEndorsementDetail, removeEndrosement, clearErrors } from 'store/slices/endorsement';
+import { searchEndorsements, getUsers, saveEndorsement, deleteEndorsement, getEndorsementDetail, removeEndrosement } from 'store/slices/endorsement';
 import { openSnackbar } from 'store/slices/snackbar';
 
 // assets
@@ -205,26 +205,6 @@ const Index = () => {
       // setEndorsement({ ...endorsement, weight: urlSearchParams.get("amount") })
     }
   }, [urlSearchParams])
-
-  useEffect(() => {
-    if (endorsementState.errors.creditLineAlreadyInUse && !endorsementState.loading) {
-      dispatch(openSnackbar({
-        open: true,
-        message: endorsementState.errors.creditLineAlreadyInUse,
-        variant: 'alert',
-        alert: {
-          color: 'error',
-          severity: 'error'
-        },
-        close: false
-      }))
-    }
-    return () => {
-      dispatch(clearErrors())
-    }
-  }, [endorsementState.errors.creditLineAlreadyInUse])
-
-
 
   return (
     <>
