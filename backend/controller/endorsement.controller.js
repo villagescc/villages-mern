@@ -7,8 +7,6 @@ const axios = require("axios");
 const Payment = require("../models/Payment");
 const { default: mongoose } = require("mongoose");
 const sendEmail = require("../utils/email");
-const { buildGraph } = require("./payment.controller");
-const { allSimplePaths } = require("graphology-simple-path");
 
 exports.save = async (req, res, next) => {
   let errors = {};
@@ -134,10 +132,6 @@ exports.delete = async (req, res, next) => {
   let errors = {};
   const { recipient } = req.body.recipient;
   const recipientUser = await User.findById(recipient);
-  const graph = await buildGraph()
-  const allSimplePath = allSimplePaths(graph, req.user._id, recipientUser._id, { maxDepth: 2 })
-  const flattenSimplePath = allSimplePath.flatMap(path => path)
-  const isCreditLineAlreadyInUse = flattenSimplePath.includes(recipientUser._id.toString())
   if (!recipientUser) {
     errors.recipient = "Recipient does not exist.";
     return res.status(404).send(errors);
@@ -146,21 +140,36 @@ exports.delete = async (req, res, next) => {
     errors.recipient = "You can't send trust to yourself.";
     return res.status(400).send(errors);
   }
-  if (isCreditLineAlreadyInUse) {
-    errors.creditLineAlreadyInUse = "You cannot delete credit line which is already in use";
-    return res.status(400).send(errors);
-  }
+
 
   try {
-    let endorsement = await Endorsement.findOne({
-      recipientId: recipientUser._id,
-      endorserId: req.user._id,
-    });
-    endorsement.weight = 0;
-    endorsement.text = "";
-    endorsement.deleted = true;
-    await endorsement.save();
-    res.send(endorsement);
+    let payment_history = await Payment.aggregate([
+      {
+        $match:
+        {
+          $or: [
+            { recipient: mongoose.Types.ObjectId(recipient), payer: mongoose.Types.ObjectId(req.user._id) },
+            { recipient: mongoose.Types.ObjectId(req.user._id), payer: mongoose.Types.ObjectId(recipient) }
+          ],
+          status: "Completed",
+        },
+      },
+    ])
+
+    if (!payment_history.length) {
+      let endorsement = await Endorsement.findOne({
+        recipientId: recipientUser._id,
+        endorserId: req.user._id,
+      });
+      endorsement.weight = 0;
+      endorsement.text = "";
+      endorsement.deleted = true;
+      await endorsement.save();
+      res.send(endorsement);
+    }
+    else {
+      res.status(400).send({ creditLineAlreadyInUse: "You cannot delete credit line which is already in use" })
+    }
   } catch (err) {
     next(err);
   }
@@ -384,8 +393,10 @@ exports.search = async (req, res, next) => {
           {
             $match:
             {
-              recipient: mongoose.Types.ObjectId(req.user._id),
-              payer: mongoose.Types.ObjectId(x?.user?._id),
+              $or: [
+                { recipient: mongoose.Types.ObjectId(x?.user?._id), payer: mongoose.Types.ObjectId(req.user._id) },
+                { recipient: mongoose.Types.ObjectId(req.user._id), payer: mongoose.Types.ObjectId(x?.user?._id) }
+              ],
               status: "Completed",
             },
           },

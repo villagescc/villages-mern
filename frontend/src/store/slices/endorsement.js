@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'utils/axios';
 import { dispatch } from '../index';
+import { openSnackbar } from './snackbar';
 
 // ----------------------------------------------------------------------
 
@@ -101,6 +102,16 @@ export function deleteEndorsement(recipient, text, weight, successAction) {
       successAction();
       dispatch(slice.actions.hasError({}));
     } catch (error) {
+      dispatch(openSnackbar({
+        open: true,
+        message: error.creditLineAlreadyInUse,
+        variant: 'alert',
+        alert: {
+          color: 'error',
+          severity: 'error'
+        },
+        close: false
+      }))
       dispatch(slice.actions.hasError(error));
     }
   };
@@ -152,12 +163,5 @@ export function editEndrosement(data) {
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
-  };
-}
-
-// To Clear Errors
-export function clearErrors() {
-  return async () => {
-    dispatch(slice.actions.hasError({}));
   };
 }
