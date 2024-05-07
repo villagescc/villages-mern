@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -27,8 +27,6 @@ import { Formik } from 'formik';
 
 // project imports
 import useAuth from 'hooks/useAuth';
-import useConfig from 'hooks/useConfig';
-import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicatorNumFunc } from 'utils/password-strength';
 
@@ -44,17 +42,13 @@ import ReCAPTCHA from 'react-google-recaptcha';
 const AuthRegister = ({ setVerified, ...others }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const scriptedRef = useScriptRef();
-  const navigate = useNavigate();
   const reCaptchaRef = useRef(null)
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-  const { borderRadius } = useConfig();
   const [showPassword, setShowPassword] = React.useState(false);
-  const [checked, setChecked] = React.useState(true);
 
   const [strength, setStrength] = React.useState(0);
   const [level, setLevel] = React.useState();
-  const { register, login } = useAuth();
+  const { register } = useAuth();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -85,7 +79,8 @@ const AuthRegister = ({ setVerified, ...others }) => {
           password: '',
           password2: '',
           submit: null,
-          captcha: ''
+          captcha: '',
+          termsAndConditions: true,
         }}
         validationSchema={Yup.object().shape({
           firstName: Yup.string().required('First Name is required'),
@@ -94,7 +89,8 @@ const AuthRegister = ({ setVerified, ...others }) => {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required'),
           password2: Yup.string().max(255).required('Confirm password is required'),
-          captcha: Yup.string().required('Captcha is required').nullable()
+          captcha: Yup.string().required('Captcha is required').nullable(),
+          termsAndConditions: Yup.bool().oneOf([true], 'Please agree to our terms and conditions').required('Please agree to our terms and conditions')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -321,17 +317,23 @@ const AuthRegister = ({ setVerified, ...others }) => {
               <Grid item>
                 <FormControlLabel
                   control={
-                    <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
+                    <Checkbox checked={values.termsAndConditions} onChange={(event) => setValues({ ...values, termsAndConditions: event.target.checked })} name="termsAndConditions" color="primary" />
                   }
+                  name='termsAndConditions'
                   label={
                     <Typography variant="subtitle1">
                       Agree with &nbsp;
-                      <Typography variant="subtitle1" component={Link} to="#">
+                      <Typography variant="subtitle1" component={Link} to="/documentation/privacy">
                         Terms & Condition.
                       </Typography>
                     </Typography>
                   }
                 />
+                {touched.termsAndConditions && errors.termsAndConditions && (
+                  <FormHelperText error id="standard-weight-helper-text-password-login">
+                    {errors.termsAndConditions}
+                  </FormHelperText>
+                )}
               </Grid>
             </Grid>
             {errors.submit && (
