@@ -60,6 +60,24 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
+exports.deleteAccount = async (req, res, next) => {
+  try {
+    try {
+      await User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), {
+        $set: { isDeleted: true }
+      });
+    } catch (err) {
+      console.log("find user error", err);
+      // next(err);
+      res.status(500).send({ message: err });
+    }
+    res.send({ message: "Account deleted successfully", success: true });
+  } catch (err) {
+    console.log("find user error", err);
+    next(err);
+  }
+};
+
 exports.registerUser = async (req, res, next) => {
   let errors = {};
   let profile, account, user;
@@ -311,6 +329,11 @@ exports.login = async (req, res, next) => {
             bcrypt
               .compare(password, user.password)
               .then(async (isMatch) => {
+                if (user?.isDeleted && user?.showDelete) {
+                  return res.status(400).send({
+                    email: "This credential does not exist.",
+                  });
+                }
                 if (!isMatch) {
                   return res.status(400).send({
                     password: "Password is incorrect.",

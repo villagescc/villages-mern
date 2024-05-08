@@ -37,6 +37,7 @@ router.post(
 router.get("/auth/verify/:id/:token", authController.verifyToken);
 router.get("/auth/resendEmail/:email", authController.resendVerificationMail);
 router.post("/auth/login", authMiddleware.login, authController.login);
+router.post("/users/delete", authMiddleware.auth, authController.deleteAccount);
 router.post("/auth/forgot-password", authController.forgotPassword);
 router.post("/auth/reset-password/:id/:token", authController.resetPassword);
 

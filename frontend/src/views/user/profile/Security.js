@@ -22,7 +22,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import SubCard from 'ui-component/cards/SubCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { gridSpacing } from 'store/constant';
-import { changePassword, getUser, deactive } from 'store/slices/user';
+import { changePassword, getUser, deactive, deleteAccount } from 'store/slices/user';
 import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
 import useAuth from 'hooks/useAuth';
@@ -40,6 +40,7 @@ const Security = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openPermanentDeleteModal, setOpenPermanentDeleteModal] = useState(false)
   const { logout, user, isLoggedIn } = useAuth();
 
   const handleChangeClick = () => {
@@ -67,6 +68,24 @@ const Security = () => {
           openSnackbar({
             open: true,
             message: 'Your account has been deactivated',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: false
+          })
+        );
+      })
+    );
+    await logout();
+  };
+  const deleteAccountFunc = async () => {
+    await dispatch(
+      deleteAccount(() => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Your account has been deleted',
             variant: 'alert',
             alert: {
               color: 'success'
@@ -212,6 +231,40 @@ const Security = () => {
                 </Grid>
               </SubCard>
             </Grid>
+            {user?.showDelete &&
+              <Grid item xs={12}>
+                <SubCard title="Delete Account Permantely">
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant="body1">
+                        If you delete your account permanently it will delete all your trust, endorsments and your profile data. Once you delete your account permanently you will be not able to get your data back
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Stack direction="row">
+                        <AnimateButton>
+                          <Button
+                            sx={{
+                              color: theme.palette.error.main,
+                              borderColor: theme.palette.error.main,
+                              '&:hover': {
+                                background: theme.palette.error.light + 25,
+                                borderColor: theme.palette.error.main
+                              }
+                            }}
+                            variant="outlined"
+                            size="small"
+                            onClick={() => setOpenPermanentDeleteModal(true)}
+                          >
+                            Delete Account Permanently
+                          </Button>
+                        </AnimateButton>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </SubCard>
+              </Grid>
+            }
           </Grid>
         </Grid>
       </Grid>
@@ -232,6 +285,28 @@ const Security = () => {
               Cancel
             </Button>
             <Button variant="contained" size="small" onClick={deactiveAccount}>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {openPermanentDeleteModal && (
+        <Dialog open={openPermanentDeleteModal} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Confirm Notification</DialogTitle>
+          <DialogContent>
+            <Stack spacing={3}>
+              <DialogContentText>
+                <Typography variant="body2" component="span">
+                  Do you want to delete your account permanently?
+                </Typography>
+              </DialogContentText>
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ pr: 2.5 }}>
+            <Button sx={{ color: theme.palette.error.dark }} onClick={() => setOpenDeleteModal(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button variant="contained" size="small" onClick={deleteAccountFunc}>
               Confirm
             </Button>
           </DialogActions>
