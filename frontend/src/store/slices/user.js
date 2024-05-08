@@ -373,6 +373,20 @@ export function deactive(afterAction) {
   };
 }
 
+export function deleteAccount(afterAction) {
+  return async () => {
+    try {
+      const response = await axios.post(`/users/delete`);
+      if (response.data?.success) {
+        afterAction();
+        dispatch(slice.actions.hasError({}));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
 // admin
 export function saveUserData(userData, lng, lat, successAction) {
   return async () => {

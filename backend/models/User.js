@@ -49,6 +49,14 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    showDelete: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
     profile: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "profile",
