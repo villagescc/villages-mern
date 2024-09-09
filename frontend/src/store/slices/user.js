@@ -23,6 +23,7 @@ const initialState = {
   total: 0,
   users: [],
   user: {},
+  developerSettings: {},
   setting: {},
   followers: [],
   followings: [],
@@ -194,6 +195,10 @@ const slice = createSlice({
     // set trust history
     setTrustHistory(state, action) {
       state.trustHistory = action.payload
+    },
+
+    setDeveloperSettings(state, action) {
+      state.developerSettings = action.payload
     }
   }
 });
@@ -216,6 +221,43 @@ export function getUsers() {
   };
 }
 
+export function getDeveloperSettings() {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.get('users/profile/getDeveloperSetting');
+      const convertedDeveloperSettings = {
+        ...response?.data?.developerSettings,
+        whitelistedEndpoint: response?.data?.developerSettings?.whitelistedEndpoint.map((endpoint) => ({
+          id: endpoint.id,
+          label: endpoint.endpoint,
+          value: endpoint.endpoint,
+        })),
+      };
+      dispatch(slice.actions.setDeveloperSettings(convertedDeveloperSettings));
+      dispatch(slice.actions.setLoading(false));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
+    }
+  };
+}
+
+export function saveDeveloperSettings(data) {
+  return async () => {
+    dispatch(slice.actions.setLoading(true));
+    try {
+      const response = await axios.post('/users/profile/saveDeveloperSetting', data);
+      if (response.data?.success) {
+        getDeveloperSettings();
+      }
+      dispatch(slice.actions.setLoading(false));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
+    }
+  };
+}
 export function getUserList(keyword = '', page = 1, value = 'All', network = []) {
   return async () => {
     dispatch(slice.actions.setLoading(true));

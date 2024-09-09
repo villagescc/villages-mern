@@ -92,6 +92,19 @@ router.post(
   authMiddleware.auth,
   userController.saveProfileSetting
 );
+
+router.post(
+  "/users/profile/saveDeveloperSetting",
+  authMiddleware.auth,
+  userController.saveDeveloperSetting
+);
+
+router.get(
+  "/users/profile/getDeveloperSetting",
+  authMiddleware.auth,
+  userController.getDeveloperSetting
+);
+
 router.post(
   "/users/password",
   authMiddleware.auth,

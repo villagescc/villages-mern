@@ -9,6 +9,7 @@ import { Box, Tab, Tabs } from '@mui/material';
 import Profile from './Profile';
 import Security from './Security';
 import MainCard from 'ui-component/cards/MainCard';
+import DeveloperSetting from './DeveloperSetting';
 
 // tabs
 function TabPanel({ children, value, index, ...other }) {
@@ -70,12 +71,16 @@ const Index = () => {
         >
           <Tab component={Link} to="#" label="Account" {...a11yProps(0)} />
           <Tab component={Link} to="#" label="Security" {...a11yProps(1)} />
+          <Tab component={Link} to="#" label="Developer Settings" {...a11yProps(2)} />
         </Tabs>
         <TabPanel value={value} index={0}>
           <Profile />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Security />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <DeveloperSetting />
         </TabPanel>
       </div>
     </MainCard>

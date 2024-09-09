@@ -1572,3 +1572,37 @@ exports.deactive = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getDeveloperSetting = async (req, res, next) => {
+  try {
+    let user = await User.findOne({ _id: req.user._id });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.send({ success: true, developerSettings: user.developerSettings });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.saveDeveloperSetting = async (req, res, next) => {
+  try {
+    const { applicationName, clientSecret, secretKey, whitelistedEndpoint } = req.body;
+    let user = await User.findOne({ _id: req.user._id });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Update developer settings
+    user.developerSettings = {
+      applicationName: applicationName,
+      clientSecret: clientSecret,
+      secretKey: secretKey,
+      whitelistedEndpoint: whitelistedEndpoint.map((endpoint) => ({
+        endpoint: endpoint.endpoint,
+      })),
+    };
+    // Save the updated user document
+    await user.save();
+    res.send({ success: true, user: user });
+  } catch (err) {
+    next(err);
+  }
+};
