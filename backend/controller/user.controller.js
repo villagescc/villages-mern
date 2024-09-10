@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Profile = require("../models/Profile");
+const DeveloperSetting = require('../models/DevelperSettings');
 const ProfileSetting = require("../models/ProfileSetting");
 const Account = require("../models/Account");
 const {
@@ -18,6 +19,8 @@ const Endorsement = require("../models/Endorsement");
 var mongoose = require('mongoose');
 const jwt = require("jsonwebtoken");
 const { buildGraph } = require("./payment.controller");
+const { validateDeveloperSettings } = require("../validation");
+const DevelperSettings = require("../models/DevelperSettings");
 
 
 exports.getAllTrustors = async (user) => {
@@ -1530,6 +1533,34 @@ exports.saveProfileSetting = async (req, res, next) => {
     const { email, notificationCheck, updateCheck, userCheck, language, feedRadius } =
       req.body;
 
+    try {
+      const {
+        firstName,
+        lastName,
+        job,
+        placeId,
+        description,
+        website,
+        zipCode,
+        phoneNumber,
+        lat,
+        lng,
+      } = req.body;
+      let user = await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { firstName, lastName, latitude: Number(lat), longitude: Number(lng) }
+      );
+      await Profile.findOneAndUpdate(
+        { _id: user.profile },
+        { job, description, placeId, website, zipCode, phoneNumber }
+      );
+      user = await getUserById(req.user._id);
+      res.send({ success: true, user });
+    } catch (err) {
+      next(err);
+    }
+
+
     let user = await User.findOne({ _id: req.user._id });
     let profileSetting = await ProfileSetting.findOne({ user: req.user._id });
     if (profileSetting) {
@@ -1575,34 +1606,58 @@ exports.deactive = async (req, res, next) => {
 
 exports.getDeveloperSetting = async (req, res, next) => {
   try {
-    let user = await User.findOne({ _id: req.user._id });
+    let developerSettings = await DevelperSettings.findOne({ user: req.user._id });
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!developerSettings) return res.status(404).json({ message: "User not found" });
 
-    res.send({ success: true, developerSettings: user.developerSettings });
+    const response = {
+      applicationName: developerSettings.applicationName,
+      clientSecret: developerSettings.clientSecret,
+      secretKey: developerSettings.secretKey,
+      redirectUrl: developerSettings.redirectUrl,
+      whitelistedEndpoint: developerSettings.whitelistedEndpoint,
+    };
+
+    res.status(200).json({ success: true, developerSettings: response });
   } catch (err) {
     next(err);
   }
 };
 exports.saveDeveloperSetting = async (req, res, next) => {
   try {
-    const { applicationName, clientSecret, secretKey, whitelistedEndpoint } = req.body;
+    const { errors, isValid } = validateDeveloperSettings(req.body);
+
+    // Check validation
+    if (!isValid) {
+      return res.status(400).json({ errors });
+    }
+
     let user = await User.findOne({ _id: req.user._id });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Update developer settings
-    user.developerSettings = {
-      applicationName: applicationName,
-      clientSecret: clientSecret,
-      secretKey: secretKey,
-      whitelistedEndpoint: whitelistedEndpoint.map((endpoint) => ({
-        endpoint: endpoint.endpoint,
-      })),
-    };
-    // Save the updated user document
-    await user.save();
-    res.send({ success: true, user: user });
+    const { applicationName, clientSecret, secretKey, whitelistedEndpoint, redirectUrl } = req.body;
+
+    const developerSetting = await DeveloperSetting.findOneAndUpdate(
+      { user: user._id }, // Query: find a record with the same user ID
+      {
+        $set: {
+          applicationName,
+          clientSecret,
+          secretKey,
+          redirectUrl,
+          whitelistedEndpoint,
+        },
+      },
+      { new: true, upsert: true } // Options: return the updated document and create a new one if not found
+    );
+
+
+    // Save the new developer setting
+    await developerSetting.save();
+
+    res.status(201).json({ success: true });
   } catch (err) {
+    console.log('err :>> ', err);
     next(err);
   }
 };

@@ -338,3 +338,52 @@ exports.validateSearchTransactionsInput = (data) => {
     isValid: isEmpty(errors),
   };
 };
+
+
+
+exports.validateDeveloperSettings = (data) => {
+  let errors = {};
+
+  // data.weight = !isEmpty(data.weight) ? data.weight : 0;
+  data.applicationName = !isEmpty(data.applicationName) ? data.applicationName : "";
+  data.clientSecret = !isEmpty(data.clientSecret) ? data.clientSecret : "";
+  data.secretKey = !isEmpty(data.secretKey) ? data.secretKey : "";
+  data.whitelistedEndpoint = !isEmpty(data.whitelistedEndpoint) ? data.whitelistedEndpoint : [];
+  data.redirectUrl = !isEmpty(data.redirectUrl) ? data.redirectUrl : [];
+  const httpsRegex = /^https:\/\//;
+  // Validate Application Name
+  if (validator.isEmpty(data.applicationName)) {
+    errors.applicationName = "Please Enter Application Name.";
+  }
+
+  // Validate Client Secret
+  if (validator.isEmpty(data.clientSecret)) {
+    errors.clientSecret = "Please Enter Client Secret.";
+  }
+
+  // Validate Secret Key
+  if (validator.isEmpty(data.secretKey)) {
+    errors.secretKey = "Please Enter Secret Key.";
+  }
+
+  if (validator.isEmpty(data.redirectUrl)) {
+    errors.redirectUrl = "Please Enter Redirect URL.";
+  } else if (!httpsRegex.test(data.redirectUrl)) {
+    errors.redirectUrl = "Redirect URL must start with 'https://'.";
+  }
+  if (!Array.isArray(data.whitelistedEndpoint) || data.whitelistedEndpoint.length < 1) {
+    errors.whitelistedEndpoint = "Please Enter at least one Whitelisted Endpoint.";
+  } else {
+    // Validate each whitelisted endpoint to ensure it starts with "https://"
+    data.whitelistedEndpoint.forEach((endpoint, index) => {
+      if (!httpsRegex.test(endpoint)) {
+        errors.whitelistedEndpoint = `whitelistedEndpoint must start with 'https://'.`;
+      }
+    });
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};

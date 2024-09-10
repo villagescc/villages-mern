@@ -226,15 +226,7 @@ export function getDeveloperSettings() {
     dispatch(slice.actions.setLoading(true));
     try {
       const response = await axios.get('users/profile/getDeveloperSetting');
-      const convertedDeveloperSettings = {
-        ...response?.data?.developerSettings,
-        whitelistedEndpoint: response?.data?.developerSettings?.whitelistedEndpoint.map((endpoint) => ({
-          id: endpoint.id,
-          label: endpoint.endpoint,
-          value: endpoint.endpoint,
-        })),
-      };
-      dispatch(slice.actions.setDeveloperSettings(convertedDeveloperSettings));
+      dispatch(slice.actions.setDeveloperSettings(response?.data?.developerSettings));
       dispatch(slice.actions.setLoading(false));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -244,7 +236,7 @@ export function getDeveloperSettings() {
 }
 
 export function saveDeveloperSettings(data) {
-  return async () => {
+  return async (dispatch) => {
     dispatch(slice.actions.setLoading(true));
     try {
       const response = await axios.post('/users/profile/saveDeveloperSetting', data);
