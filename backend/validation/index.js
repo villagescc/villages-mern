@@ -1,6 +1,6 @@
 const validator = require("validator");
 const isEmpty = require("./is-empty");
-const Categories = require('../models/Category');
+const Categories = require("../models/Category");
 
 exports.validateLoginInput = (data) => {
   let errors = {};
@@ -94,8 +94,7 @@ exports.validateEndorsementCreate = (data) => {
 
   if (isEmpty(data.weight)) {
     errors.weight = "Please input Credit limit.";
-  }
-  else if (parseFloat(data.weight) <= 0) {
+  } else if (parseFloat(data.weight) <= 0) {
     errors.weight = "Credit Limit must be greater 0";
   }
 
@@ -204,7 +203,7 @@ exports.validatePostingCreate = async (data) => {
     errors.subCategory = "Subcategory field is required";
   }
 
-  if (validator.isEmpty(data.paidContent) && data?.type === 'DIGITAL PRODUCT') {
+  if (validator.isEmpty(data.paidContent) && data?.type === "DIGITAL PRODUCT") {
     errors.paidContent = "Paid content is required";
   }
 
@@ -339,16 +338,20 @@ exports.validateSearchTransactionsInput = (data) => {
   };
 };
 
-
+// OAuth validation
 
 exports.validateDeveloperSettings = (data) => {
   let errors = {};
 
   // data.weight = !isEmpty(data.weight) ? data.weight : 0;
-  data.applicationName = !isEmpty(data.applicationName) ? data.applicationName : "";
+  data.applicationName = !isEmpty(data.applicationName)
+    ? data.applicationName
+    : "";
   data.clientSecret = !isEmpty(data.clientSecret) ? data.clientSecret : "";
   data.secretKey = !isEmpty(data.secretKey) ? data.secretKey : "";
-  data.whitelistedEndpoint = !isEmpty(data.whitelistedEndpoint) ? data.whitelistedEndpoint : [];
+  data.whitelistedEndpoint = !isEmpty(data.whitelistedEndpoint)
+    ? data.whitelistedEndpoint
+    : [];
   data.redirectUrl = !isEmpty(data.redirectUrl) ? data.redirectUrl : [];
   const httpsRegex = /^https:\/\//;
   // Validate Application Name
@@ -371,8 +374,12 @@ exports.validateDeveloperSettings = (data) => {
   } else if (!httpsRegex.test(data.redirectUrl)) {
     errors.redirectUrl = "Redirect URL must start with 'https://'.";
   }
-  if (!Array.isArray(data.whitelistedEndpoint) || data.whitelistedEndpoint.length < 1) {
-    errors.whitelistedEndpoint = "Please Enter at least one Whitelisted Endpoint.";
+  if (
+    !Array.isArray(data.whitelistedEndpoint) ||
+    data.whitelistedEndpoint.length < 1
+  ) {
+    errors.whitelistedEndpoint =
+      "Please Enter at least one Whitelisted Endpoint.";
   } else {
     // Validate each whitelisted endpoint to ensure it starts with "https://"
     data.whitelistedEndpoint.forEach((endpoint, index) => {
@@ -380,6 +387,26 @@ exports.validateDeveloperSettings = (data) => {
         errors.whitelistedEndpoint = `whitelistedEndpoint must start with 'https://'.`;
       }
     });
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};
+
+exports.validateClient = (data) => {
+  let errors = {};
+
+  data.clientSecret = !isEmpty(data.clientSecret) ? data.clientSecret : "";
+  data.secretKey = !isEmpty(data.secretKey) ? data.secretKey : "";
+
+  if (validator.isEmpty(data.clientSecret)) {
+    errors.clientSecret = "Client Secret is required";
+  }
+
+  if (validator.isEmpty(data.secretKey)) {
+    errors.secretKey = "SecretKey field is required";
   }
 
   return {

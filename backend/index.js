@@ -6,7 +6,7 @@ const path = require("path");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const router = require("./router");
-const cronJob = require("./cronJob")
+// const cronJob = require("./cronJob")  // un comment after development completed
 
 //connect database
 connectDB();

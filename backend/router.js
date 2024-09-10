@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const builder = require("xmlbuilder")
+const builder = require("xmlbuilder");
 const router = express.Router();
 const authMiddleware = require("./middleware/auth.middleware");
 const postMiddleware = require("./middleware/posting.middleware");
@@ -10,6 +10,7 @@ const accountMiddleware = require("./middleware/account.middleware");
 const endorsementMiddleware = require("./middleware/endorsement.middleware");
 const paymentMiddleware = require("./middleware/payment.middleware");
 const notificationMiddleware = require("./middleware/notification.middleware");
+const oauthMiddleware = require("./middleware/oauth.middleware");
 
 const authController = require("./controller/auth.controller");
 const baseController = require("./controller/base.controller");
@@ -54,8 +55,14 @@ router.get(
 // ######################### POSTING ROUTER #############################
 router.post("/posting/posts", authMiddleware.auth, postController.searchPosts);
 router.get("/posting/post/:id", postController.getById);
-router.post("/posting/post/getMarketPlaceProfile", postController.getMarketPlaceProfile);
-router.get("/posting/post/:username/:title", postController.getByUsernameAndTitle);
+router.post(
+  "/posting/post/getMarketPlaceProfile",
+  postController.getMarketPlaceProfile
+);
+router.get(
+  "/posting/post/:username/:title",
+  postController.getByUsernameAndTitle
+);
 router.post(
   "/posting/upload",
   authMiddleware.auth,
@@ -63,8 +70,12 @@ router.post(
   postMiddleware.create,
   postController.createPost
 );
-router.post('/posting/purchase', authMiddleware.auth, postController.purchase)
-router.post('/posting/purchase/getPurchaseLimit', authMiddleware.auth, postController.purchaseLimit)
+router.post("/posting/purchase", authMiddleware.auth, postController.purchase);
+router.post(
+  "/posting/purchase/getPurchaseLimit",
+  authMiddleware.auth,
+  postController.purchaseLimit
+);
 router.get("/posting/getByUser/:userId", postController.getByUser);
 router.delete("/posting/:id", postController.deleteById);
 
@@ -146,11 +157,7 @@ router.post(
   adminController.deleteUser
 );
 
-router.post(
-  "/admin/users/search",
-  authMiddleware.auth,
-  adminController.search
-);
+router.post("/admin/users/search", authMiddleware.auth, adminController.search);
 
 router.post(
   "/admin/users/getMostConnectedUsers",
@@ -252,7 +259,11 @@ router.post(
   authMiddleware.auth,
   endorsementController.search
 );
-router.get("/endorsement/getEndrosmentbyId/:id", authMiddleware.auth, endorsementController.getEndrosmentbyId);
+router.get(
+  "/endorsement/getEndrosmentbyId/:id",
+  authMiddleware.auth,
+  endorsementController.getEndrosmentbyId
+);
 router.get("/endorsement/followers/:id", endorsementController.getFollowers);
 router.get("/endorsement/followings/:id", endorsementController.getFollowings);
 
@@ -337,48 +348,63 @@ router.get("/map/users", authMiddleware.auth, mapController.getUsers);
 router.post("/map/posts", authMiddleware.auth, mapController.mapPosts);
 
 // ######################### SEO Sitemap ROUTER #############################
-router.post('/userConnected', authMiddleware.auth, socketController.createSocketUser)
-router.post('/userDisconnected', socketController.removeSocketUser)
+router.post(
+  "/userConnected",
+  authMiddleware.auth,
+  socketController.createSocketUser
+);
+router.post("/userDisconnected", socketController.removeSocketUser);
 
 // ######################### SEO Sitemap ROUTER #############################
-router.get('/sitemap.xml', async (req, res, next) => {
-  res.sendFile(path.join(path.join(__dirname), 'sitemap.xml'))
-})
+router.get("/sitemap.xml", async (req, res, next) => {
+  res.sendFile(path.join(path.join(__dirname), "sitemap.xml"));
+});
 
-router.get('/root.xml', async (req, res, next) => {
-  res.sendFile(path.join(path.join(__dirname), 'root.xml'))
-})
+router.get("/root.xml", async (req, res, next) => {
+  res.sendFile(path.join(path.join(__dirname), "root.xml"));
+});
 
-router.get('/people.xml', async (req, res, next) => {
-  const allRoutes = await User.find({})
-  const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
-  root.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-  allRoutes.map(e => {
-    const url = root.ele('url');
-    url.ele('loc', `https://villages.io/${e.username}`);
-    url.ele('lastmod', new Date(e.updatedAt).toISOString());
-    url.ele('changefreq', 'daily');
-    url.ele('priority', '0.8');
-  })
+router.get("/people.xml", async (req, res, next) => {
+  const allRoutes = await User.find({});
+  const root = builder.create("urlset", { version: "1.0", encoding: "UTF-8" });
+  root.att("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
+  allRoutes.map((e) => {
+    const url = root.ele("url");
+    url.ele("loc", `https://villages.io/${e.username}`);
+    url.ele("lastmod", new Date(e.updatedAt).toISOString());
+    url.ele("changefreq", "daily");
+    url.ele("priority", "0.8");
+  });
   const sitemapXml = root.end({ pretty: true });
-  fs.writeFileSync('./people.xml', sitemapXml, 'utf8')
-  res.sendFile(path.join(path.join(__dirname), 'people.xml'))
-})
+  fs.writeFileSync("./people.xml", sitemapXml, "utf8");
+  res.sendFile(path.join(path.join(__dirname), "people.xml"));
+});
 
-router.get('/post.xml', async (req, res, next) => {
-  const allRoutes = await Listing.find({}).populate('userId')
-  const root = builder.create('urlset', { version: '1.0', encoding: 'UTF-8' });
-  root.att('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-  allRoutes.map(e => {
-    const url = root.ele('url');
-    url.ele('loc', `https://villages.io/${e.userId.username}/${encodeURIComponent(e.title)}`);
-    url.ele('lastmod', new Date(e.updatedAt).toISOString());
-    url.ele('changefreq', 'daily');
-    url.ele('priority', '0.8');
-  })
+router.get("/post.xml", async (req, res, next) => {
+  const allRoutes = await Listing.find({}).populate("userId");
+  const root = builder.create("urlset", { version: "1.0", encoding: "UTF-8" });
+  root.att("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
+  allRoutes.map((e) => {
+    const url = root.ele("url");
+    url.ele(
+      "loc",
+      `https://villages.io/${e.userId.username}/${encodeURIComponent(e.title)}`
+    );
+    url.ele("lastmod", new Date(e.updatedAt).toISOString());
+    url.ele("changefreq", "daily");
+    url.ele("priority", "0.8");
+  });
   const sitemapXml = root.end({ pretty: true });
-  fs.writeFileSync('./post.xml', sitemapXml, 'utf8')
-  res.sendFile(path.join(path.join(__dirname), 'post.xml'))
-})
+  fs.writeFileSync("./post.xml", sitemapXml, "utf8");
+  res.sendFile(path.join(path.join(__dirname), "post.xml"));
+});
 
 module.exports = router;
+
+// ######################### OAuth ROUTER #############################
+
+router.post(
+  "/oauth/login",
+  oauthMiddleware.validateLoginInput,
+  authController.oAuthLogin
+);
