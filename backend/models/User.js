@@ -77,20 +77,9 @@ const UserSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
     },
-    developerSettings: {
-      applicationName: {
-        type: String,
-      },
-      clientSecret: {
-        type: String,
-      },
-      secretKey: {
-        type: String,
-      },
-      whitelistedEndpoint: [{
-        endpoint: { type: String },
-      }
-      ],
+    developerSetting: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "developerSetting",
     },
   },
   {

@@ -408,3 +408,9 @@ router.post(
   oauthMiddleware.validateLoginInput,
   authController.oAuthLogin
 );
+
+router.post(
+  "/oauth/verifyClient",
+  oauthMiddleware.validateClient,
+  authController.verifyClient
+);

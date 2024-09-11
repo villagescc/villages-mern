@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Profile = require("../models/Profile");
-const DeveloperSetting = require('../models/DevelperSettings');
+const DeveloperSetting = require("../models/DevelperSettings");
 const ProfileSetting = require("../models/ProfileSetting");
 const Account = require("../models/Account");
 const {
@@ -16,15 +16,14 @@ const path = require("path");
 const fs = require("fs");
 const { headingDistanceTo } = require("geolocation-utils");
 const Endorsement = require("../models/Endorsement");
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { buildGraph } = require("./payment.controller");
 const { validateDeveloperSettings } = require("../validation");
 const DevelperSettings = require("../models/DevelperSettings");
 
-
 exports.getAllTrustors = async (user) => {
-  let usersInTrustNetworkAndTrustors = []
+  let usersInTrustNetworkAndTrustors = [];
   // let allUsers = await User.find({});
   // let allEndorsements = await Endorsement.find({})
   // let allFollowers = await Profile.find({}).populate("user").exec();
@@ -38,15 +37,22 @@ exports.getAllTrustors = async (user) => {
     const visited = new Set();
     function findPath(currentUser) {
       visited.add(currentUser);
-      const user = allUsers?.find(x => x?._id?.toString() == currentUser)
-      let endorsers = allEndorsements?.filter(x => x?.recipientId?.toString() == user?._id?.toString() && x.weight !== 0)
-      endorsers = endorsers?.map((endorser) => endorser?.endorserId?.toString())
-      let followers = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
+      const user = allUsers?.find((x) => x?._id?.toString() == currentUser);
+      let endorsers = allEndorsements?.filter(
+        (x) =>
+          x?.recipientId?.toString() == user?._id?.toString() && x.weight !== 0
+      );
+      endorsers = endorsers?.map((endorser) =>
+        endorser?.endorserId?.toString()
+      );
+      let followers = allFollowers?.filter((x) =>
+        endorsers?.includes(x?.user?._id?.toString())
+      );
       if (followers.length == 0) {
-        visited.delete(currentUser)
+        visited.delete(currentUser);
       }
       for (let follower of followers) {
-        const followerUser = follower?.user?._id?.toString()
+        const followerUser = follower?.user?._id?.toString();
         if (!visited.has(followerUser)) {
           pathway.push(followerUser);
           findPath(followerUser);
@@ -56,14 +62,16 @@ exports.getAllTrustors = async (user) => {
     findPath(startUser);
     return Array.from(visited);
   }
-  const startUser = user._id
-  usersInTrustNetworkAndTrustors = findFollowersPathway(startUser)
-  usersInTrustNetworkAndTrustors = usersInTrustNetworkAndTrustors.filter(e => e !== startUser)
-  return usersInTrustNetworkAndTrustors
-}
+  const startUser = user._id;
+  usersInTrustNetworkAndTrustors = findFollowersPathway(startUser);
+  usersInTrustNetworkAndTrustors = usersInTrustNetworkAndTrustors.filter(
+    (e) => e !== startUser
+  );
+  return usersInTrustNetworkAndTrustors;
+};
 
 exports.getAllTrustees = async (user) => {
-  let usersYouTrustAndTheirTrustees = []
+  let usersYouTrustAndTheirTrustees = [];
   const [allUsers, allEndorsements, allFollowers] = await Promise.all([
     User.find({}).allowDiskUse(),
     Endorsement.find({}).allowDiskUse(),
@@ -76,28 +84,35 @@ exports.getAllTrustees = async (user) => {
     function findFollowingsPath(currentUser) {
       visited.add(currentUser);
       // const user = await allUsers.find({ _id: currentUser });
-      const user = allUsers?.find(x => x?._id?.toString() == currentUser)
+      const user = allUsers?.find((x) => x?._id?.toString() == currentUser);
       // const endorsers = await Endorsement.find({
       //   endorserId: user?._id,
       //   weight: { $ne: Number(0) },
       // }).exec();
-      let endorsers = allEndorsements?.filter(x => x?.endorserId?.toString() == user?._id?.toString() && x.weight !== 0)
-      endorsers = endorsers?.map((endorser) => endorser?.recipientId?.toString())
+      let endorsers = allEndorsements?.filter(
+        (x) =>
+          x?.endorserId?.toString() == user?._id?.toString() && x.weight !== 0
+      );
+      endorsers = endorsers?.map((endorser) =>
+        endorser?.recipientId?.toString()
+      );
       // let followings = await Profile.find({
       //   user: { $in: endorsers?.map((endorser) => endorser?.recipientId) },
       // })
       //   .populate("user")
       //   .exec();
-      let followings = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
+      let followings = allFollowers?.filter((x) =>
+        endorsers?.includes(x?.user?._id?.toString())
+      );
       // let followings = allFollowers?.filter(x => endorsers?.includes(x?.user?._id?.toString()))
       // if (currentUser == '653a8cb1046d47a90b238fc8') {
       //   console.log(followings, endorsers, 'Current');
       // }
       if (followings.length == 0) {
-        visited.delete(currentUser)
+        visited.delete(currentUser);
       }
       for (let follower of followings) {
-        const followerUser = follower?.user?._id?.toString()
+        const followerUser = follower?.user?._id?.toString();
         if (!visited.has(followerUser)) {
           pathway.push(followerUser);
           findFollowingsPath(followerUser);
@@ -120,28 +135,30 @@ exports.getAllTrustees = async (user) => {
     findFollowingsPath(startUser);
     return Array.from(visited); // Return all users in the pathway
   }
-  const startUser = user._id
+  const startUser = user._id;
 
-  usersYouTrustAndTheirTrustees = await findFollowingsPathway(startUser)
+  usersYouTrustAndTheirTrustees = await findFollowingsPathway(startUser);
 
-  usersYouTrustAndTheirTrustees = usersYouTrustAndTheirTrustees.filter(e => e !== startUser)
-  return usersYouTrustAndTheirTrustees
-}
+  usersYouTrustAndTheirTrustees = usersYouTrustAndTheirTrustees.filter(
+    (e) => e !== startUser
+  );
+  return usersYouTrustAndTheirTrustees;
+};
 
 exports.search = async (req, res, next) => {
   const token = req.header("Authorization");
   let { keyword, page, value, network } = req.body;
   if (!page) page = 1;
   let query = {};
-  let arr = []
+  let arr = [];
   try {
     if (keyword && keyword !== "") {
-      page = 1
+      page = 1;
       query = {
         $or: [
           // { firstName: { $regex: keyword, $options: "i" } },
           // { lastName: { $regex: keyword, $options: "i" } },
-          { 'profile.description': { $regex: keyword, $options: "i" } },
+          { "profile.description": { $regex: keyword, $options: "i" } },
           { fullName: { $regex: keyword, $options: "i" } },
           { email: { $regex: keyword, $options: "i" } },
           { username: { $regex: keyword, $options: "i" } },
@@ -152,8 +169,8 @@ exports.search = async (req, res, next) => {
     // To find people without any Filter
     if (value === "All") {
       const decoded = token && jwt.verify(token, process.env.jwtSecret);
-      const user = decoded?.user
-      let users = []
+      const user = decoded?.user;
+      let users = [];
 
       if (network.length !== 0) {
         // const currentUser = await User.aggregate([
@@ -277,11 +294,11 @@ exports.search = async (req, res, next) => {
         // const graph = await buildGraph()
         // const loggedInUser = user._id;
         // const loggedInUser = "645ad2be30e76ac12143483d";
-        let usersInTrustNetworkAndTrustors = []
-        let usersYouTrustAndTheirTrustees = []
-        if (network.includes('TrustsMe') && network.includes('TrustedByMe')) {
-          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
-          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user)
+        let usersInTrustNetworkAndTrustors = [];
+        let usersYouTrustAndTheirTrustees = [];
+        if (network.includes("TrustsMe") && network.includes("TrustedByMe")) {
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user);
+          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user);
 
           // const trustNetwork = new Set();
 
@@ -302,7 +319,6 @@ exports.search = async (req, res, next) => {
           // findTrustNetworkAndTheirTrustees(loggedInUser);
 
           // usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
-
 
           // const trustNetwork2 = new Set();
 
@@ -329,10 +345,9 @@ exports.search = async (req, res, next) => {
 
           // // Convert the trustNetwork set to an array
           // usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
-        }
-        else if (network.includes('TrustsMe')) {
+        } else if (network.includes("TrustsMe")) {
           // const startUsername = 'testuser2';
-          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user);
           // res.send(graph)
           // const usersSet = new Set();
           // const userQueue = [loggedInUser];
@@ -408,9 +423,8 @@ exports.search = async (req, res, next) => {
           // });
 
           // console.log("Users who trust you and users whom you trust:", Array.from(usersWhoTrustYou));
-        }
-        else if (network.includes('TrustedByMe')) {
-          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user)
+        } else if (network.includes("TrustedByMe")) {
+          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user);
           // findPathway(startUsername)
           //   .then((pathway) => {
           //     if (pathway.length > 1) {
@@ -491,105 +505,169 @@ exports.search = async (req, res, next) => {
         }
         query = {
           ...query,
-          ...(network.includes('TrustsMe') && network.includes('TrustedByMe'))
+          ...(network.includes("TrustsMe") && network.includes("TrustedByMe")
             ? {
-              $and: [
-                { "_id": { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) } },
-                { "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) } }
-              ]
-            } :
-            network.includes('TrustedByMe') ? {
-              "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) }
-            } :
-              (network.includes('TrustsMe') ?
+                $and: [
+                  {
+                    _id: {
+                      $in: usersYouTrustAndTheirTrustees.map(
+                        (e) => new mongoose.Types.ObjectId(e)
+                      ),
+                    },
+                  },
+                  {
+                    _id: {
+                      $in: usersInTrustNetworkAndTrustors.map(
+                        (e) => new mongoose.Types.ObjectId(e)
+                      ),
+                    },
+                  },
+                ],
+              }
+            : network.includes("TrustedByMe")
+            ? {
+                _id: {
+                  $in: usersInTrustNetworkAndTrustors.map(
+                    (e) => new mongoose.Types.ObjectId(e)
+                  ),
+                },
+              }
+            : network.includes("TrustsMe")
+            ? {
+                _id: {
+                  $in: usersYouTrustAndTheirTrustees.map(
+                    (e) => new mongoose.Types.ObjectId(e)
+                  ),
+                },
+              }
+            : {}),
+        };
+        users = await User.aggregate([
+          {
+            $match: {
+              verified: true,
+            },
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              localField: "profile",
+              foreignField: "_id",
+              as: "profile",
+              pipeline: [
                 {
-                  "_id":
-                    { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) }
-                } : {}),
-        }
-        users = await User.aggregate([
-          {
-            $match: {
-              verified: true
-            }
-          },
-          {
-            $lookup: {
-              from: 'profiles',
-              localField: 'profile',
-              foreignField: "_id",
-              as: 'profile',
-              pipeline: [{ $unset: ['website', "createdAt", "placeId", "phoneNumber", "tags", "zipCode"] }]
-            }
+                  $unset: [
+                    "website",
+                    "createdAt",
+                    "placeId",
+                    "phoneNumber",
+                    "tags",
+                    "zipCode",
+                  ],
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ['$profile', 0] },
-              fullName: { $concat: ['$firstName', " ", "$lastName"] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+              fullName: { $concat: ["$firstName", " ", "$lastName"] },
+            },
           },
           {
             $match: {
-              ...query
-            }
+              ...query,
+            },
           },
           {
-            $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
+            $project: {
+              _id: 1,
+              account: 1,
+              profile: 1,
+              username: 1,
+              email: 1,
+              createdAt: 1,
+              isActive: 1,
+              isSuperuser: 1,
+              verified: 1,
+            },
           },
           {
-            $sort: { createdAt: -1 }
-          }
-        ])
-      }
-      else {
+            $sort: { createdAt: -1 },
+          },
+        ]);
+      } else {
         users = await User.aggregate([
           {
             $match: {
-              verified: true
-            }
+              verified: true,
+            },
           },
           {
             $lookup: {
-              from: 'profiles',
-              localField: 'profile',
+              from: "profiles",
+              localField: "profile",
               foreignField: "_id",
-              as: 'profile',
-              pipeline: [{ $unset: ['website', "createdAt", "placeId", "phoneNumber", "tags", "zipCode"] }]
-            }
+              as: "profile",
+              pipeline: [
+                {
+                  $unset: [
+                    "website",
+                    "createdAt",
+                    "placeId",
+                    "phoneNumber",
+                    "tags",
+                    "zipCode",
+                  ],
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ['$profile', 0] },
-              fullName: { $concat: ['$firstName', " ", "$lastName"] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+              fullName: { $concat: ["$firstName", " ", "$lastName"] },
+            },
           },
           {
             $match: {
-              ...query
-            }
+              ...query,
+            },
           },
           {
-            $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
+            $project: {
+              _id: 1,
+              account: 1,
+              profile: 1,
+              username: 1,
+              email: 1,
+              createdAt: 1,
+              isActive: 1,
+              isSuperuser: 1,
+              verified: 1,
+            },
           },
 
           {
-            $sort: { createdAt: -1 }
-          }
-        ])
+            $sort: { createdAt: -1 },
+          },
+        ]);
       }
       // const users = await User.find({ ...query, verified: true }).sort({ createdAt: -1 }).select("username");
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       // let userData = [];
-      let userInfo = []
+      let userInfo = [];
       // if (network?.length !== 0) {
-      userInfo = await getUserDetail(filteredUsers.map(x => x.username), user?._id);
+      userInfo = await getUserDetail(
+        filteredUsers.map((x) => x.username),
+        user?._id
+      );
       // }
       // userData.push(userInfo);
       res.send({ total: users.length, users: userInfo });
-    }
-    else {
+    } else {
       const decoded = token && jwt.verify(token, process.env.jwtSecret);
-      const user = decoded?.user
+      const user = decoded?.user;
       if (user) {
         const radius = 100000 * 1.609;
         const userLocation = await User.findById(user?._id).select(
@@ -601,7 +679,7 @@ exports.search = async (req, res, next) => {
         };
         const filterRadiusUsers = [];
         if (userLocation.latitude && userLocation.longitude) {
-          const span = Date.now()
+          const span = Date.now();
 
           const filterUsers = await User.find({}).select("longitude latitude");
           for (var i = 0; i < filterUsers.length; i++) {
@@ -614,8 +692,13 @@ exports.search = async (req, res, next) => {
                 centerLocation,
                 filterLocation
               );
-              if (result.distance < radius && filterUsers[i]._id !== user?._id) {
-                filterRadiusUsers.push(mongoose.Types.ObjectId(filterUsers[i]._id));
+              if (
+                result.distance < radius &&
+                filterUsers[i]._id !== user?._id
+              ) {
+                filterRadiusUsers.push(
+                  mongoose.Types.ObjectId(filterUsers[i]._id)
+                );
               }
             }
           }
@@ -626,47 +709,62 @@ exports.search = async (req, res, next) => {
         //  To find user Id whom user is following
         const endorserStg1 = await Endorsement.aggregate([
           {
-            $match: { endorserId: mongoose.Types.ObjectId(user?._id) }
+            $match: { endorserId: mongoose.Types.ObjectId(user?._id) },
           },
           {
-            $group: { _id: null, receipents: { $push: { $toString: '$recipientId' } } }
-          }
-        ])
+            $group: {
+              _id: null,
+              receipents: { $push: { $toString: "$recipientId" } },
+            },
+          },
+        ]);
         // Array of Id which contains Following user id
-        let endroserData1 = endorserStg1[0]?.receipents ?? []
+        let endroserData1 = endorserStg1[0]?.receipents ?? [];
 
         //  To find user Id of which user following is following (Web of Trust)
         // A => Following B => B Following C
 
         const endorserStg2 = await Endorsement.aggregate([
           {
-            $match: { endorserId: { $in: endroserData1.map(x => mongoose.Types.ObjectId(x)) } }
+            $match: {
+              endorserId: {
+                $in: endroserData1.map((x) => mongoose.Types.ObjectId(x)),
+              },
+            },
           },
           {
-            $group: { _id: null, receipents: { $push: { $toString: '$recipientId' } } }
-          }
-        ])
+            $group: {
+              _id: null,
+              receipents: { $push: { $toString: "$recipientId" } },
+            },
+          },
+        ]);
 
         //  Array contain user id of web of trust
         //  Data of C will get in endroserData2 variable
-        let endroserData2 = endorserStg2[0]?.receipents ?? []
+        let endroserData2 = endorserStg2[0]?.receipents ?? [];
 
         if (filterRadiusUsers.length) {
-          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString())])]
+          arr = [...new Set([...filterRadiusUsers.map((x) => x?.toString())])];
         }
         if (endorserStg2.length) {
-          arr = [...new Set([...arr, ...endroserData2])]
+          arr = [...new Set([...arr, ...endroserData2])];
         }
         if (filterRadiusUsers.length && endorserStg2.length) {
-          arr = [...new Set([...filterRadiusUsers.map(x => x?.toString()), ...endroserData2])]
+          arr = [
+            ...new Set([
+              ...filterRadiusUsers.map((x) => x?.toString()),
+              ...endroserData2,
+            ]),
+          ];
         }
 
-        arr = arr.filter(x => !endroserData1.includes(x));
-        arr = arr.filter(x => x !== user?._id)
+        arr = arr.filter((x) => !endroserData1.includes(x));
+        arr = arr.filter((x) => x !== user?._id);
       }
       // const users = await User.find(...(arr.length !== 0 ? [{ "_id": { $in: arr }, ...query }] : [query])).sort({ createdAt: -1 }).select("username");
       // const users = await User.find({ "_id": { $in: arr }, ...query }).sort({ createdAt: -1 }).select("username");
-      let users = []
+      let users = [];
       if (network?.length !== 0) {
         // const currentUser = await User.aggregate([
         //   {
@@ -789,9 +887,9 @@ exports.search = async (req, res, next) => {
 
         // const graph = await buildGraph()
         // const loggedInUser = user._id;
-        let usersInTrustNetworkAndTrustors = []
-        let usersYouTrustAndTheirTrustees = []
-        if (network.includes('TrustsMe') && network.includes('TrustedByMe')) {
+        let usersInTrustNetworkAndTrustors = [];
+        let usersYouTrustAndTheirTrustees = [];
+        if (network.includes("TrustsMe") && network.includes("TrustedByMe")) {
           // const trustNetwork = new Set();
 
           // // Create a function to find users you trust and those who trust them
@@ -826,7 +924,6 @@ exports.search = async (req, res, next) => {
           // // Convert the trustNetwork set to an array
           // usersInTrustNetworkAndTrustors = Array.from(trustNetwork);
 
-
           // const trustNetwork2 = new Set();
 
           // // Perform a depth-first search to find users in the trust network and their trustors
@@ -852,10 +949,9 @@ exports.search = async (req, res, next) => {
 
           // // Convert the trustNetwork set to an array
           // usersYouTrustAndTheirTrustees = Array.from(trustNetwork2);
-          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
-          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user)
-        }
-        else if (network.includes('TrustsMe')) {
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user);
+          usersInTrustNetworkAndTrustors = await this.getAllTrustors(user);
+        } else if (network.includes("TrustsMe")) {
           // const trustNetwork = new Set();
 
           // // Create a function to find users you trust and anyone they have trusted
@@ -875,9 +971,8 @@ exports.search = async (req, res, next) => {
           // findTrustNetworkAndTheirTrustees(loggedInUser);
 
           // usersYouTrustAndTheirTrustees = Array.from(trustNetwork);
-          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user)
-        }
-        else if (network.includes('TrustedByMe')) {
+          usersYouTrustAndTheirTrustees = await this.getAllTrustees(user);
+        } else if (network.includes("TrustedByMe")) {
           // const trustNetwork2 = new Set();
           // function findTrustNetworkAndTrustors(user) {
           //   trustNetwork2.add(user);
@@ -894,99 +989,165 @@ exports.search = async (req, res, next) => {
           // }
           // findTrustNetworkAndTrustors(loggedInUser);
           // usersInTrustNetworkAndTrustors = Array.from(trustNetwork2);
-          usersInTrustNetworkAndTrustors = await this.getAllTrustees(user)
+          usersInTrustNetworkAndTrustors = await this.getAllTrustees(user);
         }
 
         // console.log(currentUser[0].followers.map(e => new mongoose.Types.ObjectId(e.profile.user._id)));
         users = await User.aggregate([
           {
             $lookup: {
-              from: 'profiles',
-              localField: 'profile',
+              from: "profiles",
+              localField: "profile",
               foreignField: "_id",
-              as: 'profile',
-              pipeline: [{ $unset: ['website', "createdAt", "placeId", "phoneNumber", "tags", "zipCode"] }]
-            }
+              as: "profile",
+              pipeline: [
+                {
+                  $unset: [
+                    "website",
+                    "createdAt",
+                    "placeId",
+                    "phoneNumber",
+                    "tags",
+                    "zipCode",
+                  ],
+                },
+              ],
+            },
           },
           {
             $match: {
-              _id: { $in: arr.map(e => mongoose.Types.ObjectId(e)) },
-            }
+              _id: { $in: arr.map((e) => mongoose.Types.ObjectId(e)) },
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ['$profile', 0] },
-              fullName: { $concat: ['$firstName', " ", '$lastName'] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+              fullName: { $concat: ["$firstName", " ", "$lastName"] },
+            },
           },
           { $match: { ...query } },
           {
             $match: {
-              ...(network.includes('TrustsMe') && network.includes('TrustedByMe'))
+              ...(network.includes("TrustsMe") &&
+              network.includes("TrustedByMe")
                 ? {
-                  $and: [
-                    { "_id": { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) } },
-                    { "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) } }
-                  ]
-                } :
-                network.includes('TrustedByMe') ? {
-                  "_id": { $in: usersInTrustNetworkAndTrustors.map(e => new mongoose.Types.ObjectId(e)) }
-                } :
-                  (network.includes('TrustsMe') ?
-                    {
-                      "_id":
-                        { $in: usersYouTrustAndTheirTrustees.map(e => new mongoose.Types.ObjectId(e)) }
-                    } : {}),
-              verified: true
-            }
+                    $and: [
+                      {
+                        _id: {
+                          $in: usersYouTrustAndTheirTrustees.map(
+                            (e) => new mongoose.Types.ObjectId(e)
+                          ),
+                        },
+                      },
+                      {
+                        _id: {
+                          $in: usersInTrustNetworkAndTrustors.map(
+                            (e) => new mongoose.Types.ObjectId(e)
+                          ),
+                        },
+                      },
+                    ],
+                  }
+                : network.includes("TrustedByMe")
+                ? {
+                    _id: {
+                      $in: usersInTrustNetworkAndTrustors.map(
+                        (e) => new mongoose.Types.ObjectId(e)
+                      ),
+                    },
+                  }
+                : network.includes("TrustsMe")
+                ? {
+                    _id: {
+                      $in: usersYouTrustAndTheirTrustees.map(
+                        (e) => new mongoose.Types.ObjectId(e)
+                      ),
+                    },
+                  }
+                : {}),
+              verified: true,
+            },
           },
           {
-            $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
+            $project: {
+              _id: 1,
+              account: 1,
+              profile: 1,
+              username: 1,
+              email: 1,
+              createdAt: 1,
+              isActive: 1,
+              isSuperuser: 1,
+              verified: 1,
+            },
           },
           {
             $sort: {
-              createdAt: -1
-            }
+              createdAt: -1,
+            },
           },
-        ])
-      }
-      else {
+        ]);
+      } else {
         users = await User.aggregate([
           {
             $lookup: {
-              from: 'profiles',
-              localField: 'profile',
+              from: "profiles",
+              localField: "profile",
               foreignField: "_id",
-              as: 'profile',
-              pipeline: [{ $unset: ['website', "createdAt", "placeId", "phoneNumber", "tags", "zipCode"] }]
-            }
+              as: "profile",
+              pipeline: [
+                {
+                  $unset: [
+                    "website",
+                    "createdAt",
+                    "placeId",
+                    "phoneNumber",
+                    "tags",
+                    "zipCode",
+                  ],
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ['$profile', 0] },
-              fullName: { $concat: ['$firstName', " ", '$lastName'] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+              fullName: { $concat: ["$firstName", " ", "$lastName"] },
+            },
           },
           {
             $match: {
               ...query,
-              _id: { $in: arr.map(e => mongoose.Types.ObjectId(e)) },
-              verified: true
-            }
+              _id: { $in: arr.map((e) => mongoose.Types.ObjectId(e)) },
+              verified: true,
+            },
           },
           {
-            $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1 }
+            $project: {
+              _id: 1,
+              account: 1,
+              profile: 1,
+              username: 1,
+              email: 1,
+              createdAt: 1,
+              isActive: 1,
+              isSuperuser: 1,
+              verified: 1,
+            },
           },
           {
             $sort: {
-              createdAt: -1
-            }
-          }
-        ])
+              createdAt: -1,
+            },
+          },
+        ]);
       }
       let filteredUsers = [...users].slice((page - 1) * 10, page * 10);
       let userInfo = [];
-      userInfo = await getUserDetail(filteredUsers.map(x => x.username), user?._id);
+      userInfo = await getUserDetail(
+        filteredUsers.map((x) => x.username),
+        user?._id
+      );
       // userData.push(userInfo);
       res.send({ total: users.length, users: userInfo });
     }
@@ -999,7 +1160,7 @@ exports.search = async (req, res, next) => {
 exports.getById = async (req, res, next) => {
   try {
     const user = await getUserById(req.params.id);
-    user?.length ? res.send(...user) : res.send({})
+    user?.length ? res.send(...user) : res.send({});
   } catch (err) {
     next(err);
   }
@@ -1008,8 +1169,11 @@ exports.getByUserName = async (req, res, next) => {
   const token = req.header("Authorization");
   const decoded = token && jwt.verify(token, process.env.jwtSecret);
   try {
-    const user = await getUserDetailByUserName(req.params.username, decoded?.user?._id);
-    user?.length ? res.send(...user) : res.send({})
+    const user = await getUserDetailByUserName(
+      req.params.username,
+      decoded?.user?._id
+    );
+    user?.length ? res.send(...user) : res.send({});
   } catch (err) {
     next(err);
   }
@@ -1018,7 +1182,7 @@ exports.getByUserName = async (req, res, next) => {
 const getUserDetail = async (username, _id) => {
   const user = await User.aggregate([
     {
-      $match: { "username": { $in: username } }
+      $match: { username: { $in: username } },
     },
     {
       $lookup: {
@@ -1034,16 +1198,10 @@ const getUserDetail = async (username, _id) => {
               $expr: {
                 $and: [
                   {
-                    $eq: [
-                      "$recipientId",
-                      "$$userid",
-                    ],
+                    $eq: ["$recipientId", "$$userid"],
                   },
                   {
-                    $eq: [
-                      "$endorserId",
-                      mongoose.Types.ObjectId(_id)
-                    ],
+                    $eq: ["$endorserId", mongoose.Types.ObjectId(_id)],
                   },
                 ],
               },
@@ -1054,33 +1212,44 @@ const getUserDetail = async (username, _id) => {
       },
     },
     {
-      $project: { _id: 1, account: 1, profile: 1, username: 1, email: 1, createdAt: 1, isActive: 1, isSuperuser: 1, verified: 1, endorser: 1 }
+      $project: {
+        _id: 1,
+        account: 1,
+        profile: 1,
+        username: 1,
+        email: 1,
+        createdAt: 1,
+        isActive: 1,
+        isSuperuser: 1,
+        verified: 1,
+        endorser: 1,
+      },
     },
     {
       $lookup: {
         from: "profiles",
         foreignField: "_id",
         localField: "profile",
-        as: "profile"
-      }
+        as: "profile",
+      },
     },
     {
       $addFields: {
-        profile: { $arrayElemAt: ["$profile", 0] }
-      }
+        profile: { $arrayElemAt: ["$profile", 0] },
+      },
     },
     {
       $lookup: {
         from: "accounts",
         foreignField: "_id",
         localField: "account",
-        as: "account"
-      }
+        as: "account",
+      },
     },
     {
       $addFields: {
-        account: { $arrayElemAt: ["$account", 0] }
-      }
+        account: { $arrayElemAt: ["$account", 0] },
+      },
     },
     {
       $lookup: {
@@ -1090,10 +1259,10 @@ const getUserDetail = async (username, _id) => {
         as: "followers",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
+            $match: { weight: { $ne: Number(0) } },
           },
           {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt: -1 },
           },
           {
             $lookup: {
@@ -1103,15 +1272,22 @@ const getUserDetail = async (username, _id) => {
               as: "profile",
               pipeline: [
                 {
-                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    name: 1,
+                    avatar: 1,
+                    user: 1,
+                    placeId: 1,
+                    website: 1,
+                    zipCode: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+            },
           },
           {
             $lookup: {
@@ -1121,21 +1297,34 @@ const getUserDetail = async (username, _id) => {
               as: "profile.user",
               pipeline: [
                 {
-                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    username: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    profile: 1,
+                    job: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-            }
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] },
+            },
           },
           {
-            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
-          }
-        ]
-      }
+            $project: {
+              recipientId: 1,
+              endorserId: 1,
+              text: 1,
+              weight: 1,
+              profile: 1,
+            },
+          },
+        ],
+      },
     },
     {
       $lookup: {
@@ -1145,10 +1334,10 @@ const getUserDetail = async (username, _id) => {
         as: "followings",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
+            $match: { weight: { $ne: Number(0) } },
           },
           {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt: -1 },
           },
           {
             $lookup: {
@@ -1158,15 +1347,22 @@ const getUserDetail = async (username, _id) => {
               as: "profile",
               pipeline: [
                 {
-                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    name: 1,
+                    avatar: 1,
+                    user: 1,
+                    placeId: 1,
+                    website: 1,
+                    zipCode: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+            },
           },
           {
             $lookup: {
@@ -1176,21 +1372,36 @@ const getUserDetail = async (username, _id) => {
               as: "profile.user",
               pipeline: [
                 {
-                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1, isActive: 1, isSuperuser: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    username: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    profile: 1,
+                    job: 1,
+                    isActive: 1,
+                    isSuperuser: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-            }
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] },
+            },
           },
           {
-            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
-          }
-        ]
-      }
+            $project: {
+              recipientId: 1,
+              endorserId: 1,
+              text: 1,
+              weight: 1,
+              profile: 1,
+            },
+          },
+        ],
+      },
     },
     {
       $addFields: {
@@ -1201,13 +1412,13 @@ const getUserDetail = async (username, _id) => {
             { $arrayElemAt: ["$endorser.weight", 0] },
           ],
         },
-      }
+      },
     },
-    { $unset: ['endorser'] },
+    { $unset: ["endorser"] },
     {
-      $sort: { createdAt: -1 }
-    }
-  ])
+      $sort: { createdAt: -1 },
+    },
+  ]);
   // const span = Date.now() - start;
   // console.log(`fetched ${user._id} - ${span}`);
   return user;
@@ -1216,10 +1427,10 @@ const getUserDetail = async (username, _id) => {
 const getUserDetailByUserName = async (username, _id) => {
   const user = await User.aggregate([
     {
-      $match: { username }
+      $match: { username },
     },
     {
-      $project: { password: 0, token: 0, lastLogin: 0 }
+      $project: { password: 0, token: 0, lastLogin: 0 },
     },
     {
       $lookup: {
@@ -1235,16 +1446,10 @@ const getUserDetailByUserName = async (username, _id) => {
               $expr: {
                 $and: [
                   {
-                    $eq: [
-                      "$recipientId",
-                      "$$userid",
-                    ],
+                    $eq: ["$recipientId", "$$userid"],
                   },
                   {
-                    $eq: [
-                      "$endorserId",
-                      mongoose.Types.ObjectId(_id)
-                    ],
+                    $eq: ["$endorserId", mongoose.Types.ObjectId(_id)],
                   },
                 ],
               },
@@ -1263,33 +1468,33 @@ const getUserDetailByUserName = async (username, _id) => {
             { $arrayElemAt: ["$endorser.weight", 0] },
           ],
         },
-      }
+      },
     },
     {
       $lookup: {
         from: "profiles",
         foreignField: "_id",
         localField: "profile",
-        as: "profile"
-      }
+        as: "profile",
+      },
     },
     {
       $addFields: {
-        profile: { $arrayElemAt: ["$profile", 0] }
-      }
+        profile: { $arrayElemAt: ["$profile", 0] },
+      },
     },
     {
       $lookup: {
         from: "accounts",
         foreignField: "_id",
         localField: "account",
-        as: "account"
-      }
+        as: "account",
+      },
     },
     {
       $addFields: {
-        account: { $arrayElemAt: ["$account", 0] }
-      }
+        account: { $arrayElemAt: ["$account", 0] },
+      },
     },
     {
       $lookup: {
@@ -1299,10 +1504,10 @@ const getUserDetailByUserName = async (username, _id) => {
         as: "followers",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
+            $match: { weight: { $ne: Number(0) } },
           },
           {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt: -1 },
           },
           {
             $lookup: {
@@ -1312,15 +1517,22 @@ const getUserDetailByUserName = async (username, _id) => {
               as: "profile",
               pipeline: [
                 {
-                  $project: { name: 1, avatar: 1, user: 1, placeId: 1, website: 1, zipCode: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    name: 1,
+                    avatar: 1,
+                    user: 1,
+                    placeId: 1,
+                    website: 1,
+                    zipCode: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+            },
           },
           {
             $lookup: {
@@ -1330,21 +1542,34 @@ const getUserDetailByUserName = async (username, _id) => {
               as: "profile.user",
               pipeline: [
                 {
-                  $project: { username: 1, firstName: 1, lastName: 1, email: 1, profile: 1, job: 1 }
-                }
-              ]
-            }
+                  $project: {
+                    username: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    profile: 1,
+                    job: 1,
+                  },
+                },
+              ],
+            },
           },
           {
             $addFields: {
-              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-            }
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] },
+            },
           },
           {
-            $project: { recipientId: 1, endorserId: 1, text: 1, weight: 1, profile: 1 }
-          }
-        ]
-      }
+            $project: {
+              recipientId: 1,
+              endorserId: 1,
+              text: 1,
+              weight: 1,
+              profile: 1,
+            },
+          },
+        ],
+      },
     },
     {
       $lookup: {
@@ -1354,23 +1579,23 @@ const getUserDetailByUserName = async (username, _id) => {
         as: "followings",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
+            $match: { weight: { $ne: Number(0) } },
           },
           {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt: -1 },
           },
           {
             $lookup: {
               from: "profiles",
               foreignField: "user",
               localField: "recipientId",
-              as: "profile"
-            }
+              as: "profile",
+            },
           },
           {
             $addFields: {
-              profile: { $arrayElemAt: ["$profile", 0] }
-            }
+              profile: { $arrayElemAt: ["$profile", 0] },
+            },
           },
           {
             $lookup: {
@@ -1378,69 +1603,69 @@ const getUserDetailByUserName = async (username, _id) => {
               foreignField: "_id",
               localField: "profile.user",
               as: "profile.user",
-            }
+            },
           },
           {
             $addFields: {
-              "profile.user": { $arrayElemAt: ["$profile.user", 0] }
-            }
-          }
-        ]
-      }
+              "profile.user": { $arrayElemAt: ["$profile.user", 0] },
+            },
+          },
+        ],
+      },
     },
     {
       $lookup: {
-        from: 'listings',
+        from: "listings",
         foreignField: "userId",
         localField: "_id",
         as: "postings",
         pipeline: [
           {
             $lookup: {
-              from: 'users',
+              from: "users",
               foreignField: "_id",
               localField: "userId",
               as: "user",
-            }
+            },
           },
           {
             $addFields: {
-              "user": { $arrayElemAt: ["$user", 0] }
-            }
-          }
-        ]
-      }
-    }
-  ])
+              user: { $arrayElemAt: ["$user", 0] },
+            },
+          },
+        ],
+      },
+    },
+  ]);
   return user;
 };
 
 const getUserById = async (id) => {
   const user = User.aggregate([
     {
-      $match: { $expr: { $eq: ['$_id', { $toObjectId: id }] } }
+      $match: { $expr: { $eq: ["$_id", { $toObjectId: id }] } },
     },
     {
       $lookup: {
         from: "profiles",
         foreignField: "_id",
         localField: "profile",
-        as: "profile"
-      }
+        as: "profile",
+      },
     },
     {
-      $addFields: { profile: { $arrayElemAt: ["$profile", 0] } }
+      $addFields: { profile: { $arrayElemAt: ["$profile", 0] } },
     },
     {
       $lookup: {
         from: "accounts",
         foreignField: "_id",
         localField: "account",
-        as: "account"
-      }
+        as: "account",
+      },
     },
     {
-      $addFields: { account: { $arrayElemAt: ["$account", 0] } }
+      $addFields: { account: { $arrayElemAt: ["$account", 0] } },
     },
     {
       $lookup: {
@@ -1450,10 +1675,10 @@ const getUserById = async (id) => {
         as: "followers",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
-          }
-        ]
-      }
+            $match: { weight: { $ne: Number(0) } },
+          },
+        ],
+      },
     },
     {
       $lookup: {
@@ -1463,17 +1688,29 @@ const getUserById = async (id) => {
         as: "followings",
         pipeline: [
           {
-            $match: { weight: { $ne: Number(0) } }
-          }
-        ]
-      }
+            $match: { weight: { $ne: Number(0) } },
+          },
+        ],
+      },
     },
     {
-      $project: { username: 1, firstName: 1, lastName: 1, email: 1, latitude: 1, longitude: 1, isSuperuser: 1, profile: 1, account: 1, followers: 1, followings: 1 }
-    }
-  ])
+      $project: {
+        username: 1,
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        latitude: 1,
+        longitude: 1,
+        isSuperuser: 1,
+        profile: 1,
+        account: 1,
+        followers: 1,
+        followings: 1,
+      },
+    },
+  ]);
 
-  return user
+  return user;
 };
 
 exports.uploadAvatar = async (req, res, next) => {
@@ -1530,8 +1767,14 @@ exports.saveProfile = async (req, res, next) => {
 
 exports.saveProfileSetting = async (req, res, next) => {
   try {
-    const { email, notificationCheck, updateCheck, userCheck, language, feedRadius } =
-      req.body;
+    const {
+      email,
+      notificationCheck,
+      updateCheck,
+      userCheck,
+      language,
+      feedRadius,
+    } = req.body;
 
     try {
       const {
@@ -1559,7 +1802,6 @@ exports.saveProfileSetting = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-
 
     let user = await User.findOne({ _id: req.user._id });
     let profileSetting = await ProfileSetting.findOne({ user: req.user._id });
@@ -1606,9 +1848,12 @@ exports.deactive = async (req, res, next) => {
 
 exports.getDeveloperSetting = async (req, res, next) => {
   try {
-    let developerSettings = await DevelperSettings.findOne({ user: req.user._id });
+    let developerSettings = await DevelperSettings.findOne({
+      user: req.user._id,
+    });
 
-    if (!developerSettings) return res.status(404).json({ message: "User not found" });
+    if (!developerSettings)
+      return res.status(404).json({ message: "User not found" });
 
     const response = {
       applicationName: developerSettings.applicationName,
@@ -1623,10 +1868,10 @@ exports.getDeveloperSetting = async (req, res, next) => {
     next(err);
   }
 };
+
 exports.saveDeveloperSetting = async (req, res, next) => {
   try {
     const { errors, isValid } = validateDeveloperSettings(req.body);
-
     // Check validation
     if (!isValid) {
       return res.status(400).json({ errors });
@@ -1635,7 +1880,13 @@ exports.saveDeveloperSetting = async (req, res, next) => {
     let user = await User.findOne({ _id: req.user._id });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const { applicationName, clientSecret, secretKey, whitelistedEndpoint, redirectUrl } = req.body;
+    const {
+      applicationName,
+      clientSecret,
+      secretKey,
+      whitelistedEndpoint,
+      redirectUrl,
+    } = req.body;
 
     const developerSetting = await DeveloperSetting.findOneAndUpdate(
       { user: user._id }, // Query: find a record with the same user ID
@@ -1651,13 +1902,18 @@ exports.saveDeveloperSetting = async (req, res, next) => {
       { new: true, upsert: true } // Options: return the updated document and create a new one if not found
     );
 
-
+    await User.findOneAndUpdate(
+      { _id: user._id },
+      {
+        developerSetting: developerSetting._id,
+      }
+    );
     // Save the new developer setting
     await developerSetting.save();
 
     res.status(201).json({ success: true });
   } catch (err) {
-    console.log('err :>> ', err);
+    console.log("err :>> ", err);
     next(err);
   }
 };

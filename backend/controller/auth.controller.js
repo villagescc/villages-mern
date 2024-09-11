@@ -28,6 +28,7 @@ const axios = require("axios");
 const ProfileSetting = require("../models/ProfileSetting");
 const { default: mongoose } = require("mongoose");
 const sendEmail = require("../utils/email");
+const DevelperSettings = require("../models/DevelperSettings");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
@@ -606,12 +607,10 @@ exports.resetPassword = async (req, res, next) => {
     });
 };
 
+// oAuthLogin
 exports.oAuthLogin = async (req, res, next) => {
   const { password, email } = req.body;
   try {
-    if (!captcha) {
-      return res.status(400).send({ captcha: "Captcha is required" });
-    }
     User.findOne({
       $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
     })
@@ -652,17 +651,15 @@ exports.oAuthLogin = async (req, res, next) => {
 
               const userData = await _getUser(user.id);
 
-              const payload = {
-                user: {
-                  username: userData.username,
-                  firstName: userData.firstName,
-                  lastName: userData.lastName,
-                  email: userData.email,
-                },
+              const userDetails = {
+                username: userData.username,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
               };
 
               jwt.sign(
-                payload,
+                userDetails,
                 process.env.jwtSecret,
                 { expiresIn: 3600 * 24 },
                 (err, serviceToken) => {
@@ -672,7 +669,7 @@ exports.oAuthLogin = async (req, res, next) => {
                   }
                   return res.json({
                     serviceToken,
-                    user: userData,
+                    user: userDetails,
                   });
                 }
               );
@@ -692,4 +689,23 @@ exports.oAuthLogin = async (req, res, next) => {
   } catch (error) {
     return res.status(500).send({ message: "Something went wrong" });
   }
+};
+
+exports.verifyClient = async (req, res, next) => {
+  const { clientSecret, secretKey } = req.body;
+  await DevelperSettings.findOne({
+    clientSecret: clientSecret,
+    secretKey: secretKey,
+  })
+    .then((client) => {
+      if (!client) return res.status(400).send("Unable to verify client");
+      if (!client.isApproved)
+        return res
+          .status(400)
+          .send("Application not approved please contact admin");
+      return res.json({
+        client,
+      });
+    })
+    .catch((err) => console.log(err));
 };

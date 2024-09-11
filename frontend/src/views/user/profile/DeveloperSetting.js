@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Alert,
-    Button,
-    FormControl,
-    Grid,
-    IconButton,
-    InputAdornment,
-    Snackbar,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Alert, Button, FormControl, Grid, IconButton, InputAdornment, Snackbar, Stack, TextField, Typography } from '@mui/material';
 import { gridSpacing } from 'store/constant';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -24,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AddOutlined, ContentCopyOutlined, DeleteOutlined } from '@mui/icons-material';
 import { copyToClipboard, generate16CharacterKey, generate32CharacterKey } from 'utils/helper/helper';
 
-const fqdnRegex = /^(?!https?:\/\/)(?!localhost)(?!\d+\.\d+\.\d+\.\d+)(?!www\.)(?!\[(?:[A-Fa-f0-9:]+)\])([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(:\d{1,5})?$/;
+const fqdnRegex =
+    /^(?!https?:\/\/)(?!localhost)(?!\d+\.\d+\.\d+\.\d+)(?!www\.)(?!\[(?:[A-Fa-f0-9:]+)\])([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(:\d{1,5})?$/;
 
 // Define the Yup validation schema
 const validationSchema = Yup.object().shape({
@@ -37,10 +27,7 @@ const validationSchema = Yup.object().shape({
             'Invalid domain: must not specify the scheme. (http:// or https://)',
             (value) => value && !/^https?:\/\//i.test(value) // Ensure it does not start with http:// or https://
         )
-        .matches(
-            fqdnRegex,
-            'Invalid domain: must be a top private domain'
-        )
+        .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
         .required('Domain cannot be empty.'),
     whitelistedEndpoint: Yup.array()
         .of(
@@ -50,10 +37,7 @@ const validationSchema = Yup.object().shape({
                     'Invalid domain: must not specify the scheme. (http:// or https://)',
                     (value) => value && !/^https?:\/\//i.test(value) // Ensure it does not start with http:// or https://
                 )
-                .matches(
-                    fqdnRegex,
-                    'Invalid domain: must be a top private domain'
-                )
+                .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
                 .required('Domain cannot be empty.')
         )
         .min(1, 'At least one valid domain is required.')
@@ -137,7 +121,7 @@ const DeveloperSetting = () => {
 
     const onSubmit = (data) => {
         console.log('data :>> ', data);
-        // dispatch(saveDeveloperSettings(data));
+        dispatch(saveDeveloperSettings(data));
     };
 
     // Enhanced handleAddField function
@@ -257,7 +241,8 @@ const DeveloperSetting = () => {
                                         <Grid item xs={12}>
                                             <Typography variant="h5">Authorized Redirect URL</Typography>
                                             <Typography variant="caption">
-                                                Please Add the URL where you want to Redirect After Successful Authentication.
+                                                Destination URL where Villages will send access token after the user completes successful
+                                                authentication.
                                             </Typography>
                                             <Controller
                                                 name="redirectUrl"
@@ -267,7 +252,7 @@ const DeveloperSetting = () => {
                                                         {...field}
                                                         fullWidth
                                                         label="Redirect Url"
-                                                        placeholder='example.com'
+                                                        placeholder="https://example.com"
                                                         InputLabelProps={{ shrink: true }}
                                                         error={Boolean(errors.redirectUrl)}
                                                         helperText={errors.redirectUrl?.message}
@@ -279,9 +264,11 @@ const DeveloperSetting = () => {
 
                                         <Grid item xs={12}>
                                             <Typography variant="h5">Whitelisted endpoint</Typography>
-                                            <Typography variant="caption" >For use with requests from the browser</Typography>
+                                            <Typography variant="caption">
+                                                Add URls to be whitelisted for authentication to achevied imporvement security.
+                                            </Typography>
                                             <FormControl fullWidth variant="outlined">
-                                                <Grid container spacing={2} sx={{ marginTop: "4px" }}>
+                                                <Grid container spacing={2} sx={{ marginTop: '4px' }}>
                                                     {fields.map((field, index) => (
                                                         <Grid item lg={10} md={12} xs={12} key={field.id}>
                                                             <Controller
@@ -293,7 +280,7 @@ const DeveloperSetting = () => {
                                                                         fullWidth
                                                                         label={`URL ${index + 1}`}
                                                                         variant="outlined"
-                                                                        placeholder='example.com'
+                                                                        placeholder="example.com"
                                                                         InputLabelProps={{ shrink: true }}
                                                                         error={Boolean(errors?.whitelistedEndpoint?.[index])}
                                                                         helperText={errors?.whitelistedEndpoint?.[index]?.message}
@@ -315,11 +302,20 @@ const DeveloperSetting = () => {
                                                             />
                                                         </Grid>
                                                     ))}
-                                                    <Grid item lg={2} md={12} style={{
-                                                        paddingTop: fields.length === 0 ? '4px' : '22px',
-                                                    }}>
+                                                    <Grid
+                                                        item
+                                                        lg={2}
+                                                        md={12}
+                                                        style={{
+                                                            paddingTop: fields.length === 0 ? '4px' : '22px'
+                                                        }}
+                                                    >
                                                         <AnimateButton>
-                                                            <Button variant="outlined" onClick={() => handleAddField()} startIcon={<AddOutlined />}>
+                                                            <Button
+                                                                variant="outlined"
+                                                                onClick={() => handleAddField()}
+                                                                startIcon={<AddOutlined />}
+                                                            >
                                                                 Add URL
                                                             </Button>
                                                         </AnimateButton>

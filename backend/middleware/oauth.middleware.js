@@ -1,5 +1,7 @@
+const { validateLoginInput, validateClient } = require("../validation");
+
 exports.validateClient = (req, res, next) => {
-  const { errors, isValid } = validateRegisterInput(req.body);
+  const { errors, isValid } = validateClient(req.body);
 
   if (!isValid) {
     return res.status(400).json(errors);
@@ -7,22 +9,11 @@ exports.validateClient = (req, res, next) => {
   next();
 };
 
-exports.validateLoginInput = (data) => {
-  let errors = {};
+exports.validateLoginInput = (req, res, next) => {
+  const { errors, isValid } = validateLoginInput(req.body);
 
-  data.email = !isEmpty(data.email) ? data.email : "";
-  data.password = !isEmpty(data.password) ? data.password : "";
-
-  if (validator.isEmpty(data.email)) {
-    errors.email = "Email field is required";
+  if (!isValid) {
+    return res.status(400).json(errors);
   }
-
-  if (validator.isEmpty(data.password)) {
-    errors.password = "Password field is required";
-  }
-
-  return {
-    errors,
-    isValid: isEmpty(errors),
-  };
+  next();
 };
