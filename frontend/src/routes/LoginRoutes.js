@@ -13,6 +13,9 @@ const AuthRegister = Loadable(lazy(() => import('views/authentication/authentica
 const AuthRegisterVerification = Loadable(lazy(() => import('views/authentication/authentication3/VerifyMail3')));
 const ResetPassword = Loadable(lazy(() => import('views/authentication/authentication3/ResetPassword3')));
 const AuthForgotPassword = Loadable(lazy(() => import('views/authentication/authentication3/ForgotPassword3')));
+const OAuthLogin = Loadable(lazy(() => import('views/authentication/oauth-login/Login4')));
+const Unauthorized = Loadable(lazy(() => import('views/authentication/unauthorized/Unauthorized')));
+const AccessDenied = Loadable(lazy(() => import('views/authentication/access-denied/AccessDenied')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
@@ -49,6 +52,18 @@ const LoginRoutes = {
     {
       path: '/auth/verify/:id/:token',
       element: <AuthRegisterVerification />
+    },
+    {
+      path: '/oauth/login',
+      element: <OAuthLogin />
+    },
+    {
+      path: '/unauthorized',
+      element: <Unauthorized />
+    },
+    {
+      path: '/access-denied',
+      element: <AccessDenied />
     }
   ]
 };

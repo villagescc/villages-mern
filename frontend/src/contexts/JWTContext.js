@@ -141,8 +141,20 @@ export const JWTProvider = ({ children }) => {
     return <Loader />;
   }
 
+  // ================= OAuth API Call ===========================
+  const oAuthLogin = async (email, password, clientSecret, secretKey) => {
+    const response = await axios.post('/oauth/login', { email, password, clientSecret, secretKey});
+    const { accessToken, user, refreshToken, redirectUrl } = response.data;
+    window.location = redirectUrl;
+  };
+
+  const verifyClient = async (clientSecret, secretKey, originUrl) => {
+    const response = await axios.post('/oauth/verifyClient', {clientSecret, secretKey, originUrl});
+    return response.data;
+  };
+
   return (
-    <JWTContext.Provider value={{ ...state, init, login, logout, register, resetPassword, forgotPassword, updateProfile, verify, resendVerificationMail }}>
+    <JWTContext.Provider value={{ ...state, init, login, logout, register, resetPassword, forgotPassword, updateProfile, verify, resendVerificationMail, oAuthLogin, verifyClient }}>
       {children}
     </JWTContext.Provider>
   );

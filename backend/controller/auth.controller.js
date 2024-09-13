@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const Mailjet = require("node-mailjet");
+const DeveloperSetting = require('../models/DevelperSettings')
 
 const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
@@ -609,81 +610,103 @@ exports.resetPassword = async (req, res, next) => {
 
 // oAuthLogin
 exports.oAuthLogin = async (req, res, next) => {
-  const { password, email } = req.body;
+  const { password, email, secretKey, clientSecret } = req.body;
   try {
-    User.findOne({
-      $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
-    })
-      .select("+password")
-      .then(async (user) => {
-        if (!user) {
+    DeveloperSetting.findOne({ clientSecret: clientSecret, secretKey: secretKey })
+      .then(async (devloperSecret) => {
+        if (!devloperSecret) {
           return res.status(400).send({
-            email: "This credential does not exist.",
+            email: "The clientSecretkey or secretKey supplied by your organization is invalid, please contact an administration of your organization.",
           });
         }
-        if (user.password) {
-          bcrypt
-            .compare(password, user.password)
-            .then(async (isMatch) => {
-              if (user?.isDeleted && user?.showDelete) {
-                return res.status(400).send({
-                  email: "This credential does not exist.",
-                });
-              }
-              if (!isMatch) {
-                return res.status(400).send({
-                  password: "Password is incorrect.",
-                });
-              }
 
-              if (!user.verified) {
-                return res.status(400).send({
-                  email: "Email is not verified",
-                  isEmailVerified: false,
-                });
-              }
-
-              if (!user.isActive) {
-                return res.status(400).send({
-                  email: "Account is not active",
-                });
-              }
-
-              const userData = await _getUser(user.id);
-
-              const userDetails = {
-                username: userData.username,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-              };
-
-              jwt.sign(
-                userDetails,
-                process.env.jwtSecret,
-                { expiresIn: 3600 * 24 },
-                (err, serviceToken) => {
-                  if (err) {
-                    console.log("jwt sign error", err);
-                    next(err);
+        User.findOne({
+          $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
+        })
+          .select("+password")
+          .then(async (user) => {
+            if (!user) {
+              return res.status(400).send({
+                email: "This credential does not exist.",
+              });
+            }
+            if (user.password) {
+              bcrypt
+                .compare(password, user.password)
+                .then(async (isMatch) => {
+                  if (user?.isDeleted && user?.showDelete) {
+                    return res.status(400).send({
+                      email: "This credential does not exist.",
+                    });
                   }
-                  return res.json({
-                    serviceToken,
-                    user: userDetails,
-                  });
-                }
-              );
-            })
-            .catch((err) => {
-              console.log("bcrypt compare error", err);
-              next(err);
-            });
-        } else {
-          return res.status(400).send({ message: "Credential dosen't exist" });
-        }
+                  if (!isMatch) {
+                    return res.status(400).send({
+                      password: "Password is incorrect.",
+                    });
+                  }
+
+                  if (!user.verified) {
+                    return res.status(400).send({
+                      email: "Email is not verified",
+                      isEmailVerified: false,
+                    });
+                  }
+
+                  if (!user.isActive) {
+                    return res.status(400).send({
+                      email: "Account is not active",
+                    });
+                  }
+
+                  const userData = await _getUser(user.id);
+
+                  const userDetails = {
+                    username: userData.username,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                  };
+
+                  const accessToken = jwt.sign(userDetails, process.env.jwtSecret, { expiresIn: '3m' });
+                  const refreshToken = jwt.sign(userDetails, process.env.jwtSecret, { expiresIn: '5m' });
+
+                  await User.findOneAndUpdate(
+                    { _id: user._id }, // Query: find a record with the same user ID
+                    {
+                      $set: {
+                        refreshToken: refreshToken
+                      },
+                    },
+                    { new: true })
+                    .then(() =>
+                      res.json({
+                        accessToken,
+                        user: userDetails,
+                        refreshToken,
+                        redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}&refresh_token=${refreshToken}`
+                      })
+                    )
+                    .catch((err) => {
+                      console.log("update user error", err);
+                      next(err);
+                    });
+                })
+                .catch((err) => {
+                  console.log("bcrypt compare error", err);
+                  next(err);
+                });
+            } else {
+              return res.status(400).send({ message: "Credential dosen't exist" });
+            }
+          })
+          .catch((err) => {
+            console.log("find user error", err);
+            next(err);
+          });
+
       })
       .catch((err) => {
-        console.log("find user error", err);
+        console.log("Credential dosen't exist", err);
         next(err);
       });
   } catch (error) {
@@ -692,20 +715,77 @@ exports.oAuthLogin = async (req, res, next) => {
 };
 
 exports.verifyClient = async (req, res, next) => {
-  const { clientSecret, secretKey } = req.body;
+  const { clientSecret, secretKey, originUrl } = req.body;
   await DevelperSettings.findOne({
     clientSecret: clientSecret,
     secretKey: secretKey,
+    whitelistedEndpoint: {
+      $in: [originUrl]
+    }
   })
     .then((client) => {
-      if (!client) return res.status(400).send("Unable to verify client");
+      if (!client) return res.status(400)
+        .send({
+          message: "Unable to verify client",
+          redirectUrl: `/unauthorized`
+        });
       if (!client.isApproved)
         return res
           .status(400)
-          .send("Application not approved please contact admin");
+          .send({
+            message: "Application not approved please contact admin",
+            redirectUrl: `/access-denied`
+          });
       return res.json({
         client,
       });
     })
     .catch((err) => console.log(err));
 };
+
+// Refresh token 
+exports.refreshToken = async (req, res, next) => {
+  const { refreshToken } = req.body;
+  try {
+    User.findOne({ refreshToken: refreshToken })
+      .then(async (user) => {
+        if (!user) return res.sendStatus(403);
+
+        const userData = await _getUser(user.id);
+        jwt.verify(refreshToken, process.env.jwtSecret, (err, user) => {
+          if (err) return res.sendStatus(403);
+
+          const userDetails = {
+            username: userData.username,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+          };
+
+          jwt.sign(
+            userDetails,
+            process.env.jwtSecret,
+            { expiresIn: '3m' },
+            (err, accessToken) => {
+              if (err) {
+                console.log("jwt sign error", err);
+                next(err);
+              }
+              return res.json({
+                accessToken,
+                user: userDetails,
+              });
+            }
+          );
+        })
+      })
+      .catch((err) => {
+        console.log("find user error", err);
+        next(err);
+      })
+  } catch (error) {
+    return res.status(500).send({ message: "Something went wrong" });
+  }
+};
+
+

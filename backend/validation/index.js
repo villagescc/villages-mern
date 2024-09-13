@@ -353,7 +353,7 @@ exports.validateDeveloperSettings = (data) => {
     ? data.whitelistedEndpoint
     : [];
   data.redirectUrl = !isEmpty(data.redirectUrl) ? data.redirectUrl : [];
-  const httpsRegex = /^https:\/\//;
+  const httpsRegex = /^https?:\/\//i;
   // Validate Application Name
   if (validator.isEmpty(data.applicationName)) {
     errors.applicationName = "Please Enter Application Name.";
@@ -372,7 +372,7 @@ exports.validateDeveloperSettings = (data) => {
   if (validator.isEmpty(data.redirectUrl)) {
     errors.redirectUrl = "Please Enter Redirect URL.";
   } else if (!httpsRegex.test(data.redirectUrl)) {
-    errors.redirectUrl = "Redirect URL must start with 'https://'.";
+    errors.redirectUrl = "Redirect URL must start with 'https:// or http://'.";
   }
   if (
     !Array.isArray(data.whitelistedEndpoint) ||
@@ -383,8 +383,8 @@ exports.validateDeveloperSettings = (data) => {
   } else {
     // Validate each whitelisted endpoint to ensure it starts with "https://"
     data.whitelistedEndpoint.forEach((endpoint, index) => {
-      if (!httpsRegex.test(endpoint)) {
-        errors.whitelistedEndpoint = `whitelistedEndpoint must start with 'https://'.`;
+      if (httpsRegex.test(endpoint)) {
+        errors.whitelistedEndpoint = `whitelistedEndpoint must do not start with 'https:// or http://'.`;
       }
     });
   }
@@ -414,3 +414,18 @@ exports.validateClient = (data) => {
     isValid: isEmpty(errors),
   };
 };
+
+exports.validateRefreshToken = (data) => {
+  let errors = {};
+
+  data.refreshToken = !isEmpty(data.refreshToken) ? data.refreshToken : ""
+
+  if (validator.isEmpty(data.refreshToken)) {
+    errors.refreshToken = "Refresh token is required";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+}

@@ -414,3 +414,10 @@ router.post(
   oauthMiddleware.validateClient,
   authController.verifyClient
 );
+
+// ######################## Refresh Token Router ######################
+router.post(
+  "/refresh-token",
+  oauthMiddleware.validateRefreshToken,
+  authController.refreshToken
+)

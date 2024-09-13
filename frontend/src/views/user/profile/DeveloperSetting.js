@@ -15,6 +15,7 @@ import { copyToClipboard, generate16CharacterKey, generate32CharacterKey } from 
 
 const fqdnRegex =
     /^(?!https?:\/\/)(?!localhost)(?!\d+\.\d+\.\d+\.\d+)(?!www\.)(?!\[(?:[A-Fa-f0-9:]+)\])([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(:\d{1,5})?$/;
+const portRegex = /:(\d+)/;
 
 // Define the Yup validation schema
 const validationSchema = Yup.object().shape({
@@ -24,10 +25,10 @@ const validationSchema = Yup.object().shape({
     redirectUrl: Yup.string()
         .test(
             'no-scheme',
-            'Invalid domain: must not specify the scheme. (http:// or https://)',
-            (value) => value && !/^https?:\/\//i.test(value) // Ensure it does not start with http:// or https://
+            'Invalid domain: must use either http or https as the scheme. (http:// or https://)',
+            (value) => value && /^https?:\/\//i.test(value) // Ensure it only start with http:// or https://
         )
-        .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
+        // .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
         .required('Domain cannot be empty.'),
     whitelistedEndpoint: Yup.array()
         .of(
@@ -36,6 +37,11 @@ const validationSchema = Yup.object().shape({
                     'no-scheme',
                     'Invalid domain: must not specify the scheme. (http:// or https://)',
                     (value) => value && !/^https?:\/\//i.test(value) // Ensure it does not start with http:// or https://
+                )
+                .test(
+                    'no-scheme',
+                    'Invalid domain: cannot contain a port',
+                    (value) => value && !portRegex.test(value) // Ensure it does not start with http:// or https://
                 )
                 .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
                 .required('Domain cannot be empty.')

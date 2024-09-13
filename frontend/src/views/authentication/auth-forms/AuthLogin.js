@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 
 // material-ui
@@ -25,6 +25,7 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useSearchParams } from 'react-router-dom';
 
 // project imports
 import useConfig from 'hooks/useConfig';
@@ -49,6 +50,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ loginProp, ...others }) => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams()
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const reCaptchaRef = useRef(null)
@@ -57,7 +60,7 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
 
-  const { login, resendVerificationMail } = useAuth();
+  const { login, resendVerificationMail, oAuthLogin, verifyClient } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -143,21 +146,30 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
         validationSchema={Yup.object().shape({
           email: Yup.string().max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required'),
-          captcha: Yup.string().required('Captcha is required').nullable()
+          captcha: !others.oAuth && Yup.string().required('Captcha is required').nullable()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting, setValues }) => {
           try {
-            await login(values.email, values.password, token, placeId, longitude, latitude, values.captcha).then(
-              () => { },
-              (err) => {
-                if (err.captcha) {
-                  reCaptchaRef.current.reset()
+            others.oAuth ?
+              await oAuthLogin(values.email, values.password, searchParams.get('clientSecret'), searchParams.get('secretKey')).then(
+                () => { },
+                (err) => {
+                  setStatus({ success: false });
+                  setErrors(err);
+                  setSubmitting(false);
                 }
-                setStatus({ success: false });
-                setErrors(err);
-                setSubmitting(false);
-              }
-            );
+              )
+              : await login(values.email, values.password, token, placeId, longitude, latitude, values.captcha).then(
+                () => { },
+                (err) => {
+                  if (err.captcha) {
+                    reCaptchaRef.current.reset()
+                  }
+                  setStatus({ success: false });
+                  setErrors(err);
+                  setSubmitting(false);
+                }
+              );
           } catch (err) {
             if (scriptedRef.current) {
               setStatus({ success: false });
@@ -220,37 +232,43 @@ const FirebaseLogin = ({ loginProp, ...others }) => {
                 </FormHelperText>
               )}
             </FormControl>
-            <Stack direction="column" alignItems="center" justifyContent="start" spacing={1}>
-              <ReCAPTCHA
-                sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
-                onChange={(captcha) => setValues({ ...values, captcha })}
-                name='captcha'
-                ref={reCaptchaRef}
-                onReset={() => setValues({ ...values, captcha: "" })}
-              />
-              {touched.captcha && errors.captcha && (
-                <FormHelperText error id="standard-weight-helper-text-password-login">
-                  {errors.captcha}
-                </FormHelperText>
-              )}
-            </Stack>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
-                }
-                label="Remember me"
-              />
-              <Typography
-                variant="subtitle1"
-                component={Link}
-                to={loginProp ? `/pages/forgot-password/forgot-password${loginProp}` : '/auth/forgot-password'}
-                color="secondary"
-                sx={{ textDecoration: 'none' }}
-              >
-                Forgot Password?
-              </Typography>
-            </Stack>
+            {
+              !others.oAuth && (
+                <>
+                  <Stack direction="column" alignItems="center" justifyContent="start" spacing={1}>
+                    <ReCAPTCHA
+                      sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                      onChange={(captcha) => setValues({ ...values, captcha })}
+                      name='captcha'
+                      ref={reCaptchaRef}
+                      onReset={() => setValues({ ...values, captcha: "" })}
+                    />
+                    {touched.captcha && errors.captcha && (
+                      <FormHelperText error id="standard-weight-helper-text-password-login">
+                        {errors.captcha}
+                      </FormHelperText>
+                    )}
+                  </Stack>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
+                      }
+                      label="Remember me"
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      component={Link}
+                      to={loginProp ? `/pages/forgot-password/forgot-password${loginProp}` : '/auth/forgot-password'}
+                      color="secondary"
+                      sx={{ textDecoration: 'none' }}
+                    >
+                      Forgot Password?
+                    </Typography>
+                  </Stack>
+                </>
+              )
+            }
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
