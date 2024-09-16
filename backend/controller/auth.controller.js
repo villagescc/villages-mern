@@ -665,6 +665,7 @@ exports.oAuthLogin = async (req, res, next) => {
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     email: userData.email,
+                    clientSecret: clientSecret
                   };
 
                   const accessToken = jwt.sign(userDetails, process.env.jwtSecret, { expiresIn: '3m' });
@@ -715,6 +716,7 @@ exports.oAuthLogin = async (req, res, next) => {
 };
 
 exports.verifyClient = async (req, res, next) => {
+  console.log("hlellel")
   const { clientSecret, secretKey, originUrl } = req.body;
   await DevelperSettings.findOne({
     clientSecret: clientSecret,
