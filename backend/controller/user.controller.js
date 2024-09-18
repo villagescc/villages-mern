@@ -507,40 +507,40 @@ exports.search = async (req, res, next) => {
           ...query,
           ...(network.includes("TrustsMe") && network.includes("TrustedByMe")
             ? {
-                $and: [
-                  {
-                    _id: {
-                      $in: usersYouTrustAndTheirTrustees.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
+              $and: [
+                {
+                  _id: {
+                    $in: usersYouTrustAndTheirTrustees.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
                   },
-                  {
-                    _id: {
-                      $in: usersInTrustNetworkAndTrustors.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
+                },
+                {
+                  _id: {
+                    $in: usersInTrustNetworkAndTrustors.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
                   },
-                ],
-              }
+                },
+              ],
+            }
             : network.includes("TrustedByMe")
-            ? {
+              ? {
                 _id: {
                   $in: usersInTrustNetworkAndTrustors.map(
                     (e) => new mongoose.Types.ObjectId(e)
                   ),
                 },
               }
-            : network.includes("TrustsMe")
-            ? {
-                _id: {
-                  $in: usersYouTrustAndTheirTrustees.map(
-                    (e) => new mongoose.Types.ObjectId(e)
-                  ),
-                },
-              }
-            : {}),
+              : network.includes("TrustsMe")
+                ? {
+                  _id: {
+                    $in: usersYouTrustAndTheirTrustees.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
+                  },
+                }
+                : {}),
         };
         users = await User.aggregate([
           {
@@ -1029,42 +1029,42 @@ exports.search = async (req, res, next) => {
           {
             $match: {
               ...(network.includes("TrustsMe") &&
-              network.includes("TrustedByMe")
+                network.includes("TrustedByMe")
                 ? {
-                    $and: [
-                      {
-                        _id: {
-                          $in: usersYouTrustAndTheirTrustees.map(
-                            (e) => new mongoose.Types.ObjectId(e)
-                          ),
-                        },
+                  $and: [
+                    {
+                      _id: {
+                        $in: usersYouTrustAndTheirTrustees.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
                       },
-                      {
-                        _id: {
-                          $in: usersInTrustNetworkAndTrustors.map(
-                            (e) => new mongoose.Types.ObjectId(e)
-                          ),
-                        },
+                    },
+                    {
+                      _id: {
+                        $in: usersInTrustNetworkAndTrustors.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
                       },
-                    ],
-                  }
+                    },
+                  ],
+                }
                 : network.includes("TrustedByMe")
-                ? {
+                  ? {
                     _id: {
                       $in: usersInTrustNetworkAndTrustors.map(
                         (e) => new mongoose.Types.ObjectId(e)
                       ),
                     },
                   }
-                : network.includes("TrustsMe")
-                ? {
-                    _id: {
-                      $in: usersYouTrustAndTheirTrustees.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
-                  }
-                : {}),
+                  : network.includes("TrustsMe")
+                    ? {
+                      _id: {
+                        $in: usersYouTrustAndTheirTrustees.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
+                      },
+                    }
+                    : {}),
               verified: true,
             },
           },
@@ -1917,3 +1917,30 @@ exports.saveDeveloperSetting = async (req, res, next) => {
     next(err);
   }
 };
+
+
+exports.getProtectedUser = async (req, res, next) => {
+  const token = req.header('Authorization');
+  try {
+    if (!client) return res.status(401).send("Unauthorized");
+
+    if (!token) {
+      return res.status(401).json({ msg: "No token, authorization denied" });
+    } else {
+      const userToken = token.replace("Bearer ", "")
+      const decoded = jwt.verify(userToken, process.env.jwtSecret);
+
+      const getUser = await User.find({ username: decoded?.username })
+
+      if (getUser) {
+        return res.json({
+          getUser,
+        });
+      } else {
+        return res.status(400).send({ message: "Something went wrong" });
+      }
+    }
+  } catch (error) {
+    return res.status(500).send({ message: "Something went wrong" });
+  }
+}

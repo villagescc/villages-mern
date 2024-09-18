@@ -421,3 +421,24 @@ router.post(
   oauthMiddleware.validateRefreshToken,
   authController.refreshToken
 )
+
+// ##################### Get Protected User Router ####################
+router.get(
+  "/protected-user",
+  oauthMiddleware.Oauth,
+  userController.getProtectedUser
+)
+
+// ##################### Core Data Access ####################
+
+// =====================  User Profile Retrieval ==================
+router.get("/oauth/user-profile-retrieval", oauthMiddleware.Oauth, userController.getById);
+
+// ===================== Balance Check ==================
+router.get("/oauth/check-balance", oauthMiddleware.Oauth, authController.getUser);
+
+// ===================== Credit Limit ==================
+router.post("oauth/credit-limit", oauthMiddleware.Oauth, endorsementController.search);
+
+// ===================== Transaction History ==================
+router.get("/oauth/payment/transaction-history", oauthMiddleware.Oauth, paymentController.getTransaction);

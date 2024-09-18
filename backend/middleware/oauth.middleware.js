@@ -57,7 +57,8 @@ exports.Oauth = async (req, res, next) => {
 
   //verify token
   try {
-    const decoded = jwt.verify(token, process.env.jwtSecret);
+    const verifyToken = token.replace("Bearer ", "")
+    const decoded = jwt.verify(verifyToken, process.env.jwtSecret);
 
     req.user = decoded;
     await Log.create({

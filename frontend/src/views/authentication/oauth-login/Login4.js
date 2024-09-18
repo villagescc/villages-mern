@@ -27,7 +27,7 @@ const Login = () => {
 
     useEffect(() => {
         const checkedVerifyClient = async () => {
-            await verifyClient(searchParams.get('clientSecret'), searchParams.get('secretKey'), searchParams.get('origin_url')).then(
+            await verifyClient(searchParams.get('clientSecret'), searchParams.get('secretKey')).then(
                 (data) => {
                     setApplicationName(data.client.applicationName)
                 },

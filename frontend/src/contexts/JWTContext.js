@@ -148,8 +148,8 @@ export const JWTProvider = ({ children }) => {
     window.location = redirectUrl;
   };
 
-  const verifyClient = async (clientSecret, secretKey, originUrl) => {
-    const response = await axios.post('/oauth/verifyClient', {clientSecret, secretKey, originUrl});
+  const verifyClient = async (clientSecret, secretKey) => {
+    const response = await axios.post('/oauth/verifyClient', {clientSecret, secretKey});
     return response.data;
   };
 

@@ -726,11 +726,7 @@ exports.verifyClient = async (req, res, next) => {
     }
   })
     .then((client) => {
-      if (!client) return res.status(400)
-        .send({
-          message: "Unable to verify client",
-          redirectUrl: `/unauthorized`
-        });
+      if (!client) return res.status(400).send("Unable to verify client");
       if (!client.isApproved)
         return res
           .status(400)
