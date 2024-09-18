@@ -398,15 +398,10 @@ exports.validateDeveloperSettings = (data) => {
 exports.validateClient = (data) => {
   let errors = {};
 
-  data.clientSecret = !isEmpty(data.clientSecret) ? data.clientSecret : "";
-  data.secretKey = !isEmpty(data.secretKey) ? data.secretKey : "";
+  data.clientId = !isEmpty(data.clientId) ? data.clientId : "";
 
-  if (validator.isEmpty(data.clientSecret)) {
-    errors.clientSecret = "Client Secret is required";
-  }
-
-  if (validator.isEmpty(data.secretKey)) {
-    errors.secretKey = "SecretKey field is required";
+  if (validator.isEmpty(data.clientId)) {
+    errors.clientId = "Client Id is required";
   }
 
   return {
@@ -418,7 +413,7 @@ exports.validateClient = (data) => {
 exports.validateRefreshToken = (data) => {
   let errors = {};
 
-  data.refreshToken = !isEmpty(data.refreshToken) ? data.refreshToken : ""
+  data.refreshToken = !isEmpty(data.refreshToken) ? data.refreshToken : "";
 
   if (validator.isEmpty(data.refreshToken)) {
     errors.refreshToken = "Refresh token is required";
@@ -428,4 +423,4 @@ exports.validateRefreshToken = (data) => {
     errors,
     isValid: isEmpty(errors),
   };
-}
+};

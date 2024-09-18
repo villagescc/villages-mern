@@ -24,8 +24,8 @@ const AccessDenied = () => {
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
     const redirectYourApplication = () => {
-        navigate(-2);
-    }
+        navigate(-2); // Return user to there origin URL
+    };
 
     return (
         <AuthWrapper1>
@@ -33,24 +33,25 @@ const AccessDenied = () => {
                 <Grid item xs={12}>
                     <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
                         <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
-                            <AuthCardWrapper style={{ maxWidth: "100%" }}>
-                                <Grid container spacing={2}>
+                            <AuthCardWrapper style={{ maxWidth: '100%' }}>
+                                <Grid container spacing={2} justifyContent={'center'}>
                                     <Grid item sx={{ mb: 3 }}>
                                         <Link to="/">
                                             <Logo />
                                         </Link>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <IconAlertTriangle color='red' size={42} />
+                                    <Grid item xs={12} display={'flex'} justifyContent={'center'}>
+                                        <IconAlertTriangle color="red" size={100} />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Grid container>
+                                        <Grid container justifyContent={'center'}>
                                             <Grid item>
                                                 <Stack spacing={1}>
                                                     <Typography
                                                         color={theme.palette.secondary.main}
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
+                                                        textAlign={'center'}
                                                     >
                                                         Access Denied
                                                     </Typography>
@@ -59,7 +60,7 @@ const AccessDenied = () => {
                                                         fontSize="16px"
                                                         textAlign={matchDownSM ? 'center' : 'inherit'}
                                                     >
-                                                        Your Application not approved so you do not have permission to view this page please contact admin.
+                                                        Application not approved yet!
                                                     </Typography>
                                                 </Stack>
                                             </Grid>
@@ -68,7 +69,13 @@ const AccessDenied = () => {
                                     <Grid item sx={{ mb: 3 }}>
                                         <Box sx={{ mt: 2 }}>
                                             <AnimateButton>
-                                                <Button size="large" type="submit" variant="contained" color="secondary" onClick={redirectYourApplication}>
+                                                <Button
+                                                    size="large"
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={redirectYourApplication}
+                                                >
                                                     Go Back
                                                 </Button>
                                             </AnimateButton>

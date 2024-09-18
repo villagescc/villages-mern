@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const Mailjet = require("node-mailjet");
-const DeveloperSetting = require('../models/DevelperSettings')
+const DeveloperSetting = require("../models/DevelperSettings");
 
 const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
@@ -610,18 +610,24 @@ exports.resetPassword = async (req, res, next) => {
 
 // oAuthLogin
 exports.oAuthLogin = async (req, res, next) => {
-  const { password, email, secretKey, clientSecret } = req.body;
+  const { password, email, clientId } = req.body;
   try {
-    DeveloperSetting.findOne({ clientSecret: clientSecret, secretKey: secretKey })
+    DeveloperSetting.findOne({
+      clientSecret: clientId,
+    })
       .then(async (devloperSecret) => {
         if (!devloperSecret) {
           return res.status(400).send({
-            email: "The clientSecretkey or secretKey supplied by your organization is invalid, please contact an administration of your organization.",
+            email:
+              "ClientId is invalid, please contact an administration of your organization.",
           });
         }
 
         User.findOne({
-          $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
+          $or: [
+            { email: email.toLowerCase() },
+            { username: email.toLowerCase() },
+          ],
         })
           .select("+password")
           .then(async (user) => {
@@ -665,46 +671,59 @@ exports.oAuthLogin = async (req, res, next) => {
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     email: userData.email,
-                    clientSecret: clientSecret
+                    id: userData._id,
                   };
 
-                  const accessToken = jwt.sign(userDetails, process.env.jwtSecret, { expiresIn: '3m' });
-                  const refreshToken = jwt.sign(userDetails, process.env.jwtSecret, { expiresIn: '5m' });
+                  const accessToken = jwt.sign(
+                    { user: userDetails, clientId },
+                    process.env.oauthSecret,
+                    { expiresIn: "10m" }
+                  );
 
-                  await User.findOneAndUpdate(
-                    { _id: user._id }, // Query: find a record with the same user ID
-                    {
-                      $set: {
-                        refreshToken: refreshToken
-                      },
-                    },
-                    { new: true })
-                    .then(() =>
-                      res.json({
-                        accessToken,
-                        user: userDetails,
-                        refreshToken,
-                        redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}&refresh_token=${refreshToken}`
-                      })
-                    )
-                    .catch((err) => {
-                      console.log("update user error", err);
-                      next(err);
-                    });
+                  res.json({
+                    user: userDetails,
+                    redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}`,
+                  });
+                  // const refreshToken = jwt.sign(process.env.jwtSecret, {
+                  //   expiresIn: "5m",
+                  // });
+
+                  // await User.findOneAndUpdate(
+                  //   { _id: user._id }, // Query: find a record with the same user ID
+                  //   {
+                  //     $set: {
+                  //       refreshToken: refreshToken,
+                  //     },
+                  //   },
+                  //   { new: true }
+                  // )
+                  //   .then(() =>
+                  //     res.json({
+                  //       accessToken,
+                  //       user: userDetails,
+                  //       refreshToken,
+                  //       redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}&refresh_token=${refreshToken}`,
+                  //     })
+                  //   )
+                  //   .catch((err) => {
+                  //     console.log("update user error", err);
+                  //     next(err);
+                  //   });
                 })
                 .catch((err) => {
                   console.log("bcrypt compare error", err);
                   next(err);
                 });
             } else {
-              return res.status(400).send({ message: "Credential dosen't exist" });
+              return res
+                .status(400)
+                .send({ message: "Credential dosen't exist" });
             }
           })
           .catch((err) => {
             console.log("find user error", err);
             next(err);
           });
-
       })
       .catch((err) => {
         console.log("Credential dosen't exist", err);
@@ -716,24 +735,21 @@ exports.oAuthLogin = async (req, res, next) => {
 };
 
 exports.verifyClient = async (req, res, next) => {
-  console.log("hlellel")
-  const { clientSecret, secretKey, originUrl } = req.body;
+  const { clientId } = req.body;
   await DevelperSettings.findOne({
-    clientSecret: clientSecret,
-    secretKey: secretKey,
-    whitelistedEndpoint: {
-      $in: [originUrl]
-    }
+    clientSecret: clientId,
   })
     .then((client) => {
-      if (!client) return res.status(400).send("Unable to verify client");
+      if (!client)
+        return res.status(400).send({
+          message: "Unable to verify client",
+          redirectUrl: `/unauthorized`,
+        });
       if (!client.isApproved)
-        return res
-          .status(400)
-          .send({
-            message: "Application not approved please contact admin",
-            redirectUrl: `/access-denied`
-          });
+        return res.status(400).send({
+          message: "Application not approved yet please contact admin",
+          redirectUrl: `/access-denied`,
+        });
       return res.json({
         client,
       });
@@ -741,7 +757,7 @@ exports.verifyClient = async (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-// Refresh token 
+// Refresh token
 exports.refreshToken = async (req, res, next) => {
   const { refreshToken } = req.body;
   try {
@@ -763,7 +779,7 @@ exports.refreshToken = async (req, res, next) => {
           jwt.sign(
             userDetails,
             process.env.jwtSecret,
-            { expiresIn: '3m' },
+            { expiresIn: "3m" },
             (err, accessToken) => {
               if (err) {
                 console.log("jwt sign error", err);
@@ -775,15 +791,13 @@ exports.refreshToken = async (req, res, next) => {
               });
             }
           );
-        })
+        });
       })
       .catch((err) => {
         console.log("find user error", err);
         next(err);
-      })
+      });
   } catch (error) {
     return res.status(500).send({ message: "Something went wrong" });
   }
 };
-
-

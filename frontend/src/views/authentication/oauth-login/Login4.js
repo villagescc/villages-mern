@@ -27,19 +27,20 @@ const Login = () => {
 
     useEffect(() => {
         const checkedVerifyClient = async () => {
-            await verifyClient(searchParams.get('clientSecret'), searchParams.get('secretKey')).then(
+            await verifyClient(searchParams.get('clientId')).then(
                 (data) => {
-                    setApplicationName(data.client.applicationName)
+                    setApplicationName(data.client.applicationName);
                 },
                 (err) => {
+                    console.log(err);
                     if (err.redirectUrl) {
-                        navigate(err.redirectUrl)
+                        navigate(err.redirectUrl);
                     }
                 }
-            )
-        }
+            );
+        };
         checkedVerifyClient();
-    }, [searchParams])
+    }, [searchParams]);
 
     return (
         <AuthWrapper1>
@@ -69,7 +70,10 @@ const Login = () => {
                                                         textAlign={matchDownSM ? 'center' : 'center'}
                                                         maxWidth={matchDownSM ? '100%' : '80%'}
                                                     >
-                                                        Enter your credentials to connect Villages.io with <Typography component={'strong'} color={'secondary'} fontWeight={700}>{applicationName}</Typography>
+                                                        Enter your credentials to connect Villages.io with{' '}
+                                                        <Typography component={'strong'} color={'secondary'} fontWeight={700}>
+                                                            {applicationName}
+                                                        </Typography>
                                                     </Typography>
                                                 </Stack>
                                             </Grid>

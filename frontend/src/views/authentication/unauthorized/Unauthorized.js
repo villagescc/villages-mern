@@ -22,7 +22,7 @@ const Unauthorized = () => {
 
     const redirectYourApplication = () => {
         navigate(-2);
-    }
+    };
 
     return (
         <AuthWrapper1>
@@ -30,17 +30,17 @@ const Unauthorized = () => {
                 <Grid item xs={12}>
                     <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
                         <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
-                            <AuthCardWrapper style={{ maxWidth: "100%" }}>
-                                <Grid container spacing={2}>
-                                    <Grid item sx={{ mb: 3 }}>
+                            <AuthCardWrapper style={{ maxWidth: '100%' }}>
+                                <Grid container spacing={2} justifyContent={'center'}>
+                                    <Grid item sx={{ mb: 3 }} justifyContent={'center'}>
                                         <Link to="/">
                                             <Logo />
                                         </Link>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Grid container>
+                                        <Grid container justifyContent={'center'}>
                                             <Grid item>
-                                                <Stack spacing={1}>
+                                                <Stack spacing={1} alignItems={'center'}>
                                                     <Typography
                                                         color={theme.palette.secondary.main}
                                                         gutterBottom
@@ -51,9 +51,10 @@ const Unauthorized = () => {
                                                     <Typography
                                                         variant="caption"
                                                         fontSize="16px"
-                                                        textAlign={matchDownSM ? 'center' : 'inherit'}
+                                                        textAlign={matchDownSM ? 'center' : 'center'}
                                                     >
-                                                        We apologize for the inconvenience, but you are not authorized to visit this page. If you believe this is an error, please contact your account manager.
+                                                        We apologize for the inconvenience, but you are not authorized to visit this page.
+                                                        If you believe this is an error, please contact your account manager.
                                                     </Typography>
                                                 </Stack>
                                             </Grid>
@@ -62,7 +63,13 @@ const Unauthorized = () => {
                                     <Grid item sx={{ mb: 3 }}>
                                         <Box sx={{ mt: 2 }}>
                                             <AnimateButton>
-                                                <Button size="large" type="submit" variant="contained" color="secondary" onClick={redirectYourApplication}>
+                                                <Button
+                                                    size="large"
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={redirectYourApplication}
+                                                >
                                                     Go Back
                                                 </Button>
                                             </AnimateButton>
