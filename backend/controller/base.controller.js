@@ -42,3 +42,26 @@ exports.getRecipients = async (req, res, next) => {
     next(err);
   }
 };
+
+// ================= get Oauth Recipients ====================
+exports.getOauthRecipients = async (req, res, next) => {
+  try {
+    const users = await User.find(
+      {},
+      "id username"
+    ).populate("profile", "name avatar");
+
+    const flattenedUsers = users.map((data) => {
+      return ({
+        _id: data._id,
+        username: data.username,
+        name: data.profile ? data.profile.name : "",     // Flattened name
+        avatar: (data.profile && data.profile.avatar !== "")  ? `https://villages.io/upload/avatar/${data.profile.avatar}` : ""   // Flattened avatar
+      })
+    });
+
+    res.send(flattenedUsers);
+  } catch (err) {
+    next(err);
+  }
+};

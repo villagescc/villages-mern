@@ -62,36 +62,36 @@ exports.save = async (req, res, next) => {
       }
     }
 
-    axios
-      .post(
-        "https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast",
-        {
-          receiverFcm: recipientUser.deviceToken,
-          message: `${notifyText}\nTestimonial: ${text}`,
-          type: "trust",
-          senderid: "",
-          sender: "",
-          image: "",
-        }
-      )
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // axios
+    //   .post(
+    //     "https://us-central1-villages-io-cbb64.cloudfunctions.net/broadcast",
+    //     {
+    //       receiverFcm: recipientUser.deviceToken,
+    //       message: `${notifyText}\nTestimonial: ${text}`,
+    //       type: "trust",
+    //       senderid: "",
+    //       sender: "",
+    //       image: "",
+    //     }
+    //   )
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
 
-    sendEmail(endorserUser.email, recipientUser.email, "Notification from Villages.io", `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
-    <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
-    <p>${notifyText}</p>
-    <p>Testimonial: ${text}</p>
-    <a href=https://villages.io/trust> Click here</a>
-    <br>`).then(function (response) {
-      console.log(response);
-    })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // sendEmail(endorserUser.email, recipientUser.email, "Notification from Villages.io", `<h1>You have been trusted by ${endorserUser.firstName} ${endorserUser.lastName}(${endorserUser.email})</h1>
+    // <h2>Hello ${recipientUser.firstName} ${recipientUser.lastName}</h2>
+    // <p>${notifyText}</p>
+    // <p>Testimonial: ${text}</p>
+    // <a href=https://villages.io/trust> Click here</a>
+    // <br>`).then(function (response) {
+    //   console.log(response);
+    // })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
 
     // axios
     //   .post(
@@ -114,14 +114,14 @@ exports.save = async (req, res, next) => {
     //     console.log(error);
     //   });
 
-    const notification = await createNotification(
-      "TRUST",
-      req.user._id,
-      recipient,
-      weight,
-      notifyText
-    );
-    global.io.emit("newNotification", notification);
+    // const notification = await createNotification(
+    //   "TRUST",
+    //   req.user._id,
+    //   recipient,
+    //   weight,
+    //   notifyText
+    // );
+    // global.io.emit("newNotification", notification);
     res.send(endorsement);
   } catch (err) {
     next(err);
@@ -484,3 +484,13 @@ exports.getEndrosmentbyId = async (req, res, next) => {
     next(err);
   }
 }
+
+// ========================= Oauth Initiate Trust Line ======================
+exports.oauthSave = async (req, res, next) => {
+  try {
+    req.user = req.user.user;
+    await this.save(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+};

@@ -260,27 +260,27 @@ exports.pay = async (req, res, next) => {
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
 
-        const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
-        const notification = await createNotification(
-          "PAYMENT",
-          req.user._id,
-          recipient,
-          amount,
-          notifyText
-        );
-        global.io.emit("newNotification", notification);
-        const receiveUser = await User.findById(recipient);
+        // const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
+        // const notification = await createNotification(
+        //   "PAYMENT",
+        //   req.user._id,
+        //   recipient,
+        //   amount,
+        //   notifyText
+        // );
+        // global.io.emit("newNotification", notification);
+        // const receiveUser = await User.findById(recipient);
 
-        sendEmail(req.user.email, receiveUser?.email, "Notification from Villages.io", `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
-        <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
-        <p>${notifyText}</p>
-        <a href=https://villages.io/pay> Click here</a>
-        <br>`).then(function (response) {
-          // console.log(response);
-        })
-          .catch(function (error) {
-            console.log(error);
-          });
+        // sendEmail(req.user.email, receiveUser?.email, "Notification from Villages.io", `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+        // <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
+        // <p>${notifyText}</p>
+        // <a href=https://villages.io/pay> Click here</a>
+        // <br>`).then(function (response) {
+        //   // console.log(response);
+        // })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
 
         // axios
         //   .post(
@@ -638,6 +638,46 @@ exports.getTransaction = async (req, res, next) => {
       success: true,
       transaction: { ...transaction.toObject(), paylogs },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// =================== Check Oauth Trust Limit =====================
+exports.getOauthMaxLimit = async (req, res, next) => {
+  const { recipient } = req.params;
+  const sender = req.user.user._id
+  const recipientUser = recipient ? recipient : req.body.recipient
+
+  try {
+    const result = await this._getMaxFlow(sender, recipientUser);
+    if (result.success) {
+      return recipient ? res.send({ trustLimit: result.maxLimit }) : { trustLimit: result.maxLimit };
+    } else {
+      return res.status(400).send(result.errors);
+    }
+  } catch (error) {
+    console.log("get max limit error", error);
+    next(error);
+  }
+};
+
+// ================== Oauth Initiate Payment =======================
+exports.oauthPay = async (req, res, next) => {
+  const { amount } = req.body;
+  try {
+    const paymentMaxLimitResult = await this.getOauthMaxLimit(req, res, next);
+
+    if (amount > paymentMaxLimitResult.trustLimit) {
+      res.status(400).send({
+        message: `You can send only up to ${paymentMaxLimitResult.trustLimit}VH`
+      });
+    }
+
+    req.user = req.user.user
+
+    await this.pay(req, res, next)
+
   } catch (error) {
     next(error);
   }

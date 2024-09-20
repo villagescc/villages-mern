@@ -801,3 +801,16 @@ exports.refreshToken = async (req, res, next) => {
     return res.status(500).send({ message: "Something went wrong" });
   }
 };
+
+// =================== Get User Balance ==================
+exports.getOauthUserBalance = async (req, res, next) => {
+  try {
+    const userAccount = await Account.findOne({ user: req.user.user._id });
+    res.send({
+      balance: userAccount.balance
+    });
+  } catch (err) {
+    console.log("find user error", err);
+    next(err);
+  }
+}

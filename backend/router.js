@@ -418,7 +418,7 @@ router.post(
 // ######################## Refresh Token Router ######################
 router.post(
   "/refresh-token",
-  oauthMiddleware.validateRefreshToken,
+  // oauthMiddleware.validateRefreshToken,
   authController.refreshToken
 );
 
@@ -430,7 +430,6 @@ router.get(
 );
 
 // ##################### Core Data Access ####################
-
 // =====================  User Profile Retrieval ==================
 router.get(
   "/oauth/getUserProfle",
@@ -440,21 +439,44 @@ router.get(
 
 // ===================== Balance Check ==================
 router.get(
-  "/oauth/check-balance",
+  "/oauth/getUserBalance",
   oauthMiddleware.Oauth,
-  authController.getUser
+  authController.getOauthUserBalance
 );
 
 // ===================== Credit Limit ==================
-router.post(
-  "oauth/credit-limit",
+router.get(
+  "/oauth/getAllUser",
   oauthMiddleware.Oauth,
-  endorsementController.search
-);
+  baseController.getOauthRecipients
+)
+
+router.get(
+  "/oauth/checkedTrustLimit/:recipient",
+  oauthMiddleware.Oauth,
+  paymentController.getOauthMaxLimit
+)
 
 // ===================== Transaction History ==================
-router.get(
-  "/oauth/payment/transaction-history",
+router.post(
+  "/oauth/transaction-history",
   oauthMiddleware.Oauth,
-  paymentController.getTransaction
+  adminController.getPaymentHistory
+);
+
+// #####################  Transaction Management ####################
+// ===================== Oauth Initiate Transactions =================
+router.post(
+  "/oauth/initiateTransaction",
+  oauthMiddleware.Oauth,
+  paymentMiddleware.pay,
+  paymentController.oauthPay
+);
+
+// ===================== Oauth  Initiate Trust Line =================
+router.post(
+  "/oauth/initiateTrustLine",
+  oauthMiddleware.Oauth,
+  endorsementMiddleware.save,
+  endorsementController.oauthSave
 );

@@ -62,11 +62,11 @@ exports.Oauth = async (req, res, next) => {
   //verify token
   try {
     const verifyToken = token.replace("Bearer ", "");
-    const decoded = jwt.verify(verifyToken, process.env.oauthSecret);
+    const decoded = jwt.verify(verifyToken, process.env.jwtSecret);
 
     req.user = decoded;
     await Log.create({
-      user: req.user._id,
+      user: req.user.user._id,
       log: req.route.path,
     });
     const clientSecret = decoded.clientId; // Extract clientSecret from the decoded token
