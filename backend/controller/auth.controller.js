@@ -671,12 +671,12 @@ exports.oAuthLogin = async (req, res, next) => {
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     email: userData.email,
-                    id: userData._id,
+                    _id: userData._id,
                   };
 
                   const accessToken = jwt.sign(
                     { user: userDetails, clientId },
-                    process.env.oauthSecret,
+                    process.env.jwtSecret,
                     { expiresIn: "10m" }
                   );
 
@@ -755,51 +755,6 @@ exports.verifyClient = async (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
-};
-
-// Refresh token
-exports.refreshToken = async (req, res, next) => {
-  const { refreshToken } = req.body;
-  try {
-    User.findOne({ refreshToken: refreshToken })
-      .then(async (user) => {
-        if (!user) return res.sendStatus(403);
-
-        const userData = await _getUser(user.id);
-        jwt.verify(refreshToken, process.env.jwtSecret, (err, user) => {
-          if (err) return res.sendStatus(403);
-
-          const userDetails = {
-            username: userData.username,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            email: userData.email,
-          };
-
-          jwt.sign(
-            userDetails,
-            process.env.jwtSecret,
-            { expiresIn: "3m" },
-            (err, accessToken) => {
-              if (err) {
-                console.log("jwt sign error", err);
-                next(err);
-              }
-              return res.json({
-                accessToken,
-                user: userDetails,
-              });
-            }
-          );
-        });
-      })
-      .catch((err) => {
-        console.log("find user error", err);
-        next(err);
-      });
-  } catch (error) {
-    return res.status(500).send({ message: "Something went wrong" });
-  }
 };
 
 // =================== Get User Balance ==================

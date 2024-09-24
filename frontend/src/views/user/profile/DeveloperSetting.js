@@ -21,14 +21,12 @@ const portRegex = /:(\d+)/;
 const validationSchema = Yup.object().shape({
     applicationName: Yup.string().required('Application name must not be empty'),
     clientSecret: Yup.string().required('Client Secret Key must not be empty'),
-    secretKey: Yup.string().required('Secret Key must not be empty'),
     redirectUrl: Yup.string()
         .test(
             'no-scheme',
             'Invalid domain: must use either http or https as the scheme. (http:// or https://)',
             (value) => value && /^https?:\/\//i.test(value) // Ensure it only start with http:// or https://
         )
-        // .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
         .required('Domain cannot be empty.'),
     whitelistedEndpoint: Yup.array()
         .of(
@@ -55,7 +53,6 @@ const DeveloperSetting = () => {
     const { developerSettings: settings, error } = useSelector((state) => state.user);
 
     const ClientSecret = 'clientSecret';
-    const SecretKey = 'secretKey';
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -72,7 +69,6 @@ const DeveloperSetting = () => {
         defaultValues: {
             applicationName: '',
             clientSecret: '',
-            secretKey: '',
             whitelistedEndpoint: [''],
             redirectUrl: ''
         }
@@ -91,7 +87,6 @@ const DeveloperSetting = () => {
         if (settings) {
             setValue('applicationName', settings?.applicationName || '');
             setValue('clientSecret', settings?.clientSecret || '');
-            setValue('secretKey', settings?.secretKey || '');
             setValue('whitelistedEndpoint', settings?.whitelistedEndpoint?.length > 0 ? settings?.whitelistedEndpoint : ['']);
             setValue('redirectUrl', settings?.redirectUrl || '');
         }
@@ -105,14 +100,11 @@ const DeveloperSetting = () => {
 
     const handleGenerateKeys = () => {
         setValue('clientSecret', generate16CharacterKey());
-        setValue('secretKey', generate32CharacterKey());
     };
 
     const handleCopy = (keyType) => {
         if (keyType === ClientSecret) {
             copyToClipboard(getValues('clientSecret'));
-        } else if (keyType === SecretKey) {
-            copyToClipboard(getValues('secretKey'));
         }
         handleOpenSnackbar();
     };
@@ -202,42 +194,12 @@ const DeveloperSetting = () => {
                                                 )}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} lg={5} md={6}>
-                                            <Controller
-                                                name="secretKey"
-                                                control={control}
-                                                render={({ field }) => (
-                                                    <TextField
-                                                        {...field}
-                                                        fullWidth
-                                                        label="Secret Key"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        error={Boolean(errors.secretKey)}
-                                                        helperText={errors.secretKey?.message}
-                                                        disabled
-                                                        InputProps={{
-                                                            endAdornment: (
-                                                                <InputAdornment position="end">
-                                                                    <IconButton
-                                                                        aria-label="copy secret key"
-                                                                        onClick={() => handleCopy('secretKey')}
-                                                                        disabled={!getValues('secretKey')}
-                                                                    >
-                                                                        <ContentCopyOutlined />
-                                                                    </IconButton>
-                                                                </InputAdornment>
-                                                            )
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
                                         <Grid item xs={12} lg={2} md={12} sx={{ marginTop: '8px' }}>
                                             <AnimateButton>
                                                 <Button
                                                     variant="outlined"
                                                     onClick={handleGenerateKeys}
-                                                    disabled={getValues('clientSecret') && getValues('secretKey')}
+                                                    disabled={getValues('clientSecret')}
                                                 >
                                                     Generate Keys
                                                 </Button>

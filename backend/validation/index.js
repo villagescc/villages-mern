@@ -364,11 +364,6 @@ exports.validateDeveloperSettings = (data) => {
     errors.clientSecret = "Please Enter Client Secret.";
   }
 
-  // Validate Secret Key
-  if (validator.isEmpty(data.secretKey)) {
-    errors.secretKey = "Please Enter Secret Key.";
-  }
-
   if (validator.isEmpty(data.redirectUrl)) {
     errors.redirectUrl = "Please Enter Redirect URL.";
   } else if (!httpsRegex.test(data.redirectUrl)) {

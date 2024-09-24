@@ -507,40 +507,40 @@ exports.search = async (req, res, next) => {
           ...query,
           ...(network.includes("TrustsMe") && network.includes("TrustedByMe")
             ? {
-                $and: [
-                  {
-                    _id: {
-                      $in: usersYouTrustAndTheirTrustees.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
+              $and: [
+                {
+                  _id: {
+                    $in: usersYouTrustAndTheirTrustees.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
                   },
-                  {
-                    _id: {
-                      $in: usersInTrustNetworkAndTrustors.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
+                },
+                {
+                  _id: {
+                    $in: usersInTrustNetworkAndTrustors.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
                   },
-                ],
-              }
+                },
+              ],
+            }
             : network.includes("TrustedByMe")
-            ? {
+              ? {
                 _id: {
                   $in: usersInTrustNetworkAndTrustors.map(
                     (e) => new mongoose.Types.ObjectId(e)
                   ),
                 },
               }
-            : network.includes("TrustsMe")
-            ? {
-                _id: {
-                  $in: usersYouTrustAndTheirTrustees.map(
-                    (e) => new mongoose.Types.ObjectId(e)
-                  ),
-                },
-              }
-            : {}),
+              : network.includes("TrustsMe")
+                ? {
+                  _id: {
+                    $in: usersYouTrustAndTheirTrustees.map(
+                      (e) => new mongoose.Types.ObjectId(e)
+                    ),
+                  },
+                }
+                : {}),
         };
         users = await User.aggregate([
           {
@@ -1029,42 +1029,42 @@ exports.search = async (req, res, next) => {
           {
             $match: {
               ...(network.includes("TrustsMe") &&
-              network.includes("TrustedByMe")
+                network.includes("TrustedByMe")
                 ? {
-                    $and: [
-                      {
-                        _id: {
-                          $in: usersYouTrustAndTheirTrustees.map(
-                            (e) => new mongoose.Types.ObjectId(e)
-                          ),
-                        },
+                  $and: [
+                    {
+                      _id: {
+                        $in: usersYouTrustAndTheirTrustees.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
                       },
-                      {
-                        _id: {
-                          $in: usersInTrustNetworkAndTrustors.map(
-                            (e) => new mongoose.Types.ObjectId(e)
-                          ),
-                        },
+                    },
+                    {
+                      _id: {
+                        $in: usersInTrustNetworkAndTrustors.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
                       },
-                    ],
-                  }
+                    },
+                  ],
+                }
                 : network.includes("TrustedByMe")
-                ? {
+                  ? {
                     _id: {
                       $in: usersInTrustNetworkAndTrustors.map(
                         (e) => new mongoose.Types.ObjectId(e)
                       ),
                     },
                   }
-                : network.includes("TrustsMe")
-                ? {
-                    _id: {
-                      $in: usersYouTrustAndTheirTrustees.map(
-                        (e) => new mongoose.Types.ObjectId(e)
-                      ),
-                    },
-                  }
-                : {}),
+                  : network.includes("TrustsMe")
+                    ? {
+                      _id: {
+                        $in: usersYouTrustAndTheirTrustees.map(
+                          (e) => new mongoose.Types.ObjectId(e)
+                        ),
+                      },
+                    }
+                    : {}),
               verified: true,
             },
           },
@@ -1858,7 +1858,6 @@ exports.getDeveloperSetting = async (req, res, next) => {
     const response = {
       applicationName: developerSettings.applicationName,
       clientSecret: developerSettings.clientSecret,
-      secretKey: developerSettings.secretKey,
       redirectUrl: developerSettings.redirectUrl,
       whitelistedEndpoint: developerSettings.whitelistedEndpoint,
     };
@@ -1883,7 +1882,6 @@ exports.saveDeveloperSetting = async (req, res, next) => {
     const {
       applicationName,
       clientSecret,
-      secretKey,
       whitelistedEndpoint,
       redirectUrl,
     } = req.body;
@@ -1894,7 +1892,6 @@ exports.saveDeveloperSetting = async (req, res, next) => {
         $set: {
           applicationName,
           clientSecret,
-          secretKey,
           redirectUrl,
           whitelistedEndpoint,
         },
@@ -1918,35 +1915,42 @@ exports.saveDeveloperSetting = async (req, res, next) => {
   }
 };
 
-exports.getProtectedUser = async (req, res, next) => {
-  const token = req.header("Authorization");
+exports.getAllDeveloperSetting = async (req, res, next) => {
   try {
-    if (!client) return res.status(401).send("Unauthorized");
+    let developerSettings = await DevelperSettings.find().populate("user", "username");
 
-    if (!token) {
-      return res.status(401).json({ msg: "No token, authorization denied" });
-    } else {
-      const userToken = token.replace("Bearer ", "");
-      const decoded = jwt.verify(userToken, process.env.oauthSecret);
+    if (!developerSettings)
+      return res.status(404).json({ message: "User not found" });
 
-      const getUser = await User.find({ username: decoded?.username });
-
-      if (getUser) {
-        return res.json({
-          getUser,
-        });
-      } else {
-        return res.status(400).send({ message: "Something went wrong" });
-      }
-    }
-  } catch (error) {
-    return res.status(500).send({ message: "Something went wrong" });
+    res.status(200).json({ success: true, developerSettings: developerSettings });
+  } catch (err) {
+    next(err);
   }
 };
 
+exports.approveDeveloper = async (req, res, next) => {
+  try {
+    const { id, isApproved } = req.body;
+
+    let developerSettings = await DevelperSettings.findOneAndUpdate(
+      { _id: id },
+      {
+        isApproved: isApproved
+      }
+    );
+
+    if (!developerSettings)
+      return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
 exports.getOauthUserDetails = async (req, res, nest) => {
   try {
-    const user = await getUserById(req.user.user.id);
+    const user = await getUserById(req.user.user._id);
     user?.length ? res.send(...user) : res.send({});
   } catch (err) {
     next(err);

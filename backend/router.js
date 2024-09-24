@@ -116,6 +116,18 @@ router.get(
   userController.getDeveloperSetting
 );
 
+router.get(
+  "/getAllDeveloper",
+  authMiddleware.auth,
+  userController.getAllDeveloperSetting
+)
+
+router.post(
+  "/approveDeveloper",
+  authMiddleware.auth,
+  userController.approveDeveloper
+)
+
 router.post(
   "/users/password",
   authMiddleware.auth,
@@ -413,20 +425,6 @@ router.post(
   "/oauth/verifyClient",
   oauthMiddleware.validateClient,
   authController.verifyClient
-);
-
-// ######################## Refresh Token Router ######################
-router.post(
-  "/refresh-token",
-  // oauthMiddleware.validateRefreshToken,
-  authController.refreshToken
-);
-
-// ##################### Get Protected User Router ####################
-router.get(
-  "/protected-user",
-  oauthMiddleware.Oauth,
-  userController.getProtectedUser
 );
 
 // ##################### Core Data Access ####################
