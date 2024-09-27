@@ -615,8 +615,8 @@ exports.oAuthLogin = async (req, res, next) => {
     DeveloperSetting.findOne({
       clientSecret: clientId,
     })
-      .then(async (devloperSecret) => {
-        if (!devloperSecret) {
+      .then(async (developerSecret) => {
+        if (!developerSecret) {
           return res.status(400).send({
             email:
               "ClientId is invalid, please contact an administration of your organization.",
@@ -676,39 +676,14 @@ exports.oAuthLogin = async (req, res, next) => {
 
                   const accessToken = jwt.sign(
                     { user: userDetails, clientId },
-                    process.env.jwtSecret,
+                    process.env.oauthSecret,
                     { expiresIn: "10m" }
                   );
 
                   res.json({
                     user: userDetails,
-                    redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}`,
+                    redirectUrl: `${developerSecret.redirectUrl}?token=${accessToken}`,
                   });
-                  // const refreshToken = jwt.sign(process.env.jwtSecret, {
-                  //   expiresIn: "5m",
-                  // });
-
-                  // await User.findOneAndUpdate(
-                  //   { _id: user._id }, // Query: find a record with the same user ID
-                  //   {
-                  //     $set: {
-                  //       refreshToken: refreshToken,
-                  //     },
-                  //   },
-                  //   { new: true }
-                  // )
-                  //   .then(() =>
-                  //     res.json({
-                  //       accessToken,
-                  //       user: userDetails,
-                  //       refreshToken,
-                  //       redirectUrl: `${devloperSecret.redirectUrl}?token=${accessToken}&refresh_token=${refreshToken}`,
-                  //     })
-                  //   )
-                  //   .catch((err) => {
-                  //     console.log("update user error", err);
-                  //     next(err);
-                  //   });
                 })
                 .catch((err) => {
                   console.log("bcrypt compare error", err);

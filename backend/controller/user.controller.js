@@ -21,6 +21,9 @@ const jwt = require("jsonwebtoken");
 const { buildGraph } = require("./payment.controller");
 const { validateDeveloperSettings } = require("../validation");
 const DevelperSettings = require("../models/DevelperSettings");
+const ejs = require('ejs');
+const sendEmail = require("../utils/email");
+const templateFile = './template/applicationApproval.ejs';
 
 exports.getAllTrustors = async (user) => {
   let usersInTrustNetworkAndTrustors = [];
@@ -1932,15 +1935,28 @@ exports.approveDeveloper = async (req, res, next) => {
   try {
     const { id, isApproved } = req.body;
 
-    let developerSettings = await DevelperSettings.findOneAndUpdate(
+    let developer = await DevelperSettings.findOneAndUpdate(
       { _id: id },
       {
         isApproved: isApproved
       }
     );
 
-    if (!developerSettings)
+    if (!developer)
       return res.status(404).json({ message: "User not found" });
+
+    let developerSettings = await DevelperSettings.findOne({
+      _id: id,
+    }).populate('user', "username email")
+
+    ejs.renderFile(templateFile, { developerSettings }, async (error, renderedTemplate) => {
+      if (error) {
+        console.log('Error rendering template:', error);
+      } else {
+        // Use the renderedTemplate to send the email
+        await sendEmail("info@villages.io", developerSettings.user.email, 'Application Approved by Admin', renderedTemplate)
+      }
+    });
 
     res.status(200).json({ success: true });
   } catch (err) {
@@ -1948,9 +1964,251 @@ exports.approveDeveloper = async (req, res, next) => {
   }
 }
 
-exports.getOauthUserDetails = async (req, res, nest) => {
+exports.getOauthUserDetails = async (req, res, next) => {
   try {
-    const user = await getUserById(req.user.user._id);
+    const user = await User.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [
+              "$_id",
+              {
+                $toObjectId: req.user.user._id
+              }
+            ]
+          }
+        }
+      },
+      {
+        $project:
+        {
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          profile: 1
+        }
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          foreignField: "_id",
+          localField: "profile",
+          as: "profile",
+          pipeline: [
+            {
+              $project: {
+                _id: 0,
+                recentActivitiesOn: 0,
+                user: 0,
+                updatedAt: 0,
+                createdAt: 0,
+                old_id: 0,
+                job: 0,
+                placeId: 0
+              }
+            },
+            {
+              $addFields: {
+                avatar: {
+                  $cond: { if: { $eq: ["$avatar", ""] }, then: "$avatar", else: { $concat: ["https://villages.io/upload/avatar/", "$avatar"] } }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          profile: {
+            $arrayElemAt: ["$profile", 0]
+          }
+        }
+      },
+      {
+        $lookup:
+        {
+          from: "endorsements",
+          foreignField: "endorserId",
+          localField: "_id",
+          as: "trustGiven",
+          pipeline: [
+            {
+              $lookup: {
+                from: "profiles",
+                foreignField: "user",
+                localField: "recipientId",
+                as: "following",
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: "users",
+                      foreignField: "_id",
+                      localField: "user",
+                      as: "username",
+                      pipeline: [
+                        {
+                          $project: {
+                            _id: 0,
+                            username: 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    $addFields: {
+                      username: {
+                        $arrayElemAt: [
+                          "$username.username",
+                          0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      name: 1,
+                      avatar: 1,
+                      username: 1
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              $addFields: {
+                username: {
+                  $arrayElemAt: [
+                    "$following.username",
+                    0
+                  ]
+                },
+                name: {
+                  $arrayElemAt: [
+                    "$following.name",
+                    0
+                  ]
+                },
+                avatar: {
+                  $arrayElemAt: [
+                    "$following.avatar",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                username: 1,
+                avatar: 1,
+                name: 1
+              }
+            },
+            {
+              $addFields: {
+                avatar: {
+                  $cond: { if: { $eq: ["$avatar", ""] }, then: "$avatar", else: { $concat: ["https://villages.io/upload/avatar/", "$avatar"] } }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        $lookup:
+        {
+          from: "endorsements",
+          foreignField: "recipientId",
+          localField: "_id",
+          as: "trustedBy",
+          pipeline: [
+            {
+              $lookup: {
+                from: "profiles",
+                foreignField: "user",
+                localField: "endorserId",
+                as: "follower",
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: "users",
+                      foreignField: "_id",
+                      localField: "user",
+                      as: "username",
+                      pipeline: [
+                        {
+                          $project: {
+                            _id: 0,
+                            username: 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    $addFields: {
+                      username: {
+                        $arrayElemAt: [
+                          "$username.username",
+                          0
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      name: 1,
+                      avatar: 1,
+                      username: 1
+                    }
+                  },
+                ]
+              }
+            },
+            {
+              $addFields: {
+                username: {
+                  $arrayElemAt: [
+                    "$follower.username",
+                    0
+                  ]
+                },
+                name: {
+                  $arrayElemAt: [
+                    "$follower.name",
+                    0
+                  ]
+                },
+                avatar: {
+                  $arrayElemAt: [
+                    "$follower.avatar",
+                    0
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                username: 1,
+                avatar: 1,
+                name: 1
+              }
+            },
+            {
+              $addFields: {
+                avatar: {
+                  $cond: { if: { $eq: ["$avatar", ""] }, then: "$avatar", else: { $concat: ["https://villages.io/upload/avatar/", "$avatar"] } }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ])
+
     user?.length ? res.send(...user) : res.send({});
   } catch (err) {
     next(err);

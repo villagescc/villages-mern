@@ -34,25 +34,9 @@ exports.validateRefreshToken = (req, res, next) => {
   next();
 };
 
-const checkDeveloperSetting = async (clientSecret, requestOrigin) => {
-  try {
-    // Query the DeveloperSetting model to check if the clientSecret matches
-    // and the requestOrigin is in the whitelistedEndpoint array
-    const developerSetting = await DeveloperSetting.findOne({
-      clientSecret,
-      whitelistedEndpoint: { $in: [requestOrigin] },
-    });
-
-    // Return true if the developer setting exists and origin is allowed, otherwise false
-    return !!developerSetting;
-  } catch (err) {
-    console.error("Error checking developer setting:", err);
-    throw new Error("Error while checking developer setting.");
-  }
-};
-
 const rateLimitStore = {}; 
 exports.Oauth = async (req, res, next) => {
+  const requestOrigin = req.headers.origin;
   const token = req.header("Authorization");
 
   //when no token is available
@@ -63,7 +47,7 @@ exports.Oauth = async (req, res, next) => {
   //verify token
   try {
     const verifyToken = token.replace("Bearer ", "");
-    const decoded = jwt.verify(verifyToken, process.env.jwtSecret);
+    const decoded = jwt.verify(verifyToken, process.env.oauthSecret);
 
     const clientId = decoded.clientId;
 
@@ -93,14 +77,11 @@ exports.Oauth = async (req, res, next) => {
       clientID: decoded.clientId,
     });
     const clientSecret = decoded.clientId; // Extract clientSecret from the decoded token
-    // Construct request origin
-    const requestOrigin = req.get("host");
-    // Check if the developer setting is valid and origin is whitelisted
-    // const isValid = await checkDeveloperSetting(clientSecret, requestOrigin);
-    const isValid = true;
+    const developerSetting = await DeveloperSetting.findOne({clientSecret});
+    const isValidUrl = developerSetting.whitelistedEndpoint.find((url) => requestOrigin?.includes(url))
 
-    if (!isValid) {
-      return res.status(401).json({ msg: "You Are Unauthorized." });
+    if (!isValidUrl) {
+      return res.status(401).json({ msg: "Unauthorized, Domain not whitelisted" });
     }
     next();
   } catch (err) {

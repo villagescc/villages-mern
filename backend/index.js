@@ -7,6 +7,8 @@ const bodyparser = require("body-parser");
 const cors = require("cors");
 const router = require("./router");
 // const cronJob = require("./cronJob")  // un comment after development completed
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
 
 //connect database
 connectDB();
@@ -15,6 +17,38 @@ app.use(cors());
 app.use(express.json({ extended: true }));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
+
+// Swagger APIs Document
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Villages',
+      version: '1.0.0',
+      description: 'OAuth API documentation',
+    },
+    servers: [
+      {
+        url: `http://localhost:5000/api`,
+      },
+    ],
+    components: {
+      securitySchemes: {
+        authorization: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization',
+          description: 'Enter your API key in the format without Bearer. Do not include the brackets.', 
+        },
+      },
+    },
+    security: [{ authorization: [] }],
+  },
+  apis: ['./utils/swaggerDocs.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Hosting upload files
 app.use("/upload", express.static("upload"));

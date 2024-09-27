@@ -118,7 +118,6 @@ const DeveloperSetting = () => {
     };
 
     const onSubmit = (data) => {
-        console.log('data :>> ', data);
         dispatch(saveDeveloperSettings(data));
     };
 
