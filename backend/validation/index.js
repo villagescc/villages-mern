@@ -1,6 +1,6 @@
 const validator = require("validator");
 const isEmpty = require("./is-empty");
-const Categories = require('../models/Category');
+const Categories = require("../models/Category");
 
 exports.validateLoginInput = (data) => {
   let errors = {};
@@ -94,8 +94,7 @@ exports.validateEndorsementCreate = (data) => {
 
   if (isEmpty(data.weight)) {
     errors.weight = "Please input Credit limit.";
-  }
-  else if (parseFloat(data.weight) <= 0) {
+  } else if (parseFloat(data.weight) <= 0) {
     errors.weight = "Credit Limit must be greater 0";
   }
 
@@ -204,7 +203,7 @@ exports.validatePostingCreate = async (data) => {
     errors.subCategory = "Subcategory field is required";
   }
 
-  if (validator.isEmpty(data.paidContent) && data?.type === 'DIGITAL PRODUCT') {
+  if (validator.isEmpty(data.paidContent) && data?.type === "DIGITAL PRODUCT") {
     errors.paidContent = "Paid content is required";
   }
 
@@ -331,6 +330,88 @@ exports.validateSearchTransactionsInput = (data) => {
     isNaN(new Date(data.period[1]))
   ) {
     errors.period = "Please choose correct end date";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};
+
+// OAuth validation
+
+exports.validateDeveloperSettings = (data) => {
+  let errors = {};
+
+  // data.weight = !isEmpty(data.weight) ? data.weight : 0;
+  data.applicationName = !isEmpty(data.applicationName)
+    ? data.applicationName
+    : "";
+  data.clientSecret = !isEmpty(data.clientSecret) ? data.clientSecret : "";
+  data.secretKey = !isEmpty(data.secretKey) ? data.secretKey : "";
+  data.whitelistedEndpoint = !isEmpty(data.whitelistedEndpoint)
+    ? data.whitelistedEndpoint
+    : [];
+  data.redirectUrl = !isEmpty(data.redirectUrl) ? data.redirectUrl : [];
+  const httpsRegex = /^https?:\/\//i;
+  // Validate Application Name
+  if (validator.isEmpty(data.applicationName)) {
+    errors.applicationName = "Please Enter Application Name.";
+  }
+
+  // Validate Client Secret
+  if (validator.isEmpty(data.clientSecret)) {
+    errors.clientSecret = "Please Enter Client Secret.";
+  }
+
+  if (validator.isEmpty(data.redirectUrl)) {
+    errors.redirectUrl = "Please Enter Redirect URL.";
+  } else if (!httpsRegex.test(data.redirectUrl)) {
+    errors.redirectUrl = "Redirect URL must start with 'https:// or http://'.";
+  }
+  if (
+    !Array.isArray(data.whitelistedEndpoint) ||
+    data.whitelistedEndpoint.length < 1
+  ) {
+    errors.whitelistedEndpoint =
+      "Please Enter at least one Whitelisted Endpoint.";
+  } else {
+    // Validate each whitelisted endpoint to ensure it starts with "https://"
+    data.whitelistedEndpoint.forEach((endpoint, index) => {
+      if (httpsRegex.test(endpoint)) {
+        errors.whitelistedEndpoint = `whitelistedEndpoint must do not start with 'https:// or http://'.`;
+      }
+    });
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};
+
+exports.validateClient = (data) => {
+  let errors = {};
+
+  data.clientId = !isEmpty(data.clientId) ? data.clientId : "";
+
+  if (validator.isEmpty(data.clientId)) {
+    errors.clientId = "Client Id is required";
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};
+
+exports.validateRefreshToken = (data) => {
+  let errors = {};
+
+  data.refreshToken = !isEmpty(data.refreshToken) ? data.refreshToken : "";
+
+  if (validator.isEmpty(data.refreshToken)) {
+    errors.refreshToken = "Refresh token is required";
   }
 
   return {

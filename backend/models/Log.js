@@ -9,6 +9,9 @@ const LogSchema = new mongoose.Schema(
     log: {
       type: String,
     },
+    clientID: {
+      type: String,
+    }
   },
   {
     timestamps: true,

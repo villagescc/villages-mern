@@ -642,3 +642,43 @@ exports.getTransaction = async (req, res, next) => {
     next(error);
   }
 };
+
+// =================== Check Oauth Trust Limit =====================
+exports.getOauthMaxLimit = async (req, res, next) => {
+  const { recipient } = req.params;
+  const sender = req.user.user._id
+  const recipientUser = recipient ? recipient : req.body.recipient
+
+  try {
+    const result = await this._getMaxFlow(sender, recipientUser);
+    if (result.success) {
+      return recipient ? res.send({ trustLimit: result.maxLimit }) : { trustLimit: result.maxLimit };
+    } else {
+      return res.status(400).send(result.errors);
+    }
+  } catch (error) {
+    console.log("get max limit error", error);
+    next(error);
+  }
+};
+
+// ================== Oauth Initiate Payment =======================
+exports.oauthPay = async (req, res, next) => {
+  const { amount } = req.body;
+  try {
+    const paymentMaxLimitResult = await this.getOauthMaxLimit(req, res, next);
+
+    if (amount > paymentMaxLimitResult.trustLimit) {
+      res.status(400).send({
+        message: `You can send only up to ${paymentMaxLimitResult.trustLimit}VH`
+      });
+    }
+
+    req.user = req.user.user
+
+    await this.pay(req, res, next)
+
+  } catch (error) {
+    next(error);
+  }
+};

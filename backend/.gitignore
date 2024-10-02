@@ -18,3 +18,5 @@ node_modules/
 # frontend
 ## upload files
 upload/
+
+DB/

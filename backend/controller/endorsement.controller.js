@@ -484,3 +484,13 @@ exports.getEndrosmentbyId = async (req, res, next) => {
     next(err);
   }
 }
+
+// ========================= Oauth Initiate Trust Line ======================
+exports.oauthSave = async (req, res, next) => {
+  try {
+    req.user = req.user.user;
+    await this.save(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+};

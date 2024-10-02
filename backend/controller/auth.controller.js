@@ -4,7 +4,8 @@ const Profile = require("../models/Profile");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const Mailjet = require('node-mailjet')
+const Mailjet = require("node-mailjet");
+const DeveloperSetting = require("../models/DevelperSettings");
 
 const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
@@ -12,8 +13,8 @@ const accountController = require("./account.controller");
 
 const mailjet = new Mailjet({
   apiKey: process.env.MJ_APIKEY_PUBLIC,
-  apiSecret: process.env.MJ_APIKEY_PRIVATE
-})
+  apiSecret: process.env.MJ_APIKEY_PRIVATE,
+});
 
 const MailChimp = require("mailchimp-api-v3");
 const mailchimp = new MailChimp(process.env.MAILCHIMP_APIKEY);
@@ -28,6 +29,7 @@ const axios = require("axios");
 const ProfileSetting = require("../models/ProfileSetting");
 const { default: mongoose } = require("mongoose");
 const sendEmail = require("../utils/email");
+const DevelperSettings = require("../models/DevelperSettings");
 
 const _getUser = async (id) => {
   const user = await User.findById(id).exec();
@@ -42,11 +44,14 @@ const _getUser = async (id) => {
 exports.getUser = async (req, res, next) => {
   try {
     try {
-      await Profile.updateOne({ user: mongoose.Types.ObjectId(req.user._id), isSuperuser: false }, {
-        $push: {
-          recentActivitiesOn: new Date().toISOString()
+      await Profile.updateOne(
+        { user: mongoose.Types.ObjectId(req.user._id), isSuperuser: false },
+        {
+          $push: {
+            recentActivitiesOn: new Date().toISOString(),
+          },
         }
-      });
+      );
     } catch (err) {
       console.log("find user error", err);
       // next(err);
@@ -64,7 +69,7 @@ exports.deleteAccount = async (req, res, next) => {
   try {
     try {
       await User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), {
-        $set: { isDeleted: true }
+        $set: { isDeleted: true },
       });
     } catch (err) {
       console.log("find user error", err);
@@ -82,17 +87,20 @@ exports.registerUser = async (req, res, next) => {
   let errors = {};
   let profile, account, user;
   try {
-    const { password, username, firstName, lastName, email, captcha } = req.body;
+    const { password, username, firstName, lastName, email, captcha } =
+      req.body;
 
     if (!captcha) {
-      return res.status(400).send({ captcha: 'Captcha is required' });
+      return res.status(400).send({ captcha: "Captcha is required" });
     }
-    let googleCaptchaSiteVerifyLink = process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI
-    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink.replace('{{0}}', process.env.GOOGLE_RECAPTCHA_SECRET_KEY).replace('{{1}}', captcha)
-    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink)
+    let googleCaptchaSiteVerifyLink =
+      process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI;
+    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink
+      .replace("{{0}}", process.env.GOOGLE_RECAPTCHA_SECRET_KEY)
+      .replace("{{1}}", captcha);
+    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink);
 
     if (isValidCaptcha.data.success) {
-
       user = await User.findOne({ $or: [{ email }, { username }] });
       if (user) {
         if (user.email.toLowerCase() === email.toLowerCase())
@@ -147,26 +155,26 @@ exports.registerUser = async (req, res, next) => {
       //To add contacts in mailjet
       try {
         const request = mailjet
-          .post("contactslist", { 'version': 'v3' })
+          .post("contactslist", { version: "v3" })
           .id(process.env.MJ_CONTACT_LIST_ID)
           .action("managecontact")
           .request({
-            "Name": `${firstName} ${lastName}`,
-            "Properties": "object",
-            "Action": "addnoforce",
-            "Email": email
-          })
+            Name: `${firstName} ${lastName}`,
+            Properties: "object",
+            Action: "addnoforce",
+            Email: email,
+          });
         request
           .then((result) => {
-            console.log(result.body)
+            console.log(result.body);
           })
           .catch((err) => {
-            console.log(err.statusCode)
-          })
+            console.log(err.statusCode);
+          });
       } catch (error) {
-        console.log('====================================');
+        console.log("====================================");
         console.log(error);
-        console.log('====================================');
+        console.log("====================================");
       }
 
       user.save((err) => {
@@ -181,12 +189,17 @@ exports.registerUser = async (req, res, next) => {
 
         // nodemailer.sendConfirmationEmail(user.username, user.email, user.token);
 
-        sendEmail('info@villages.io', email, "Please confirm your account", `<h1>Email Confirmation</h1>
+        sendEmail(
+          "info@villages.io",
+          email,
+          "Please confirm your account",
+          `<h1>Email Confirmation</h1>
       <h2>Hello ${firstName} ${lastName}</h2>
       <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
       <a href=https://villages.io/auth/verify/${user._id}/${token}> Click here</a>
       <div>https://villages.io/auth/verify/${user._id}/${token}</div>
-      <br>`)
+      <br>`
+        );
 
         // axios
         //   .post(
@@ -209,9 +222,8 @@ exports.registerUser = async (req, res, next) => {
         //     console.log(error);
         //   });
       });
-    }
-    else {
-      return res.status(400).send({ captcha: 'Invalid captcha' });
+    } else {
+      return res.status(400).send({ captcha: "Invalid captcha" });
     }
   } catch (err) {
     if (profile) await profileController._removeProfileById(profile.id);
@@ -239,41 +251,50 @@ exports.verifyToken = async (req, res, next) => {
       next(err);
     });
 
-  const result = new ProfileSetting(
-    {
-      "receiveNotifications": true,
-      "receiveUpdates": true,
-      "receiveUser": true,
-      "language": "en",
-      "feedRadius": 0,
-      "user": req.params.id
-    }
-  );
-  await result.save()
+  const result = new ProfileSetting({
+    receiveNotifications: true,
+    receiveUpdates: true,
+    receiveUser: true,
+    language: "en",
+    feedRadius: 0,
+    user: req.params.id,
+  });
+  await result.save();
 };
 
 exports.resendVerificationMail = async (req, res, next) => {
   const email = req.params?.email;
   try {
     const user = await User.findOne({
-      $or: [{ email: email.toLowerCase().trim() }, { username: email.toLowerCase().trim() }],
-    }).exec()
+      $or: [
+        { email: email.toLowerCase().trim() },
+        { username: email.toLowerCase().trim() },
+      ],
+    }).exec();
     if (!user) {
       return res.status(400).send({
         email: "This email/username does not exist.",
       });
     }
 
-    sendEmail("info@villages.io", user.email, "Please confirm your account", `<h1>Email Confirmation</h1>
+    sendEmail(
+      "info@villages.io",
+      user.email,
+      "Please confirm your account",
+      `<h1>Email Confirmation</h1>
     <h2>Hello ${user.firstName} ${user.lastName}</h2>
     <p>Thank you for joining our website. Please confirm your email by clicking on the following link</p>
     <a href=https://villages.io/auth/verify/${user._id}/${user.token}> Click here</a>
    <div>https://villages.io/auth/verify/${user._id}/${user.token}</div>
-    <br>`).then(function (response) {
-      return res.status(200).send({ message: "Email sent successfully" });
-    })
+    <br>`
+    )
+      .then(function (response) {
+        return res.status(200).send({ message: "Email sent successfully" });
+      })
       .catch(function (error) {
-        return res.status(400).send({ message: "Error sending Email", error: error });
+        return res
+          .status(400)
+          .send({ message: "Error sending Email", error: error });
       });
 
     // axios
@@ -296,27 +317,38 @@ exports.resendVerificationMail = async (req, res, next) => {
     //   .catch(function (error) {
     //     return res.status(400).send({ message: "Error sending Email", error: error });
     //   });
-
   } catch (error) {
-    return res.status(400).send(error)
+    return res.status(400).send(error);
   }
-
-}
+};
 
 exports.login = async (req, res, next) => {
-  const { password, email, deviceToken, placeId, latitude, longitude, captcha } =
-    req.body;
+  const {
+    password,
+    email,
+    deviceToken,
+    placeId,
+    latitude,
+    longitude,
+    captcha,
+  } = req.body;
   try {
     if (!captcha) {
-      return res.status(400).send({ captcha: 'Captcha is required' });
+      return res.status(400).send({ captcha: "Captcha is required" });
     }
-    let googleCaptchaSiteVerifyLink = process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI
-    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink.replace('{{0}}', process.env.GOOGLE_RECAPTCHA_SECRET_KEY).replace('{{1}}', captcha)
-    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink)
+    let googleCaptchaSiteVerifyLink =
+      process.env.GOOGLE_RECAPTCHA_VERIFY_SITE_URI;
+    googleCaptchaSiteVerifyLink = googleCaptchaSiteVerifyLink
+      .replace("{{0}}", process.env.GOOGLE_RECAPTCHA_SECRET_KEY)
+      .replace("{{1}}", captcha);
+    const isValidCaptcha = await axios.post(googleCaptchaSiteVerifyLink);
     if (isValidCaptcha.data.success) {
-      const { 'user-agent': userAgent } = req.headers
+      const { "user-agent": userAgent } = req.headers;
       User.findOne({
-        $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }],
+        $or: [
+          { email: email.toLowerCase() },
+          { username: email.toLowerCase() },
+        ],
       })
         .select("+password")
         .then(async (user) => {
@@ -343,7 +375,7 @@ exports.login = async (req, res, next) => {
                 if (!user.verified) {
                   return res.status(400).send({
                     email: "Email is not verified",
-                    isEmailVerified: false
+                    isEmailVerified: false,
                   });
                 }
 
@@ -391,13 +423,19 @@ exports.login = async (req, res, next) => {
                 jwt.sign(
                   payload,
                   process.env.jwtSecret,
-                  { expiresIn: userAgent === 'webview' ? "5 years" : 3600 * 24 },
+                  {
+                    expiresIn: userAgent === "webview" ? "5 years" : 3600 * 24,
+                  },
                   (err, serviceToken) => {
                     if (err) {
                       console.log("jwt sign error", err);
                       next(err);
                     }
-                    return res.json({ serviceToken, user: userData, isFirstTimeLogin: userData?.lastLogin ? false : true });
+                    return res.json({
+                      serviceToken,
+                      user: userData,
+                      isFirstTimeLogin: userData?.lastLogin ? false : true,
+                    });
                   }
                 );
               })
@@ -431,12 +469,11 @@ exports.login = async (req, res, next) => {
           console.log("find user error", err);
           next(err);
         });
-    }
-    else {
-      return res.status(400).send({ captcha: 'Invalid captcha' });
+    } else {
+      return res.status(400).send({ captcha: "Invalid captcha" });
     }
   } catch (error) {
-    return res.status(500).send({ message: 'Invalid  captcha' });
+    return res.status(500).send({ message: "Invalid  captcha" });
   }
 };
 
@@ -499,14 +536,20 @@ exports.forgotPassword = async (req, res, next) => {
           message: "Please check your email to reset password",
         });
 
-        sendEmail("info@villages.io", email, "Please Reset Your Password", `<h1>Resetting Password</h1>
+        sendEmail(
+          "info@villages.io",
+          email,
+          "Please Reset Your Password",
+          `<h1>Resetting Password</h1>
         <h2>Hello ${user.firstName} ${user.lastName}</h2>
         <p>Please follow the link to reset your password</p>
         <a href=https://villages.io/auth/forgot-password/${user._id}/${token}> Click here</a>
         <div>https://villages.io/auth/forgot-password/${user._id}/${token}</div>
-        <br>`).then(function (response) {
-          console.log(response);
-        })
+        <br>`
+        )
+          .then(function (response) {
+            console.log(response);
+          })
           .catch(function (error) {
             console.log(error);
           });
@@ -564,3 +607,140 @@ exports.resetPassword = async (req, res, next) => {
       next(err);
     });
 };
+
+// oAuthLogin
+exports.oAuthLogin = async (req, res, next) => {
+  const { password, email, clientId } = req.body;
+  try {
+    DeveloperSetting.findOne({
+      clientSecret: clientId,
+    })
+      .then(async (developerSecret) => {
+        if (!developerSecret) {
+          return res.status(400).send({
+            email:
+              "ClientId is invalid, please contact an administration of your organization.",
+          });
+        }
+
+        User.findOne({
+          $or: [
+            { email: email.toLowerCase() },
+            { username: email.toLowerCase() },
+          ],
+        })
+          .select("+password")
+          .then(async (user) => {
+            if (!user) {
+              return res.status(400).send({
+                email: "This credential does not exist.",
+              });
+            }
+            if (user.password) {
+              bcrypt
+                .compare(password, user.password)
+                .then(async (isMatch) => {
+                  if (user?.isDeleted && user?.showDelete) {
+                    return res.status(400).send({
+                      email: "This credential does not exist.",
+                    });
+                  }
+                  if (!isMatch) {
+                    return res.status(400).send({
+                      password: "Password is incorrect.",
+                    });
+                  }
+
+                  if (!user.verified) {
+                    return res.status(400).send({
+                      email: "Email is not verified",
+                      isEmailVerified: false,
+                    });
+                  }
+
+                  if (!user.isActive) {
+                    return res.status(400).send({
+                      email: "Account is not active",
+                    });
+                  }
+
+                  const userData = await _getUser(user.id);
+
+                  const userDetails = {
+                    username: userData.username,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    _id: userData._id,
+                  };
+
+                  const accessToken = jwt.sign(
+                    { user: userDetails, clientId },
+                    process.env.oauthSecret,
+                    { expiresIn: "2 years" }
+                  );
+
+                  res.json({
+                    user: userDetails,
+                    redirectUrl: `${developerSecret.redirectUrl}?token=${accessToken}`,
+                  });
+                })
+                .catch((err) => {
+                  console.log("bcrypt compare error", err);
+                  next(err);
+                });
+            } else {
+              return res
+                .status(400)
+                .send({ message: "Credential dosen't exist" });
+            }
+          })
+          .catch((err) => {
+            console.log("find user error", err);
+            next(err);
+          });
+      })
+      .catch((err) => {
+        console.log("Credential dosen't exist", err);
+        next(err);
+      });
+  } catch (error) {
+    return res.status(500).send({ message: "Something went wrong" });
+  }
+};
+
+exports.verifyClient = async (req, res, next) => {
+  const { clientId } = req.body;
+  await DevelperSettings.findOne({
+    clientSecret: clientId,
+  })
+    .then((client) => {
+      if (!client)
+        return res.status(400).send({
+          message: "Unable to verify client",
+          redirectUrl: `/unauthorized`,
+        });
+      if (!client.isApproved)
+        return res.status(400).send({
+          message: "Application not approved yet please contact admin",
+          redirectUrl: `/access-denied`,
+        });
+      return res.json({
+        client,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+// =================== Get User Balance ==================
+exports.getOauthUserBalance = async (req, res, next) => {
+  try {
+    const userAccount = await Account.findOne({ user: req.user.user._id });
+    res.send({
+      balance: userAccount.balance
+    });
+  } catch (err) {
+    console.log("Balance fetching error", err);
+    next(err);
+  }
+}

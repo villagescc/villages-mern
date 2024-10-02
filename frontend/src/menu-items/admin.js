@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 import HistoryIcon from '@mui/icons-material/History';
 // assets
-import { IconUsers, IconDeviceAnalytics, IconWallet, IconHeart } from '@tabler/icons';
+import { IconUsers, IconDeviceAnalytics, IconWallet, IconHeart, IconCodeCircle } from '@tabler/icons';
 
 // constant
 const icons = {
@@ -10,7 +10,8 @@ const icons = {
   IconDeviceAnalytics,
   HistoryIcon,
   IconWallet,
-  IconHeart
+  IconHeart,
+  IconCodeCircle
 };
 
 // ==============================|| ADMIN MENU ITEMS ||============================== //
@@ -50,6 +51,14 @@ const admin = {
       type: 'item',
       url: '/admin/transaction-history',
       icon: icons.IconWallet,
+      breadcrumbs: false
+    },
+    {
+      id: 'developer',
+      title: <FormattedMessage id="Developer" />,
+      type: 'item',
+      url: '/admin/developer',
+      icon: icons.IconCodeCircle,
       breadcrumbs: false
     }
   ]

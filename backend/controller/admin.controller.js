@@ -2110,3 +2110,175 @@ exports.getUserByID = async (req, res, next) => {
     return res.send({ success: false, message: 'Something went wrong', error: error?.message ?? "" })
   }
 }
+
+// ======================= Payment History for OAuth ======================
+exports.getOAuthPaymentHistory = async (req, res, next) => {
+  const { viewport: { north, east, south, west } } = req.body
+  const isValidLatLng = typeof north === 'number' && typeof west === 'number' && typeof south === 'number' && typeof east === 'number'
+  const fromDate = new Date(req.body.dateRange[0])
+  const toDate = req.body.dateRange[1] ? new Date(req.body.dateRange[1]) : new Date()
+  const filterRadiusUsers = [];
+  if (isValidLatLng) {
+    const filterUsers = await User.find({
+      latitude: {
+        $gte: south,
+        $lte: north,
+      },
+      longitude: {
+        $gte: west,
+        $lte: east,
+      },
+    }).select("_id");
+    filterRadiusUsers.push(...filterUsers.map(e => e._id))
+  }
+  const transactions = await Payment.aggregate([
+    ...(isValidLatLng ? [
+      {
+        $match: {
+          $or: [
+            { payer: { $in: filterRadiusUsers } },
+            { recipient: { $in: filterRadiusUsers } }
+          ]
+        }
+      }
+    ] : []),
+    { $sort: { updatedAt: -1 } },
+    {
+      $match: {
+        "createdAt": { $gte: fromDate, $lte: toDate },
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "recipient",
+        foreignField: "_id",
+        as: "recipient",
+        pipeline: [
+          {
+            $lookup: {
+              from: "profiles",
+              localField: "profile",
+              foreignField: "_id",
+              as: "profile",
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    name: 1,
+                    avatar: 1,
+                  }
+                },
+                {
+                  $addFields: {
+                    avatar: {
+                      $cond: { if: { $eq: ["$avatar", ""] }, then: "$avatar", else: { $concat: ["https://villages.io/upload/avatar/", "$avatar"] } }
+                    }
+                  }
+                }
+              ]
+            },
+          },
+          {
+            $addFields: {
+              profile: {
+                $arrayElemAt: ["$profile", 0],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              email: 1,
+              firstName: 1,
+              username: 1,
+              profile: 1,
+              lastName: 1
+            }
+          }
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "payer",
+        foreignField: "_id",
+        as: "payer",
+        pipeline: [
+          {
+            $lookup: {
+              from: "profiles",
+              localField: "profile",
+              foreignField: "_id",
+              as: "profile",
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    name: 1,
+                    avatar: 1,
+                  }
+                },
+                {
+                  $addFields: {
+                    avatar: {
+                      $cond: { if: { $eq: ["$avatar", ""] }, then: "$avatar", else: { $concat: ["https://villages.io/upload/avatar/", "$avatar"] } }
+                    }
+                  }
+                }
+              ]
+            },
+          },
+          {
+            $addFields: {
+              profile: {
+                $arrayElemAt: ["$profile", 0],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              email: 1,
+              firstName: 1,
+              username: 1,
+              profile: 1,
+              lastName: 1
+            }
+          }
+        ],
+      },
+    },
+    {
+      $addFields: {
+        payer: {
+          $arrayElemAt: ["$payer", 0],
+        },
+        recipient: {
+          $arrayElemAt: ["$recipient", 0],
+        },
+      },
+    },
+  ])
+
+  const total = (await Payment.aggregate([
+    { $sort: { updatedAt: -1 } },
+    {
+      $match: {
+        "createdAt": { $gte: fromDate, $lte: toDate },
+      }
+    },
+    ...(isValidLatLng ? [
+      {
+        $match: {
+          $or: [
+            { payer: { $in: filterRadiusUsers } },
+            { recipient: { $in: filterRadiusUsers } }
+          ]
+        }
+      }
+    ] : []),
+  ])).length
+  res.send({ success: true, total: total, transactions: transactions })
+}

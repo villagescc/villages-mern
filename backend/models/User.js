@@ -77,6 +77,10 @@ const UserSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
     },
+    developerSetting: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "developerSetting",
+    },
   },
   {
     timestamps: true,

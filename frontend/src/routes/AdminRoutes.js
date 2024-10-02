@@ -12,6 +12,7 @@ const AdminAnalytics = Loadable(lazy(() => import('views/admin/analytics')));
 const TransactionHistory = Loadable(lazy(() => import('views/admin/transaction-history')));
 const TrustHistory = Loadable(lazy(() => import('views/admin/trust-history')));
 const UserAdmin = Loadable(lazy(() => import('views/admin/user')));
+const Developer = Loadable(lazy(() => import('views/admin/developer')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
@@ -44,6 +45,10 @@ const AdminRoutes = {
         {
             path: 'user/:userId',
             element: <UserAdmin />
+        },
+        {
+            path: 'developer',
+            element: <Developer />
         }
     ]
 };
