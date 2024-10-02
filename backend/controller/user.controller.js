@@ -1856,7 +1856,7 @@ exports.getDeveloperSetting = async (req, res, next) => {
     });
 
     if (!developerSettings)
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Developer Setting not found" });
 
     const response = {
       applicationName: developerSettings.applicationName,
@@ -1964,6 +1964,7 @@ exports.approveDeveloper = async (req, res, next) => {
   }
 }
 
+// ==================== Get OAuth User Detail =========================
 exports.getOauthUserDetails = async (req, res, next) => {
   try {
     const user = await User.aggregate([

@@ -14,9 +14,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 // assets
 import { IconAlertTriangle } from '@tabler/icons';
 
-// assets
-
-// ================================|| Unauthorized Access - Page ||================================ //
+// ================================|| Access Denied - Page ||================================ //
 
 const AccessDenied = () => {
     const navigate = useNavigate();

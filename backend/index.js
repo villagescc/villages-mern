@@ -6,7 +6,7 @@ const path = require("path");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const router = require("./router");
-// const cronJob = require("./cronJob")  // un comment after development completed
+const cronJob = require("./cronJob")  // comment it during development
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
@@ -29,7 +29,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:5000/api`,
+        url: `https://villages.io/api`,
       },
     ],
     components: {

@@ -677,7 +677,7 @@ exports.oAuthLogin = async (req, res, next) => {
                   const accessToken = jwt.sign(
                     { user: userDetails, clientId },
                     process.env.oauthSecret,
-                    { expiresIn: "10m" }
+                    { expiresIn: "2 years" }
                   );
 
                   res.json({
@@ -740,7 +740,7 @@ exports.getOauthUserBalance = async (req, res, next) => {
       balance: userAccount.balance
     });
   } catch (err) {
-    console.log("find user error", err);
+    console.log("Balance fetching error", err);
     next(err);
   }
 }

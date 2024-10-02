@@ -260,27 +260,27 @@ exports.pay = async (req, res, next) => {
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
 
-        // const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
-        // const notification = await createNotification(
-        //   "PAYMENT",
-        //   req.user._id,
-        //   recipient,
-        //   amount,
-        //   notifyText
-        // );
-        // global.io.emit("newNotification", notification);
-        // const receiveUser = await User.findById(recipient);
+        const notifyText = `${req.user.username} paid you the amount of ${amount}(V.H.).`;
+        const notification = await createNotification(
+          "PAYMENT",
+          req.user._id,
+          recipient,
+          amount,
+          notifyText
+        );
+        global.io.emit("newNotification", notification);
+        const receiveUser = await User.findById(recipient);
 
-        // sendEmail(req.user.email, receiveUser?.email, "Notification from Villages.io", `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
-        // <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
-        // <p>${notifyText}</p>
-        // <a href=https://villages.io/pay> Click here</a>
-        // <br>`).then(function (response) {
-        //   // console.log(response);
-        // })
-        //   .catch(function (error) {
-        //     console.log(error);
-        //   });
+        sendEmail(req.user.email, receiveUser?.email, "Notification from Villages.io", `<h1>You have been paid by ${req.user.firstName} ${req.user.lastName}(${req.user.email})</h1>
+        <h2>Hello ${receiveUser?.firstName} ${receiveUser?.lastName}</h2>
+        <p>${notifyText}</p>
+        <a href=https://villages.io/pay> Click here</a>
+        <br>`).then(function (response) {
+          // console.log(response);
+        })
+          .catch(function (error) {
+            console.log(error);
+          });
 
         // axios
         //   .post(

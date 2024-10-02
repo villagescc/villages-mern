@@ -30,16 +30,43 @@
  *                   type: string
  *                 lastName:
  *                   type: string
+ *                 profile:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     avatar:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     header_image:
+ *                       type: string
+ *                     tags:
+ *                       type: string
+ *                     phoneNumber:
+ *                       type: string
+ *                     website:
+ *                       type: string
+ *                     zipCode:
+ *                       type: string
+ *                     recentlyActive:
+ *                       type: string
  *                 trustedBy:
  *                   type: array
  *                   items:
  *                     oneOf:
  *                       - type: object
+ *                   example: [{_id: "string", username: "string", name: "string", avatar: "string"}]
  *                 trustGiven:
  *                   type: array
  *                   items:
  *                     oneOf:
  *                       - type: object
+ *                   example: [{_id: "string", username: "string", name: "string", avatar: "string"}]
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
  */
 
 // ===================== Oauth Balance Check ==================
@@ -60,6 +87,10 @@
  *               properties:
  *                 balance:
  *                   type: number
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
  */
 
 // ===================== Oauth Credit Limit ==================
@@ -68,8 +99,8 @@
  * /oauth/getAllUser:
  *   get:
  *     tags: [OAuth]
- *     summary: Get all credit user
- *     description: Returns all credit user based on the provided token.
+ *     summary: Get all user
+ *     description: Returns all user based on the provided token.
  *     responses:
  *       200:
  *         description: Success
@@ -84,8 +115,26 @@
  *                   type: string
  *                 profile:
  *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     avatar:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     recentlyActive:
+ *                       type: string
+ *                     job:
+ *                       type: string
+ *                     placeId:
+ *                       type: string
+ *                     website:
+ *                       type: string
  *                 account:
  *                   type: object
+ *                   properties:
+ *                     balance:
+ *                       type: number
  *                 joinedAt:
  *                   type: string
  *                 trustedBy:
@@ -93,11 +142,17 @@
  *                   items:
  *                     oneOf:
  *                       - type: object
+ *                   example: [{_id: "string", username: "string", name: "string", avatar: "string"}]
  *                 trustGiven:
  *                   type: array
  *                   items:
  *                     oneOf:
  *                       - type: object
+ *                   example: [{_id: "string", username: "string", name: "string", avatar: "string"}]
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
  */
 
 /**
@@ -111,7 +166,7 @@
  *       - in: path
  *         name: recipient
  *         required: true
- *         description: The recipient's identifier for which the trust limit is being requested.
+ *         description: Enter the user's _id from the get all user api
  *         schema:
  *           type: string
  *     responses:
@@ -124,6 +179,12 @@
  *               properties:
  *                 trustLimit:
  *                   type: number
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
+ *       400:
+ *         description: Error
  */
 
 // ===================== Oauth Transaction History ==================
@@ -132,7 +193,7 @@
  * /oauth/transaction-history:
  *   post:
  *     tags: [OAuth]
- *     summary: Get user transaction history 
+ *     summary: Get user transaction history
  *     description: Returns user transaction history based on the provided token.
  *     requestBody:
  *       required: true
@@ -141,16 +202,13 @@
  *           schema:
  *             type: object
  *             properties:
- *               page:
- *                 type: number
- *                 example: 1
  *               dateRange:
  *                 type: array
  *                 items:
  *                   oneOf:
  *                     - type: string
  *                     - type: null
- *                 example: ["date", "date"]
+ *                 example: ["YYYY-MM-DDTHH:mm:ss.sssZ", "YYYY-MM-DDTHH:mm:ss.sssZ"]
  *               viewport:
  *                 type: object
  *                 properties:
@@ -175,6 +233,10 @@
  *                   items:
  *                     oneOf:
  *                       - type: object
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
  */
 
 // ===================== Oauth Initiate Transactions =================
@@ -183,7 +245,7 @@
  * /oauth/initiateTransaction:
  *   post:
  *     tags: [OAuth]
- *     summary: Get initiate transaction history 
+ *     summary: Get initiate transaction history
  *     description: Returns initiate transaction history based on the provided token.
  *     requestBody:
  *       required: true
@@ -194,10 +256,8 @@
  *             properties:
  *               recipient:
  *                 type: string
- *                 example: 641bb6acbdb8052f8806e636
  *               amount:
  *                 type: number
- *                 example: 0
  *               memo:
  *                 type: string
  *     responses:
@@ -215,6 +275,12 @@
  *                   items:
  *                    oneOf:
  *                      - type: object
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
+ *       400:
+ *         description: Error
  */
 
 // ===================== Oauth Initiate Trust Line =================
@@ -234,12 +300,10 @@
  *             properties:
  *               recipient:
  *                 type: string
- *                 example: 641bb6acbdb8052f8806e636
  *               text:
  *                 type: string
  *               weight:
  *                 type: string
- *                 example: 19
  *     responses:
  *       200:
  *         description: Success
@@ -266,4 +330,8 @@
  *                   type: number
  *                 deleted:
  *                   type: boolean
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too Many Requests
  */

@@ -114,9 +114,9 @@ exports.validatePaymentInput = (data) => {
     errors.recipient = "Please choose recipient.";
   }
 
-  // if (!(data.amount > 0)) {
-  //   errors.amount = "Please input amount.";
-  // }
+  if (!(data.amount > 0)) {
+    errors.amount = "Please input amount.";
+  }
 
   return {
     errors,

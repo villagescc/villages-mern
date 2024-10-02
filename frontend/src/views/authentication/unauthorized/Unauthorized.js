@@ -11,8 +11,6 @@ import Logo from 'ui-component/Logo';
 import { Box } from '@mui/system';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
-// assets
-
 // ================================|| Unauthorized Access - Page ||================================ //
 
 const Unauthorized = () => {

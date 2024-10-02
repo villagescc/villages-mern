@@ -13,8 +13,6 @@ import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
 import useAuth from 'hooks/useAuth';
 
-// assets
-
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {

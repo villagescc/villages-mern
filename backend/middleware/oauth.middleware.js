@@ -36,7 +36,7 @@ exports.validateRefreshToken = (req, res, next) => {
 
 const rateLimitStore = {}; 
 exports.Oauth = async (req, res, next) => {
-  const requestOrigin = req.headers.origin;
+  const requestOrigin = req.headers.origin || req.headers.referer;
   const token = req.header("Authorization");
 
   //when no token is available
@@ -78,6 +78,7 @@ exports.Oauth = async (req, res, next) => {
     });
     const clientSecret = decoded.clientId; // Extract clientSecret from the decoded token
     const developerSetting = await DeveloperSetting.findOne({clientSecret});
+    developerSetting.whitelistedEndpoint.push("villages.io")
     const isValidUrl = developerSetting.whitelistedEndpoint.find((url) => requestOrigin?.includes(url))
 
     if (!isValidUrl) {

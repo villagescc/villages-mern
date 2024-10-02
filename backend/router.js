@@ -459,7 +459,7 @@ router.get(
 router.post(
   "/oauth/transaction-history",
   oauthMiddleware.Oauth,
-  adminController.getPaymentHistory
+  adminController.getOAuthPaymentHistory
 );
 
 // #####################  Transaction Management ####################
