@@ -48,7 +48,7 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/oauth/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Hosting upload files
 app.use("/upload", express.static("upload"));
