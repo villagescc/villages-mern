@@ -31,18 +31,15 @@ const validationSchema = Yup.object().shape({
     whitelistedEndpoint: Yup.array()
         .of(
             Yup.string()
-                .test(
-                    'no-scheme',
-                    'Invalid domain: must not specify the scheme. (http:// or https://)',
-                    (value) => value && !/^https?:\/\//i.test(value) // Ensure it does not start with http:// or https://
-                )
-                .test(
-                    'no-scheme',
-                    'Invalid domain: cannot contain a port',
-                    (value) => value && !portRegex.test(value) // Ensure it does not start with http:// or https://
-                )
-                .matches(fqdnRegex, 'Invalid domain: must be a top private domain')
                 .required('Domain cannot be empty.')
+                .matches(
+                    /^(https?:\/\/)/,
+                    'Invalid origin: Must use either http or https as the scheme.'
+                )
+                .matches(
+                    /^(http|https):\/\/[^\/]+$/,
+                    'Invalid origin: Must use either http or https as the scheme, and URIs must not contain a path or end with "/".'
+                )
         )
         .min(1, 'At least one valid domain is required.')
 });
@@ -247,7 +244,7 @@ const DeveloperSetting = () => {
                                                                         fullWidth
                                                                         label={`URL ${index + 1}`}
                                                                         variant="outlined"
-                                                                        placeholder="example.com"
+                                                                        placeholder="https://www.example.com"
                                                                         InputLabelProps={{ shrink: true }}
                                                                         error={Boolean(errors?.whitelistedEndpoint?.[index])}
                                                                         helperText={errors?.whitelistedEndpoint?.[index]?.message}

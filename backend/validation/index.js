@@ -378,8 +378,8 @@ exports.validateDeveloperSettings = (data) => {
   } else {
     // Validate each whitelisted endpoint to ensure it starts with "https://"
     data.whitelistedEndpoint.forEach((endpoint, index) => {
-      if (httpsRegex.test(endpoint)) {
-        errors.whitelistedEndpoint = `whitelistedEndpoint must do not start with 'https:// or http://'.`;
+      if (!httpsRegex.test(endpoint)) {
+        errors.whitelistedEndpoint = `whitelistedEndpoint must start with 'https:// or http://'.`;
       }
     });
   }
