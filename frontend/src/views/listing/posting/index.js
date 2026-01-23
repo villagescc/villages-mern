@@ -320,6 +320,8 @@ const Posting = () => {
         successAction();
         dispatch(filterPost(filterData));
         setLoading(false)
+      }, () => {
+        setLoading(false)
       })
     );
   };
