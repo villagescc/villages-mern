@@ -4,17 +4,11 @@ const Profile = require("../models/Profile");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const Mailjet = require("node-mailjet");
 const DeveloperSetting = require("../models/DevelperSettings");
 
 const profileController = require("./profile.controller");
 const accountController = require("./account.controller");
 // const paymentController = require("./payment.controller");
-
-const mailjet = new Mailjet({
-  apiKey: process.env.MJ_APIKEY_PUBLIC,
-  apiSecret: process.env.MJ_APIKEY_PRIVATE,
-});
 
 const MailChimp = require("mailchimp-api-v3");
 const mailchimp = new MailChimp(process.env.MAILCHIMP_APIKEY);
@@ -152,30 +146,8 @@ exports.registerUser = async (req, res, next) => {
       //   console.log(error);
       // }
 
-      //To add contacts in mailjet
-      try {
-        const request = mailjet
-          .post("contactslist", { version: "v3" })
-          .id(process.env.MJ_CONTACT_LIST_ID)
-          .action("managecontact")
-          .request({
-            Name: `${firstName} ${lastName}`,
-            Properties: "object",
-            Action: "addnoforce",
-            Email: email,
-          });
-        request
-          .then((result) => {
-            console.log(result.body);
-          })
-          .catch((err) => {
-            console.log(err.statusCode);
-          });
-      } catch (error) {
-        console.log("====================================");
-        console.log(error);
-        console.log("====================================");
-      }
+      // Mailjet email campaigns disabled
+      // To re-enable, configure MJ_APIKEY_PUBLIC, MJ_APIKEY_PRIVATE, MJ_CONTACT_LIST_ID
 
       user.save((err) => {
         if (err) {
