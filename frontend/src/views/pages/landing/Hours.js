@@ -1,137 +1,147 @@
-import { Link } from 'react-router-dom';
 import { useTheme, styled } from '@mui/material/styles';
 
 // material-ui
-import { Button, ButtonBase, Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, Box, Paper } from '@mui/material';
 
 // project imports
 import FadeInWhenVisible from './Animation';
-import AnimateButton from 'ui-component/extended/AnimateButton';
-import { gridSpacing } from 'store/constant';
 
-// assets
-import imgDemo1 from 'assets/images/landing/img-demo-1.jpg';
-import imgDemo2 from 'assets/images/landing/img-demo-2.jpg';
-import imgDemo3 from 'assets/images/landing/img-demo-3.jpg';
-
-import box1 from 'assets/images/pages/box-1.png';
-import box2 from 'assets/images/pages/box-2.png';
-
-const imageStyle = {
-    width: '100%',
-    borderRadius: '12px'
-};
-
-const Paragraph = styled('p')(({ theme }) => ({
-    color: `#b0b0b0`,
-    flex: `0 0 60%`,
-    fontFamily: `"Open Sans", sans-serif`,
-    lineHeight: `1.5em`,
-    fontSize: `1.5em`,
-    textAlign: `left`,
-    marginTop: `0`,
-    [theme.breakpoints.down(1140)]: {
-        fontSize: `1.4em`
-    },
-    [theme.breakpoints.down(1025)]: {
-        fontSize: `1.25em`
-    },
-    [theme.breakpoints.down(935)]: {
-        textAlign: `center`,
-        paddingTop: `1em`,
-        flex: `0 0 100%`
-    },
-    [theme.breakpoints.down(`sm`)]: {
-        fontSize: `1em`
-    }
+// Styled components
+const SectionWrapper = styled('div')(({ theme }) => ({
+  padding: '80px 0',
+  background: '#fff',
 }));
 
-const FrameBox = styled(`div`)(({ theme }) => ({
-    padding: `3.75em 3em 1.5em 3em`,
-    border: `3px solid #1695c8`,
-    display: `flex`,
-    justifyContent: `space-between`,
-    alignItems: `center`,
-    flexFlow: `row wrap`,
-    height: `100%`,
-    [theme.breakpoints.down(935)]: {
-        justifyContent: `center`,
-        alignItems: `flex-start`
-    }
+const FeatureCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(5),
+  borderRadius: '20px',
+  textAlign: 'center',
+  height: '100%',
+  border: '2px solid #e8f4f8',
+  boxShadow: 'none',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+    boxShadow: '0 12px 40px rgba(22, 149, 200, 0.12)',
+    transform: 'translateY(-4px)',
+  },
 }));
 
-const Divider = styled(`div`)(({ theme }) => ({
-    height: `120px`,
-    margin: `0 1em`,
-    width: `3px`,
-    backgroundColor: `#eaeaea`,
-    [theme.breakpoints.down(935)]: {
-        display: `none`
-    }
+const IconWrapper = styled(Box)(({ theme }) => ({
+  width: 80,
+  height: 80,
+  borderRadius: '50%',
+  background: 'linear-gradient(135deg, #e8f4f8 0%, #d0eaf2 100%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: '0 auto 24px',
 }));
 
-const Img = styled(`img`)(({ theme }) => ({
-    maxWidth: `7.5em`
-}));
-// ==============================|| LANDING - DEMOS PAGE ||============================== //
+// ==============================|| LANDING - HOURS SECTION ||============================== //
 
 const Hours = () => {
-    const theme = useTheme();
+  const theme = useTheme();
 
-    return (
-        <Container>
-            <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} lg={5} md={10}>
-                    <Grid container spacing={2} sx={{ mb: 2 }}>
-                        <Grid item xs={12}>
-                            <Typography
-                                variant="h2"
-                                component="div"
-                                sx={{ fontWeight: 400, fontSize: `1.75em`, color: theme.palette.primary.main }}
-                            >
-                                Villages Hours
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body2" sx={{ maxWidth: `270px`, fontSize: `1.15em` }}>
-                                Backed by a Sustainable Hour's Wage
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <FadeInWhenVisible>
-                        <Grid container justifyContent="center" spacing={gridSpacing} sx={{ textAlign: 'center' }}>
-                            <Grid item sm={6} xs={12}>
-                                <FrameBox>
-                                    <Img src={box1} alt="box 1"></Img>
-                                    <Divider />
+  const features = [
+    {
+      icon: '⏱',
+      title: 'Stable Value',
+      description: "A sustainable hour's wage is different in every community, but it always remains a stable measure of value. From this base, members negotiate fair prices for their products and services.",
+    },
+    {
+      icon: '🌍',
+      title: 'Universal System',
+      description: 'This is an effective complementary currency system that can be used anywhere in the world. What is a sustainable wage in your community? Start exchanging value today.',
+    },
+    {
+      icon: '🤝',
+      title: 'Trust-Based',
+      description: 'Unlike traditional currencies, Villages hours are backed by real relationships and trust. Every transaction strengthens your community and builds lasting connections.',
+    },
+  ];
 
-                                    <Paragraph>
-                                        A sustainable hour's wage is different in every community but it always remains a stable measure of
-                                        value.
-                                    </Paragraph>
-                                    <Paragraph>From this base, members negotiate a fair price for their products and services</Paragraph>
-                                </FrameBox>
-                            </Grid>
-                            <Grid item sm={6} xs={12}>
-                                <FrameBox>
-                                    <Img src={box2} alt="box 2"></Img>
-                                    <Divider />
+  return (
+    <SectionWrapper>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <FadeInWhenVisible>
+            <Typography
+              variant="overline"
+              sx={{
+                color: theme.palette.primary.main,
+                fontWeight: 600,
+                letterSpacing: 2,
+                mb: 1,
+                display: 'block',
+              }}
+            >
+              OUR CURRENCY
+            </Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: 700,
+                color: '#1a1a2e',
+                mb: 2,
+                fontSize: { xs: '2rem', md: '2.5rem' },
+              }}
+            >
+              Villages Hours
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#666',
+                maxWidth: '600px',
+                mx: 'auto',
+                fontSize: '1.1rem',
+                lineHeight: 1.7,
+              }}
+            >
+              Backed by a sustainable hour's wage in your community — 
+              real value, not speculation
+            </Typography>
+          </FadeInWhenVisible>
+        </Box>
 
-                                    <Paragraph>
-                                        This is an effective and useful complementary currency system that can be used anywhere in the
-                                        world.
-                                    </Paragraph>
-                                    <Paragraph>What is a sustainable wage in your community?</Paragraph>
-                                </FrameBox>
-                            </Grid>
-                        </Grid>
-                    </FadeInWhenVisible>
-                </Grid>
+        <Grid container spacing={4}>
+          {features.map((feature, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <FadeInWhenVisible>
+                <FeatureCard>
+                  <IconWrapper>
+                    <Typography variant="h3" sx={{ color: theme.palette.primary.main }}>
+                      {feature.icon}
+                    </Typography>
+                  </IconWrapper>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 600,
+                      color: '#1a1a2e',
+                      mb: 2,
+                    }}
+                  >
+                    {feature.title}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: '#666',
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {feature.description}
+                  </Typography>
+                </FeatureCard>
+              </FadeInWhenVisible>
             </Grid>
-        </Container>
-    );
+          ))}
+        </Grid>
+      </Container>
+    </SectionWrapper>
+  );
 };
 
 export default Hours;
