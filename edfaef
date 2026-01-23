@@ -1,0 +1,940 @@
+[33mcommit a263d4a0f2343992bbe2c9b2268525c5970e0234[m[33m ([m[1;36mHEAD -> [m[1;32mdev[m[33m)[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Mar 8 09:32:46 2023 -0800
+
+    test notification on server
+
+[33mcommit 03315a14a3bfdcc4237c8d823e434b215cd89bbf[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Mar 6 19:13:47 2023 +0900
+
+    send notification
+
+[33mcommit 93e1274b4b56a15c6e2a127b1136a5f717e0e508[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Mar 6 16:57:59 2023 +0900
+
+    modify push notification
+
+[33mcommit 1134a01fcf51b8398eb64a87c357e2492dd44592[m
+Author: akita <blockchainmaster2022@gmail.com>
+Date:   Mon Mar 6 15:20:19 2023 +0900
+
+    push notification
+
+[33mcommit ae874cc0b8e325e2aaba817551971d12d6915de0[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Mar 1 05:51:46 2023 -0800
+
+    payment userlist sorting
+
+[33mcommit 501054d0b567d9c042105cafddca09db47f2028d[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Feb 22 18:18:04 2023 -0800
+
+    iphone responsive for payment page header
+
+[33mcommit f5581a3258d9a6e80abfcb51e0eea73fabb7e1c8[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Feb 22 09:39:58 2023 -0800
+
+    navcollapse done
+
+[33mcommit 845760abb0eb34692dd1c529f076ff7b595be56a[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Feb 21 01:25:20 2023 -0800
+
+    modified
+
+[33mcommit e6f021e0df92be14faa5fde6480b845be7cd1013[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Feb 21 01:24:57 2023 -0800
+
+    modified
+
+[33mcommit d3bc1d6d3aec30e443b60ceffd93e5acd673bb76[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Feb 21 00:34:34 2023 -0800
+
+    graph done
+
+[33mcommit f42e34fa93a49d768e28c734f563e208624ddf45[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Feb 18 19:26:42 2023 -0800
+
+    landing page mobile responsive
+
+[33mcommit 5a3fb821d87ff6bfdf555cd9893406092fb162f6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Feb 17 00:36:45 2023 -0800
+
+    landing & admin page
+
+[33mcommit 42c214d1264eebcdcd23b90a17f171bfd766a971[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Feb 8 02:21:05 2023 +0900
+
+    created post detail component
+
+[33mcommit 67590ace3d3909ae4541340595b102e53d758ac9[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Feb 2 17:10:14 2023 +0900
+
+    updated posting type without empty value
+
+[33mcommit dd84fc2213626971b442cee2c90561721437d2c1[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Feb 2 16:59:58 2023 +0900
+
+    updated emtpy card component
+
+[33mcommit ee1bd111d846bcb35bb49bd7bd65b8b12ce033a0[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Feb 2 12:19:25 2023 +0900
+
+    ignore upload files in backend
+
+[33mcommit b6a3f1bcbbfb53b198cd39a7dec68658cbe3b971[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Feb 2 11:26:39 2023 +0900
+
+    updated axios interceptor
+
+[33mcommit 3cf3b7d47d5c2e8c55a1b19b429b83049deae051[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Feb 2 10:18:52 2023 +0900
+
+    fix posting create issue
+
+[33mcommit 70c90119aa28e6a7836b4d363f6d6cd0251cdc54[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 29 21:01:51 2023 +0900
+
+    align center chat empty component
+
+[33mcommit 9e7abda88ce95f1a82206c915d7ed9cdc3100b73[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 29 20:56:20 2023 +0900
+
+    empty chat component and toggle menu button
+
+[33mcommit fe128af76615f18a15ab01194548e55982e7f995[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 29 07:11:50 2023 +0900
+
+    fixed payment user select issue
+
+[33mcommit e9377eaabe9183883b0e0b1635f105fb65d91897[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 29 07:03:41 2023 +0900
+
+    update server
+
+[33mcommit 5126cac2fd92a71007b28e984aa9eb9c49c6d590[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 29 04:28:19 2023 +0900
+
+    built chat page before using firebase api
+
+[33mcommit 03ef9d02752b8583b24378d2b47a56eb839d4ced[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Jan 28 01:37:05 2023 +0900
+
+    hide api keys of firebase
+
+[33mcommit 8960ad41064deb72e0b8b63cb4932c07d4bf42d0[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Jan 28 00:02:21 2023 +0900
+
+    configured and updated firebase messaging part
+
+[33mcommit 8147dc8055943363789e393668b74fa5256a2eb6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 27 01:43:29 2023 +0900
+
+    add payment path graph in transaction detail
+
+[33mcommit 3e424084235dbe1d4fadd7f18876d8492b7c6d4a[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 26 19:23:16 2023 +0900
+
+    payment detail component without path graph
+
+[33mcommit 8d740194ee695009ff43547a4f83424c468559eb[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 26 06:41:07 2023 +0900
+
+    built payment history component(without detail component)
+
+[33mcommit 7369e1a2b900b780255193cb897ae854fbb6b628[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Jan 24 04:10:59 2023 +0900
+
+    add pagination on trust list page
+
+[33mcommit b4ad2fe3360c7c41dd9062f50aaa6a4d9c1b0f88[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Jan 24 03:31:41 2023 +0900
+
+    update init db function
+
+[33mcommit f33ac3f2e78da8e3a0cbd38e04cb07bb8cc36854[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 23 07:10:49 2023 +0900
+
+    stop clearing user and endorsement
+
+[33mcommit ff2318c17b096cbec8b6ba2d47010729e63029a1[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 23 07:08:44 2023 +0900
+
+    set admin permission to levy
+
+[33mcommit be23d002f4866f0ddc609e80d78213522766afb9[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 23 07:06:11 2023 +0900
+
+    update server url
+
+[33mcommit e09bacec27f123ce12ae2859f4ca0e7d1870f1d7[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 23 07:05:25 2023 +0900
+
+    fresh user, endorsement collection
+
+[33mcommit 3d6595237a316888b163ed99c956c676b2189984[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 23 06:32:09 2023 +0900
+
+    import server_url from config
+
+[33mcommit ccc9fa899a384343b98840c3b7413368c30e353d[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 22 13:36:57 2023 +0900
+
+    update avatar url with server_url
+
+[33mcommit aa5d38220626c54727f3c655c1f6075feafab973[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Jan 22 13:15:13 2023 +0900
+
+    provide admin permission to dlevy
+
+[33mcommit 4933ed790765a0c240bfb1369f6bbfcc9faf10b6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 20 18:03:14 2023 +0900
+
+    init firebase
+
+[33mcommit 3bcc798963ef100f77920a943f5945ef92195da5[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 20 16:16:50 2023 +0900
+
+    add credit page in user admin page
+
+[33mcommit 38aaa57bd2619be9384439fe0770c1cc096eea86[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 20 09:49:41 2023 +0900
+
+    add balance card in user admin page
+
+[33mcommit 1bbf4a1777e4e9dbeb7a65388b006d69cc570389[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Fri Jan 20 09:16:00 2023 +0900
+
+    update user admin profile and trust page
+
+[33mcommit 0a23bc9faf4e35aa15fd63b8706d34ba573458ab[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Tue Jan 17 12:17:10 2023 +0900
+
+    build admin user profile page
+
+[33mcommit 778ea94c6756916d471016a301b988e3ff112736[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Tue Jan 17 11:32:00 2023 +0900
+
+    build user admin infra
+
+[33mcommit c4f12525982bec321a33918e288bd2adcdc6ad0f[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Tue Jan 17 10:33:52 2023 +0900
+
+    create users admin page
+
+[33mcommit 29e4fb02297154f17fef6d6b346419362fb3d681[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Tue Jan 17 01:41:17 2023 +0900
+
+    build admin routes
+
+[33mcommit 30be893889146b619f59b20542b12e3c3aa245d1[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 13 17:02:07 2023 +0900
+
+    fix get followers and followings function in endorsement controller
+
+[33mcommit d1652fcae30798c4f034dd0b1136c431d236bd5a[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 13 16:34:44 2023 +0900
+
+    fix getById function in user controller
+
+[33mcommit 517923e3e028c5f64c8266b02348dc8967e74db7[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 13 16:16:25 2023 +0900
+
+    create visibility icon on profile security page
+
+[33mcommit d3c881516112ebf55d855ec0f44120a8ac134c21[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 13 15:57:34 2023 +0900
+
+    fix changePassword function for select password when fetching user data
+
+[33mcommit bb25dab2839d643de15dda0493a55bc8859c8217[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 13 15:47:24 2023 +0900
+
+    trust empty tag position fix
+
+[33mcommit b49f25e8603d72b1eee836fe631d8cb4cbd7e24e[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 19:43:41 2023 +0900
+
+    update balance after payment
+
+[33mcommit b8cb32d874ca033e5d344d8a90874280e2ce3009[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 18:28:05 2023 +0900
+
+    redirect to login route when getting 401 error
+
+[33mcommit e6554a49645a80dce2ab9647a5cdaf6d6e86eee2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 16:13:17 2023 +0900
+
+    remove alert from login
+
+[33mcommit 5f27e77a1b42b97a597c7013d09bed913e239913[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 16:00:04 2023 +0900
+
+    fix path graph
+
+[33mcommit e93b3a97b85ae5bbbcda21f88672d6bdd479f3f2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 15:00:05 2023 +0900
+
+    fix home route item id
+
+[33mcommit 93d7f486d1bc5dc3bafdf60b54906b53aca8b4f8[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Jan 12 14:44:18 2023 +0900
+
+    fix how it work path in landing page
+
+[33mcommit cbacd9cdf3da97b9793cea4723d7939a33eb6ab9[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Jan 10 03:45:35 2023 +0900
+
+    add getPath function
+
+[33mcommit 006c23d1048b455a310028eca710cb0f93bb7b8c[m
+Author: Mike <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 9 17:31:38 2023 +0000
+
+    fix graph
+
+[33mcommit 364f76c5a02bfe815cf8262a6d4b8e4f8171bd63[m
+Author: Mike <nataliia.pelenia@gmail.com>
+Date:   Mon Jan 9 11:29:33 2023 +0000
+
+    update upload images hosting logic
+
+[33mcommit ff1f15e136e5adf799fb71fbf05cbcd17c11b335[m
+Author: Mike <nataliia.pelenia@gmail.com>
+Date:   Fri Jan 6 22:14:40 2023 +0000
+
+    host the project on remote server
+
+[33mcommit 0c2adcc63521b4a29fa61ea8cd6bf927150cc863[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Jan 4 22:24:46 2023 +0900
+
+    show graph before payment
+
+[33mcommit 15199a1cd79532c46293460216887e4e6b97c576[m
+Author: daniel-888 <mikecryptodev05615@gmail.com>
+Date:   Fri Dec 30 06:59:35 2022 +0900
+
+    remove trust graph in payment page
+
+[33mcommit c4aa625d880514204eb25e70f781c44300d7a981[m
+Author: daniel-888 <mikecryptodev05615@gmail.com>
+Date:   Fri Dec 30 06:57:37 2022 +0900
+
+    load google map library script without api key
+
+[33mcommit 9b9c72e3316f7b0633b2edfe1d832d98f1fd55c1[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 27 11:13:21 2022 +0900
+
+    show graph on trust page
+
+[33mcommit d7f471790848a72813ed08431d294148decb52ac[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 27 10:49:35 2022 +0900
+
+    remove useless menu in endorsement card
+
+[33mcommit e76a3162b974ae2419697d525b152b1ed2699fe2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 27 10:43:20 2022 +0900
+
+    use endorsement skeleton
+
+[33mcommit 0c7425581428bc52db7e67fa8c0f413a09bba5c6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 27 10:17:06 2022 +0900
+
+    build endorsement card skeleton
+
+[33mcommit 5e9128f7414cf76598f09cbe216bb4dbc5ab78d8[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Dec 26 12:56:12 2022 +0900
+
+    remove api key in index.html
+
+[33mcommit 165482a028c377093860003a02aa3b121a23ea4f[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Dec 25 10:31:12 2022 +0900
+
+    import old db contents
+
+[33mcommit 01e2e6afc0a6419e6942eb3d1a1d80993b1b1b21[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Dec 25 01:58:48 2022 +0900
+
+    update profile page for google map location
+
+[33mcommit a7f62d9545331d88f8ee02bc82dacd061ad571d2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Dec 25 01:33:28 2022 +0900
+
+    update profile model for rename locationId as placeId
+
+[33mcommit 4b13d7effcd26f3666ec95f95fa64faedfbc1c1d[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Dec 24 17:08:42 2022 +0900
+
+    update sidebar
+
+[33mcommit adc61145966fcd65369fb00da965cd5242948df2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 17:35:36 2022 +0900
+
+    update trust page for empty component
+
+[33mcommit f363f90a23cace54e8b451b6805d31b6c2570827[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 17:16:53 2022 +0900
+
+    update notifications to add empty component
+
+[33mcommit 3ebdcb737f0b9e9644686f5119e9454733a701a9[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 17:12:31 2022 +0900
+
+    build notifications page
+
+[33mcommit ff0637768f24b2e6b226a2dd1b3b8dfa11cafda6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 07:59:37 2022 +0900
+
+    create user list skeleton
+
+[33mcommit 066e332d9312da0fdbaf82487129bc364101d6c9[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 06:35:44 2022 +0900
+
+    fix payment validation middleware
+
+[33mcommit 5839eda9ba0f63bafee218124cb7f23edd900e89[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 06:16:18 2022 +0900
+
+    add empty component in public profile posting tab
+
+[33mcommit 73749714dd845ee145e5094af7abcc4f58a69674[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 06:05:30 2022 +0900
+
+    update fetch posting function for author avatar
+
+[33mcommit 670681208902763b39a359a85220511033acac65[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:57:29 2022 +0900
+
+    use avatar in trust list page
+
+[33mcommit 10875085f3bb89a674669484e2358a42ed7ce434[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:54:06 2022 +0900
+
+    reload profile after change avatar
+
+[33mcommit 40d775629f8fc46c6b244a45854917df5b0c6c07[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:43:07 2022 +0900
+
+    fix the maximum list label in payment form
+
+[33mcommit e237a124a38a182d0815607c154307eae8a59bf4[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:35:28 2022 +0900
+
+    link to trust and payment page from posting list
+
+[33mcommit 5129f4882b10673d1c8e0e932f64f086921e5a8e[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:29:04 2022 +0900
+
+    use avatar image in people list page
+
+[33mcommit 6047e080893ae91d91b6f29475514ade620fec6e[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:22:26 2022 +0900
+
+    upload avatar when change file
+
+[33mcommit 68cf68c76401f61713aee140404a061d86cb3d74[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 05:12:15 2022 +0900
+
+    add profile and account id to auth payload data
+
+[33mcommit 85e87b8fdc024968e7022c955be55305c87f4c80[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 23 04:15:04 2022 +0900
+
+    add posting update feature
+
+[33mcommit d294306168891f01b6fafcb3765900c6128afa1f[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Dec 22 22:08:09 2022 +0900
+
+    create empty component
+
+[33mcommit d6bc9d005c0e1ca15fd5d3f8238215fc9bf3cede[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Dec 22 19:14:57 2022 +0900
+
+    add posting delete function
+
+[33mcommit f172d99961af16dabcd2c392f34c04c269fb22c5[m
+Merge: 0b26d6c 8a6fec9
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Dec 21 09:48:52 2022 +0900
+
+    Merge branch 'dev' of https://github.com/villagescc/villages-mern into dev
+
+[33mcommit 0b26d6c84b7eee941a911d0c3307dc71244ddab4[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Dec 21 09:42:10 2022 +0900
+
+    changed to single account logic
+
+[33mcommit 8a6fec9df59f5fa62c0f6d6ecfe7956b106fae79[m
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Tue Dec 20 07:53:16 2022 +0900
+
+    Update README.md
+
+[33mcommit 41a9c5b105a0836116153c2c9b381bf06ccf7684[m
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Tue Dec 20 07:48:42 2022 +0900
+
+    Create README.md
+
+[33mcommit 5d949548dbc5297e87fbf86153bcf0531de6ee23[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 20 07:14:22 2022 +0900
+
+    update user model
+
+[33mcommit b55e401ddbda7a8f36ee925f6113ac3b9adf3de6[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Mon Dec 19 08:45:04 2022 +0900
+
+    merge changes for graph
+
+[33mcommit 51057d48dee922896bd62ff0dc0ca4e916023837[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 9 11:34:29 2022 +0900
+
+    payment logic before changing balance and choose account
+
+[33mcommit 174b71bde8242c462034289120d87579a1e2d0b8[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 9 11:03:01 2022 +0900
+
+    payment logic before creation of paylogs and payment document
+
+[33mcommit afb2146edafc651261ad3bbe04ba16e5cd2179b4[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 9 09:10:10 2022 +0900
+
+    build logic to get max flow
+
+[33mcommit 17d891948b589530d01f0480029f471e24c29970[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Dec 9 00:53:09 2022 +0900
+
+    update account controller
+
+[33mcommit 2b1e3c68d61780301e9198d02a4336262b6c9463[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Dec 8 17:34:22 2022 +0900
+
+    install graphology and get paths
+
+[33mcommit 55589ea5deaff9691e6cead657d25780a28c293f[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Tue Dec 6 03:33:12 2022 +0900
+
+    integrate ilp-connector
+
+[33mcommit 384c6a320dbc23ad216eabbd360159515dc0f058[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Dec 4 05:15:40 2022 +0900
+
+    validation structure changed & password change page
+
+[33mcommit d8117e9e55250f8a92b33dd1cdae635bae7c9d0c[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Dec 3 21:17:41 2022 +0900
+
+    done help & motivation & privacy pages
+
+[33mcommit 609166b973124198f2bccbc7d885fb46893d7fd2[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Dec 3 05:34:17 2022 +0900
+
+    profile info save
+
+[33mcommit 125a77cdc3c5db2ddc63176b75c823bdc2afe230[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Thu Dec 1 23:59:50 2022 +0900
+
+    clear useless config
+
+[33mcommit 13ef1c57a97e4137deea39c293b5b26ac931380d[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Wed Nov 30 07:18:52 2022 +0900
+
+    Profile page
+
+[33mcommit 1924ae2980ffe41caba955879e5ae41cc828c37b[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 27 09:36:56 2022 +0900
+
+    payment form
+
+[33mcommit 7739956d8c0858068be982efac51e6ad2ba6a713[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 27 00:12:17 2022 +0900
+
+    trust page with recipient param
+
+[33mcommit d9dc407a34e3c659226fb753de81ef4dd824c242[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Sat Nov 26 18:59:01 2022 +0900
+
+    profile part except for profile component
+
+[33mcommit 369494095a8cd55ebb7020e1140aa22d541e3f0c[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Nov 25 05:13:05 2022 +0900
+
+    build user detail page infra
+
+[33mcommit 3787f9e3abd33f29f7df8ae5992e26a393d2540d[m
+Author: NataliiaOfBlockchain <nataliia.pelenia@gmail.com>
+Date:   Fri Nov 25 03:22:04 2022 +0900
+
+    people
+
+[33mcommit 33df4e1315fb6eba897b84b36fd8dc63bc67fe2d[m
+Author: NataliiaOfBlockchain <Nataliia.pelenia@gmail.com>
+Date:   Sat Nov 12 23:27:45 2022 +0900
+
+    build trust cart in frontend with search func
+
+[33mcommit b292516f12336995aeb79b750f28cb4ef1695206[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Nov 11 12:29:35 2022 +0900
+
+    update endorsement search func
+
+[33mcommit 04c74a606f5a79dfff4e8b66568e18695bcd07a8[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 10 04:32:16 2022 +0900
+
+    Building trust page upto search without group by user
+
+[33mcommit 7cd2d1a93e5af898cf7ae0e8ecf45f581b61ee7c[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 10 02:17:14 2022 +0900
+
+    add snackbar in the register page
+
+[33mcommit 329fecabbeb48b0d0f570b2826c1ede74ae7b608[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 10 01:45:51 2022 +0900
+
+    create endorsement logic in backend
+
+[33mcommit 0d4cf0e5eae17987db704238dfd86526432e4d67[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 10 01:16:31 2022 +0900
+
+    create notification func in backend
+
+[33mcommit e3f5031d6e441b17ad66c9f913aa7d791600358e[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Nov 8 03:29:39 2022 +0900
+
+    create endorsement validation&middleware
+
+[33mcommit 065ebaad03e4fc1718750ce897b4b78fb4ff887a[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 6 04:03:09 2022 +0900
+
+    create balance section in header
+
+[33mcommit 4755d0851c156647c4ea803620459710ea3f931d[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 6 00:40:13 2022 +0900
+
+    update auth payload info
+
+[33mcommit 0f4c154526f49b37a512f9328aa8603b8f4db1e0[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 6 00:27:34 2022 +0900
+
+    create payment controller for creating account
+
+[33mcommit 8071e838b3a619ff9b197d359a7f6abb011e2b42[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sun Nov 6 00:12:37 2022 +0900
+
+    create profile controller in backend
+
+[33mcommit b0b2a4120c943ec71ba33fc63fb2bdb35fa0f698[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sat Nov 5 23:48:10 2022 +0900
+
+    Change backend routing logic for one router with middleware and validation
+
+[33mcommit 2353a8ae3342012aa80bf49cc0e43f6d9e67030d[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sat Nov 5 10:44:27 2022 +0900
+
+    built ripple related models
+
+[33mcommit a4a917e46027b12de5df39f24dbe0ade7821bbca[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 12:00:58 2022 +0900
+
+    tidy useless files and auth check
+
+[33mcommit b5d65bd8b61cc6ddc4d684362ab74b2ef505462a[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 09:45:27 2022 +0900
+
+    Built all routing structure
+
+[33mcommit bcf80a88e433292ce7dd1596f37d40f0d99b7d89[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 02:53:20 2022 +0900
+
+    fix posting card height & truncate
+
+[33mcommit 7c6160123af754c435e7d0cf886286d8ca4a16f9[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 02:26:23 2022 +0900
+
+    fix filter with pagination
+
+[33mcommit fe97b8261155f951c4d38f8d7c4c5869624b60c1[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 02:24:08 2022 +0900
+
+    fix keyword insensitive filter & or operation
+
+[33mcommit ffae560ee24f9a89a224462d0b82433edc0d71a9[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Nov 3 02:10:55 2022 +0900
+
+    upto posting filter
+
+[33mcommit ac4463f02f9c7af9dda6af368425df3b26319ab7[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Wed Nov 2 04:08:33 2022 +0900
+
+    done create listing
+
+[33mcommit b20684a28fa96bb0ec2c0d99171b984ef75ca31b[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Nov 1 23:04:31 2022 +0900
+
+    upto posting list skeleton
+
+[33mcommit 9af76eade110ed418fc068f6677c1a1115513ee9[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Nov 1 02:33:54 2022 +0900
+
+    landing header fixed for checking auth
+
+[33mcommit 68a6c01a627aed6c865b24bfc82536da0a9bff10[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Nov 1 01:55:11 2022 +0900
+
+    before creating filter control function
+
+[33mcommit 9786ea9f85882cb5998304f6ac5137e600ad0bf0[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Sat Oct 29 01:54:10 2022 +0900
+
+    building backend models
+
+[33mcommit 9b88b2cf745deefe1cee7b98a5a14dd245fbccbf[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 08:30:23 2022 +0900
+
+    login route done
+
+[33mcommit b0b87f11bed8f58a6852264297327e04d5816a59[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 07:27:44 2022 +0900
+
+    login route done
+
+[33mcommit 361af426d9772191181fdecf6a647892425ad55d[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 06:57:35 2022 +0900
+
+    verify route done
+
+[33mcommit 216ab324823b978258e2f6eb0b3018eeae4d8c0a[m
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Fri Oct 28 04:52:13 2022 +0900
+
+    Delete .env
+
+[33mcommit 0faf5febe8802c72dbe532c3477df3857d52cd53[m
+Merge: b11e0e2 b614a80
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 04:52:05 2022 +0900
+
+    register action without mail check
+
+[33mcommit b11e0e23a5ae2ee814883b80599cf5a545965d57[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 04:49:53 2022 +0900
+
+    register action without mail check
+
+[33mcommit b614a805244ee8b42e44eee85c7ba923d8b4581d[m
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Fri Oct 28 02:04:58 2022 +0900
+
+    Delete .env
+
+[33mcommit 69994bbcdb3207f54132917053505d352d52d12c[m
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Fri Oct 28 02:04:17 2022 +0900
+
+    Delete .env
+
+[33mcommit a844ebb3c1058490e33ac3aaa5044324cd66cc77[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Fri Oct 28 02:03:41 2022 +0900
+
+    fixed gitignore
+
+[33mcommit ad7d0ea26dd756c6f23744207ccfbdc9823d5e8e[m
+Merge: 9a827b1 792518d
+Author: NataliiaOfBlockchain <115803445+NataliiaOfBlockchain@users.noreply.github.com>
+Date:   Thu Oct 27 22:50:42 2022 +0900
+
+    Merge pull request #2 from daniel-888/villages-mern
+    
+    Villages mern
+
+[33mcommit 792518d95e081d56cdd25699651c161f739164f8[m
+Author: daniel-888 <mikecryptodev05615@gmail.com>
+Date:   Thu Oct 27 10:52:32 2022 +0000
+
+    gg
+
+[33mcommit 521c222d4396bea19007f805f243176a19965e94[m
+Author: daniel-888 <mikecryptodev05615@gmail.com>
+Date:   Thu Oct 27 10:50:50 2022 +0000
+
+    setup gitpod config
+
+[33mcommit e170c69891f89dad092a80227265f144829ba2c1[m
+Author: daniel-888 <mikecryptodev05615@gmail.com>
+Date:   Thu Oct 27 09:45:53 2022 +0000
+
+    gitpod
+
+[33mcommit a5b18be2848586f3e254070582c311e92f41fd61[m
+Author: NataliiaOfBlockchain <mikecryptodev05615@gmail.com>
+Date:   Thu Oct 27 09:33:12 2022 +0000
+
+    init gitpod config
+
+[33mcommit 9a827b1a8daf1a06ad0469e04adbad03dcf6aec4[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Oct 27 18:05:55 2022 +0900
+
+    create register route in backend
+
+[33mcommit 104f603744249d5966b2309a9a389b12b3da42b3[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Thu Oct 27 18:03:01 2022 +0900
+
+    create register route in backend
+
+[33mcommit a47f854f0774753802dc972cf4c03fddcc1af18c[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Wed Oct 26 03:34:31 2022 +0900
+
+    change the logo
+
+[33mcommit e2b0dd7ad140d46d10e9524a1f71b1bf3bb901c4[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Oct 25 23:17:56 2022 +0900
+
+    changed structure
+
+[33mcommit 2f8db4f91ea98935e529a38c002f77e43f7384d5[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Oct 25 21:37:17 2022 +0900
+
+    build new template for frontend
+
+[33mcommit 1199c3e4633eb217b44a8c8a4bc8a686aa370fee[m
+Author: unknown <nataliia.pelenia@gmail.com>
+Date:   Tue Oct 25 05:05:16 2022 +0900
+
+    init node server & react frontend app
+
+[33mcommit 733e7d7bc7110312b34ef741782494bdc0a87e6c[m
+Author: allinfinite <humandalas@gmail.com>
+Date:   Thu Oct 20 11:46:43 2022 -1000
+
+    Initial commit
