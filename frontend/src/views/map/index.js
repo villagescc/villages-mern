@@ -90,6 +90,7 @@ const Index = () => {
     const uniqueNames = new Set();
 
     data.forEach(item => {
+      if (!item.userId?._id) return;
       if (!uniqueNames.has(item.userId._id)) {
         mergedArray.push({ "id": item.userId._id, "user": item.userId, "post": [item] });
         uniqueNames.add(item.userId._id);

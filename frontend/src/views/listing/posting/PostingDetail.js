@@ -261,6 +261,8 @@ const PostingDetail = () => {
         successAction();
         dispatch(getPost(username, title));
         setLoading(false)
+      }, () => {
+        setLoading(false)
       })
     );
   };

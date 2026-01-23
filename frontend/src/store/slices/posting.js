@@ -92,6 +92,7 @@ export function getTags() {
       dispatch(slice.actions.getTagsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
     }
   };
 }
@@ -104,6 +105,7 @@ export function getCategories() {
       dispatch(slice.actions.getCategoriesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
     }
   };
 }
@@ -116,6 +118,7 @@ export function getSubCategories(categoryId = 'all') {
       dispatch(slice.actions.getSubCategoriesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.setLoading(false));
     }
   };
 }
@@ -149,7 +152,7 @@ export function getPost(username, title) {
   };
 }
 
-export function submitPost(data, setCount, successAction) {
+export function submitPost(data, setCount, successAction, errorAction) {
   return async () => {
     try {
       const response = await axios.postForm('/posting/upload', data, {
@@ -161,6 +164,7 @@ export function submitPost(data, setCount, successAction) {
       setCount((prevCount) => prevCount + 1);
     } catch (error) {
       dispatch(slice.actions.hasError(error));
+      if (errorAction) errorAction(error);
     }
   };
 }
