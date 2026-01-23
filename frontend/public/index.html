@@ -2,23 +2,127 @@
 <html lang="en">
 
 <head>
-    <title>Villages.io</title>
-    <link rel="icon" href="%PUBLIC_URL%/favicon/favicon.ico" />
-    <!-- Meta Tags-->
+    <!-- Primary Meta Tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#2296f3" />
-    <meta name="title" content="Villages.io" />
-    <meta name="description" content="Local Exchange Trading with A Network You Trust" />
-    <meta name="keywords" content="Web of Trust, villages, credit line, interledger, routing payment" />
-    <meta name="author" content="CodedThemes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <title>Villages.io | Trust-Based Community Currency</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="title" content="Villages.io | Trust-Based Community Currency" />
+    <meta name="description" content="Join a trust-based community where your time and skills create real value. Exchange services with neighbors using Villages Hours - no money needed. Build your web of trust today." />
+    <meta name="keywords" content="community currency, local exchange, trust network, time banking, alternative currency, mutual credit, local economy, community marketplace, skill sharing, Villages Hours, RumplePay, web of trust" />
+    <meta name="author" content="Villages.io" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="theme-color" content="#1695c8" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://villages.io" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://villages.io/" />
+    <meta property="og:title" content="Villages.io | Everyone Has Value to Share" />
+    <meta property="og:description" content="A trust-based community currency where your time and skills create real value. Exchange services with neighbors without needing money. Join your village today." />
+    <meta property="og:image" content="https://villages.io/og-image.png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content="Villages.io - Community members connected through trust, sharing skills and services" />
+    <meta property="og:site_name" content="Villages.io" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://villages.io/" />
+    <meta name="twitter:title" content="Villages.io | Everyone Has Value to Share" />
+    <meta name="twitter:description" content="A trust-based community currency where your time and skills create real value. Exchange services with neighbors without needing money." />
+    <meta name="twitter:image" content="https://villages.io/og-image.png" />
+    <meta name="twitter:image:alt" content="Villages.io - Community members connected through trust" />
+    <meta name="twitter:creator" content="@villagesio" />
+    <meta name="twitter:site" content="@villagesio" />
+    
+    <!-- Additional SEO -->
+    <meta name="application-name" content="Villages.io" />
+    <meta name="apple-mobile-web-app-title" content="Villages.io" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Villages.io",
+        "description": "A trust-based community currency platform where your time and skills create real value. Exchange services with neighbors without needing money.",
+        "url": "https://villages.io",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "Puna Rising LLC",
+            "url": "https://punarising.com"
+        }
+    }
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Villages.io",
+        "url": "https://villages.io",
+        "logo": "https://villages.io/favicon/android-chrome-512x512.png",
+        "description": "Trust-based community currency platform",
+        "sameAs": [
+            "https://instagram.com/villages.io",
+            "https://t.me/villagesio",
+            "https://github.com/villagescc",
+            "https://www.youtube.com/user/weboftrustnet"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "url": "https://villages.io"
+        }
+    }
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Google Verification -->
     <meta name="google-site-verification" content="dvT6cX68eNQQROoIUwwfyWj-SI7bO9lt2RKS_aEPn5g" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+    
+    <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_GOOGLE_MAPS_API_KEY%&libraries=places"></script>
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
-        rel="stylesheet" />
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>

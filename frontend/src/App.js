@@ -26,9 +26,17 @@ const App = () => (
                     <AuthProvider>
                         <>
                             <Helmet>
-                                <title>Villages.io</title>
-                                <meta name="description" content="Local Exchange Trading with A Network You Trust" />
-                                <meta name="keywords" content="Web of Trust, villages, credit line, interledger, routing payment" />
+                                <title>Villages.io | Trust-Based Community Currency</title>
+                                <meta name="description" content="Join a trust-based community where your time and skills create real value. Exchange services with neighbors using Villages Hours - no money needed." />
+                                <meta name="keywords" content="community currency, local exchange, trust network, time banking, alternative currency, mutual credit, local economy, skill sharing, Villages Hours" />
+                                <meta property="og:title" content="Villages.io | Everyone Has Value to Share" />
+                                <meta property="og:description" content="A trust-based community currency where your time and skills create real value. Exchange services with neighbors without needing money." />
+                                <meta property="og:image" content="https://villages.io/og-image.png" />
+                                <meta property="og:type" content="website" />
+                                <meta name="twitter:card" content="summary_large_image" />
+                                <meta name="twitter:title" content="Villages.io | Everyone Has Value to Share" />
+                                <meta name="twitter:description" content="A trust-based community currency where your time and skills create real value." />
+                                <meta name="twitter:image" content="https://villages.io/og-image.png" />
                             </Helmet>
                             <Routes />
                             <Snackbar />
