@@ -1,62 +1,117 @@
-import { Link } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 
 // material-ui
-import { Button, ButtonBase, Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, Box, Paper } from '@mui/material';
 
 // project imports
 import FadeInWhenVisible from './Animation';
-import AnimateButton from 'ui-component/extended/AnimateButton';
-import { gridSpacing } from 'store/constant';
 
 // assets
-import imgDemo1 from 'assets/images/landing/img-demo-1.jpg';
-import imgDemo2 from 'assets/images/landing/img-demo-2.jpg';
-import imgDemo3 from 'assets/images/landing/img-demo-3.jpg';
-
 import cycle from 'assets/images/pages/cycle-of-credit.png';
 
-const imageStyle = {
-    width: '100%',
-    borderRadius: '12px'
-};
+// Styled components
+const SectionWrapper = styled('div')(({ theme }) => ({
+  padding: '80px 0',
+  background: 'linear-gradient(180deg, #f8fbfc 0%, #fff 100%)',
+}));
 
-// ==============================|| LANDING - DEMOS PAGE ||============================== //
+const ContentCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(5),
+  borderRadius: '24px',
+  background: '#fff',
+  boxShadow: '0 8px 40px rgba(0, 0, 0, 0.06)',
+  border: '1px solid #e8ecef',
+}));
+
+const CycleImage = styled('img')({
+  maxWidth: '100%',
+  height: 'auto',
+  borderRadius: '16px',
+});
+
+// ==============================|| LANDING - CYCLE SECTION ||============================== //
 
 const Cycle = () => {
-    const theme = useTheme();
+  const theme = useTheme();
 
-    return (
-        <Container>
-            <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} lg={5} md={10}>
-                    <Grid container spacing={2} sx={{ mb: 2 }}>
-                        <Grid item xs={12}>
-                            <Typography
-                                variant="h2"
-                                component="div"
-                                sx={{ fontWeight: 400, fontSize: `1.75em`, color: theme.palette.primary.main }}
-                            >
-                                <strong style={{ fontWeight: `600` }}>Full cycle</strong> of credit
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body2" sx={{ maxWidth: `270px`, fontSize: `1.15em` }}>
-                                Money is an agreement within a community to encourage collaboration by keeping track of checks and balances.
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <img
-                        src={cycle}
-                        alt="cycle"
-                        style={{ margin: `auto`, visibility: `visible`, display: `block`, maxWidth: `100%`, height: `auto` }}
-                    ></img>
-                </Grid>
+  return (
+    <SectionWrapper>
+      <Container maxWidth="lg">
+        <ContentCard>
+          <Grid container spacing={5} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <FadeInWhenVisible>
+                <CycleImage src={cycle} alt="Cycle of credit illustration" />
+              </FadeInWhenVisible>
             </Grid>
-        </Container>
-    );
+            <Grid item xs={12} md={6}>
+              <FadeInWhenVisible>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    letterSpacing: 2,
+                    mb: 1,
+                    display: 'block',
+                  }}
+                >
+                  THE TRUST NETWORK
+                </Typography>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 700,
+                    color: '#1a1a2e',
+                    mb: 3,
+                    fontSize: { xs: '1.75rem', md: '2rem' },
+                  }}
+                >
+                  Full Cycle of Credit
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: '#555',
+                    mb: 3,
+                    lineHeight: 1.8,
+                    fontSize: '1.05rem',
+                  }}
+                >
+                  Money is an agreement within a community to encourage collaboration 
+                  by keeping track of checks and balances. Villages creates a natural 
+                  cycle where value flows through trusted connections.
+                </Typography>
+                <Box sx={{ mb: 3 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: '#555', lineHeight: 1.8, mb: 2 }}
+                  >
+                    <strong>Example:</strong> Sally wants to pay Eta for picking up her kids. 
+                    They don't know each other directly, but they're connected through trusted friends.
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: '#555', lineHeight: 1.8, mb: 2 }}
+                  >
+                    The payment flows: Sally → John → Robert → Eta. Each person only 
+                    exchanges promises with someone they've personally endorsed.
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: theme.palette.primary.main, fontWeight: 600, lineHeight: 1.8 }}
+                  >
+                    Result: Eta receives meaningful value from someone she trusts. 
+                    The whole community gets stronger.
+                  </Typography>
+                </Box>
+              </FadeInWhenVisible>
+            </Grid>
+          </Grid>
+        </ContentCard>
+      </Container>
+    </SectionWrapper>
+  );
 };
 
 export default Cycle;
