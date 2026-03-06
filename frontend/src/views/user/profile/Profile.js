@@ -20,7 +20,7 @@ import {
   DialogActions
 } from '@mui/material';
 import { WithContext as ReactTags } from 'react-tag-input';
-import PlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-places-autocomplete';
+import PlacesAutocomplete, { geocodeByAddress, geocodeByPlaceId, getLatLng } from 'react-places-autocomplete';
 
 // project imports
 import useAuth from 'hooks/useAuth';
@@ -80,12 +80,27 @@ const Profile = () => {
     setPhoneNumber(currentUser.profile?.phoneNumber ? currentUser.profile.phoneNumber : '');
     setWebsite(currentUser.profile?.website ? currentUser.profile.website : '');
     if (currentUser && currentUser.profile && currentUser.profile.placeId) {
-      geocodeByPlaceId(currentUser.profile.placeId).then((results) =>
-        setLocation({
-          placeId: currentUser.profile.placeId,
-          description: results[0]?.formatted_address
-        })
-      );
+      geocodeByPlaceId(currentUser.profile.placeId)
+        .then((results) =>
+          setLocation({
+            placeId: currentUser.profile.placeId,
+            description: results[0]?.formatted_address
+          })
+        )
+        .catch(async () => {
+          try {
+            const results = await geocodeByAddress(currentUser.profile.placeId);
+            setLocation({
+              placeId: results?.[0]?.place_id || currentUser.profile.placeId,
+              description: results?.[0]?.formatted_address || currentUser.profile.placeId
+            });
+          } catch (error) {
+            setLocation({
+              placeId: currentUser.profile.placeId,
+              description: currentUser.profile.placeId
+            });
+          }
+        });
     }
     setDescription(currentUser.profile?.description ? currentUser.profile.description : '');
   }, [currentUser]);
@@ -186,48 +201,59 @@ const Profile = () => {
   };
 
   const handleSaveProfileClick = async () => {
-    var placeId = location.placeId;
-    try {
-      await geocodeByPlaceId(placeId)
-        .then((results) => getLatLng(results[0]))
-        .then(({ lat, lng }) => {
-          dispatch(
-            saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
-              dispatch(
-                openSnackbar({
-                  open: true,
-                  message: 'Profile is saved successfully.',
-                  variant: 'alert',
-                  alert: {
-                    color: 'success'
-                  },
-                  close: false
-                })
-              );
-              dispatch(getUser(user._id));
+    let placeId = location?.placeId || '';
+    let resolvedLat = lat;
+    let resolvedLng = lng;
 
-              navigate('/listing/people', { replace: true })
-            })
-          );
-        });
+    try {
+      if (!placeId && location?.description?.trim()) {
+        const results = await geocodeByAddress(location.description.trim());
+        if (results?.length) {
+          placeId = results[0]?.place_id || '';
+          const coords = await getLatLng(results[0]);
+          resolvedLat = coords.lat;
+          resolvedLng = coords.lng;
+          setLocation({
+            description: results[0]?.formatted_address || location.description.trim(),
+            placeId
+          });
+        }
+      } else if (placeId) {
+        const results = await geocodeByPlaceId(placeId);
+        const coords = await getLatLng(results[0]);
+        resolvedLat = coords.lat;
+        resolvedLng = coords.lng;
+      }
     } catch (err) {
-      dispatch(
-        saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat, lng }, () => {
-          dispatch(
-            openSnackbar({
-              open: true,
-              message: 'Profile is saved successfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              },
-              close: false
-            })
-          );
-          dispatch(getUser(user._id));
-        })
-      );
+      // Let backend validation handle malformed place ids/locations.
     }
+
+    if (!placeId && location?.description?.trim()) {
+      placeId = location.description.trim();
+    }
+
+    if (!placeId) {
+      setErrors((prev) => ({ ...prev, placeId: 'Location field is required' }));
+      return;
+    }
+
+    dispatch(
+      saveProfile({ firstName, lastName, job, placeId, description, phoneNumber, zipCode, website, lat: resolvedLat, lng: resolvedLng }, () => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Profile is saved successfully.',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            },
+            close: false
+          })
+        );
+        dispatch(getUser(user._id));
+        navigate('/listing/people', { replace: true });
+      })
+    );
   };
 
   return (
@@ -394,6 +420,7 @@ const Profile = () => {
               <PlacesAutocomplete
                 value={location.description || ''}
                 onChange={(address) => {
+                  setErrors((prev) => ({ ...prev, placeId: '' }));
                   setLocation({ description: address, placeId: '' })
                 }}
               >
@@ -417,6 +444,7 @@ const Profile = () => {
                           component="li"
                           {...props}
                           onClick={() => {
+                            setErrors((prev) => ({ ...prev, placeId: '' }));
                             setLocation(option);
                             document.activeElement.blur()
                           }}
